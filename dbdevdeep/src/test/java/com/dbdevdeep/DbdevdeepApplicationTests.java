@@ -1,4 +1,4 @@
-package com.gn.spring;
+package com.dbdevdeep;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
