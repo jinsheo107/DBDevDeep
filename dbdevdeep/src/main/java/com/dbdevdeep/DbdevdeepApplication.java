@@ -1,4 +1,4 @@
-package com.gn.spring;
+package com.dbdevdeep;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
