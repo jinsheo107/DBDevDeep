@@ -32,6 +32,17 @@ dependencies {
 	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+	
+	// MuBatis(마이바티스)
+	implementation 'org.springframework.boot:spring-boot-starter-jdbc'
+	// Thymeleaf(타임리프)
+	implementation 'nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect'
+	// JPA(제이피에이)
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	// MariaDB(마리아디비)
+	implementation 'org.mariadb.jdbc:mariadb-java-client'
+	// WebSocket(웹소켓)
+	implementation 'org.springframework.boot:spring-boot-starter-websocket'
 }
 
 tasks.named('test') {
