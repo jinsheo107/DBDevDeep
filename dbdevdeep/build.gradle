@@ -43,6 +43,11 @@ dependencies {
 	implementation 'org.mariadb.jdbc:mariadb-java-client'
 	// WebSocket(웹소켓)
 	implementation 'org.springframework.boot:spring-boot-starter-websocket'
+	
+	// security(시큐리티)
+	implementation 'org.springframework.boot:spring-boot-starter-security'
+	testImplementation 'org.springframework.security:spring-security-test'
+	implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity6'
 }
 
 tasks.named('test') {

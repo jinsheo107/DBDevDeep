@@ -1,6 +1,9 @@
 package com.dbdevdeep.employee.domain;
 
 import java.time.LocalDate;
+import java.util.List;
+
+import org.springframework.security.core.GrantedAuthority;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -39,7 +42,7 @@ public class EmployeeDto {
 	private String chat_status_msg;
 	
 	// GrantedAuthority: 시큐리티에서 권한들의 목록을 담아놓는 곳
-	// private List<GrantedAuthority> authorities;
+	private List<GrantedAuthority> authorities;
 	
 	public Employee toEntity() {
 		return Employee.builder()

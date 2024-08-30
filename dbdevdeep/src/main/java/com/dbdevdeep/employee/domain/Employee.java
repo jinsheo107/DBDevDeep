@@ -84,4 +84,5 @@ public class Employee {
 	@Column(name="chat_status_msg")
 	private String chatStatusMsg;
 	
+	
 }

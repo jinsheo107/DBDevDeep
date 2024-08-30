@@ -1,12 +1,27 @@
 <!DOCTYPE html>
-<html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
 <meta charset="UTF-8">
-<title>가남초등학교</title>
+<title>물망초등학교</title>
 </head>
 <body>
-	가남초등학교에 오신것을 환영합니다!
-	
-	<a th:href="@{}"></a>
+	물망초등학교에 오신것을 환영합니다!
+
+	<ul sec:authorize="isAnonymous()">
+		<li><a th:href="@{/login}">로그인</a></li>
+	</ul>
+	<ul sec:authorize="isAuthenticated()">
+		<li>
+			<form method="post" th:action="@{/logout}">
+				<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"> 
+				<input type="submit" value="로그아웃">
+			</form>
+		</li>
+		<li>
+			<a th:href="@{/signup}">직원등록</a>
+		</li>
+	</ul>
+
 </body>
 </html>
