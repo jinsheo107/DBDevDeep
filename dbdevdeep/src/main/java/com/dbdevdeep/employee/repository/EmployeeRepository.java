@@ -7,6 +7,6 @@ import com.dbdevdeep.employee.domain.Employee;
 public interface EmployeeRepository extends JpaRepository<Employee, String>{
 	Employee findByempId(String emp_id);
 	
-	
+	Employee findBygovId(String gov_id);
 
 }

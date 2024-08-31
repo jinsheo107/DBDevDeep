@@ -1,10 +1,16 @@
 package com.dbdevdeep.employee.controller;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.dbdevdeep.employee.service.EmployeeService;
 
@@ -14,27 +20,30 @@ import jakarta.servlet.http.HttpSession;
 public class EmployeeApiController {
 
 	private final EmployeeService employeeService;
-	
+
 	@Autowired
 	public EmployeeApiController(EmployeeService employeeService) {
 		this.employeeService = employeeService;
 	}
 	
-	@PostMapping("/login")
-    public String login(
-            @RequestParam("emp_id") String empId,
-            @RequestParam("emp_pw") String empPw,
-            HttpSession session,
-            Model model) {
-
-        // 사용자 인증 처리 (예시: 하드코딩된 사용자 ID와 PW로 인증)
-        // 실제 애플리케이션에서는 데이터베이스에서 사용자 정보를 확인해야 합니다.
-        if ("admin".equals(empId) && "password".equals(empPw)) {
-            session.setAttribute("user", empId); // 로그인 성공 시 세션에 사용자 정보 저장
-            return "redirect:/home"; // 로그인 성공 후 리다이렉트할 페이지
-        } else {
-            model.addAttribute("error", "아이디 또는 비밀번호가 올바르지 않습니다.");
-            return "login"; // 로그인 페이지로 다시 돌아가기
-        }
-    }
+	@ResponseBody
+	@PostMapping("/govIdCheck")
+	public Map<String, String> govIdCheck(@RequestBody String govId) {
+		
+		Map<String, String> resultMap = new HashMap<String, String>();
+		
+		resultMap.put("res_code", "404");
+		resultMap.put("res_msg", "중복확인 중 오류가 발생하였습니다.");
+		
+		if(employeeService.govIdCheck(govId) == 1) {
+			resultMap.put("res_code", "409");
+			resultMap.put("res_msg", "중복되는 값이 존재합니다.");
+		} else {
+			resultMap.put("res_code", "200");
+			resultMap.put("res_msg", "중복되는 값이 없습니다.");
+		}
+		
+		return resultMap;
+	}
+	
 }

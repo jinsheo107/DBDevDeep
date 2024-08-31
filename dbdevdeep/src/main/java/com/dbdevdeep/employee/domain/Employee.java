@@ -78,7 +78,7 @@ public class Employee {
 	@Column(name="login_yn")
 	private String loginYn;	
 	
-	@Column(name="accout_status")
+	@Column(name="account_status")
 	private String accoutStatus;
 	
 	@Column(name="chat_status_msg")
