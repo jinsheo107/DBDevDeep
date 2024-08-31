@@ -18,7 +18,8 @@ public class WebSecurityConfig {
         http
             // 모든 요청에 대해 인증이 필요하도록 설정
             .authorizeHttpRequests(requests -> requests
-                .requestMatchers("/**").permitAll()
+                .requestMatchers("/login").permitAll()
+                .requestMatchers("/assets/**", "/dbdevdeepcss/**", "/dbdevdeepjs/**", "/dist/**", "/docs/**", "/scss/**", "/login.js").permitAll()
                 .anyRequest().authenticated()  // 나머지 모든 요청은 인증 필요
             )
             // 로그인 설정
@@ -42,11 +43,11 @@ public class WebSecurityConfig {
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer() {
         return (web) -> web.ignoring()
-        		.requestMatchers(PathRequest.toStaticResources().atCommonLocations());
+            .requestMatchers(PathRequest.toStaticResources().atCommonLocations()); // 정적 자원 무시
     }
     
     @Bean
     public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
+        return new BCryptPasswordEncoder(); // 패스워드 인코더
     }
 }

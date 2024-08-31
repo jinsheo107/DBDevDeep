@@ -1,36 +1,36 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-<meta charset="UTF-8">
-<meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<!-- Favicon icon -->
-<link rel="icon" type="image/png" sizes="16x16" th:href="@{/assets/images/MulMang_Banner-logo.png}">
-<title>물망초등학교</title>
-<!-- Custom CSS -->
-<link th:href="@{/dist/css/style.min.css}" rel="stylesheet">
-<style>
-* {
-	user-select: none;
-}
-
-label[for="remember-id"] {
-	cursor: pointer;
-}
-
-#eye_icon_login {
-	display: flex;
-	position: absolute;
-	z-index: 999;
-	left: 320px;
-	bottom: 27px;
-	cursor: pointer;
-}
-
-a {
-	cursor: pointer;
-}
-</style>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<!-- Favicon icon -->
+	<link rel="icon" type="image/png" sizes="16x16" th:href="@{/assets/images/MulMang_Banner-logo.png}">
+	<title>물망초등학교</title>
+	<!-- Custom CSS -->
+	<link th:href="@{/dist/css/style.min.css}" rel="stylesheet">
+	<style>
+		* {
+			user-select: none;
+		}
+		
+		label[for="remember-id"] {
+			cursor: pointer;
+		}
+		
+		#eye_icon_login {
+			display: flex;
+			position: absolute;
+			z-index: 999;
+			left: 320px;
+			bottom: 27px;
+			cursor: pointer;
+		}
+		
+		a {
+			cursor: pointer;
+		}
+	</style>
 </head>
 <body>
 	<div class="main-wrapper">
@@ -50,8 +50,7 @@ a {
 				<div class="col-lg-6 col-md-7 bg-white">
 					<div class="p-3">
 						<h2 class="mt-3 text-center">로그인</h2>
-						<form class="mt-4" th:action="@{/login}" name="login_form"
-							method="post">
+						<form class="mt-4" th:action="@{/login}" name="login_form" method="post">
 							<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}">
 							<div class="row">
 								<div class="col-lg-12">
