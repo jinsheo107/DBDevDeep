@@ -15,10 +15,7 @@ public class WebSecurityConfig {
 
     @Bean
     public SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
-        http
-            // 모든 요청에 대해 인증이 필요하도록 설정
-            .authorizeHttpRequests(requests -> requests
-                .requestMatchers("/login").permitAll()
+        http.authorizeHttpRequests(requests -> requests
                 .requestMatchers("/assets/**", "/dbdevdeepcss/**", "/dbdevdeepjs/**", "/dist/**", "/docs/**", "/scss/**", "/login.js").permitAll()
                 .anyRequest().authenticated()  // 나머지 모든 요청은 인증 필요
             )
@@ -28,14 +25,12 @@ public class WebSecurityConfig {
                 .loginProcessingUrl("/login")
                 .usernameParameter("emp_id")
                 .passwordParameter("emp_pw")
-                .permitAll()  // 로그인 페이지와 로그인 처리 URL에 대한 접근을 허용
+                .permitAll()  // 로그인 접근 혀용
                 .successHandler(new MyLoginSuccessHandler())
                 .failureHandler(new MyLoginFailureHandler())
             )
             // 로그아웃 설정
-            .logout(logout -> 
-                logout.permitAll()
-            );
+            .logout(logout -> logout.permitAll()); // 로그아웃 접근 허용
 
         return http.build();
     }
