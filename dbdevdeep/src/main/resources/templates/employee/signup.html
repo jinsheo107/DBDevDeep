@@ -303,16 +303,19 @@
 								<input type="hidden" id="csrf_token" th:value="${_csrf.token}">
 								<div class="form-body">
 									<div class="row">
-										<div class="col-md-1"></div>
-
+									<div class="col-md-1 "></div>
+									
+									
 										<!-- 사진등록 -->
-										<div class="col-md-1">
-											<div class="form-group">
-												<label>사진</label>
-												<div class="preview-container hidden" id="preview-container">
-													<img id="imagePreview" src="">
+										<div class="col-md-1 ">
+											<div class="form-group" style="margin-top: 20px;">
+													<label>사진</label>
+												<div class="row">
+													<div class="preview-container hidden" id="preview-container">
+														<img id="imagePreview" src="">
+													</div>
+													<input type="button" class="addPic" id="addPic" value="+">
 												</div>
-												<input type="button" class="addPic" id="addPic" value="+">
 											</div>
 										</div>
 
@@ -379,7 +382,7 @@
 													<div class="col-md-4">
 														<input type="text" class="form-control is-invalid" id="secondEmpNo" placeholder="4111111" maxlength="7">
 													</div>
-													<input type="text" id="emp_no" name="emp_no">
+													<input type="text" id="emp_no" name="emp_no" hidden>
 													<div id="emp_no_feedback" class="mt-2 col-md-8"></div>
 												</div>
 											</div>
@@ -408,7 +411,7 @@
 														<input type="text" class="form-control is-invalid" id="thirdPhone" placeholder="2222" maxlength="4">
 													</div>
 													<div id="emp_phone_feedback" class="mt-2 col-md-8"></div>
-													<input type="text" id="empPhone" name="emp_phone">
+													<input type="text" id="empPhone" name="emp_phone" hidden>
 
 												</div>
 											</div>
