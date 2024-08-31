@@ -79,7 +79,7 @@ public class Employee {
 	private String loginYn;	
 	
 	@Column(name="account_status")
-	private String accoutStatus;
+	private String accountStatus;
 	
 	@Column(name="chat_status_msg")
 	private String chatStatusMsg;

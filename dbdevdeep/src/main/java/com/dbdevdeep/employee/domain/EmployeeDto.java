@@ -52,7 +52,7 @@ public class EmployeeDto {
 				.empAddr(emp_addr).empDetailAddr(emp_detail_addr).deptCode(dept_code)
 				.jobCode(job_code).empInternalPhone(emp_internal_phone).vacationTime(vacation_time)
 				.hireDate(hire_date).endDate(end_date).entStatus(ent_status)
-				.loginYn(login_yn).accoutStatus(account_status).chatStatusMsg(chat_status_msg).build();
+				.loginYn(login_yn).accountStatus(account_status).chatStatusMsg(chat_status_msg).build();
 				
 	}
 	
@@ -69,7 +69,7 @@ public class EmployeeDto {
 				.vacation_time(employee.getVacationTime())
 				.hire_date(employee.getHireDate()).end_date(employee.getEndDate())
 				.ent_status(employee.getEntStatus()).login_yn(employee.getLoginYn())
-				.account_status(employee.getAccoutStatus())
+				.account_status(employee.getAccountStatus())
 				.chat_status_msg(employee.getChatStatusMsg()).build();
 	}
 	

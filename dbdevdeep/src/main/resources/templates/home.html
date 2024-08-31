@@ -10,6 +10,7 @@
 
 	<ul sec:authorize="isAnonymous()">
 		<li><a th:href="@{/login}">로그인</a></li>
+		<li><a th:href="@{/signup}">직원등록</a></li>
 	</ul>
 	<ul sec:authorize="isAuthenticated()">
 		<li>
