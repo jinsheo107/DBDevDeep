@@ -1,5 +1,6 @@
 package com.dbdevdeep.security.config;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -12,6 +13,13 @@ import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
 public class WebSecurityConfig {
+	
+	private final CustomLogoutSuccessHandler customLogoutSuccessHandler;
+
+  @Autowired
+  public WebSecurityConfig(CustomLogoutSuccessHandler customLogoutSuccessHandler) {
+      this.customLogoutSuccessHandler = customLogoutSuccessHandler;
+  }
 
     @Bean
     public SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
@@ -30,7 +38,11 @@ public class WebSecurityConfig {
                 .failureHandler(new MyLoginFailureHandler())
             )
             // 로그아웃 설정
-            .logout(logout -> logout.permitAll()); // 로그아웃 접근 허용
+            .logout(logout -> logout
+            		.logoutUrl("/logout")
+            		 .logoutSuccessHandler(customLogoutSuccessHandler)
+            		.permitAll()
+            ); // 로그아웃 접근 허용
 
         return http.build();
     }

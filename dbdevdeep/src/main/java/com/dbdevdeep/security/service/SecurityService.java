@@ -17,7 +17,7 @@ import com.dbdevdeep.employee.repository.EmployeeRepository;
 import com.dbdevdeep.security.vo.SecurityUser;
 
 @Service
-public class SecurityService implements UserDetailsService {
+public class SecurityService implements UserDetailsService{
 
 	private final EmployeeRepository employeeRepository;
 	
@@ -33,15 +33,28 @@ public class SecurityService implements UserDetailsService {
 		if(employee != null) {
 			EmployeeDto dto = new EmployeeDto().toDto(employee);
 			
+			dto.setLogin_yn("Y");
+			
+			Employee e = employeeRepository.save(dto.toEntity());
+			
+			EmployeeDto employeeDto = new EmployeeDto().toDto(e);
+			
 			List<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>();
-			authorities.add(new SimpleGrantedAuthority(employee.getDeptCode()));
 			
-			dto.setAuthorities(authorities);
+			// 부서 기준 권한 설정
+			authorities.add(new SimpleGrantedAuthority(e.getDeptCode()));
 			
-			return new SecurityUser(dto);
+			// 직위 기준 권한 설정
+			authorities.add(new SimpleGrantedAuthority(e.getJobCode()));
+			
+			employeeDto.setAuthorities(authorities);
+			
+			return new SecurityUser(employeeDto);
 		} else {
 			throw new UsernameNotFoundException(username);
 		}
 	}
+	
+	
 	
 }
