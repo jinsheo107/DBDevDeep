@@ -1,8 +1,12 @@
 package com.dbdevdeep.employee.service;
 
 import java.time.Year;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -76,6 +80,17 @@ public class EmployeeService {
 		}
 
 		return result;
+	}
+	
+	public List<EmployeeDto> selectEmployeeList(EmployeeDto employeeDto) {
+		List<Employee> employeeList = employeeRepository.findAll();
+
+		List<EmployeeDto> employeeDtoList = new ArrayList<EmployeeDto>();
+		for(Employee e : employeeList) {
+			EmployeeDto dto = new EmployeeDto().toDto(e);
+			employeeDtoList.add(dto);
+		}
+		return employeeDtoList;
 	}
 
 }

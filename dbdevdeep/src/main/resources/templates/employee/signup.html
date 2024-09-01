@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -7,7 +8,7 @@
 <meta name="description" content="">
 <meta name="author" content="">
 <!-- Favicon icon -->
-<link rel="icon" type="image/png" sizes="16x16" href="assets/images/favicon.png">
+<link rel="icon" type="image/png" sizes="16x16" th:href="@{/assets/images/MulMang_Banner-logo.png}">
 <title>물망초등학교</title>
 <link href="dist/css/style.min.css" rel="stylesheet">
 <style>
@@ -868,6 +869,7 @@
     	updateEmpPhone();
     });
     
+    
     const internalPhone = document.getElementById("emp_internal_phone");
     
     internalPhone.addEventListener('input', onlyNumber);
@@ -876,12 +878,12 @@
     	const internalVali = /^\d{4}$/.test(internalPhone.value);
     	
     	if(internalVali) {
-    		internalPhone.classList.remove('is-invalie');
+    		internalPhone.classList.remove('is-invalid');
     		internalPhone.classList.add('is-valid');
     		document.getElementById('emp_internal_phone_feedback').textContent = '';
     		document.getElementById('trans_school_id').focus();
     	} else {
-    		internalPhone.classList.remove('is-valie');
+    		internalPhone.classList.remove('is-invalid');
     		internalPhone.classList.add('is-invalid');
     		document.getElementById('emp_internal_phone_feedback').textContent = '내선전화번호 4자리를 입력하세요';
     		document.getElementById('emp_internal_phone_feedback').style.color = 'red';

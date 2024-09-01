@@ -41,6 +41,9 @@ public class EmployeeDto {
 	private String account_status;
 	private String chat_status_msg;
 	
+	private int search_type = 1;
+	private String search_text;
+	
 	// GrantedAuthority: 시큐리티에서 권한들의 목록을 담아놓는 곳
 	private List<GrantedAuthority> authorities;
 	
