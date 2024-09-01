@@ -8,16 +8,20 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
 import com.dbdevdeep.employee.domain.EmployeeDto;
+import com.dbdevdeep.employee.domain.TeacherHistoryDto;
 import com.dbdevdeep.employee.service.EmployeeService;
+import com.dbdevdeep.employee.service.TeacherHistoryService;
 
 @Controller
 public class EmployeeViewController {
 	
 	private final EmployeeService employeeService;
+	private final TeacherHistoryService teacherHistoryService;
 	
 	@Autowired
-	public EmployeeViewController(EmployeeService employeeService) {
+	public EmployeeViewController(EmployeeService employeeService, TeacherHistoryService teacherHistoryService) {
 		this.employeeService = employeeService;
+		this.teacherHistoryService = teacherHistoryService;
 	}
 
 	@GetMapping("/login")
@@ -38,5 +42,14 @@ public class EmployeeViewController {
 		model.addAttribute("resultList", resultList);
 		
 		return "employee/addressBook";
+	}
+	
+	@GetMapping("/classByYear")
+	public String selectClassByYearList(Model model, TeacherHistoryDto dto) {
+		List<TeacherHistoryDto> resultList = teacherHistoryService.selectClassByYearList();
+		
+		model.addAttribute("resultList", resultList);
+		
+		return "employee/classByYear";
 	}
 }

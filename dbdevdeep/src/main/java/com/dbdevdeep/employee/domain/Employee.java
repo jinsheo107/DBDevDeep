@@ -1,10 +1,12 @@
 package com.dbdevdeep.employee.domain;
 
 import java.time.LocalDate;
+import java.util.List;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -84,5 +86,6 @@ public class Employee {
 	@Column(name="chat_status_msg")
 	private String chatStatusMsg;
 	
-	
+	@OneToMany(mappedBy = "employee")
+	private List<TeacherHistory> teacherHistorys;
 }
