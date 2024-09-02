@@ -24,8 +24,6 @@ public class ReferenceDto {
 	public Reference toEntity() {
 		return Reference.builder()
 				.refNo(ref_no)
-				.approNo(appro_no)
-				.empId(emp_id)
 				.build();
 				
 	}
@@ -33,8 +31,6 @@ public class ReferenceDto {
 	public ReferenceDto toDto(Reference reference) {
 	return ReferenceDto.builder()	
 		.ref_no(reference.getRefNo())
-		.appro_no(reference.getApproNo())
-		.emp_id(reference.getEmpId())
 		.build();
 	}
 }

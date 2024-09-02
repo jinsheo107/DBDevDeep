@@ -9,6 +9,7 @@ import lombok.Getter;
 @Getter
 public class SecurityUser extends User{
 
+	private static final long serialVersionUID = -3697057531681291270L;
 	private EmployeeDto dto;
 	
 	public SecurityUser(EmployeeDto dto) {

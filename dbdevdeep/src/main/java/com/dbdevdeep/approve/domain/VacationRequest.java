@@ -7,6 +7,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -27,8 +29,9 @@ public class VacationRequest {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long vacNo;
 	
-	@Column(name="appro_no")
-	private Long approNo;
+	@ManyToOne
+    @JoinColumn(name = "appro_no") // 외래 키 설정
+    private Approve approve; // Approve 엔티티와의 관계 설정
 	
 	@Column(name="vac_yn")
 	private String vacYn;

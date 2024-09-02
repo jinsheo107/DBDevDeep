@@ -27,7 +27,6 @@ public class VacationRequestDto {
 	public VacationRequest toEntity() {
 		return VacationRequest.builder()
 				.vacNo(vac_no)
-				.approNo(appro_no)
 				.vacYn(vac_yn)
 				.vacType(vac_type)
 				.startDate(start_date)
@@ -39,7 +38,6 @@ public class VacationRequestDto {
 	public VacationRequestDto toDto(VacationRequest vacationRequest) {
 		return VacationRequestDto.builder()
 				.vac_no(vacationRequest.getVacNo())
-				.appro_no(vacationRequest.getApproNo())
 				.vac_yn(vacationRequest.getVacYn())
 				.vac_type(vacationRequest.getVacType())
 				.start_date(vacationRequest.getStartDate())

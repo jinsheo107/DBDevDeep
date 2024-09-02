@@ -49,21 +49,15 @@ public class EmployeeService {
 		try {
 			dto.setEmp_pw(passwordEncoder.encode(dto.getEmp_pw()));
 
-			int currentYear = Year.now().getValue();
+			String currentYear = String.valueOf(dto.getHire_date());
 
-			int count = employeeRepository.findByempIdWhen(String.valueOf(currentYear));
+			int count = Integer.parseInt(employeeRepository.findByempIdWhen(currentYear));
 
-			String empYearCount = "";
+			System.out.println(count);
+			
+			int empYearCount = count + 1;
 
-			if (count < 10) {
-				empYearCount = "00" + (count + 1);
-			} else if (count < 100) {
-				empYearCount = "0" + (count + 1);
-			} else {
-				empYearCount = "" + (count + 1);
-			}
-
-			String emp_id = currentYear + empYearCount;
+			String emp_id = empYearCount + "";
 
 			dto.setEmp_id(emp_id);
 			

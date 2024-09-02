@@ -26,7 +26,6 @@ public class ApproFileDto {
 	public ApproFile toEntity() {
 		return ApproFile.builder()
 				.fileNo(file_no)
-				.approNo(appro_no)
 				.fileName(file_name)
 				.newFileName(new_file_name)
 				.approRoot(appro_root)
@@ -37,7 +36,6 @@ public class ApproFileDto {
 	public ApproFileDto toDto(ApproFile approFile) {
 		return ApproFileDto.builder()
 				.file_no(approFile.getFileNo())
-				.appro_no(approFile.getApproNo())
 				.file_name(approFile.getFileName())
 				.new_file_name(approFile.getNewFileName())
 				.appro_root(approFile.getApproRoot())

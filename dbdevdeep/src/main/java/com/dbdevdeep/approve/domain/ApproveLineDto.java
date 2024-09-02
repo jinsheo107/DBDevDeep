@@ -29,7 +29,6 @@ public class ApproveLineDto {
 	public ApproveLine toEntity() {
 		return ApproveLine.builder()
 				.approLineNo(appro_line_no)
-				.approNo(appro_no)
 				.empId(emp_id)
 				.approLineOrder(appro_line_order)
 				.approLineStatus(appro_line_status)
@@ -42,7 +41,6 @@ public class ApproveLineDto {
 	public ApproveLineDto toDto(ApproveLine approveLine) {
 		return ApproveLineDto.builder()
 				.appro_line_no(approveLine.getApproLineNo())
-				.appro_no(approveLine.getApproNo())
 				.emp_id(approveLine.getEmpId())
 				.appro_line_order(approveLine.getApproLineOrder())
 				.appro_line_status(approveLine.getApproLineStatus())
