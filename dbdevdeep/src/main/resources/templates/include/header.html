@@ -185,9 +185,14 @@
                     class="svg-icon mr-2 ml-1"></i>
                   내 정보</a>
                 <div class="dropdown-divider"></div>
-                <a class="dropdown-item" href="javascript:void(0)"><i data-feather="power"
-                    class="svg-icon mr-2 ml-1"></i>
-                  로그아웃</a>
+                <a class="dropdown-item" href="javascript:void(0)">
+                
+                    <form method="post" th:action="@{/logout}">
+						<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"> 
+						<i data-feather="power" class="svg-icon mr-2 ml-1"></i>
+						<input type="submit" value="로그아웃" style="background: none; border: none;">
+					</form>
+				</a>
               </div>
             </li>
           </ul>
