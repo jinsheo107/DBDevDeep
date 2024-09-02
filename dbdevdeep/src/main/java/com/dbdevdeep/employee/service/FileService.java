@@ -61,7 +61,7 @@ private String fileDir = "C:\\employee\\upload\\";
 			// 5. 새로운 파일명
 			newFileName = uniqueName+fileExt;
 			// 6. 파일 저장 경로 설정
-			// 7. 파일 껌데기 생성
+			// 7. 파일 껍데기 생성
 			File saveFile = new File(fileDir+newFileName);
 			// 8. 경로 존재 여부 확인
 			if(!saveFile.exists()) {

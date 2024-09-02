@@ -34,7 +34,7 @@ public class TeacherHistory {
 	@Column(name="grade")
 	private int grade;
 	
-	@Column(name="class")
+	@Column(name="grade_class")
 	private int gradeClass;
 	
 	@Column(name="t_year")
