@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<!-- Favicon icon -->
+	<link rel="icon" type="image/png" sizes="16x16" th:href="@{/assets/images/MulMang_Banner-logo.png}">
+	<title>물망초등학교</title>
+	<!-- Custom CSS -->
+	<link th:href="@{/dist/css/style.min.css}" rel="stylesheet">
+	<style>
+		* {
+			user-select: none;
+		}
+		
+		label[for="remember-id"] {
+			cursor: pointer;
+		}
+		
+		#eye_icon_login {
+			display: flex;
+			position: absolute;
+			z-index: 999;
+			left: 320px;
+			bottom: 27px;
+			cursor: pointer;
+		}
+		
+		a {
+			cursor: pointer;
+		}
+	</style>
+</head>
+<body>
+	<div class="main-wrapper">
+		<div class="preloader">
+			<div class="lds-ripple">
+				<div class="lds-pos"></div>
+				<div class="lds-pos"></div>
+			</div>
+		</div>
+		<div
+			class="auth-wrapper d-flex no-block justify-content-center align-items-center position-relative"
+			id="div_box">
+			<div class="auth-box row">
+				<div class="col-lg-6 col-md-5 modal-bg-img"
+					style="background-image: url(assets/images/MulMang_C_Logo.png); background-repeat: no-repeat; background-size: contain;">
+				</div>
+				<div class="col-lg-6 col-md-7 bg-white">
+					<div class="p-3">
+						<h2 class="mt-3 text-center">로그인</h2>
+						<form class="mt-4" th:action="@{/login}" name="login_form" method="post">
+							<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}">
+							<div class="row">
+								<div class="col-lg-12">
+									<div class="form-group">
+										<label class="text-dark" for="uname">아이디</label> <input
+											class="form-control" id="uname" type="text" name="emp_id"
+											placeholder="아이디를 입력하세요" required>
+									</div>
+								</div>
+								<div class="col-lg-12">
+									<div class="form-group">
+										<label class="text-dark" for="pwd">비밀번호</label> <i
+											class="fa fa-eye-slash text-left" id="eye_icon_login"></i> <input
+											class="form-control" id="pwd" name="emp_pw" type="password"
+											onfocus="labelUp(this)" onblur="labelDown(this)"
+											placeholder="비밀번호를 입력하세요" required>
+									</div>
+								</div>
+								<div class="col-lg-5">
+									<input type="checkbox" id="remember-id" name="remember-id">
+									<label for="remember-id">아이디 저장</label>
+								</div>
+								<div class="col-lg-7 text-right">
+									<a data-toggle="modal" data-target="#info-header-modal">아이디/비밀번호
+										찾기</a>
+								</div>
+								<div class="col-lg-12 text-center">
+									<button type="submit" class="btn btn-block btn-dark">로그인</button>
+								</div>
+							</div>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div id="info-header-modal" class="modal fade" tabindex="-1"
+			role="dialog" aria-labelledby="info-header-modalLabel"
+			aria-hidden="true">
+			<div class="modal-dialog modal-dialog-centered">
+				<div class="modal-content">
+					<div class="modal-header modal-colored-header bg-info">
+						<h4 class="modal-title" id="info-header-modalLabel">아이디/비밀번호
+							찾기</h4>
+						<button type="button" class="close" data-dismiss="modal"
+							aria-hidden="true">×</button>
+					</div>
+					<div class="modal-body">
+						<h5 class="mt-0"></h5>
+						<p>행정실에 문의바랍니다.</p>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-light" data-dismiss="modal">확인</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<script th:src="@{/assets/libs/jquery/dist/jquery.min.js}"></script>
+	<script th:src="@{/assets/libs/popper.js/dist/umd/popper.min.js}"></script>
+	<script th:src="@{/assets/libs/bootstrap/dist/js/bootstrap.min.js}"></script>
+	<script th:src="@{/login.js}"></script>
+
+	<script>
+		$(".preloader ").fadeOut();
+	</script>
+</body>
+</html>
