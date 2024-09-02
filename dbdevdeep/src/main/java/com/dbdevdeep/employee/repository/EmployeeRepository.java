@@ -13,7 +13,7 @@ public interface EmployeeRepository extends JpaRepository<Employee, String>{
 	
 	Employee findBygovId(String gov_id);
 	
-	@Query("SELECT COUNT(e) FROM Employee e WHERE e.empId LIKE CONCAT(:year, '%')")
-	int findByempIdWhen(@Param("year") String year);
+	@Query("SELECT e.empId FROM Employee e WHERE e.empId LIKE CONCAT(:year, '%') ORDER BY e.empId DESC LIMIT 1")
+	String findByempIdWhen(@Param("year") String year);
 
 }
