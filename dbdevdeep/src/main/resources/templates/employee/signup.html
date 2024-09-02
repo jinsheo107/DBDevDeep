@@ -1,6 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org"
-	xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -13,19 +12,42 @@
 <link href="dist/css/style.min.css" rel="stylesheet">
 <style>
 .addPic {
-	background-color: gainsboro; width: 120px; height: 120px; border-radius: 50%; border: none; font-size: 25px;
+	background-color: gainsboro;
+	width: 120px;
+	height: 120px;
+	border-radius: 50%;
+	border: none;
+	font-size: 25px;
 }
 
 .littleButton {
-	background-color: gainsboro; width: 35px; height: 35px; border-radius: 50%; border: none; font-size: 15px; text-align: center; position: relative; bottom: 35px; left: 85px;
+	background-color: gainsboro;
+	width: 35px;
+	height: 35px;
+	border-radius: 50%;
+	border: none;
+	font-size: 15px;
+	text-align: center;
+	position: relative;
+	bottom: 35px;
+	left: 85px;
 }
 
 .preview-container {
-	border-radius: 50%; overflow: hidden; width: 120px; height: 120px; display: flex; align-items: center; justify-content: center; border: 2px solid lightgray;
+	border-radius: 50%;
+	overflow: hidden;
+	width: 120px;
+	height: 120px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	border: 2px solid lightgray;
 }
 
 #imagePreview {
-	width: 100%; height: 100%; object-fit: cover;
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
 }
 
 .hidden {
@@ -33,7 +55,9 @@
 }
 
 .centered-container {
-	display: flex; justify-content: center; align-items: center;
+	display: flex;
+	justify-content: center;
+	align-items: center;
 }
 </style>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.4.10/dist/sweetalert2.min.css">
@@ -304,13 +328,13 @@
 								<input type="hidden" id="csrf_token" th:value="${_csrf.token}">
 								<div class="form-body">
 									<div class="row">
-									<div class="col-md-1 "></div>
-									
-									
+										<div class="col-md-1 "></div>
+
+
 										<!-- 사진등록 -->
 										<div class="col-md-1 ">
 											<div class="form-group" style="margin-top: 20px;">
-													<label>사진</label>
+												<label>사진</label>
 												<div class="row">
 													<div class="preview-container hidden" id="preview-container">
 														<img id="imagePreview" src="">
@@ -349,10 +373,10 @@
 													<div class="col-md-8">
 														<select class="form-control is-invalid" id="department" name="dept_code" style="background-image: none;">
 															<option value="0">부서를 선택하세요.</option>
-															<option value="D1">교장</option>
-															<option value="D2">교감</option>
-															<option value="D3">교무부</option>
 															<option value="D4">행정부</option>
+															<option value="D3">교무부</option>
+															<option value="D2">교감</option>
+															<option value="D1">교장</option>
 														</select>
 														<div id="department_feedback" class="mt-2"></div>
 													</div>
@@ -364,10 +388,10 @@
 													<div class="col-md-8">
 														<select class="form-control is-invalid" id="job" name="job_code" style="background-image: none;">
 															<option value="0">직급을 선택하세요.</option>
-															<option value="J1">교장</option>
-															<option value="J2">교감</option>
-															<option value="J3">부장</option>
 															<option value="J4">직원</option>
+															<option value="J3">부장</option>
+															<option value="J2">교감</option>
+															<option value="J1">교장</option>
 														</select>
 														<div id="job_feedback" class="mt-2"></div>
 													</div>
@@ -420,7 +444,7 @@
 												<label for="gov_id">내선전화번호</label>
 												<div class="row">
 													<div class="col-md-8">
-														<input type="text" class="form-control is-invalid" id="emp_internal_phone" name="emp_internal_phone" placeholder="0000">
+														<input type="text" class="form-control is-invalid" id="emp_internal_phone" name="emp_internal_phone" placeholder="0000" maxlength="4">
 														<div id="emp_internal_phone_feedback" class="mt-2"></div>
 													</div>
 												</div>
@@ -438,7 +462,7 @@
 												<label for="gov_id">이전학교번호</label>
 												<div class="row">
 													<div class="col-md-8">
-														<input type="text" class="form-control " id="trans_school_id" placeholder="00000000">
+														<input type="text" class="form-control " id="trans_school_id" placeholder="00000000" maxlength="8">
 														<div id="trans_school_id_feedback" class="mt-2"></div>
 													</div>
 												</div>
@@ -456,8 +480,9 @@
 												<div class="row">
 													<div class="col-md-8"></div>
 													<div class="col-md-2">
-														<br> <input type="submit" class="btn waves-effect waves-light btn-primary" value="등록">
-														<input type="button" class="btn waves-effect waves-light btn-light" value="취소">
+														<br> 
+														<input type="submit" class="btn waves-effect waves-light btn-primary" value="등록"> 
+														<input type="button" onclick="cancelBtn();" class="btn waves-effect waves-light btn-light" value="취소">
 													</div>
 												</div>
 											</div>
@@ -638,31 +663,32 @@
 			const empNamefeedback = document.getElementById('emp_name_feedback');
 			const isValid = /^[가-힣]{1,6}$/.test(empName);
 	
-	    if (isValid) {
-	    	empNamefeedback.textContent = '';
-	    	empNamefeedback.style.color = 'green';
-        empNameInput.classList.add('is-valid');
-        empNameInput.classList.remove('is-invalid');
-        
-        valiCount = 1;
-        
-        if(event.key == 'Enter') {
-        	document.getElementById('department').focus();
-        }
-        
-	    } else {
-	    	empNamefeedback.textContent = '한글 1 ~ 6자리를 입력해주세요.';
-	    	empNamefeedback.style.color = 'red';
-        empNameInput.classList.add('is-invalid');
-        empNameInput.classList.remove('is-valid');
-        
-        valiCount = 0;
-	    }
-	    
-	    return valiCount;
+		    if (isValid) {
+		    	empNamefeedback.textContent = '';
+		    	empNamefeedback.style.color = 'green';
+		        empNameInput.classList.add('is-valid');
+		        empNameInput.classList.remove('is-invalid');
+	        
+	        valiCount = 1;
+	        
+	        if(event.key == 'Enter') {
+	        	document.getElementById('department').focus();
+	        }
+	        
+		    } else {
+		    	empNamefeedback.textContent = '한글 1 ~ 6자리를 입력해주세요.';
+		    	empNamefeedback.style.color = 'red';
+		        empNameInput.classList.add('is-invalid');
+		        empNameInput.classList.remove('is-valid');
+	        
+	        valiCount = 0;
+		    }
+		    
+		    return valiCount;
 		});
 		
 		const departmentInput = document.getElementById('department');
+		
 		departmentInput.addEventListener('change', function() {
 			const department = departmentInput.value;
 			const feedbackElement = document.getElementById('department_feedback');
@@ -695,8 +721,8 @@
 				jobInput.innerHTML = '<option value="J2">교감</option>';
 			} else if(department == 'D3' || department == 'D4'){
 				jobInput.innerHTML = '<option value="0">직급을 선택하세요.</option>';
-				jobInput.innerHTML += '<option value="J3">부장</option>';
 				jobInput.innerHTML += '<option value="J4">직원</option>';
+				jobInput.innerHTML += '<option value="J3">부장</option>';
 				
 				job_feedback.textContent = '부서를 선택하세요';
 				job_feedback.style.color = 'red';
@@ -704,14 +730,15 @@
 				jobInput.classList.remove('is-valid');
 			} else {
 				jobInput.innerHTML = '<option value="0">직급을 선택하세요.</option>';
-				jobInput.innerHTML += '<option value="J1">교장</option>'
-					jobInput.innerHTML += '<option value="J2">교감</option>'
-				jobInput.innerHTML += '<option value="J3">부장</option>';
 				jobInput.innerHTML += '<option value="J4">직원</option>';
+				jobInput.innerHTML += '<option value="J3">부장</option>';
+				jobInput.innerHTML += '<option value="J2">교감</option>'
+				jobInput.innerHTML += '<option value="J1">교장</option>'
 			}
 		});
 		
 		const  jobInput = document.getElementById('job');
+		
 		jobInput.addEventListener('change', function() {
 			const job = jobInput.value;
 			const feedbackElement = document.getElementById('job_feedback');
@@ -731,49 +758,65 @@
 		
 		/* 주민등록번호 정규식 */
 		document.getElementById('firstEmpNo').addEventListener('input', validateResidentNumber);
-    document.getElementById('secondEmpNo').addEventListener('input', validateResidentNumber);
-	    
-    document.getElementById('firstEmpNo').addEventListener('input', function() {
-    	document.getElementById('firstEmpNo').value = document.getElementById('firstEmpNo').value.replace(/[^0-9]/g, '');
+	    document.getElementById('secondEmpNo').addEventListener('input', validateResidentNumber);
+		    
+	    document.getElementById('firstEmpNo').addEventListener('input', function() {
+	    	document.getElementById('firstEmpNo').value = document.getElementById('firstEmpNo').value.replace(/[^0-9]/g, '');
 		});
-    document.getElementById('secondEmpNo').addEventListener('input', function() {
-    	document.getElementById('secondEmpNo').value = document.getElementById('secondEmpNo').value.replace(/[^0-9]/g, '');
+	    document.getElementById('secondEmpNo').addEventListener('input', function() {
+	    	document.getElementById('secondEmpNo').value = document.getElementById('secondEmpNo').value.replace(/[^0-9]/g, '');
 		});
-
-    function validateResidentNumber() {
-       const firstEmpNo = document.getElementById('firstEmpNo');
-       const secondEmpNo = document.getElementById('secondEmpNo');
-       const empNoFeedback = document.getElementById('emp_no_feedback');
-       const empNo = `${firstEmpNo.value}${secondEmpNo.value}`;
-       
-       const isValidFirst = /^[0-9]{2}(0[1-9]|1[0-2])(0[1-9]|[1-2][0-9]|3[0-1])$/;
-       const isValidSecond = /^[1-4][0-9]{6}$/;
-
-       // 주민등록번호 형식 확인
-       if (isValidFirst.test(firstEmpNo.value)) {
-           firstEmpNo.classList.remove('is-invalid');
-           firstEmpNo.classList.add('is-valid');
-           secondEmpNo.focus();
-       } 
-       
-       if(isValidSecond.test(secondEmpNo.value)) {
-         secondEmpNo.classList.remove('is-invalid');
-         secondEmpNo.classList.add('is-valid');
-       } 
-			
-       if (isValidFirst.test(firstEmpNo.value) && isValidSecond.test(secondEmpNo.value)) {
-       	document.getElementById('emp_no').value = empNo;
-       	document.getElementById('emp_pw').value = empNo;
-       	empNoFeedback.textContent = '';
-       	document.getElementById('postBtn').focus();
-       } else {
-           empNoFeedback.textContent = '올바른 주민등록번호 형식이 아닙니다.';
-           empNoFeedback.style.color = 'red';
-           firstEmpNo.classList.remove('is-valid');
-           firstEmpNo.classList.add('is-invalid');
-           document.getElementById('emp_no').value = '';
-       }
-    }
+	
+	    function validateResidentNumber() {
+	       const firstEmpNo = document.getElementById('firstEmpNo');
+	       const secondEmpNo = document.getElementById('secondEmpNo');
+	       const empNoFeedback = document.getElementById('emp_no_feedback');
+	       const empNo = `${firstEmpNo.value}${secondEmpNo.value}`;
+	       
+	       const isValidFirst = /^[0-9]{2}(0[1-9]|1[0-2])(0[1-9]|[1-2][0-9]|3[0-1])$/;
+	       const isValidSecond = /^[1-4][0-9]{6}$/;
+	
+	       // 주민등록번호 형식 확인
+	       if (isValidFirst.test(firstEmpNo.value)) {
+	    	   firstEmpNo.classList.remove('is-invalid');
+	    	   firstEmpNo.classList.add('is-valid');
+	           empNoFeedback.textContent = '';
+	           secondEmpNo.focus();
+	           console.log("check");
+	       } else {
+	    	   empNoFeedback.textContent = '주민번호 앞 6자리를 입력해주세요';
+	           empNoFeedback.style.color = 'red';
+	           firstEmpNo.classList.remove('is-valid');
+	           firstEmpNo.classList.add('is-invalid');
+	           document.getElementById('emp_no').value = '';
+	       }
+	       
+	       if(isValidSecond.test(secondEmpNo.value)) {
+	         secondEmpNo.classList.remove('is-invalid');
+	         secondEmpNo.classList.add('is-valid');
+	         empNoFeedback.textContent = '';
+	       }  else {
+	    	   empNoFeedback.textContent = '올바른 주민등록번호 형식이 아닙니다.';
+	           empNoFeedback.style.color = 'red';
+	           secondEmpNo.classList.remove('is-valid');
+	           secondEmpNo.classList.add('is-invalid');
+	           document.getElementById('emp_no').value = '';
+	       }
+				
+	       if (isValidFirst.test(firstEmpNo.value) && isValidSecond.test(secondEmpNo.value)) {
+	       	document.getElementById('emp_no').value = empNo;
+	       	document.getElementById('emp_pw').value = empNo;
+	       	empNoFeedback.textContent = '';
+	       	document.getElementById('postBtn').focus();
+	       } else {
+	           empNoFeedback.textContent = '올바른 주민등록번호 형식이 아닙니다.';
+	           empNoFeedback.style.color = 'red';
+	           /* firstEmpNo.classList.remove('is-valid');
+	           firstEmpNo.classList.add('is-invalid'); */
+	           document.getElementById('emp_no').value = '';
+	           document.getElementById('emp_pw').value = empNo;
+	       }
+	    }
     
     /* 전화번호 */
     const firstPhone = document.getElementById('firstPhone');
@@ -799,7 +842,7 @@
         
         empPhone.value = `${firstValue}${secondValue}${thirdValue}`;
     };
-    
+    /* 전화번호 첫번째 칸 입력 */
     firstPhone.addEventListener('keyup', (event) => {
     	const trimmedValue = firstPhone.value.trim();
       const isValid = /^01[0-9]$/.test(trimmedValue);
@@ -822,7 +865,7 @@
     	
     	updateEmpPhone();
     });
-    
+    /* 전화번호 중간 입력 */
     secondPhone.addEventListener('keyup', (event) => {
     	
     	if(secondPhone.value.length == 4) {
@@ -849,6 +892,7 @@
     	updateEmpPhone();
     });
     
+    /* 세번째 전화번호 입력 */
     thirdPhone.addEventListener('keyup', (event) => {
     	if(thirdPhone.value.length == 4) {
     		thirdPhone.classList.remove('is-invalid');
@@ -883,7 +927,7 @@
     		document.getElementById('emp_internal_phone_feedback').textContent = '';
     		document.getElementById('trans_school_id').focus();
     	} else {
-    		internalPhone.classList.remove('is-invalid');
+    		internalPhone.classList.remove('is-valid');
     		internalPhone.classList.add('is-invalid');
     		document.getElementById('emp_internal_phone_feedback').textContent = '내선전화번호 4자리를 입력하세요';
     		document.getElementById('emp_internal_phone_feedback').style.color = 'red';
@@ -898,6 +942,22 @@
     const formattedDate = `${year}-${month}-${day}`;
 
     document.getElementById('hire_date').value = formattedDate;
+    
+    const transInput = document.getElementById('trans_school_id');
+    
+    transInput.addEventListener('input', onlyNumber);
+    transInput.addEventListener('keyup', () => {
+    	if(transInput.value.length == 8 || transInput.value.length == 0) {
+    		document.getElementById('trans_school_id_feedback').textContent = '';
+    		transInput.classList.add('is-valid');
+    		transInput.classList.remove('is-invalid');
+    	} else {
+    		document.getElementById('trans_school_id_feedback').textContent = '';
+    		document.getElementById('trans_school_id_feedback').style.color = 'red';
+    		transInput.classList.add('is-invalid');
+    		transInput.classList.remove('is-valid');
+    	}
+    });
 	</script>
 
 	<!-- 교육청관리번호 중복 확인 -->
@@ -1082,6 +1142,12 @@
         }
       }).open();
     }
+  </script>
+  
+  <script>
+  	const cancelBtn = () => {
+  		window.history.back();
+  	}
   </script>
 
 </body>
