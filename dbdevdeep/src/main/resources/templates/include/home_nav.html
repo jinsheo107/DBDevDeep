@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<th:block th:fragment="homeNavLayout">
+	<style>
+            /* 사이드바 컨테이너 스타일링 */
+            .sidebar_container {
+                display: flex;
+                flex-direction: column;
+                gap: 20px; /* sidebar_div 사이의 간격 */
+                padding: 20px; /* sidebar_container와 사이드바의 간격 */
+                height: calc(100vh - 100px); /* 컨테이너의 높이를 뷰포트의 높이에서 패딩을 뺀 값으로 설정 */
+            }
+
+            /* 사이드바 내 div 스타일링 */
+            .sidebar_div {
+                border: 3px solid rgb(219, 219, 219); /* 테두리 색상 및 두께 */
+                width: 100%; /* 너비를 컨테이너에 맞추기 */
+                height: calc((100% - 20px) / 2); /* 높이를 컨테이너의 반절로 설정 (간격을 고려) */
+                border-radius: 10px;
+            }
+
+            /* 프로필 섹션 스타일링 */
+            .profile_section {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+            }
+
+            /* 프로필 이미지 스타일링 */
+            .profile_image {
+                width: 120px; /* 프로필 이미지의 너비 */
+                height: 120px; /* 프로필 이미지의 높이 */
+                border-radius: 50%; /* 원형으로 만들기 */
+                overflow: hidden; /* 원형 테두리 안에서 이미지가 잘리도록 설정 */
+                margin-bottom: 20px; /* 이미지와 이름 사이의 간격 */
+                border: 3px solid rgb(219, 219, 219);
+            }
+
+            .profile_image img {
+                width: 100%; /* 이미지의 너비를 컨테이너에 맞추기 */
+                height: 100%; /* 이미지의 높이를 컨테이너에 맞추기 */
+                object-fit: cover; /* 이미지 비율 유지하며 자르기 */
+            }
+
+            /* 이름 스타일링 */
+            .profile_name div {
+                margin: 0; /* 기본 여백 제거 */
+                font-size: 18px; /* 이름의 글자 크기 */
+                font-weight:bolder; /* 이름을 굵게 표시 */
+                color: black;
+            }
+
+            /* 프로필 정보 테이블 스타일링 */
+            .profile_info {
+                display: flex;
+                justify-content: center; /* 가운데 정렬 */
+                width: 100%; /* 너비를 전체로 설정 */
+                margin-top: 10px;
+            }
+
+            .profile_info table {
+                border-collapse: collapse; /* 테두리 겹침 방지 */
+            }
+
+            .profile_info td {
+                padding: 5px 10px; /* 셀 안의 여백 */
+                text-align: left; /* 왼쪽 정렬 */
+            }
+
+            .info_label {
+                font-weight: bolder; /* 라벨을 굵게 표시 */
+                color: black;
+            }
+
+            .info_value{
+                color: rgb(66, 66, 66);
+            }
+
+            /* 오늘 섹션 스타일링 */
+            .today_section {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                padding: 20px; /* 패딩 추가 */
+            }
+
+            .today_title {
+                font-size: 20px; /* 제목 글자 크기 */
+                font-weight: bold; /* 제목 굵게 */
+                color: black; /* 제목 색상 */
+                margin-bottom: 15px; /* 제목과 날짜 사이의 간격 */
+            }
+
+            .today_date {
+                font-size: 15px; /* 날짜 글자 크기 */
+                color: black; /* 날짜 색상 */
+                margin-bottom: 20px; /* 날짜와 테이블 사이의 간격 */
+            }
+
+            /* 오늘의 정보 테이블 스타일링 */
+            .today_info {
+                display: flex;
+                justify-content: center; /* 가운데 정렬 */
+                width: 100%; /* 너비를 전체로 설정 */
+            }
+
+            .today_info table {
+                border-collapse: collapse; /* 테두리 겹침 방지 */
+            }
+
+            .today_info td {
+                padding: 5px 14px; /* 셀 안의 여백 */
+                text-align: center; /* 왼쪽 정렬 */
+            }
+
+            /* 출근 및 퇴근 버튼 스타일링 */
+            .attendance_buttons {
+                display: flex;
+                flex-direction: column;
+                gap: 10px; /* 버튼 간의 간격 */
+                margin-top: 20px;
+                width: 100%; /* 버튼의 너비를 전체로 설정 */
+            }
+
+            .attendance_btn {
+                padding: 8px; /* 버튼 여백 */
+                font-size: 16px; /* 버튼 글자 크기 */
+                border: none; /* 버튼 테두리 제거 */
+                border-radius: 5px; /* 버튼 모서리 둥글게 */
+                cursor: pointer; /* 마우스 커서 포인터로 변경 */
+                width: 100%; /* 버튼의 너비를 전체로 설정 */
+                box-sizing: border-box; /* 패딩과 테두리를 너비에 포함 */
+            }
+
+            .check-in {
+                background-color: #0031AE; /* 출근 버튼 색상 */
+                color: white; /* 출근 버튼 글자 색상 */
+            }
+
+            .check-out {
+                background-color: #424242; /* 퇴근 버튼 색상 */
+                color: white; /* 퇴근 버튼 글자 색상 */
+            }
+            
+            .check-in:hover{
+                background-color: #00278a; /* 출근 버튼 색상 */
+                color: white;
+            }
+
+            .check-out:hover{
+                background-color: #313131; /* 출근 버튼 색상 */
+                color: white;
+            }
+
+            .work_status{
+                color: #3A9900;
+            }
+
+        </style>
+        <aside class="left-sidebar" data-sidebarbg="skin6">
+            <!-- Sidebar scroll-->
+            <div class="scroll-sidebar" data-sidebarbg="skin6">
+                <!-- Sidebar navigation-->
+                <div class="sidebar_container">
+                    <div class="sidebar_div profile_section">
+                        <div class="profile_image">
+                            <img src="assets/images/users/profile_img.jpg" alt="Profile Picture">
+                        </div>
+                        <div class="profile_name">
+                            <div>이주빈</div> <!-- 이름을 여기에 입력 -->
+                        </div>
+                        <div class="profile_info">
+                            <table>
+                                <tbody>
+                                    <tr>
+                                        <td class="info_label">부서</td>
+                                        <td class="info_value">2학년</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="info_label">직급</td>
+                                        <td class="info_value">교사</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="info_label">내선번호</td>
+                                        <td class="info_value">0451</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="sidebar_div today_section">
+                        <div class="today_title">TODAY</div>
+                        <div class="today_date">2024년 9월 1일 월요일</div> <!-- 오늘의 날짜를 여기에 입력 -->
+                        <div class="today_info">
+                            <table>
+                                <tbody>
+                                    <tr>
+                                        <td class="info_label">출근 시간</td>
+                                        <td class="info_value">07:55</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="info_label">퇴근 시간</td>
+                                        <td class="info_value">미등록</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="info_label">업무 상태</td>
+                                        <td class="info_value work_status">출근</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="attendance_buttons">
+                            <button class="attendance_btn check-in">출근</button>
+                            <button class="attendance_btn check-out">퇴근</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+</th:block>
+</html>
