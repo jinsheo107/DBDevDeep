@@ -1,10 +1,15 @@
 <!DOCTYPE html>
-<html>
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
 <meta charset="UTF-8">
 <title>가남초등학교</title>
 </head>
 <body>
 	가남초등학교에 오신것을 환영합니다.
+	<div class="test">	
+		<h3>
+			<a th:href="@{/notice}">게시판</a>
+		</h3>
+	</div>
 </body>
 </html>
