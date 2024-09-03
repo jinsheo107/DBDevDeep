@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+     xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+     layout:decorate="~{include/student_layout}">
+<th:block layout:fragment="content">
+<body>
+		<!-- ============================================================== -->
+		<!-- End Left Sidebar - style you can find in sidebar.scss  -->
+		<!-- ============================================================== -->
+		<!-- ============================================================== -->
+		<!-- Page wrapper  -->
+		<!-- ============================================================== -->
+		<div class="page-wrapper">
+			<!-- ============================================================== -->
+			<!-- Bread crumb and right sidebar toggle -->
+			<!-- ============================================================== -->
+			<div class="page-breadcrumb">
+				<div class="row">
+					<div id="content">
+			            <h3>1 학생 정보 등록</h3>
+			            <div class="form-section">
+			                <div class="form-group">
+			                    <label for="name">이름</label>
+			                    <input type="text" id="name" placeholder="이름을 입력하세요.">
+			                </div>
+			                <div class="form-group">
+			                    <label>재학 여부</label>
+			                    <input type="checkbox">
+			                </div>
+			                <div class="form-group">
+			                    <label for="birth-year">생년월일</label>
+			                    <input type="text" id="birth-year"> 년
+			                    <input type="text" id="birth-month"> 월
+			                    <input type="text" id="birth-day"> 일
+			                </div>
+			                <div class="form-group">
+			                    <label for="zipcode">우편번호</label>
+			                    <input type="text" id="zipcode">
+			                    <button id="student_location">우편찾기</button>
+			                </div>
+			                <div class="form-group">
+			                    <label for="address">주소</label>
+			                    <input type="text" id="student_address">
+			                </div>
+			                <div class="form-group">
+			                    <label for="address-detail">상세주소</label>
+			                    <input type="text" id="address-detail">
+			                </div>
+			                <div class="form-group">
+			                    <label for="phone">전화번호</label>
+			                    <input type="text" id="phone"> 
+			                    <input type="text"> 
+			                    <input type="text">
+			                </div>
+			                <div class="form-group">
+			                    <label for="photo">사진</label>
+			                    <input type="file" id="photo">
+			                    <button>파일찾기</button>
+			                </div>
+			                <div class="form-group">
+			                    <label>성별</label>
+			                    <input type="radio" id="male" name="gender"> 남자
+			                    <input type="radio" id="female" name="gender"> 여자
+			                </div>
+			            </div>	
+					</div>
+						<h3>2 가족 사항 등록</h3>
+			            	<div class="form-section">
+				                <div class="form-group">
+				                    <label for="relation-1">학생과의 관계</label>
+				                    <select id="relation-1">
+				                        <option>부</option>
+				                        <option>모</option>
+				                    </select>
+				                <div class="form-group">
+				                    <label for="family-name-1">이름 : </label>
+				                    <input type="text" id="family-name-1">
+				                </div>
+				                <div class="form-group">
+				                    <label for="family-birth-year-1">생년월일</label>
+				                    <input type="text" id="family-birth-year-1"> 년
+				                    <input type="text" id="family-birth-month-1"> 월
+				                    <input type="text" id="family-birth-day-1"> 일
+				                </div>
+				                <div class="form-group">
+				                    <label for="family-phone-1">전화번호</label>
+				                    <input type="text" id="family-phone-1"> 
+				                    <input type="text"> 
+				                    <input type="text"> 
+				                </div>
+				                
+				                <div class="form-group">
+				                    <label for="relation-2">학생과의 관계</label>
+				                    <select id="relation-2">
+				                        <option>부</option>
+				                        <option>모</option>
+				                    </select>
+				                </div>
+				                <div class="form-group">
+				                    <label for="family-name-2">이름</label>
+				                    <input type="text" id="family-name-2">
+				                </div>
+				                <div class="form-group">
+				                    <label for="family-birth-year-2">생년월일</label>
+				                    <input type="text" id="family-birth-year-2"> 년
+				                    <input type="text" id="family-birth-month-2"> 월
+				                    <input type="text" id="family-birth-day-2"> 일
+				                </div>
+				                <div class="form-group">
+				                    <label for="family-phone-2">전화번호</label>
+				                    <input type="text" id="family-phone-2"> 
+				                    <input type="text"> 
+				                    <input type="text">
+				                </div>
+				                
+				                <button class="add-family">+</button>
+			                </div>
+			                <div class="form-group" style="text-align: right;">
+				                <button>취소</button>
+				                <button>등록</button>
+				            </div>
+			            </div>
+            
+            
+				</div>
+			<!-- ============================================================== -->
+			<!-- End Bread crumb and right sidebar toggle -->
+			<!-- ============================================================== -->
+			<!-- ============================================================== -->
+			<!-- Container fluid  -->
+			<!-- ============================================================== -->
+			<div class="container-fluid">
+				<!-- ============================================================== -->
+				<!-- Start Page Content -->
+				<!-- ============================================================== -->
+				<div class="row">
+					<div class="col-12">
+						<div class="card">
+							<div class="card-body">
+								<h4 class="card-title">안녕하세요 오늘도 좋은하루 보내세요</h4>
+							</div>
+							<div class="table-responsive">
+								
+								
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<!-- ============================================================== -->
+				<!-- End PAge Content -->
+				<!-- ============================================================== -->
+				<!-- ============================================================== -->
+				<!-- Right sidebar -->
+				<!-- ============================================================== -->
+				<!-- .right-sidebar -->
+				<!-- ============================================================== -->
+				<!-- End Right sidebar -->
+				<!-- ============================================================== -->
+			</div>
+			<!-- ============================================================== -->
+			<!-- End Container fluid  -->
+			<!-- ============================================================== -->
+			<!-- ============================================================== -->
+			<!-- footer -->
+			<!-- ============================================================== -->
+			<footer class="footer text-center text-muted">
+				All Rights Reserved by Adminmart. Designed and Developed by <a href="https://wrappixel.com">WrapPixel</a>.
+			</footer>
+			<!-- ============================================================== -->
+			<!-- End footer -->
+			<!-- ============================================================== -->
+		</div>
+		<!-- ============================================================== -->
+		<!-- End Page wrapper  -->
+		<!-- ============================================================== -->
+	</div>
+	<!-- ============================================================== -->
+	<!-- End Wrapper -->
+	<!-- ============================================================== -->
+	<!-- End Wrapper -->
+	<!-- ============================================================== -->
+	<!-- All Jquery -->
+	<!-- ============================================================== -->
+	<script src="/assets/libs/jquery/dist/jquery.min.js"></script>
+	<!-- Bootstrap tether Core JavaScript -->
+	<script src="/assets/libs/popper.js/dist/umd/popper.min.js"></script>
+	<script src="/assets/libs/bootstrap/dist/js/bootstrap.min.js"></script>
+	<!-- apps -->
+	<!-- apps -->
+	<script src="/dist/js/app-style-switcher.js"></script>
+	<script src="/dist/js/feather.min.js"></script>
+	<!-- slimscrollbar scrollbar JavaScript -->
+	<script src="/assets/libs/perfect-scrollbar/dist/perfect-scrollbar.jquery.min.js"></script>
+	<script src="/assets/extra-libs/sparkline/sparkline.js"></script>
+	<!--Wave Effects -->
+	<!-- themejs -->
+	<!--Menu sidebar -->
+	<script src="/dist/js/sidebarmenu.js"></script>
+	<!--Custom JavaScript -->
+	<script src="/dist/js/custom.min.js"></script>
+	<script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+	<script>
+	window.onload = function(){
+	    document.getElementById("student_location").addEventListener("click", function(){ //주소입력칸을 클릭하면
+	        //카카오 지도 발생
+	        new daum.Postcode({
+	            oncomplete: function(data) { //선택시 입력값 세팅
+	                document.getElementById("zipcode").value = data.zonecode;
+	                document.getElementById("student_address").value = data.address; // 주소 넣기
+	                document.getElementById("address-detail").focus();
+	            }
+	        }).open();
+	    });
+	}
+	</script>
+</body>
+
+</html>

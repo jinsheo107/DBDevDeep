@@ -14,10 +14,10 @@
           <div class="navbar-brand">
             <a th:href="@{/}" style="margin-top:-12px;">
               <b class="logo-icon">
-                <img src="assets/images/MulMang_logo.png" style="width: 45px;" alt="homepage" class="dark-logo" />
+                <img src="/assets/images/MulMang_logo.png" style="width: 45px;" alt="homepage" class="dark-logo" />
               </b>
               <span class="logo-text">
-                <img src="assets/images/MulMang_logo_text.png" style="width: 145px;" alt="homepage" class="dark-logo" />
+                <img src="/assets/images/MulMang_logo_text.png" style="width: 145px;" alt="homepage" class="dark-logo" />
               </span>
             </a>
           </div>
@@ -76,7 +76,7 @@
               </a>
             </li>
             <li class="nav-item left-nav">
-              <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown"
+              <a class="nav-link" th:href="@{/student}" role="button"
                 aria-haspopup="true" aria-expanded="false">
                 <span class="nav_text">학생관리</span>
               </a>
@@ -174,7 +174,7 @@
             <li class="nav-item dropdown">
               <a class="nav-link dropdown-toggle" href="javascript:void(0)" data-toggle="dropdown" aria-haspopup="true"
                 aria-expanded="false">
-                <img src="assets/images/users/user-profile.png" alt="user" class="rounded-circle" width="40"
+                <img src="/assets/images/users/user-profile.png" alt="user" class="rounded-circle" width="40"
                   style="margin-top:-3px;">
                 <span class="ml-2 d-none d-lg-inline-block"><span>안녕하세요,</span> <span class="text-dark">유저님!</span> <i
                     data-feather="chevron-down" class="svg-icon"></i></span>
