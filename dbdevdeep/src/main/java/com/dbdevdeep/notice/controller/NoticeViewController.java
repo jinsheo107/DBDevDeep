@@ -31,4 +31,10 @@ public class NoticeViewController {
 		return "notice/list";
 	}
 	
+	// 새 글 작성
+	@GetMapping("/notice/create")
+	public String createNotice(NoticeDto dto) {
+		return "notice/create";
+	}
+	
 }
