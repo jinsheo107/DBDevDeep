@@ -6,6 +6,8 @@ import java.util.List;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
@@ -56,11 +58,13 @@ public class Employee {
 	@Column(name="emp_detail_addr")
 	private String empDetailAddr;
 	
-	@Column(name="dept_code")
-	private String deptCode;
+	@ManyToOne
+	@JoinColumn(name="dept_code")
+	private Department department;
 	
-	@Column(name="job_code")
-	private String jobCode;
+	@ManyToOne
+	@JoinColumn(name="job_code")
+	private Job job;
 	
 	@Column(name="emp_internal_phone")
 	private String empInternalPhone;

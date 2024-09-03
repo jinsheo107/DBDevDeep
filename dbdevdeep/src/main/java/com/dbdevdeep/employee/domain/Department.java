@@ -1,8 +1,11 @@
 package com.dbdevdeep.employee.domain;
 
+import java.util.List;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -24,4 +27,7 @@ public class Department {
 	
 	@Column(name="dept_title")
 	private String deptTitle;
+	
+	@OneToMany(mappedBy = "department")
+	private List<Employee> employees;
 }

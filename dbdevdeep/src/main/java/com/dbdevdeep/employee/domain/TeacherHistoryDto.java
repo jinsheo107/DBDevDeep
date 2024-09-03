@@ -1,10 +1,5 @@
 package com.dbdevdeep.employee.domain;
 
-import java.time.LocalDate;
-import java.util.List;
-
-import org.springframework.security.core.GrantedAuthority;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -20,8 +15,10 @@ import lombok.ToString;
 @Builder
 public class TeacherHistoryDto {
 	private Long teacher_no;
+	
 	private String teach_emp_id;
 	private String teach_emp_name;
+	
 	private int grade;
 	private int grade_class;
 	private String t_year;
@@ -36,6 +33,8 @@ public class TeacherHistoryDto {
 		return TeacherHistoryDto.builder()
 				.teacher_no(teacherHistory.getTeacherNo()).grade(teacherHistory.getGrade())
 				.grade_class(teacherHistory.getGradeClass()).t_year(teacherHistory.getTYear())
+				.teach_emp_id(teacherHistory.getEmployee().getEmpId())
+				.teach_emp_name(teacherHistory.getEmployee().getEmpName())
 				.build();
 	}
 }

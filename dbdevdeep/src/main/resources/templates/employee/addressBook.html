@@ -67,6 +67,7 @@
 												<th scope="col">직원명</th>
 												<th scope="col">출근여부</th>
 												<th scope="col">부서</th>
+												<th scope="col">직급</th>
 												<th scope="col">담당</th>
 												<th scope="col">내선전화</th>
 												<th scope="col">전화번호</th>
@@ -84,7 +85,8 @@
 													<td th:text="${employee.emp_id}"></td>
 													<td th:text="${employee.emp_name}"></td>
 													<td></td>
-													<td th:text="${employee.dept_code}"></td>
+													<td th:text="${employee.dept_title}"></td>
+													<td th:text="${employee.job_title}"></td>
 													<td></td>
 													<td th:text="${employee.emp_internal_phone}"></td>
 													<td th:text="${employee.emp_phone}"></td>
