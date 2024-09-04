@@ -107,8 +107,8 @@ $('#address_book').DataTable({
   info: false,  // 테이블의 정보 표시를 비활성화합니다.
   "sDom": '<"row view-filter"<"col-sm-12"<"pull-left"l><"pull-right"f><"clearfix">>>t<"row view-pager"<"col-sm-12"<ip>>>',
   pagingType: 'full_numbers',  // 페이지네이션 버튼을 전체 숫자와 함께 표시합니다.
-  lengthMenu: [1, 25, 50, 100],  // 페이지당 항목 수를 선택할 수 있는 옵션
-  pageLength: 1,  // 기본 페이지당 항목 수
+  lengthMenu: [10, 25, 50, 100],  // 페이지당 항목 수를 선택할 수 있는 옵션
+  pageLength: 10,  // 기본 페이지당 항목 수
   drawCallback: function(settings) {
       var api = this.api();  // DataTables API 객체를 가져옵니다.
       var info = api.page.info();  // 현재 페이지 정보 가져오기
