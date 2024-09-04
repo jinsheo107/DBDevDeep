@@ -1,6 +1,8 @@
-package com.dbdevdeep.notice.domain;
+package com.dbdevdeep.notice.dto;
 
 import java.time.LocalDateTime;
+
+import com.dbdevdeep.notice.domain.NoticeComment;
 
 import groovy.transform.ToString;
 import lombok.AllArgsConstructor;

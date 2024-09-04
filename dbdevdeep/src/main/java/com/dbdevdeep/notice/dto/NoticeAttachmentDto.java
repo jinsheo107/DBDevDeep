@@ -1,4 +1,6 @@
-package com.dbdevdeep.notice.domain;
+package com.dbdevdeep.notice.dto;
+
+import com.dbdevdeep.notice.domain.NoticeAttachment;
 
 import groovy.transform.ToString;
 import lombok.AllArgsConstructor;

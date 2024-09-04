@@ -1,6 +1,8 @@
-package com.dbdevdeep.notice.domain;
+package com.dbdevdeep.notice.dto;
 
 import java.time.LocalDateTime;
+
+import com.dbdevdeep.notice.domain.Notice;
 
 import groovy.transform.ToString;
 import lombok.AllArgsConstructor;
@@ -29,6 +31,7 @@ public class NoticeDto {
 	private LocalDateTime reg_date;
 	private LocalDateTime mod_date;
 	private boolean att_y_n;
+	private boolean read_check = false;
 
 	public Notice toEntity() {
 		return Notice.builder()
