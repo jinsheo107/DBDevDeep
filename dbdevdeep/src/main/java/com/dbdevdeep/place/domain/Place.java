@@ -36,6 +36,25 @@ public class Place {
 	// 장소 이름
 	@Column(name = "place_name")
 	private String placeName;
+	// 직원번호(참조)
+	@ManyToOne
+	@JoinColumn(name = "emp_id")
+	private Employee employee;
+	// 장소위치
+	@Column(name = "place_location")
+	private String placeLocation;
+	// 장소내용(설명)
+	@Column(name = "place_content")
+	private String placeContent;
+	// 장소 가능여부
+	@Column(name = "place_status")
+	private String placeStatus;
+	// 사용가능 시작시간
+	@Column(name = "place_start_time")
+	private String placeStarttime;
+	// 사용가능 종료시간
+	@Column(name = "place_end_time")
+	private String placeEndtime;
 	// 등록날짜
 	@Column(name = "place_created_at")
 	@CreationTimestamp
@@ -44,25 +63,6 @@ public class Place {
 	@Column(name = "place_updated_at")
 	@UpdateTimestamp
 	private LocalDateTime placeUpdatedAt;
-	// 장소위치
-	@Column(name = "place_location")
-	private String placeLocation;
-	// 직원번호(참조)
-	@ManyToOne
-	@JoinColumn(name = "emp_id")
-	private Employee employee;
-	// 관리번호
-	@Column(name = "place_id")
-	private String placeId;
-	// 장소내용(설명)
-	@Column(name = "place_content")
-	private String placeContent;
-	// 장소 상태
-	@Column(name = "place_status")
-	private String placeStatus;
-	// 사용가능 시간
-	@Column(name = "place_usetime")
-	private String placeUsetime;
 	// 사용불가 사유
 	@Column(name = "place_unuseable_reason")
 	private String placeUnuseableReason;

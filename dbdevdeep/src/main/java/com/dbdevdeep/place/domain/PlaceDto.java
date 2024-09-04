@@ -21,14 +21,14 @@ public class PlaceDto {
 
 	private Long place_no;
 	private String place_name;
-	private LocalDateTime place_created_at;
-	private LocalDateTime place_updated_at;
-	private String place_location;
 	private Employee emp_id;
-	private String place_id;
+	private String place_location;
 	private String place_content;
 	private String place_status;
-	private String place_usetime;
+	private String place_start_time;
+	private String place_end_time;
+	private LocalDateTime place_created_at;
+	private LocalDateTime place_updated_at;
 	private String place_unuseable_reason;
 	private LocalDateTime place_unuseable_start_date;
 	private LocalDateTime place_unuseable_end_date;
@@ -41,10 +41,10 @@ public class PlaceDto {
 				.placeUpdatedAt(place_updated_at)
 				.placeLocation(place_location)
 				.employee(emp_id)
-				.placeId(place_id)
 				.placeContent(place_content)
 				.placeStatus(place_status)
-				.placeUsetime(place_usetime)
+				.placeStarttime(place_start_time)
+				.placeEndtime(place_end_time)
 				.placeUnuseableReason(place_unuseable_reason)
 				.placeUnuseableStartDate(place_unuseable_start_date)
 				.placeUnuseableEndDate(place_unuseable_end_date)
