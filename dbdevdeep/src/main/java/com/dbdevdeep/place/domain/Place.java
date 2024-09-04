@@ -28,11 +28,11 @@ import lombok.NoArgsConstructor;
 @Getter
 @Builder
 public class Place {
-	// 장소 번호
+	// 장소 번호(관리번호로 사용될 애)
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "place_no")
-	private int placeNo;
+	private Long placeNo;
 	// 장소 이름
 	@Column(name = "place_name")
 	private String placeName;
@@ -57,13 +57,20 @@ public class Place {
 	// 장소내용(설명)
 	@Column(name = "place_content")
 	private String placeContent;
-	
+	// 장소 상태
 	@Column(name = "place_status")
 	private String placeStatus;
-	
-	@Column(name = "palce_usetime")
+	// 사용가능 시간
+	@Column(name = "place_usetime")
 	private String placeUsetime;
-	
-	
+	// 사용불가 사유
+	@Column(name = "place_unuseable_reason")
+	private String placeUnuseableReason;
+	// 사용불가 시작일
+	@Column(name = "place_unuseable_start_date")
+	private LocalDateTime placeUnuseableStartDate;
+	// 사용불가 종료일
+	@Column(name = "place_unuseable_end_date")
+	private LocalDateTime placeUnuseableEndDate;
 	
 }
