@@ -27,6 +27,7 @@ public class TeacherHistory {
 	@Column(name="teacher_no")
 	private Long teacherNo;
 	
+	// employee의 emp_id로 join
 	@ManyToOne
 	@JoinColumn(name="emp_id")
 	private Employee employee;
