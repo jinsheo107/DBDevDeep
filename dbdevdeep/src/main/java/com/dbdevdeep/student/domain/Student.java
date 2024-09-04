@@ -42,7 +42,7 @@ public class Student {
 	@Column(name="student_address")
 	private String studentAddress;
 	
-	@Column(name="student_detailaddress")
+	@Column(name="student_detail_address")
 	private String studentDetailAddress;
 	
 	@Column(name="student_phone")
