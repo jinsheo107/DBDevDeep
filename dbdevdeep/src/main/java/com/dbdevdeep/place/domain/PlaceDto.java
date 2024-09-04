@@ -37,18 +37,37 @@ public class PlaceDto {
 		return Place.builder()
 				.placeNo(place_no)
 				.placeName(place_name)
-				.placeCreatedAt(place_created_at)
-				.placeUpdatedAt(place_updated_at)
 				.placeLocation(place_location)
 				.employee(emp_id)
 				.placeContent(place_content)
 				.placeStatus(place_status)
 				.placeStarttime(place_start_time)
 				.placeEndtime(place_end_time)
+				.placeCreatedAt(place_created_at)
+				.placeUpdatedAt(place_updated_at)
 				.placeUnuseableReason(place_unuseable_reason)
 				.placeUnuseableStartDate(place_unuseable_start_date)
 				.placeUnuseableEndDate(place_unuseable_end_date)
 				.build();
+	}
+	
+	public PlaceDto toDto (Place place) {
+		return PlaceDto.builder()
+				.place_no(place.getPlaceNo())
+				.place_name(place.getPlaceName())
+				.place_location(place.getPlaceLocation())
+				.emp_id(place.getEmployee())
+				.place_content(place.getPlaceContent())
+				.place_status(place.getPlaceStatus())
+				.place_start_time(place.getPlaceStarttime())
+				.place_end_time(place.getPlaceEndtime())
+				.place_created_at(place.getPlaceCreatedAt())
+				.place_updated_at(place.getPlaceUpdatedAt())
+				.place_unuseable_reason(place.getPlaceUnuseableReason())
+				.place_unuseable_start_date(place.getPlaceUnuseableStartDate())
+				.place_unuseable_end_date(place.getPlaceUnuseableEndDate())
+				.build();
+				
 	}
 	
 }
