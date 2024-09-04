@@ -13,48 +13,70 @@ import org.springframework.stereotype.Service;
 
 import com.dbdevdeep.employee.domain.Employee;
 import com.dbdevdeep.employee.domain.EmployeeDto;
+import com.dbdevdeep.employee.mybatis.mapper.EmployeeVoMapper;
 import com.dbdevdeep.employee.repository.EmployeeRepository;
+import com.dbdevdeep.employee.vo.EmployeeVo;
 import com.dbdevdeep.security.vo.SecurityUser;
 
+
 @Service
-public class SecurityService implements UserDetailsService{
+public class SecurityService implements UserDetailsService {
 
 	private final EmployeeRepository employeeRepository;
+	private final EmployeeVoMapper employeeVoMapper;
 	
 	@Autowired
-	public SecurityService(EmployeeRepository employeeRepository) {
+	public SecurityService(EmployeeRepository employeeRepository,
+			EmployeeVoMapper employeeVoMapper) {
 		this.employeeRepository = employeeRepository;
+		this.employeeVoMapper = employeeVoMapper;
 	}
-
+	
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 		Employee employee = employeeRepository.findByempId(username);
-		
-		if(employee != null) {
+
+		if (employee != null) {
 			EmployeeDto dto = new EmployeeDto().toDto(employee);
 			
-			dto.setLogin_yn("Y");
+			EmployeeVo empVo = new EmployeeVo(dto.getEmp_id(), dto.getEmp_pw(), 
+					dto.getGov_id(), dto.getEmp_name(), dto.getEmp_no(), dto.getEmp_phone(),
+					dto.getOri_pic(), dto.getNew_pic(), dto.getEmp_post(), dto.getEmp_addr(),
+					dto.getEmp_detail_addr(), dto.getDept_code(), dto.getJob_code(), 
+					dto.getEmp_internal_phone(), dto.getVacation_time(), dto.getHire_date(),
+					dto.getEnd_date(), dto.getEnt_status(), "Y",
+					dto.getAccount_status(), dto.getChat_status_msg());
 			
-			Employee e = employeeRepository.save(dto.toEntity());
 			
-			EmployeeDto employeeDto = new EmployeeDto().toDto(e);
+
+			// login_yn값 db에 반영
+			int resultInt = employeeVoMapper.updateLoginYn(empVo);
 			
-			List<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>();
+			if(resultInt > 0) {
+				Employee e = employeeRepository.findByempId(username);
+				EmployeeDto d = new EmployeeDto().toDto(e);
+				
+				// authorities 설정
+				List<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>();
+
+				// 부서 기준 권한 설정
+				authorities.add(new SimpleGrantedAuthority(employee.getDepartment().getDeptCode()));
+
+				// 직위 기준 권한 설정
+				authorities.add(new SimpleGrantedAuthority(employee.getJob().getJobCode()));
+
+				d.setAuthorities(authorities);
+
+				return new SecurityUser(d);
+				
+			} else {
+				throw new UsernameNotFoundException(username);
+			}
 			
-			// 부서 기준 권한 설정
-			authorities.add(new SimpleGrantedAuthority(e.getDeptCode()));
-			
-			// 직위 기준 권한 설정
-			authorities.add(new SimpleGrantedAuthority(e.getJobCode()));
-			
-			employeeDto.setAuthorities(authorities);
-			
-			return new SecurityUser(employeeDto);
 		} else {
 			throw new UsernameNotFoundException(username);
 		}
 	}
-	
-	
-	
+
+
 }

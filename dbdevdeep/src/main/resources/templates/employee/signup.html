@@ -323,7 +323,7 @@
 				form.emp_post.focus();
 			} else if(form.emp_detail_addr.value == "") {
 				form.emp_detail_addr.focus();
-			} else if(form.emp_phone.value == "" || !/^01[0-9]\d{3,4}\d{4}$/.test(form.emp_phone.value)) {
+			} else if(form.emp_phone.value == "" || !/^01[0-9]-\d{3,4}-\d{4}$/.test(form.emp_phone.value)) {
 				document.getElementById("firstPhone").focus();
 			} else if(form.emp_internal_phone.value == "") {
 				form.emp_internal_phone.focus();
@@ -552,7 +552,7 @@
 	       }
 				
 	       if (isValidFirst.test(firstEmpNo.value) && isValidSecond.test(secondEmpNo.value)) {
-	       	document.getElementById('emp_no').value = empNo;
+	       	document.getElementById('emp_no').value = `${firstEmpNo.value}-${secondEmpNo.value}`;
 	       	document.getElementById('emp_pw').value = empNo;
 	       	empNoFeedback.textContent = '';
 	       	document.getElementById('postBtn').focus();
@@ -588,7 +588,7 @@
         const secondValue = secondPhone.value.trim();
         const thirdValue = thirdPhone.value.trim();
         
-        empPhone.value = `${firstValue}${secondValue}${thirdValue}`;
+        empPhone.value = `${firstValue}-${secondValue}-${thirdValue}`;
     };
     /* 전화번호 첫번째 칸 입력 */
     firstPhone.addEventListener('keyup', (event) => {
