@@ -17,6 +17,7 @@ import com.dbdevdeep.student.service.StudentService;
 @Controller
 public class StudentApiController {
 	
+	// 의존성 주입
 	private final StudentFileService studentFileService;
 	private final StudentService studentService;
 	
@@ -26,6 +27,7 @@ public class StudentApiController {
 		this.studentFileService = studentFileService;
 	}
 	
+	// 게시글 등록
 	@ResponseBody
 	@PostMapping("/student")
 	public Map<String,String> createStudent(StudentDto dto,
