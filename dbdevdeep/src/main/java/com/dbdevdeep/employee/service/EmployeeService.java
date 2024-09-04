@@ -117,5 +117,16 @@ public class EmployeeService {
 		}
 		return employeeDtoList;
 	}
+	
+	public EmployeeDto selectEmployeeOne(String writer_id) {
+		Employee employee = employeeRepository.findByempId(writer_id);
+		EmployeeDto dto = null;
+		if(employee!=null) {
+			dto = new EmployeeDto().toDto(employee);
+			
+			System.out.println(dto);
+		}
+		return dto;
+	}
 
 }

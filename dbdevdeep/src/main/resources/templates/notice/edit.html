@@ -30,7 +30,7 @@
                 	<div class="col-sm-12">
                         <div class="card">
                             <div class="card-body">
-                                <h3 class="card-title">공지사항 게시글 작성</h3>
+                                <h3 class="card-title">공지사항 게시글 수정</h3>
                                 <hr>
                                 <form id="noticeCreateForm" method="post" action="/noticeCreateEnd">
                                 	<div class="row form-group">
@@ -56,26 +56,24 @@
                                 			<small id="title" class="form-text text-muted">제목</small>
 	                               			<input type="text" class="form-control" id="notice_title" placeholder="제목을 입력하세요.">
                                 		</div>
-                                		
                                 		<div class=" col-md-2 ">
                                         	<small id="name" class="form-text text-muted">작성자</small>
-                                			<input type="text" class="form-control" id="writer_name" th:value="${writer.emp_name}" readonly>
-                                			<input type="hidden" class="form-control" id="writer_id" th:value="${writer.emp_id}">
+                                			<input type="text" class="form-control" id="writer_id" value="테스트" readonly>
                                 		</div>
                                 	</div>
                                 	<div class="row form-group">
                                 		<div class="col-md-12">
-                                        	<small id="notice_content" class="form-text text-muted">내용</small>
+                                        	<small id="textHelp" class="form-text text-muted">내용</small>
                                 			<textarea class="form-control" rows="20" placeholder="내용을 입력해주세요."></textarea>
                                 		</div>
                                 	</div>
                                 	<div class="row">
                                         <div class="col-md-11">
-                                            <label class="form-control" for="notice_attr_file">파일을 선택하세요.</label>
-                                            <input type="file" class="custom-file-input" id="notice_attr_file">
+                                            <label class="form-control" for="inputGroupFile04">파일을 선택하세요.</label>
+                                            <input type="file" class="custom-file-input" id="inputGroupFile04">
                                         </div>
                                         <div class="col-md-1">
-                                            <button class="btn btn-outline-secondary" type="button" onclick="fileInput()">첨부</button>
+                                            <button class="btn btn-outline-secondary" type="button">첨부</button>
                                         </div>
                                     </div>
                                     <div class="row m-2">
@@ -118,15 +116,6 @@
         <!-- ============================================================== -->
         <!-- End Page wrapper  -->
         <!-- ============================================================== -->
-    <!-- Custom script -->
-    <!-- ============================================================== -->   
-    <script>
-	    function fileInput() {
-	        // 파일 입력 요소를 찾고 클릭 이벤트를 트리거
-	        document.getElementById('notice_attr_file').click();
-	    }
-    </script>
-    <!-- ============================================================== -->
     <!-- All Jquery -->
     <!-- ============================================================== -->
     <script src="/assets/libs/jquery/dist/jquery.min.js"></script>
