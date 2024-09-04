@@ -30,8 +30,15 @@ public class EmployeeDto {
 	private String emp_post;
 	private String emp_addr;
 	private String emp_detail_addr;
+	
+	// department join
 	private String dept_code;
+	private String dept_title;
+	
+	// job join
 	private String job_code;
+	private String job_title;
+	
 	private String emp_internal_phone;
 	private int vacation_time;
 	private LocalDate hire_date;
@@ -49,10 +56,11 @@ public class EmployeeDto {
 				.empId(emp_id).empPw(emp_pw).govId(gov_id)
 				.empName(emp_name).empNo(emp_no).empPhone(emp_phone)
 				.oriPic(ori_pic).newPic(new_pic).empPost(emp_post)
-				.empAddr(emp_addr).empDetailAddr(emp_detail_addr).deptCode(dept_code)
-				.jobCode(job_code).empInternalPhone(emp_internal_phone).vacationTime(vacation_time)
+				.empAddr(emp_addr).empDetailAddr(emp_detail_addr)
+				.empInternalPhone(emp_internal_phone).vacationTime(vacation_time)
 				.hireDate(hire_date).endDate(end_date).entStatus(ent_status)
-				.loginYn(login_yn).accountStatus(account_status).chatStatusMsg(chat_status_msg).build();
+				.loginYn(login_yn).accountStatus(account_status).chatStatusMsg(chat_status_msg)
+				.build();
 				
 	}
 	
@@ -64,13 +72,17 @@ public class EmployeeDto {
 				.ori_pic(employee.getOriPic()).new_pic(employee.getNewPic())
 				.emp_post(employee.getEmpPost()).emp_addr(employee.getEmpAddr())
 				.emp_detail_addr(employee.getEmpDetailAddr())
-				.dept_code(employee.getDeptCode()).job_code(employee.getJobCode())
 				.emp_internal_phone(employee.getEmpInternalPhone())
 				.vacation_time(employee.getVacationTime())
 				.hire_date(employee.getHireDate()).end_date(employee.getEndDate())
 				.ent_status(employee.getEntStatus()).login_yn(employee.getLoginYn())
 				.account_status(employee.getAccountStatus())
-				.chat_status_msg(employee.getChatStatusMsg()).build();
+				.chat_status_msg(employee.getChatStatusMsg())
+				.job_code(employee.getJob().getJobCode())
+				.job_title(employee.getJob().getJobTitle())
+				.dept_code(employee.getDepartment().getDeptCode())
+				.dept_code(employee.getDepartment().getDeptTitle())
+				.build();
 	}
 	
 }
