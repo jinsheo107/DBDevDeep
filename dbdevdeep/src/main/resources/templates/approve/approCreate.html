@@ -22,8 +22,8 @@
     <link rel="stylesheet" href="dist/css/ck.css">
     <link rel="stylesheet" href="https://cdn.ckeditor.com/ckeditor5/43.0.0/ckeditor5.css">
      
-     <!-- jQuery 
-     Tree 가 사용하는 jQuery로 상위에 선언 되어야 tree 가 문제 없이 작동합니다. 아래에 jQuery 가 선언되어있으면 아래 코드 삭제필요합니다.
+     <!-- 
+     Tree 가 사용하는 jQuery로 상위에 선언 되어야 tree 가 문제 없이 작동합니다. 아래에 jQuery 가 선언되어있으면 아래 코드 삭제 필요합니다.
      -->
 
     <script src="assets/libs/jquery/dist/jquery.min.js"></script>
@@ -41,7 +41,7 @@
         $(document).ready(function() {
         	let targetCellId;
         	$('#openTreeButton1').click(function () {
-                targetCellId = '#selectedNodesTable1'; // 협의자 셀 ID
+                targetCellId = '#selectedNodesTable1'; // 협의자 input ID로 변경
                 $('#treeModal').modal('show');
                 initializeTree();
             });
@@ -136,13 +136,11 @@
 
             // 확인 버튼 클릭 시 선택된 노드 처리
             $('#confirmSelection').click(function () {
-                var selectedNodes = $('#jstree_modal').jstree("get_selected", true); // 선택된 노드와 정보 가져오기
-                var names = selectedNodes.map(function (node) { return node.text; }); // 선택된 노드의 이름 추출
+                var selectedNodes = $('#jstree_modal').jstree("get_selected", true);
+                var names = selectedNodes.map(function (node) { return node.text; });
 
-                // 선택된 노드를 해당 셀에 표시
-                $(targetCellId).empty().append(names.join(', ')); // 선택된 노드 이름 추가
-
-                $('#treeModal').modal('hide'); // 모달 닫기
+                $(targetCellId).val(names.join(', ')); // 선택된 노드 이름을 input 필드에 추가
+                $('#treeModal').modal('hide');
             });
         });
 </script>
@@ -179,22 +177,23 @@
                 
                 
                 <div class="container">
+        <form id="approCreateFrm">
         <h2 class="text-center">휴가 신청서</h2>
+        
         <table class="table table-bordered">
             <tbody>
                 <tr>
                     <td>성명</td>
-                    <td><span sec:authentication="principal.dto.emp_name"></span></td>	
-                    <!-- <td><input type="text" class="form-control"></td> -->
+                    <td><input type="text" name="emp_name" th:value="${#authentication.principal.dto.emp_name}" readonly style="border: 0; outline: none;"></td>	
                     <td>부서</td>
                     
-                    <td><span sec:authentication="principal.dto.dept_code"></span></td>
+                    <td><input type="text" name="dept_code" th:value="${#authentication.principal.dto.dept_code}" readonly style="border: 0; outline: none;"></td>
                 </tr>
                 <tr>
-                    <td>사번</td>
-                    <td><input type="text" class="form-control"></td>
-                    <td>담당</td>
-                    <td><input type="text" class="form-control"></td>
+                    <td>직원번호</td>
+                    <td><input type="text" name="emp_id" th:value="${#authentication.principal.dto.emp_id}" readonly style="border: 0; outline: none;"></td>
+                    <td>직급</td>
+                    <td><input type="text" name="job_code" th:value="${#authentication.principal.dto.emp_phone}" readonly style="border: 0; outline: none;"></td>
                 </tr>
                 <tr>
                 	<td>제목</td>
@@ -204,29 +203,29 @@
                     <td>종류</td>
                     <td colspan="3">
                     <div style="display: flex; gap: 15px; justify-content: space-evenly; align-items: center;">
-                        <div><label><input type="radio" name="vac_type" onclick="toggleHalfDay(false)"> 연차</label></div>
-                        <div><label><input type="radio" name="vac_type" onclick="toggleHalfDay(true)"> 반차</label></div>
-                        <div><label><input type="radio" name="vac_type" onclick="toggleHalfDay(false)"> 공가</label></div>
-                        <div><label><input type="radio" name="vac_type" onclick="toggleHalfDay(false)"> 병가</label></div>
-                        <div><label><input type="radio" name="vac_type" onclick="toggleHalfDay(false)"> 경조사</label></div>
-                        <div><label><input type="radio" name="vac_type" onclick="toggleHalfDay(false)"> 출산휴가</label></div>
+                        <div><label><input type="radio" name="vac_type" value="0" onclick="toggleHalfDay(false)"> 연차</label></div>
+                        <div><label><input type="radio" name="vac_type" value="1" onclick="toggleHalfDay(true)"> 반차</label></div>
+                        <div><label><input type="radio" name="vac_type" value="2" onclick="toggleHalfDay(false)"> 공가</label></div>
+                        <div><label><input type="radio" name="vac_type" value="3" onclick="toggleHalfDay(false)"> 병가</label></div>
+                        <div><label><input type="radio" name="vac_type" value="4" onclick="toggleHalfDay(false)"> 경조사</label></div>
+                        <div><label><input type="radio" name="vac_type" value="5" onclick="toggleHalfDay(false)"> 출산휴가</label></div>
                         </div>
                     </td>
                 </tr>
                 <tr>
                 	<td>일정</td>
-                	<td><input type="date" class="form-control"><input type="date" class="form-control"></td>
+                	<td><input type="datetime" class="form-control" name="start_date"><input type="datetime" class="form-control" name="end_date"></td>
                 	<td>반차</td>
                 	<td>
                 	<div style="display: flex; gap: 15px; justify-content: space-evenly; align-items: center;">
-                	<div><label><input type="radio" name="half" id="half_one" disabled>오전</label></div>
-                	<div><label><input type="radio" name="half" id="half_two" disabled>오후</label></div>
+                	<div><label><input type="radio" name="half_first" value="6" id="half_one" disabled>오전</label></div>
+                	<div><label><input type="radio" name="half_two" value="7" id="half_two" disabled>오후</label></div>
                 	</div>
                 	</td>
                 </tr>
                 <tr>
                 <td>신청사유</td>
-                <td colspan="3"><textarea class="form-control" rows="10" style="resize: none"></textarea></td>
+                <td colspan="3"><textarea class="form-control" rows="10" style="resize: none" name="appro_context"></textarea></td>
                 </tr>
                 <tr>
                 <td>참고사항</td>
@@ -252,23 +251,30 @@
                 
                 <tr>
                 <td>협의자</td>
-                <td colspan="3"><button id="openTreeButton1" class="btn btn-primary">+</button><span id="selectedNodesTable1"></span></td>
+                <td colspan="3"><button id="openTreeButton1" class="btn btn-primary" type="button">+</button>
+                <input type="text" name="consult" id="selectedNodesTable1" readonly style="border: 0; outline: none; width: calc(100% - 50px);">
                 </tr>
                 <tr>
                 <td>결재자</td>
-                <td colspan="3"><button id="openTreeButton2" class="btn btn-primary">+</button><span id="selectedNodesTable2"></span></td>
+				    <td colspan="3">
+				        <button id="openTreeButton2" class="btn btn-primary" type="button">+</button>
+				        <input type="text" name="approval" id="selectedNodesTable2" readonly style="border: 0; outline: none; width: calc(100% - 50px);">
+				    </td>
                 </tr>
                 <tr>
                 <td>참조자</td>
-                <td colspan="3"><button id="openTreeButton3" class="btn btn-primary">+</button><span id="selectedNodesTable3"></span></td>
+                <td colspan="3"><button id="openTreeButton3" class="btn btn-primary" type="button">+</button>
+                <input type="text" name="reference" id="selectedNodesTable3" readonly style="border: 0; outline: none; width: calc(100% - 50px);">
+                </td>
                 </tr>
                 <tr>
                 <td>첨부파일</td>
-                <td colspan="3"><input type="file" value=""></td>
+                <td colspan="3"><input type="file" name="file_name"></td>
                 </tr>
                 
             </tbody>
         </table>
+        </form>
         <div>
         <!-- CKEditor가 적용될 영역 -->
         <div class="main-container">
@@ -284,7 +290,8 @@
         </div>
         <div class="text-center mt-3">
             <button class="btn btn-primary">임시 저장</button>
-            <button class="btn btn-success">결재 요청</button>
+			<button class="btn btn-success" id="approSubmit">결재 요청</button>
+
         </div>
         </div>
        
@@ -305,7 +312,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-primary" id="confirmSelection">확인</button>
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">닫기</button>
+                    <button type="submit" class="btn btn-secondary" data-dismiss="modal">닫기</button>
                 </div>
             </div>
         </div>
@@ -386,6 +393,50 @@
     }
     
     </script>
+    
+    <script>
+    // 결재 요청 버튼만 유효성 검사를 실행하도록 설정
+    const submitApprovalButton = document.getElementById("approSubmit");
+
+    // 결재 요청 버튼 클릭 이벤트 리스너 추가
+    submitApprovalButton.addEventListener('click', function(e) {
+        e.preventDefault();  // 기본 폼 제출 방지
+
+        // 유효성 검사 로직
+        let vali_check = true;
+
+        if (vali_check == false) {
+            alert('유효성 검사 중 문제가 발생하였습니다.');
+        } else {
+            const form = document.getElementById("approCreateFrm");
+            const payload = new FormData(form);
+            fetch('/approBase', {
+                method: 'post',
+                body: payload
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.res_code == '200') {
+                    Swal.fire({
+                        icon: 'success',
+                        title: '성공',
+                        text: data.res_msg
+                    }).then((result) => {
+                        location.href = "/board";
+                    });
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: '실패',
+                        text: data.res_msg
+                    })
+                }
+            })
+        }
+    });
+</script>
+
+    
     <!-- CKEditer 를 위한 코드  -->
     <script type="importmap">
     {
