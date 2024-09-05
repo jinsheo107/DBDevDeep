@@ -46,7 +46,6 @@ public class StudentViewController {
 	public String selectStudentOne(Model model,
 			@PathVariable("student_no") Long student_no) {
 		StudentDto dto = studentService.selectStudentOne(student_no);
-		System.out.println(dto);
 		model.addAttribute("dto",dto);
 		return "student/student_detail";
 	}
