@@ -35,7 +35,17 @@ public class TeacherHistoryViewController {
 	public String selectClassByYearList(@PathVariable("t_year") String t_year, Model model) {
 		List<TeacherHistoryDto> resultList = teacherHistoryService.selectClassByYearList(t_year);
 		
+		int maxClass = 0;
+		
+		for(int i = 0; i < resultList.size(); i++) {
+			if(resultList.get(i).getGrade_class() > maxClass) {
+				maxClass = resultList.get(i).getGrade_class();
+			}
+		}
+		
+		
 		model.addAttribute("resultList", resultList);
+		model.addAttribute("maxClass", maxClass);
 		
 		return "employee/grade_class_detail";
 	}
