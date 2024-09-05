@@ -28,6 +28,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @Builder
 public class Place {
+	//약간 데이터베이스 연결해주는애 전체적으로.
 	// 장소 번호(관리번호로 사용될 애)
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)

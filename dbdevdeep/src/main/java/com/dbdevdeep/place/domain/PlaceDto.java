@@ -18,9 +18,10 @@ import lombok.ToString;
 @ToString
 @Builder
 public class PlaceDto {
+	//엔티티로 연결했으니, 얘는 가공해서 사용하는애야
 
 	private Long place_no;
-	private Employee emp_id;
+	private String emp_id; // 엔티티에선 Employee employee가 맞지만 여기선 가공해서 사용하기에 String타입으로
 	private String place_name;
 	private String place_location;
 	private String place_content;
@@ -39,7 +40,6 @@ public class PlaceDto {
 	public Place toEntity() {
 		return Place.builder()
 				.placeNo(place_no)
-				.employee(emp_id)
 				.placeName(place_name)
 				.placeLocation(place_location)
 				.placeContent(place_content)
@@ -59,7 +59,7 @@ public class PlaceDto {
 	public PlaceDto toDto (Place place) {
 		return PlaceDto.builder()
 				.place_no(place.getPlaceNo())
-				.emp_id(place.getEmployee())
+				.emp_id(place.getEmployee().getEmpId())
 				.place_name(place.getPlaceName())
 				.place_location(place.getPlaceLocation())
 				.place_content(place.getPlaceContent())
