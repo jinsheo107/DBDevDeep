@@ -20,6 +20,17 @@ public class PlaceService {
 		this.placeRepository = placeRepository;
 	}
 	
+	// 사용 불가 시작일 가공 데이터
+	public List<String> getFormattedUnuseableStartDate() {
+        return placeRepository.findFormattedUnuseableStartDate();
+    }
+	
+	// 사용 불가 종료일 가공 데이터 가져오기
+    public List<String> getFormattedUnuseableEndDate() {
+        return placeRepository.findFormattedUnuseableEndDate();
+    }
+	
+	//목록
 	public List<PlaceDto> selectPlaceList(PlaceDto placeDto){
 		List<Place> placeList = placeRepository.findAll();
 		

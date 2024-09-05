@@ -73,29 +73,15 @@
                                             <tr>
                                                 <th>장소번호</th>
                                                 <th>장소명</th>
-                                                <th>사용 가능 시간</th>
                                                 <th>위치</th>
+                                                <th>사용 가능 시간</th>
                                                 <th>사용 가능 여부</th>
-                                                <th>사용 불가 날짜</th>
+                                                <th>사용 불가 일</th>
                                             </tr>
                                         </thead>
                                         <tbody>
-                                        	<th:block th:if="${#lists.isEmpty(resultList)}">
-                                        		<tr>
-                                        			<td colspan="6">게시글이 존재하지 않습니다.</td>
-                                        		</tr>
-                                        	</th:block>
-                                        	<th:block th:if="${!#lists.isEmpty(resultList)}">
                                         	
-	                                            <tr th:each="place, placeStat : ${resultList}">
-                                        			<td th:text="${place.placeNo}"></td>
-                                        			<td th:text="${place.placeName}"></td>
-                                        			<td th:text="${place.placeLocation}"></td>
-                                        			<td th:text="${place.placeStarttime} + ' ~ ' + ${place.placeEndtime}"></td>
-                                        			<td th:text="${place.placeStatus}"></td>
-                                        			<td th:text="${place.unuseableStartDate} + ' ~ ' + ${place.unuseableEndDate}"></td>
-                                        		</tr>
-                                        	</th:block>
+                                        	
                                            
                                         </tbody>
                                     </table>
