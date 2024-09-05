@@ -29,8 +29,8 @@ private String fileDir = "C:\\employee\\upload\\";
 		
 		try {
 			Employee e = employeeRepository.findByempId(emp_id);
-			String newFileName = e.getNewPic();	// UUID
-			String oriFileName = e.getOriPic();	// 사용자가 아는 파일명
+			String newFileName = e.getNewPicName();	// UUID
+			String oriFileName = e.getOriPicName();	// 사용자가 아는 파일명
 			String resultDir = fileDir + URLDecoder.decode(newFileName,"UTF-8");
 			if(resultDir != null && resultDir.isEmpty() == false) {
 				File file = new File(resultDir);

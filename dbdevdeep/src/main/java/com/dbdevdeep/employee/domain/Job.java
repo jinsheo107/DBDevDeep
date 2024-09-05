@@ -25,8 +25,8 @@ public class Job {
 	@Column(name="job_code")
 	private String jobCode;
 	
-	@Column(name="job_title")
-	private String jobTitle;
+	@Column(name="job_name")
+	private String jobName;
 	
 	@OneToMany(mappedBy = "job")
 	private List<Employee> employees;

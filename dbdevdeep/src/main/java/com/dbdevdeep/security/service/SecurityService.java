@@ -40,13 +40,12 @@ public class SecurityService implements UserDetailsService {
 			EmployeeDto dto = new EmployeeDto().toDto(employee);
 			
 			EmployeeVo empVo = new EmployeeVo(dto.getEmp_id(), dto.getEmp_pw(), 
-					dto.getGov_id(), dto.getEmp_name(), dto.getEmp_no(), dto.getEmp_phone(),
-					dto.getOri_pic(), dto.getNew_pic(), dto.getEmp_post(), dto.getEmp_addr(),
+					dto.getGov_id(), dto.getEmp_name(), dto.getEmp_rrn(), dto.getEmp_phone(),
+					dto.getOri_pic_name(), dto.getNew_pic_name(), dto.getEmp_post_code(), dto.getEmp_addr(),
 					dto.getEmp_detail_addr(), dto.getDept_code(), dto.getJob_code(), 
-					dto.getEmp_internal_phone(), dto.getVacation_time(), dto.getHire_date(),
+					dto.getEmp_internal_phone(), dto.getVacation_hour(), dto.getHire_date(),
 					dto.getEnd_date(), dto.getEnt_status(), "Y",
 					dto.getAccount_status(), dto.getChat_status_msg());
-			
 			
 
 			// login_yn값 db에 반영
