@@ -33,44 +33,58 @@ public class Place {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "place_no")
 	private Long placeNo;
-	// 장소 이름
-	@Column(name = "place_name")
-	private String placeName;
+	
 	// 직원번호(참조)
 	@ManyToOne
 	@JoinColumn(name = "emp_id")
 	private Employee employee;
+	
+	// 장소 이름
+	@Column(name = "place_name")
+	private String placeName;
+	
 	// 장소위치
 	@Column(name = "place_location")
 	private String placeLocation;
-	// 장소내용(설명)
+	
+	// 장소내용
 	@Column(name = "place_content")
 	private String placeContent;
+	
 	// 장소 가능여부
 	@Column(name = "place_status")
 	private String placeStatus;
+	
 	// 사용가능 시작시간
 	@Column(name = "place_start_time")
-	private String placeStarttime;
+	private int placeStarttime;
+	
 	// 사용가능 종료시간
 	@Column(name = "place_end_time")
-	private String placeEndtime;
-	// 등록날짜
-	@Column(name = "place_created_at")
-	@CreationTimestamp
-	private LocalDateTime placeCreatedAt;
-	// 수정날짜
-	@Column(name = "place_updated_at")
-	@UpdateTimestamp
-	private LocalDateTime placeUpdatedAt;
+	private int placeEndtime;
+
 	// 사용불가 사유
-	@Column(name = "place_unuseable_reason")
-	private String placeUnuseableReason;
+	@Column(name = "unuseable_reason")
+	private String unuseableReason;
 	// 사용불가 시작일
-	@Column(name = "place_unuseable_start_date")
-	private LocalDateTime placeUnuseableStartDate;
+	@Column(name = "unuseable_start_date")
+	private String unuseableStartDate;
 	// 사용불가 종료일
-	@Column(name = "place_unuseable_end_date")
-	private LocalDateTime placeUnuseableEndDate;
+	@Column(name = "unuseable_end_date")
+	private String unuseableEndDate;
+	// 원본사진명
+	@Column(name = "ori_pic_name")
+	private String oriPicname;
+	// 수정사진명
+	@Column(name = "new_pic_name")
+	private String newPicname;
 	
+	// 등록일
+	@Column(name = "reg_date")
+	@CreationTimestamp
+	private LocalDateTime regDate;
+	// 수정일
+	@Column(name = "mod_date")
+	@UpdateTimestamp
+	private LocalDateTime modDate;
 }

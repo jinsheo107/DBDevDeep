@@ -20,52 +20,59 @@ import lombok.ToString;
 public class PlaceDto {
 
 	private Long place_no;
-	private String place_name;
 	private Employee emp_id;
+	private String place_name;
 	private String place_location;
 	private String place_content;
 	private String place_status;
-	private String place_start_time;
-	private String place_end_time;
-	private LocalDateTime place_created_at;
-	private LocalDateTime place_updated_at;
-	private String place_unuseable_reason;
-	private LocalDateTime place_unuseable_start_date;
-	private LocalDateTime place_unuseable_end_date;
+	private int place_start_time;
+	private int place_end_time;
+	private String unuseable_reason;
+	private String unuseable_start_date;
+	private String unuseable_end_date;
+	private String ori_pic_name;
+	private String new_pic_name;
+	private LocalDateTime reg_date;
+	private LocalDateTime mod_date;
+
 	
 	public Place toEntity() {
 		return Place.builder()
 				.placeNo(place_no)
+				.employee(emp_id)
 				.placeName(place_name)
 				.placeLocation(place_location)
-				.employee(emp_id)
 				.placeContent(place_content)
 				.placeStatus(place_status)
 				.placeStarttime(place_start_time)
 				.placeEndtime(place_end_time)
-				.placeCreatedAt(place_created_at)
-				.placeUpdatedAt(place_updated_at)
-				.placeUnuseableReason(place_unuseable_reason)
-				.placeUnuseableStartDate(place_unuseable_start_date)
-				.placeUnuseableEndDate(place_unuseable_end_date)
+				.unuseableReason(unuseable_reason)
+				.unuseableStartDate(unuseable_start_date)
+				.unuseableEndDate(unuseable_end_date)
+				.oriPicname(ori_pic_name)
+				.newPicname(new_pic_name)
+				.regDate(reg_date)
+				.modDate(mod_date)
 				.build();
 	}
 	
 	public PlaceDto toDto (Place place) {
 		return PlaceDto.builder()
 				.place_no(place.getPlaceNo())
+				.emp_id(place.getEmployee())
 				.place_name(place.getPlaceName())
 				.place_location(place.getPlaceLocation())
-				.emp_id(place.getEmployee())
 				.place_content(place.getPlaceContent())
 				.place_status(place.getPlaceStatus())
 				.place_start_time(place.getPlaceStarttime())
 				.place_end_time(place.getPlaceEndtime())
-				.place_created_at(place.getPlaceCreatedAt())
-				.place_updated_at(place.getPlaceUpdatedAt())
-				.place_unuseable_reason(place.getPlaceUnuseableReason())
-				.place_unuseable_start_date(place.getPlaceUnuseableStartDate())
-				.place_unuseable_end_date(place.getPlaceUnuseableEndDate())
+				.unuseable_reason(place.getUnuseableReason())
+				.unuseable_start_date(place.getUnuseableStartDate())
+				.unuseable_end_date(place.getUnuseableEndDate())
+				.ori_pic_name(place.getOriPicname())
+				.new_pic_name(place.getNewPicname())
+				.reg_date(place.getRegDate())
+				.mod_date(place.getModDate())
 				.build();
 				
 	}
