@@ -3,6 +3,8 @@ package com.dbdevdeep.employee.domain;
 import java.time.LocalDate;
 import java.util.List;
 
+import com.dbdevdeep.schedule.domain.Schedule;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -88,4 +90,7 @@ public class Employee {
 	
 	@OneToMany(mappedBy = "employee")
 	private List<TeacherHistory> teacherHistorys;
+	
+	@OneToMany(mappedBy = "employee")
+	private List<Schedule> shcedules;
 }
