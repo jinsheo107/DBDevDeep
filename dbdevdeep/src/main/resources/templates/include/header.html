@@ -6,6 +6,12 @@
 	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.4.10/dist/sweetalert2.min.js"></script>
 
 	<header class="topbar" data-navbarbg="skin6">
+		<div class="preloader">
+			<div class="lds-ripple">
+				<div class="lds-pos"></div>
+				<div class="lds-pos"></div>
+			</div>
+		</div>
       <nav class="navbar top-navbar navbar-expand-md">
         <div class="navbar-header" data-logobg="skin6">
           <!-- sidebar toggle -->
@@ -84,6 +90,8 @@
 	                }
 	            });
 	        });
+	        
+	        $(".preloader ").fadeOut();
         </script>
         <div class="navbar-collapse collapse" id="navbarSupportedContent">
           <ul class="navbar-nav float-left mr-auto ml-3 pl-1">

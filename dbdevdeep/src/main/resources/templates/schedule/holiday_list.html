@@ -100,6 +100,58 @@
 
 </style>
 <script>
+	$(document).ready(function() {
+	    // 전체 선택 체크박스 클릭 시 모든 체크박스 선택/해제
+	    $('#selectAllCheckbox').on('click', function() {
+	        $('.holidayCheckbox').prop('checked', this.checked);
+	    });
+	
+	    // 삭제 버튼 클릭 시
+	    $('#deleteButton').on('click', function() {
+	        const selectedHolidays = $('.holidayCheckbox:checked').map(function() {
+	            return $(this).val();
+	        }).get();
+	
+	        if (selectedHolidays.length === 0) {
+	            alert('삭제할 항목을 선택하세요.');
+	            return;
+	        }
+	
+	        // 경고창 띄우기
+	        Swal.fire({
+	            title: '삭제하시겠습니까?',
+	            text: "선택된 항목들이 삭제됩니다.",
+	            icon: 'warning',
+	            showCancelButton: true,
+	            confirmButtonColor: '#3085d6',
+	            cancelButtonColor: '#d33',
+	            confirmButtonText: 'Yes',
+	            cancelButtonText: 'No'
+	        }).then((result) => {
+	            if (result.isConfirmed) {
+	                // AJAX를 통해 서버로 삭제 요청
+	                $.ajax({
+	                    url: '/holiday/delete',  // 실제 삭제를 처리할 서버의 URL
+	                    type: 'POST',
+	                    contentType: 'application/json',
+	                    data: JSON.stringify(selectedHolidays),  // 선택된 holiday_no 목록 전송
+	                    success: function(response) {
+	                        Swal.fire(
+	                            '삭제 성공!',
+	                            '선택한 항목이 삭제되었습니다.',
+	                            'success'
+	                        ).then(() => {
+	                            location.reload();  // 삭제 후 페이지 새로고침
+	                        });
+	                    },
+	                    error: function(xhr, status, error) {
+	                        Swal.fire('실패', '삭제 중 오류가 발생했습니다.', 'error');
+	                    }
+	                });
+	            }
+	        });
+	    });
+	});
 	document.addEventListener('DOMContentLoaded', function () {
 	    // 모달 열기 및 닫기 이벤트 리스너 추가
 	    const modal = document.getElementById('holidayCreateModal');
@@ -436,7 +488,7 @@
 			                            <div style="font-size:36px; font-weight:bolder">휴일관리</div>
 		                        	</div>
 		                        	<div class="col-6 d-flex justify-content-end" style="padding:0;">
-			                            <button type="button" class="btn waves-effect waves-light btn-light m-2">삭제</button>
+			                            <button type="button" class="btn waves-effect waves-light btn-light m-2" id="deleteButton">삭제</button>
 			                            <button type="button" class="btn waves-effect waves-light btn-primary m-2" data-toggle="modal" data-target="#holidayCreateModal">등록</button>
 			                            
 			                            <!-- 상세보기 모달 HTML -->
