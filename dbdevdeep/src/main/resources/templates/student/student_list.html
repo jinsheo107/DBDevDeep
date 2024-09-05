@@ -87,7 +87,9 @@
 													<td>반</td>
 													<td>번호</td>
 													<td th:text="${student.student_name}"></td>
-													<td th:text="${student.student_birth}"></td>
+													<td>
+														<a th:text="${student.student_birth}" th:href="@{/student/{no}(no=${student.student_no})}"></a> 
+													</td>
 												</tr>
 											</th:block>
 										</tbody>

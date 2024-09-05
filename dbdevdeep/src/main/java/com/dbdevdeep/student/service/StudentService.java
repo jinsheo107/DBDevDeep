@@ -43,13 +43,33 @@ public class StudentService {
 	// 학생리스트를 옮겨주기 위해 dto로 변환하여 담아주는 절차
 	public List<StudentDto> selectStudentList(StudentDto studentDto){
 		List<Student> studentList = studentRepository.findAll();
-		
+		System.out.println(studentList);
 		List<StudentDto> studentDtoList = new ArrayList<StudentDto>();
 		for(Student s : studentList) {
 			StudentDto dto = new StudentDto().toDto(s);
+			studentDtoList.add(dto);
 		}
 		return studentDtoList;
 	} 
+	
+	// 학생번호를 통해 선택한 학생의 정보를 dto로 변환하여 담아주는 절차
+	public StudentDto selectStudentOne(Long student_no) {
+		Student student = studentRepository.findBystudentNo(student_no);
+		StudentDto dto = StudentDto.builder()
+				.student_no(student.getStudentNo())
+				.student_name(student.getStudentName())
+				.student_birth(student.getStudentBirth())
+				.student_gender(student.getStudentGender())
+				.student_address_no(student.getStudentAddressNo())
+				.student_address(student.getStudentAddress())
+				.student_detail_address(student.getStudentDetailAddress())
+				.student_phone(student.getStudentPhone())
+				.student_ori_profile(student.getStudentOriProfile())
+				.student_new_profile(student.getStudentNewProfile())
+				.student_status(student.getStudentStatus())
+				.build();
+			return dto;
+	}
 	
 	
 	
