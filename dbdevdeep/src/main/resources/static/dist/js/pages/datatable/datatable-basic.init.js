@@ -9,8 +9,10 @@
  *       Notice Table                   *
  ****************************************/
 $('#notice_config').DataTable({
+	
 	 // 화면 크기에 따라 컬럼 width 자동 조절
 	 "responsive": true,
+	 
 	 // 컬럼 width 비율 조절
 	 "columnDefs": [
         { "width": "5%", "targets": 0 },
@@ -20,18 +22,26 @@ $('#notice_config').DataTable({
         { "width": "10%", "targets": 4 },
         { "width": "20%", "targets": 5 }
     ],
+    
     // 정보 표시 해제
 	info: false, 
+	
 	// DataTables의 DOM 구조를 재정의
 	// 표시건수, 검색, 테이블, 페이징의 위치 재설정
 	// (정보 표시 부분을 제외)
 	"sDom": '<"row view-filter"<"col-sm-12"<"pull-left"l><"pull-right"f><"clearfix">>>t<"row view-pager"<"col-sm-12"<ip>>>',
+	
 	// 페이지네이션 버튼을 전체 숫자와 함께 표시
   	pagingType: 'full_numbers',
+  	
   	// 페이지당 항목 수를 선택할 수 있는 옵션
   	lengthMenu: [10, 25, 50, 100],
+  	
   	// 기본 페이지당 항목 수
   	pageLength: 10,
+  	
+  	 // 기본 정렬 기준 컬럼 설정 (최신날짜 -> 오래된날짜)
+     "order": [[5, 'desc']],
   	
   	// 페이징 관련 설정
   	drawCallback: function(settings) {
@@ -81,10 +91,13 @@ $('#notice_config').DataTable({
           	}
       	});
   	}
+  	
 });
 
+
+
 /****************************************
- * Custom Table : 각자의 테이블 옵션 설정하기 *
+ *            multi_col_order           *
  ****************************************/
 $('#multi_col_order').DataTable({
     columnDefs: [{
