@@ -49,10 +49,10 @@ public class NoticeService {
 					.notice_title(n.getNoticeTitle())
 					.notice_content(n.getNoticeContent())
 					.is_important(n.isImportant())
-					.cmt_agree(n.isCmtAgree())
-					.reg_date(n.getRegDate())
-					.mod_date(n.getModDate())
-					.att_y_n(n.isAttYN())
+					.is_cmt(n.isCmt())
+					.reg_time(n.getRegTime())
+					.mod_time(n.getModTime())
+					.is_att(n.isAtt())
 					.build();
 			
 			for(NoticeReadCheck nrc : nrcList) {

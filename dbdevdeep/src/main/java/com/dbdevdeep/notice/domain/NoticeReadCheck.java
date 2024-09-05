@@ -43,7 +43,7 @@ public class NoticeReadCheck {
 	@JoinColumn(name="read_id")
 	private Employee employee;
 	
-	@Column(name="read_date")
-	private LocalDateTime read_date;
+	@Column(name="read_time")
+	private LocalDateTime readTime;
 	
 }

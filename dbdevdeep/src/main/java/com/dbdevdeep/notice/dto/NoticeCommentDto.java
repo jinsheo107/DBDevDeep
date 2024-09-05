@@ -24,15 +24,15 @@ public class NoticeCommentDto {
 	private String writer_id;
 	private int parent_cmt_no;
     private String cmt_content;
-    private LocalDateTime reg_date;
-	private LocalDateTime mod_date;
+    private LocalDateTime reg_time;
+	private LocalDateTime mod_time;
 	
 	public NoticeComment toEntity() {
 		return NoticeComment.builder()
 				.cmtNo(cmt_no)
 				.cmtContent(cmt_content)
-				.regDate(reg_date)
-				.modDate(mod_date)
+				.regTime(reg_time)
+				.modTime(mod_time)
 				.build();		
 	}
 	
@@ -40,8 +40,8 @@ public class NoticeCommentDto {
 		return NoticeCommentDto.builder()
 				.cmt_no(ncmt.getCmtNo())
 				.cmt_content(ncmt.getCmtContent())
-				.reg_date(ncmt.getRegDate())
-				.mod_date(ncmt.getModDate())
+				.reg_time(ncmt.getRegTime())
+				.mod_time(ncmt.getModTime())
 				.build();
 	}
 

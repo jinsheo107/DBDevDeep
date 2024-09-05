@@ -51,11 +51,11 @@ public class NoticeComment {
     @Column(name="cmt_content")
     private String cmtContent;
     
-	@Column(name="reg_date")
-	private LocalDateTime regDate;
+	@Column(name="reg_time")
+	private LocalDateTime regTime;
 	
-	@Column(name="mod_date")
-	private LocalDateTime modDate;
+	@Column(name="mod_time")
+	private LocalDateTime modTime;
 	
 	
 }

@@ -35,19 +35,19 @@ public class NoticeReadCheckDto {
 	private Long check_no;
 	private Long notice_no;
 	private String read_id;
-	private LocalDateTime read_date;
+	private LocalDateTime read_time;
 	
 	public NoticeReadCheck toEntity() {
 		return NoticeReadCheck.builder()
 				.checkNo(check_no)
-				.read_date(read_date)
+				.readTime(read_time)
 				.build();
 	}
 	
 	public NoticeReadCheckDto toDto(NoticeReadCheck nrc) {
 		return NoticeReadCheckDto.builder()
 				.check_no(nrc.getCheckNo())
-				.read_date(nrc.getRead_date())
+				.read_time(nrc.getReadTime())
 				.build();
 	}
 	

@@ -27,10 +27,10 @@ public class NoticeDto {
 	private String notice_title;
 	private String notice_content;
 	private boolean is_important;
-	private boolean cmt_agree;
-	private LocalDateTime reg_date;
-	private LocalDateTime mod_date;
-	private boolean att_y_n;
+	private boolean is_cmt;
+	private LocalDateTime reg_time;
+	private LocalDateTime mod_time;
+	private boolean is_att;
 	private boolean read_check = false;
 
 	public Notice toEntity() {
@@ -39,10 +39,10 @@ public class NoticeDto {
 				.noticeTitle(notice_title)
 				.noticeContent(notice_content)
 				.isImportant(is_important)
-				.cmtAgree(cmt_agree)
-				.regDate(reg_date)
-				.modDate(mod_date)
-				.attYN(att_y_n)
+				.isCmt(is_cmt)
+				.regTime(reg_time)
+				.modTime(mod_time)
+				.isAtt(is_att)
 				.build();
 	}
 	
@@ -52,10 +52,10 @@ public class NoticeDto {
 				.notice_title(n.getNoticeTitle())
 				.notice_content(n.getNoticeContent())
 				.is_important(n.isImportant())
-				.cmt_agree(n.isCmtAgree())
-				.reg_date(n.getRegDate())
-				.mod_date(n.getModDate())
-				.att_y_n(n.isAttYN())
+				.is_cmt(n.isCmt())
+				.reg_time(n.getRegTime())
+				.mod_time(n.getModTime())
+				.is_att(n.isAtt())
 				.build();
 				
 	}

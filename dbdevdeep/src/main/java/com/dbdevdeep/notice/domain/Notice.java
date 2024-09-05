@@ -51,16 +51,16 @@ public class Notice {
 	@Column(name="is_important")
 	private boolean isImportant;
 	
-	@Column(name="cmt_agree")
-	private boolean cmtAgree;
+	@Column(name="is_cmt")
+	private boolean isCmt;
 	
-	@Column(name="reg_date")
-	private LocalDateTime regDate;
+	@Column(name="reg_time")
+	private LocalDateTime regTime;
 	
-	@Column(name="mod_date")
-	private LocalDateTime modDate;
+	@Column(name="mod_time")
+	private LocalDateTime modTime;
 	
-	@Column(name="att_y_n")
-	private boolean attYN;
+	@Column(name="is_att")
+	private boolean isAtt;
 	
 }
