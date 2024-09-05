@@ -28,7 +28,7 @@ public class EmployeeApiController {
 	}
 	
 	@ResponseBody
-	@PostMapping("/govIdCheck")
+	@PostMapping("/govid")
 	public Map<String, String> govIdCheck(@RequestBody String govId) {
 		
 		Map<String, String> resultMap = new HashMap<String, String>();
@@ -58,8 +58,8 @@ public class EmployeeApiController {
 		String savedFileName = fileService.upload(file);
 		
 		if(savedFileName != null) {
-			dto.setOri_pic(file.getOriginalFilename());
-			dto.setNew_pic(savedFileName);
+			dto.setOri_pic_name(file.getOriginalFilename());
+			dto.setNew_pic_name(savedFileName);
 			
 			if(employeeService.addEmployee(dto) > 0) {
 				resultMap.put("res_code", "200");

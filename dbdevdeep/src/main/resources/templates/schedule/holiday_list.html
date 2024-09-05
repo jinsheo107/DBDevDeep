@@ -10,9 +10,25 @@
 </head>
 <th:block layout:fragment="content">
 	<style>
+	
+	input[type="checkbox"] {
+            width: 12px; /* 너비 설정 */
+            height: 12px; /* 높이 설정 */
+            transform: scale(1.5); /* 크기 조정 비율 */
+            -webkit-transform: scale(1.5); /* 크로스 브라우저 호환성 */
+            -moz-transform: scale(1.5); /* 크로스 브라우저 호환성 */
+            -ms-transform: scale(1.5); /* 크로스 브라우저 호환성 */
+            -o-transform: scale(1.5); /* 크로스 브라우저 호환성 */
+            margin: 5px; /* 여백 설정 */
+	}
+	
 	/* 세 번째 td 요소에 커서 포인터 추가 */
 	#holiday_config tbody tr td:nth-child(3) {
 	    cursor: pointer;
+	}
+	
+	.custom-cancel-button{
+		color: black !important;
 	}
 	
 	.swal-custom-button {
@@ -113,45 +129,76 @@
 	        }).get();
 	
 	        if (selectedHolidays.length === 0) {
-	            alert('삭제할 항목을 선택하세요.');
+	            Swal.fire({
+	                icon: 'warning',
+	                title: '경고',
+	                text: "삭제할 항목을 선택해주세요!",
+	                confirmButtonText: '확인', // 버튼 텍스트
+	                customClass: {
+	                    confirmButton: 'swal-custom-button' // 버튼에 custom 클래스를 추가
+	                }
+	            });
 	            return;
 	        }
+	        
+	     	// CSRF 토큰을 가져옴
+	        const csrfToken = document.getElementById('csrf_token').value;
 	
 	        // 경고창 띄우기
 	        Swal.fire({
 	            title: '삭제하시겠습니까?',
-	            text: "선택된 항목들이 삭제됩니다.",
+	            text: '선택된 항목들이 삭제됩니다.',
 	            icon: 'warning',
 	            showCancelButton: true,
-	            confirmButtonColor: '#3085d6',
-	            cancelButtonColor: '#d33',
-	            confirmButtonText: 'Yes',
-	            cancelButtonText: 'No'
+	            confirmButtonColor: '#5f76e8',
+	            cancelButtonColor: '#e8eaec',
+	            confirmButtonText: '삭제',
+	            cancelButtonText: '취소',
+	            customClass: {
+	                cancelButton: 'custom-cancel-button'
+	            }
 	        }).then((result) => {
 	            if (result.isConfirmed) {
-	                // AJAX를 통해 서버로 삭제 요청
-	                $.ajax({
-	                    url: '/holiday/delete',  // 실제 삭제를 처리할 서버의 URL
-	                    type: 'POST',
-	                    contentType: 'application/json',
-	                    data: JSON.stringify(selectedHolidays),  // 선택된 holiday_no 목록 전송
-	                    success: function(response) {
-	                        Swal.fire(
-	                            '삭제 성공!',
-	                            '선택한 항목이 삭제되었습니다.',
-	                            'success'
-	                        ).then(() => {
+	                // 각 선택된 holiday_no에 대해 DELETE 요청 보내기
+	                Promise.all(selectedHolidays.map(holidayNo => {
+	                    return fetch(`/holiday/${holidayNo}`, {  // 실제 삭제를 처리할 서버의 URL
+	                        method: 'DELETE',  // HTTP 메소드 설정
+	                        headers: {
+	    	                    'X-CSRF-TOKEN': csrfToken,
+	    	                    'Content-Type': 'application/json', // JSON 타입 설정
+	    	                    'Accept': 'application/json'       // JSON 응답 기대
+	    	                }
+	                    });
+	                }))
+	                .then(responses => {
+	                    const allSuccessful = responses.every(response => response.ok); // 모든 응답이 성공적인지 확인
+	                    if (allSuccessful) {
+	                        // 모든 요청이 성공했을 때의 처리
+	                        Swal.fire({
+	                            icon: 'success',
+	                            title: '성공',
+	                            text: '선택한 항목이 삭제되었습니다.',
+	                            confirmButtonText: '확인', // 버튼 텍스트
+	                            customClass: {
+	                                confirmButton: 'swal-custom-button' // 버튼에 custom 클래스를 추가
+	                            }
+	                        }).then(() => {
 	                            location.reload();  // 삭제 후 페이지 새로고침
 	                        });
-	                    },
-	                    error: function(xhr, status, error) {
+	                    } else {
+	                        // 일부 요청이 실패했을 때의 처리
 	                        Swal.fire('실패', '삭제 중 오류가 발생했습니다.', 'error');
 	                    }
+	                })
+	                .catch(error => {
+	                    // 네트워크 오류 또는 기타 예외 처리
+	                    Swal.fire('실패', '삭제 중 오류가 발생했습니다.', 'error');
 	                });
 	            }
 	        });
 	    });
 	});
+
 	document.addEventListener('DOMContentLoaded', function () {
 	    // 모달 열기 및 닫기 이벤트 리스너 추가
 	    const modal = document.getElementById('holidayCreateModal');
@@ -242,12 +289,117 @@
 		        `);
 		        // 모달 열기
 		        $('#holidayDetailModal').modal('show');
+		        
+		     	// 수정 버튼 클릭 시 수정 모달 열기
+	            $('#holidayDetailModal .btn-primary').on('click', function() {
+	                openEditModal(data);  // 수정 모달 열기
+	            });
 		    })
 		    .catch(error => {
 		        console.error('There has been a problem with your fetch operation:', error);
 		        alert('데이터를 가져오는 데 실패했습니다.');
 		    });
 		});
+	 	
+	 // 수정 모달 열기 함수
+	    function openEditModal(data) {
+	        // 수정 모달의 제목과 버튼 텍스트 수정
+	        $('#holidayEditModalLabel').text('휴일 수정');
+	        $('#holidayEditFrm button[type="submit"]').text('수정');
+	        
+	        // 기존 값을 수정 모달의 폼에 채우기
+	        $('#holidayEditFrm input[name="holiday_name"]').val(data.holiday_name);
+	        
+	        // is_period에 따른 날짜 필드 채우기 및 비활성화 설정
+	        if (data.is_period === 'Y') {
+	            $('#holidayEditFrm input[name="is_period"][value="Y"]').prop('checked', true);
+	            $('#holidayEditFrm input[name="start_date"]').prop('disabled', true).val('');  // 하루 날짜 필드 비활성화
+	            $('#holidayEditFrm input[name="start_date"]').prop('disabled', false).val(data.start_date); // 시작일 필드 활성화 및 값 설정
+	            $('#holidayEditFrm input[name="end_date"]').prop('disabled', false).val(data.end_date);     // 종료일 필드 활성화 및 값 설정
+	        } else {
+	            $('#holidayEditFrm input[name="is_period"][value="N"]').prop('checked', true);
+	            $('#holidayEditFrm input[name="start_date"]').prop('disabled', false).val(data.start_date); // 하루 날짜 필드 활성화 및 값 설정
+	            $('#holidayEditFrm input[name="start_date"]').prop('disabled', true).val('');  // 기간 시작일 필드 비활성화
+	            $('#holidayEditFrm input[name="end_date"]').prop('disabled', true).val('');    // 기간 종료일 필드 비활성화
+	        }
+
+	        // repeat_type에 따른 반복 필드 채우기 및 비활성화 설정
+	        if (data.repeat_type === 'YEARLY') {
+	            $('#holidayEditFrm input[name="repeat_type"][value="YEARLY"]').prop('checked', true);
+	            $('#holidayEditFrm input[name="repeat_start_date"]').prop('disabled', false).val(data.repeat_start_date); // 반복 시작일 필드 활성화 및 값 설정
+	            $('#holidayEditFrm input[name="repeat_end_date"]').prop('disabled', false).val(data.repeat_end_date);     // 반복 종료일 필드 활성화 및 값 설정
+	        } else {
+	            $('#holidayEditFrm input[name="repeat_type"][value="NONE"]').prop('checked', true);
+	            $('#holidayEditFrm input[name="repeat_start_date"]').prop('disabled', true).val('');  // 반복 시작일 필드 비활성화
+	            $('#holidayEditFrm input[name="repeat_end_date"]').prop('disabled', true).val('');    // 반복 종료일 필드 비활성화
+	        }
+
+	        // 수정할 항목의 ID를 폼에 데이터로 저장
+	        $('#holidayEditFrm').data('holiday-id', data.holiday_no);
+
+	        $('#holidayDetailModal').modal('hide');
+	        $('#holidayEditModal').modal('show');  // 수정 모달 열기
+	    }
+
+	    // 수정 모달 폼 제출 이벤트 리스너 추가 (수정 처리)
+	    $('#holidayEditFrm').on('submit', function(e) {
+	        e.preventDefault();  // 기본 폼 제출 방지
+
+	        const csrfToken = document.getElementById('csrf_token_edit').value;
+	        const holidayNo = $(this).data('holiday-id');
+
+	        const payload = new FormData(this);
+
+	        fetch(`/holiday/${holidayNo}`, {
+	            method: 'PUT',
+	            body: JSON.stringify(Object.fromEntries(payload)),
+	            headers: {
+	                'X-CSRF-TOKEN': csrfToken,
+	                'Content-Type': 'application/json', // JSON 타입 설정
+	                'Accept': 'application/json'       // JSON 응답 기대
+	            }
+	        })
+	        .then(response => response.json())
+	        .then(data => {
+	            if (data.res_code === '200') {
+	                Swal.fire({
+	                    icon: 'success',
+	                    title: '성공',
+	                    text: data.res_msg,
+	                    confirmButtonText: '확인',
+	                    customClass: {
+	                        confirmButton: 'swal-custom-button'
+	                    }
+	                }).then(() => {
+	                    location.href = "/holiday";
+	                });
+	            } else {
+	                Swal.fire({
+	                    icon: 'error',
+	                    title: '실패',
+	                    text: data.res_msg,
+	                    confirmButtonText: '확인',
+	                    customClass: {
+	                        confirmButton: 'swal-custom-button'
+	                    }
+	                });
+	            }
+	            $('#holidayEditModal').modal('hide');
+	        })
+	        .catch(error => {
+	            console.error('There has been a problem with your fetch operation:', error);
+	            alert('데이터를 수정하는 데 실패했습니다.');
+	        });
+	    });
+
+	    // 폼 리셋 및 상태 초기화
+	    $('#holidayEditModal').on('hidden.bs.modal', function() {
+	        resetEditForm();
+	    });
+
+	    function resetEditForm() {
+	        $('#holidayEditFrm')[0].reset();  // 폼 리셋
+	    }
 
 	    // 날짜 옵션 라디오 버튼 클릭 시 이벤트 핸들러
 	    const dateOption1 = document.getElementById('dateOption1');
@@ -493,7 +645,7 @@
 			                            
 			                            <!-- 상세보기 모달 HTML -->
 										<div class="modal fade" id="holidayDetailModal" tabindex="-1" role="dialog" aria-labelledby="holidayDetailModalLabel">
-										    <div class="modal-dialog modal-dialog-centered" style="max-width:46%; width: 46%;">
+										    <div class="modal-dialog modal-dialog-centered" style="max-width:48%; width: 48%;">
 										        <div class="modal-content" id="holidayDetailContent">
 										            <div class="modal-header modal-colored-header bg-primary" style="display: flex; align-items: center; justify-content: space-between; font-size: 25px;">
 										                <div class="modal-title" id="holidayDetailModalLabel">휴일 정보</div>
@@ -508,7 +660,7 @@
 										                </table>
 										            </div>
 										            <div class="modal-footer" style="margin-top:-15px;">
-										                <button type="submit" class="btn btn-primary">수정</button>
+										                <button type="button" class="btn btn-primary" id="updateButton">수정</button>
 										                <button type="button" class="btn waves-effect waves-light btn-outline-secondary" data-dismiss="modal">닫기</button>
 										            </div>
 										        </div>
@@ -517,7 +669,7 @@
 			                            
 			                            <!-- 등록 모달 HTML -->
 										<div class="modal fade" id="holidayCreateModal" tabindex="-1" role="dialog" aria-labelledby="holidayCreateModalLabel">
-										    <div class="modal-dialog modal-dialog-centered" style="max-width:46%; width: 46%;">
+										    <div class="modal-dialog modal-dialog-centered" style="max-width:48%; width: 48%;">
 										        <div class="modal-content">
 										            <div class="modal-header modal-colored-header bg-primary" style="display: flex; align-items: center; justify-content: space-between; font-size: 25px;">
 										                <div class="modal-title" id="holidayCreateModalLabel">휴일 등록</div>
@@ -585,6 +737,78 @@
 										        </div>
 										    </div>
 										</div>
+										
+										<!-- 수정 모달 HTML -->
+										<div class="modal fade" id="holidayEditModal" tabindex="-1" role="dialog" aria-labelledby="holidayEditModalLabel">
+										    <div class="modal-dialog modal-dialog-centered" style="max-width:48%; width: 48%;">
+										        <div class="modal-content">
+										            <div class="modal-header modal-colored-header bg-primary" style="display: flex; align-items: center; justify-content: space-between; font-size: 25px;">
+										                <div class="modal-title" id="holidayEditModalLabel">휴일 수정</div>
+										                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+										            </div>
+										    			<form id="holidayEditFrm">
+												            <div class="modal-body" style="padding:0px;">
+												    			<input type="hidden" id="csrf_token" th:value="${_csrf.token}">
+												                <table style="border-bottom:none; border-top:none;" class="table bordered">
+												                    <tbody id="holidayCreateContent">
+												                        <!-- 날짜 선택 -->
+																	            <tr>
+																	                <td class="align-center" style="width: 20%;">
+																	                    <label>날짜</label>
+																	                </td>
+																	                <td style="width: 80%;">
+																	                    <div class="form-inline">
+																	                        <input type="radio" name="is_period" value="Y" id="dateOption1" checked>
+																		                    <label for="dateOption1" class="ml-2">하루</label>
+																		                    <input type="date" class="form-control ml-3" name="start_date" placeholder="날짜">
+																		                    <input type="radio" name="is_period" value="N" id="dateOption2" class="ml-4">
+																		                    <label for="dateOption2" class="ml-2">기간</label>
+																		                    <input type="date" class="form-control ml-2" name="start_date" placeholder="시작일">
+																		                    <span class="ml-3 mr-2"> ~ </span>
+																		                    <input type="date" class="form-control ml-2" name="end_date" placeholder="종료일">
+																	                    </div>
+																	                </td>
+																	            </tr>
+																	
+																	            <!-- 휴일명 입력 -->
+																	            <tr>
+																	                <td class="align-center" style="width: 20%;">
+																	                    <label>휴일명</label>
+																	                </td>
+																	                <td style="width: 80%;">
+																	                    <input type="text" class="form-control" name="holiday_name" placeholder="휴일명">
+																	                </td>
+																	            </tr>
+																	
+																	            <!-- 매년반복여부 -->
+																	            <tr>
+																	                <td class="align-center" style="width: 20%;">
+																	                    <label>매년반복여부</label>
+																	                </td>
+																	                <td style="width: 80%;">
+																	                    <div class="form-inline">
+																							<input type="radio" name="repeat_type" value="NONE" id="repeatOption1" checked>
+																		                    <label for="repeatOption1" class="ml-2">반복 없음</label>
+																		                    <input type="radio" name="repeat_type" value="YEARLY" id="repeatOption2" class="ml-4">
+																		                    <label for="repeatOption2" class="ml-2">매년 반복</label>
+																		                    <input type="date" class="form-control ml-3" name="repeat_start_date" placeholder="반복 시작일" >
+																		                    <span class="ml-3 mr-2"> ~ </span>
+																		                    <input type="date" class="form-control ml-2" name="repeat_end_date" placeholder="반복 종료일">
+																	                    </div>
+																	                </td>
+																	            </tr>
+												                    </tbody>
+												                </table>
+												            </div>
+												            <div class="modal-footer" style="margin-top:-15px;">
+												                <button type="button" class="btn waves-effect waves-light btn-outline-secondary" data-dismiss="modal">취소</button>
+		                    									<button type="submit" class="btn waves-effect waves-light btn-primary" id="saveButton">등록</button>
+												            </div>
+										        	</form>
+										        </div>
+										    </div>
+										</div>
+										
 	                            	</div>
                                 <div class="table-responsive" style="margin-top:20px;">
                                     <table id="holiday_config" class="table table-hover table-bordered no-wrap" style="width:100%">

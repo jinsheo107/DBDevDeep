@@ -65,5 +65,16 @@ public class HolidayService {
 		return dto;
 	}
 
+	public int deleteHoliday(Long holiday_no) {
+		int result = 0;
+		try {
+			holidayRepository.deleteById(holiday_no);
+			result = 1;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return result;
+	}
+
 
 }

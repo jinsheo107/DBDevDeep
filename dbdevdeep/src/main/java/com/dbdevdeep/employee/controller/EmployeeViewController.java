@@ -16,12 +16,10 @@ import com.dbdevdeep.employee.service.TeacherHistoryService;
 public class EmployeeViewController {
 	
 	private final EmployeeService employeeService;
-	private final TeacherHistoryService teacherHistoryService;
 	
 	@Autowired
-	public EmployeeViewController(EmployeeService employeeService, TeacherHistoryService teacherHistoryService) {
+	public EmployeeViewController(EmployeeService employeeService) {
 		this.employeeService = employeeService;
-		this.teacherHistoryService = teacherHistoryService;
 	}
 
 	@GetMapping("/login")
@@ -34,22 +32,15 @@ public class EmployeeViewController {
 		return"employee/signup";
 	}
 	
-	@GetMapping("/addressBook")
+	@GetMapping("/addressbook")
 	public String selectAddressbookList(Model model, EmployeeDto dto) {
 		
 		List<EmployeeDto> resultList = employeeService.selectEmployeeList(dto);
 		
 		model.addAttribute("resultList", resultList);
 		
-		return "employee/addressBook";
+		return "employee/address_book";
 	}
 	
-	@GetMapping("/classByYear")
-	public String selectClassByYearList(Model model, TeacherHistoryDto dto) {
-		List<TeacherHistoryDto> resultList = teacherHistoryService.selectClassByYearList();
-		
-		model.addAttribute("resultList", resultList);
-		
-		return "employee/classByYear";
-	}
+
 }

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-     layout:decorate="~{include/adress_book_layout}">
+     layout:decorate="~{include/student_layout}">
 <th:block layout:fragment="content">
 <body>
 		<!-- ============================================================== -->
@@ -52,42 +52,10 @@
 					<div class="col-12">
 						<div class="card">
 							<div class="card-body">
-								<h4 class="card-title">주소록</h4>
+								<h4 class="card-title">안녕하세요 오늘도 좋은하루 보내세요</h4>
 							</div>
 							<div class="table-responsive">
-								<table class="table table-hover">
-									<thead>
-										<tr>
-											<th scope="col">번호</th>
-											<th scope="col">직원번호</th>
-											<th scope="col">직원명</th>
-											<th scope="col">출근여부</th>
-											<th scope="col">부서</th>
-											<th scope="col">담당</th>
-											<th scope="col">내선전화</th>
-											<th scope="col">전화번호</th>
-										</tr>
-									</thead>
-									<tbody>
-										<th:block th:if="${#lists.isEmpty(resultList)}">
-											<tr>
-												<td colspan="7">주소록이 없습니다.</td>
-											</tr>
-										</th:block>
-										<th:block th:if="${!#lists.isEmpty(resultList)}">
-											<tr th:each="employee, employeeStat : ${resultList}">
-												<td scope="row" th:text="${employeeStat.count}"></td>
-												<td th:text="${employee.emp_id}"></td>
-												<td th:text="${employee.emp_name}"></td>
-												<td></td>
-												<td th:text="${employee.dept_code}"></td>
-												<td></td>
-												<td th:text="${employee.emp_internal_phone}"></td>
-												<td th:text="${employee.emp_phone}"></td>
-											</tr>
-										</th:block>
-									</tbody>
-								</table>
+								
 								
 							</div>
 						</div>
@@ -129,23 +97,23 @@
 	<!-- ============================================================== -->
 	<!-- All Jquery -->
 	<!-- ============================================================== -->
-	<script src="assets/libs/jquery/dist/jquery.min.js"></script>
+	<script src="/assets/libs/jquery/dist/jquery.min.js"></script>
 	<!-- Bootstrap tether Core JavaScript -->
-	<script src="assets/libs/popper.js/dist/umd/popper.min.js"></script>
-	<script src="assets/libs/bootstrap/dist/js/bootstrap.min.js"></script>
+	<script src="/assets/libs/popper.js/dist/umd/popper.min.js"></script>
+	<script src="/assets/libs/bootstrap/dist/js/bootstrap.min.js"></script>
 	<!-- apps -->
 	<!-- apps -->
-	<script src="dist/js/app-style-switcher.js"></script>
-	<script src="dist/js/feather.min.js"></script>
+	<script src="/dist/js/app-style-switcher.js"></script>
+	<script src="/dist/js/feather.min.js"></script>
 	<!-- slimscrollbar scrollbar JavaScript -->
-	<script src="assets/libs/perfect-scrollbar/dist/perfect-scrollbar.jquery.min.js"></script>
-	<script src="assets/extra-libs/sparkline/sparkline.js"></script>
+	<script src="/assets/libs/perfect-scrollbar/dist/perfect-scrollbar.jquery.min.js"></script>
+	<script src="/assets/extra-libs/sparkline/sparkline.js"></script>
 	<!--Wave Effects -->
 	<!-- themejs -->
 	<!--Menu sidebar -->
-	<script src="dist/js/sidebarmenu.js"></script>
+	<script src="/dist/js/sidebarmenu.js"></script>
 	<!--Custom JavaScript -->
-	<script src="dist/js/custom.min.js"></script>
+	<script src="/dist/js/custom.min.js"></script>
 </body>
 
 </html>
