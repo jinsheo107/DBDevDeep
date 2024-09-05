@@ -18,12 +18,12 @@ public class StudentDto {
 	private String student_name;
 	private String student_birth;
 	private String student_gender;
-	private String student_address_no;
-	private String student_address;
-	private String student_detail_address;
+	private String student_post_code;
+	private String student_addr;
+	private String student_detail_addr;
 	private String student_phone;
-	private String student_ori_profile;
-	private String student_new_profile;
+	private String student_ori_pic;
+	private String student_new_pic;
 	private String student_status;
 	
 	public Student toEntity() {
@@ -32,12 +32,12 @@ public class StudentDto {
 				.studentName(student_name)
 				.studentBirth(student_birth)
 				.studentGender(student_gender)
-				.studentAddressNo(student_address_no)
-				.studentAddress(student_address)
-				.studentDetailAddress(student_detail_address)
+				.studentPostCode(student_post_code)
+				.studentAddr(student_addr)
+				.studentDetailAddr(student_detail_addr)
 				.studentPhone(student_phone)
-				.studentOriProfile(student_ori_profile)
-				.studentNewProfile(student_new_profile)
+				.studentOriPic(student_ori_pic)
+				.studentNewPic(student_new_pic)
 				.studentStatus(student_status)
 				.build();
 	}
@@ -48,12 +48,12 @@ public class StudentDto {
 				.student_name(student.getStudentName())
 				.student_birth(student.getStudentBirth())
 				.student_gender(student.getStudentGender())
-				.student_address_no(student.getStudentAddressNo())
-				.student_address(student.getStudentAddress())
-				.student_detail_address(student.getStudentDetailAddress())
+				.student_post_code(student.getStudentPostCode())
+				.student_addr(student.getStudentAddr())
+				.student_detail_addr(student.getStudentDetailAddr())
 				.student_phone(student.getStudentPhone())
-				.student_ori_profile(student.getStudentOriProfile())
-				.student_new_profile(student.getStudentNewProfile())
+				.student_ori_pic(student.getStudentOriPic())
+				.student_new_pic(student.getStudentNewPic())
 				.student_status(student.getStudentStatus())
 				.build();
 	}
