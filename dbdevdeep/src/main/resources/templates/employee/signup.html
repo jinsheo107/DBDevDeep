@@ -149,22 +149,24 @@
 												<label for="gov_id">주민등록번호</label>
 												<div class="row">
 													<div class="col-md-4">
-														<input type="text" class="form-control is-invalid" id="firstEmpNo" placeholder="000101" maxlength="6">
+														<input type="text" class="form-control is-invalid" id="firstempRrn" placeholder="000101" maxlength="6">
 
 													</div>
 													<div class="col-md-4">
-														<input type="text" class="form-control is-invalid" id="secondEmpNo" placeholder="4111111" maxlength="7">
+														<input type="text" class="form-control is-invalid" id="secondempRrn" placeholder="4111111" maxlength="7">
 													</div>
-													<input type="text" id="emp_no" name="emp_no" hidden>
-													<div id="emp_no_feedback" class="mt-2 col-md-8"></div>
+													<input type="text" id="emp_rrn" name="emp_rrn" hidden>
+													<div id="emp_rrn_feedback" class="mt-2 col-md-8"></div>
 												</div>
 											</div>
 											<div class="form-group">
 												<label for="gov_id">우편번호</label>
 												<div class="row">
 													<div class="col-md-8">
-														<input type="text" name="emp_post" class="form-control is-invalid" id="sample6_postcode" placeholder="우편번호" onclick="sample6_execDaumPostcode()" readonly><br> <input type="text" name="emp_addr" class="form-control is-invalid" id="sample6_address" placeholder="주소" readonly><br> <input type="text" name="emp_detail_addr" class="form-control is-invalid" id="sample6_detailAddress" placeholder="상세주소"> <input type="text" id="sample6_extraAddress" placeholder="참고항목" hidden>
-														<div id="emp_post_feedback" class="mt-2"></div>
+														<input type="text" name="emp_post_code" class="form-control is-invalid" id="sample6_postcode" placeholder="우편번호" onclick="sample6_execDaumPostcode()" readonly><br> 
+														<input type="text" name="emp_addr" class="form-control is-invalid" id="sample6_address" placeholder="주소" readonly><br> 
+														<input type="text" name="emp_detail_addr" class="form-control is-invalid" id="sample6_detailAddress" placeholder="상세주소"> <input type="text" id="sample6_extraAddress" placeholder="참고항목" hidden>
+														<div id="emp_post_code_feedback" class="mt-2"></div>
 													</div>
 													<div class="col-md-1">
 														<input type="button" id="postBtn" onclick="sample6_execDaumPostcode()" value="우편번호 찾기" class="btn waves-effect waves-light btn-primary">
@@ -317,10 +319,10 @@
 				form.dept_code.focus();
 			} else if(form.job_code.value == "0") {
 				form.job_code.focus();
-			} else if(form.emp_no.value == "") {
-				document.getElementById("firstEmpNo").focus();
-			} else if(form.emp_post.value == "") {
-				form.emp_post.focus();
+			} else if(form.emp_rrn.value == "") {
+				document.getElementById("firstempRrn").focus();
+			} else if(form.emp_post_code.value == "") {
+				form.emp_post_code.focus();
 			} else if(form.emp_detail_addr.value == "") {
 				form.emp_detail_addr.focus();
 			} else if(form.emp_phone.value == "" || !/^01[0-9]-\d{3,4}-\d{4}$/.test(form.emp_phone.value)) {
@@ -505,64 +507,64 @@
 		});
 		
 		/* 주민등록번호 정규식 */
-		document.getElementById('firstEmpNo').addEventListener('input', validateResidentNumber);
-	    document.getElementById('secondEmpNo').addEventListener('input', validateResidentNumber);
+		document.getElementById('firstempRrn').addEventListener('input', validateResidentNumber);
+	    document.getElementById('secondempRrn').addEventListener('input', validateResidentNumber);
 		    
-	    document.getElementById('firstEmpNo').addEventListener('input', function() {
-	    	document.getElementById('firstEmpNo').value = document.getElementById('firstEmpNo').value.replace(/[^0-9]/g, '');
+	    document.getElementById('firstempRrn').addEventListener('input', function() {
+	    	document.getElementById('firstempRrn').value = document.getElementById('firstempRrn').value.replace(/[^0-9]/g, '');
 		});
-	    document.getElementById('secondEmpNo').addEventListener('input', function() {
-	    	document.getElementById('secondEmpNo').value = document.getElementById('secondEmpNo').value.replace(/[^0-9]/g, '');
+	    document.getElementById('secondempRrn').addEventListener('input', function() {
+	    	document.getElementById('secondempRrn').value = document.getElementById('secondempRrn').value.replace(/[^0-9]/g, '');
 		});
 	
 	    function validateResidentNumber() {
-	       const firstEmpNo = document.getElementById('firstEmpNo');
-	       const secondEmpNo = document.getElementById('secondEmpNo');
-	       const empNoFeedback = document.getElementById('emp_no_feedback');
-	       const empNo = `${firstEmpNo.value}${secondEmpNo.value}`;
+	       const firstempRrn = document.getElementById('firstempRrn');
+	       const secondempRrn = document.getElementById('secondempRrn');
+	       const empRrnFeedback = document.getElementById('emp_rrn_feedback');
+	       const empRrn = `${firstempRrn.value}${secondempRrn.value}`;
 	       
 	       const isValidFirst = /^[0-9]{2}(0[1-9]|1[0-2])(0[1-9]|[1-2][0-9]|3[0-1])$/;
 	       const isValidSecond = /^[1-4][0-9]{6}$/;
 	
 	       // 주민등록번호 형식 확인
-	       if (isValidFirst.test(firstEmpNo.value)) {
-	    	   firstEmpNo.classList.remove('is-invalid');
-	    	   firstEmpNo.classList.add('is-valid');
-	           empNoFeedback.textContent = '';
-	           secondEmpNo.focus();
+	       if (isValidFirst.test(firstempRrn.value)) {
+	    	   firstempRrn.classList.remove('is-invalid');
+	    	   firstempRrn.classList.add('is-valid');
+	           empRrnFeedback.textContent = '';
+	           secondempRrn.focus();
 	           console.log("check");
 	       } else {
-	    	   empNoFeedback.textContent = '주민번호 앞 6자리를 입력해주세요';
-	           empNoFeedback.style.color = 'red';
-	           firstEmpNo.classList.remove('is-valid');
-	           firstEmpNo.classList.add('is-invalid');
-	           document.getElementById('emp_no').value = '';
+	    	   empRrnFeedback.textContent = '주민번호 앞 6자리를 입력해주세요';
+	           empRrnFeedback.style.color = 'red';
+	           firstempRrn.classList.remove('is-valid');
+	           firstempRrn.classList.add('is-invalid');
+	           document.getElementById('emp_rrn').value = '';
 	       }
 	       
-	       if(isValidSecond.test(secondEmpNo.value)) {
-	         secondEmpNo.classList.remove('is-invalid');
-	         secondEmpNo.classList.add('is-valid');
-	         empNoFeedback.textContent = '';
+	       if(isValidSecond.test(secondempRrn.value)) {
+	         secondempRrn.classList.remove('is-invalid');
+	         secondempRrn.classList.add('is-valid');
+	         empRrnFeedback.textContent = '';
 	       }  else {
-	    	   empNoFeedback.textContent = '올바른 주민등록번호 형식이 아닙니다.';
-	           empNoFeedback.style.color = 'red';
-	           secondEmpNo.classList.remove('is-valid');
-	           secondEmpNo.classList.add('is-invalid');
-	           document.getElementById('emp_no').value = '';
+	    	   empRrnFeedback.textContent = '올바른 주민등록번호 형식이 아닙니다.';
+	           empRrnFeedback.style.color = 'red';
+	           secondempRrn.classList.remove('is-valid');
+	           secondempRrn.classList.add('is-invalid');
+	           document.getElementById('emp_rrn').value = '';
 	       }
 				
-	       if (isValidFirst.test(firstEmpNo.value) && isValidSecond.test(secondEmpNo.value)) {
-	       	document.getElementById('emp_no').value = `${firstEmpNo.value}-${secondEmpNo.value}`;
-	       	document.getElementById('emp_pw').value = empNo;
-	       	empNoFeedback.textContent = '';
+	       if (isValidFirst.test(firstempRrn.value) && isValidSecond.test(secondempRrn.value)) {
+	       	document.getElementById('emp_rrn').value = `${firstempRrn.value}-${secondempRrn.value}`;
+	       	document.getElementById('emp_pw').value = empRrn;
+	       	empRrnFeedback.textContent = '';
 	       	document.getElementById('postBtn').focus();
 	       } else {
-	           empNoFeedback.textContent = '올바른 주민등록번호 형식이 아닙니다.';
-	           empNoFeedback.style.color = 'red';
-	           /* firstEmpNo.classList.remove('is-valid');
-	           firstEmpNo.classList.add('is-invalid'); */
-	           document.getElementById('emp_no').value = '';
-	           document.getElementById('emp_pw').value = empNo;
+	           empRrnFeedback.textContent = '올바른 주민등록번호 형식이 아닙니다.';
+	           empRrnFeedback.style.color = 'red';
+	           /* firstempRrn.classList.remove('is-valid');
+	           firstempRrn.classList.add('is-invalid'); */
+	           document.getElementById('emp_rrn').value = '';
+	           document.getElementById('emp_pw').value = empRrn;
 	       }
 	    }
     
@@ -710,9 +712,10 @@
 
 	<!-- 교육청관리번호 중복 확인 -->
 	<script>
-		const govCheck = 0;
 	
 		const dupGov = function() {
+			valiCount = 0;
+			
 			let govId = document.getElementById('gov_id').value;
 			const govFeedback = document.getElementById('gov_id_feedback');
 			
@@ -720,7 +723,7 @@
 						
 			if(govId.length == 11 && !isNaN(govId)) {
 				
-				fetch('/govIdCheck',{
+				fetch('/govid',{
 					method:'POST',
 					headers : {
 						"Content-Type": "application/json;charset=utf-8",
@@ -866,8 +869,8 @@
 	        	postCode.classList.add('is-invalid');
 	        	addrCode.classList.remove('is-valid');
 	        	addrCode.classList.add('is-invalid');
-	        	emp_post_feedback.textContent = '우편번호를 선택하세요';
-	        	emp_post_feedback.style.color = 'red';
+	        	emp_post_code_feedback.textContent = '우편번호를 선택하세요';
+	        	emp_post_code_feedback.style.color = 'red';
 	        }
           
           detailAddr.addEventListener('keyup', (event) => {
@@ -875,15 +878,15 @@
         	  if(detailAddr.value.length > 0) {
         		  detailAddr.classList.remove('is-invalid');
         		  detailAddr.classList.add('is-valid');
-           		emp_post_feedback.textContent = '';
+           		emp_post_code_feedback.textContent = '';
            		if(event.key == 'Enter') {
            			document.getElementById('firstPhone').focus();
            		}
         	  } else {
         		  detailAddr.classList.remove('is-valid');
         		  detailAddr.classList.add('is-invalid');
-  	        	emp_post_feedback.textContent = '상세주소를 입력하세요';
-	        	emp_post_feedback.style.color = 'red';
+  	        	emp_post_code_feedback.textContent = '상세주소를 입력하세요';
+	        	emp_post_code_feedback.style.color = 'red';
         	  }
           })
           

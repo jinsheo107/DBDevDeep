@@ -33,8 +33,8 @@ public class TeacherHistoryDto {
 		return TeacherHistoryDto.builder()
 				.teacher_no(teacherHistory.getTeacherNo()).grade(teacherHistory.getGrade())
 				.grade_class(teacherHistory.getGradeClass()).t_year(teacherHistory.getTYear())
-				.teach_emp_id(teacherHistory.getEmployee().getEmpId())
-				.teach_emp_name(teacherHistory.getEmployee().getEmpName())
+				.teach_emp_id(teacherHistory.getEmployee() == null ? null : teacherHistory.getEmployee().getEmpId())
+				.teach_emp_name(teacherHistory.getEmployee() == null ? null : teacherHistory.getEmployee().getEmpName())
 				.build();
 	}
 }
