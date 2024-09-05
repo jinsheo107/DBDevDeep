@@ -7,4 +7,6 @@ import com.dbdevdeep.employee.vo.EmployeeVo;
 @Mapper
 public interface EmployeeVoMapper {
 	int updateLoginYn(EmployeeVo vo);
+	
+	
 }

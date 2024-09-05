@@ -25,8 +25,8 @@ public class Department {
 	@Column(name="dept_code")
 	private String deptCode;
 	
-	@Column(name="dept_title")
-	private String deptTitle;
+	@Column(name="dept_name")
+	private String deptName;
 	
 	@OneToMany(mappedBy = "department")
 	private List<Employee> employees;

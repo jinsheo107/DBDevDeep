@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{include/employee_layout}">
+<th:block layout:fragment="content">
+	<style>
+div.dataTables_wrapper div.dataTables_paginate ul.pagination {
+	margin: 2px 0;
+	white-space: nowrap;
+	justify-content: center;
+}
+</style>
+
+	<!-- ============================================================== -->
+	<!-- End Left Sidebar - style you can find in sidebar.scss  -->
+	<!-- ============================================================== -->
+	<!-- ============================================================== -->
+	<!-- Page wrapper  -->
+	<!-- ============================================================== -->
+	<div class="page-wrapper">
+		<!-- ============================================================== -->
+		<!-- Bread crumb and right sidebar toggle -->
+		<!-- ============================================================== -->
+		<div class="page-breadcrumb">
+			<div class="row">
+				<div class="col-7 align-self-center">
+					<h4 class="page-title text-truncate text-dark font-weight-medium mb-1">Basic Table</h4>
+					<div class="d-flex align-items-center">
+						<nav aria-label="breadcrumb">
+							<ol class="breadcrumb m-0 p-0">
+								<li class="breadcrumb-item"><a href="index.html" class="text-muted">Home</a></li>
+								<li class="breadcrumb-item text-muted active" aria-current="page">Library</li>
+							</ol>
+						</nav>
+					</div>
+				</div>
+				<div class="col-5 align-self-center">
+					<div class="customize-input float-right">
+						<select class="custom-select custom-select-set form-control bg-white border-0 custom-shadow custom-radius">
+							<option selected>Aug 19</option>
+							<option value="1">July 19</option>
+							<option value="2">Jun 19</option>
+						</select>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- ============================================================== -->
+		<!-- End Bread crumb and right sidebar toggle -->
+		<!-- ============================================================== -->
+		<!-- ============================================================== -->
+		<!-- Container fluid  -->
+		<!-- ============================================================== -->
+		<div class="container-fluid">
+			<!-- ============================================================== -->
+			<!-- Start Page Content -->
+			<!-- ============================================================== -->
+			<div class="row">
+				<div class="col-12">
+					<div class="card">
+						<div class="card-body">
+							<h3 class="card-title" th:text="${resultList[0].t_year + ' 년도'}"></h3>
+							<hr>
+							<div class="row mb-2">
+								<div class="col-6 d-flex justify-content-start">
+									<button type="button" class="btn waves-effect waves-light btn-primary m-1">btn1</button>
+									<button type="button" class="btn waves-effect waves-light btn-light m-1">btn2</button>
+								</div>
+								<div class="col-6 d-flex justify-content-end">
+									<button type="button" class="btn waves-effect waves-light btn-primary m-1" data-toggle="modal" data-target="#class_create_modal">반 생성</button>
+
+								</div>
+							</div>
+							<div class="table-responsive">
+								<table id="class_by_year" class="table table-hover table-bordered no-wrap" style="width: 100%">
+									<thead>
+										<tr>
+											<th scope="col">번호</th>
+											<th scope="col">학년</th>
+											<th scope="col">반</th>
+											<th scope="col">직원명</th>
+										</tr>
+									</thead>
+									<tbody>
+										<th:block th:if="${#lists.isEmpty(resultList)}">
+											<tr>
+												<td colspan="7">반 배정 목록이 없습니다.</td>
+											</tr>
+										</th:block>
+										<th:block th:if="${!#lists.isEmpty(resultList)}">
+												<tr th:each="history, historyStat : ${resultList}">
+											        <td scope="row" th:text="${historyStat.count}"></td>
+											        <td th:text="${history.grade + ' 학년'}"></td>
+											        <td th:text="${history.grade_class + ' 반'}"></td>
+											        <td th:text="${history.teach_emp_name == null ? '-': history.teach_emp_name}"></td>
+											    </tr>
+										</th:block>
+									</tbody>
+								</table>
+
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<!-- ============================================================== -->
+			<!-- End PAge Content -->
+			<!-- ============================================================== -->
+			<!-- ============================================================== -->
+			<!-- Right sidebar -->
+			<!-- ============================================================== -->
+			<!-- .right-sidebar -->
+			<!-- ============================================================== -->
+			<!-- End Right sidebar -->
+			<!-- ============================================================== -->
+		</div>
+		<!-- ============================================================== -->
+		<!-- End Container fluid  -->
+		<!-- ============================================================== -->
+		<!-- ============================================================== -->
+		<!-- footer -->
+		<!-- ============================================================== -->
+		<footer class="footer text-center text-muted">
+			All Rights Reserved by Adminmart. Designed and Developed by <a href="https://wrappixel.com">WrapPixel</a>.
+		</footer>
+		<!-- ============================================================== -->
+		<!-- End footer -->
+		<!-- ============================================================== -->
+	</div>
+	<!-- ============================================================== -->
+	<!-- End Page wrapper  -->
+	<!-- ============================================================== -->
+	<!-- ============================================================== -->
+	<!-- End Wrapper -->
+	<!-- ============================================================== -->
+	<!-- End Wrapper -->
+	<!-- ============================================================== -->
+	<!-- All Jquery -->
+	<!-- ============================================================== -->
+	<script src="/assets/libs/jquery/dist/jquery.min.js"></script>
+	<!-- Bootstrap tether Core JavaScript -->
+	<script src="/assets/libs/popper.js/dist/umd/popper.min.js"></script>
+	<script src="/assets/libs/bootstrap/dist/js/bootstrap.min.js"></script>
+	<!-- apps -->
+	<!-- apps -->
+	<script src="/dist/js/app-style-switcher.js"></script>
+	<script src="/dist/js/feather.min.js"></script>
+	<!-- slimscrollbar scrollbar JavaScript -->
+	<script src="/assets/libs/perfect-scrollbar/dist/perfect-scrollbar.jquery.min.js"></script>
+	<script src="/assets/extra-libs/sparkline/sparkline.js"></script>
+	<!--Wave Effects -->
+	<!-- themejs -->
+	<!--Menu sidebar -->
+	<script src="/dist/js/sidebarmenu.js"></script>
+	<!--Custom JavaScript -->
+	<script src="/dist/js/custom.min.js"></script>
+	<!--This page plugins -->
+	<script src="/assets/extra-libs/datatables.net/js/jquery.dataTables.min.js"></script>
+	<script src="/dist/js/pages/datatable/datatable-basic.init.js"></script>
+
+    <script>
+	    function moveToDetailPage(t_year) {
+	        window.location.href = '/grade-class/' + t_year;
+	    }
+	</script>
+	</body>
+</html>

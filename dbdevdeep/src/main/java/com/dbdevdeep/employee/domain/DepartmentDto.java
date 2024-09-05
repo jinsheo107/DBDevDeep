@@ -16,15 +16,15 @@ import lombok.ToString;
 public class DepartmentDto {
 
 	private String dept_code;
-	private String dept_title;
+	private String dept_name;
 	
 	public Department toEntity() {
 		return Department.builder()
-				.deptCode(dept_code).deptTitle(dept_title).build();
+				.deptCode(dept_code).deptName(dept_name).build();
 	}
 	
 	public DepartmentDto toDto(Department dept) {
 		return DepartmentDto.builder()
-				.dept_code(dept.getDeptCode()).dept_title(dept.getDeptTitle()).build();
+				.dept_code(dept.getDeptCode()).dept_name(dept.getDeptName()).build();
 	}
 }
