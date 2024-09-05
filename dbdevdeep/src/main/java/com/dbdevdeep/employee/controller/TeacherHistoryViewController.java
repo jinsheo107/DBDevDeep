@@ -1,6 +1,9 @@
 package com.dbdevdeep.employee.controller;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -37,15 +40,26 @@ public class TeacherHistoryViewController {
 		
 		int maxClass = 0;
 		
-		for(int i = 0; i < resultList.size(); i++) {
-			if(resultList.get(i).getGrade_class() > maxClass) {
-				maxClass = resultList.get(i).getGrade_class();
-			}
-		}
+		Map<String, List<TeacherHistoryDto>> gradeToClassMap = new HashMap<>();
 		
+		for (int grade = 1; grade <= 6; grade++) {
+	        gradeToClassMap.put(grade + "", new ArrayList<>());
+	    }
+		
+		for (TeacherHistoryDto dto : resultList) {
+	        int grade = dto.getGrade();
+	        int gradeClass = dto.getGrade_class();
+	        
+	        if (gradeClass > maxClass) {
+	            maxClass = gradeClass;
+	        }
+
+	        gradeToClassMap.get(grade + "").add(dto);
+	    }
 		
 		model.addAttribute("resultList", resultList);
 		model.addAttribute("maxClass", maxClass);
+		model.addAttribute("gradeToClassMap", gradeToClassMap);
 		
 		return "employee/grade_class_detail";
 	}

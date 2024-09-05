@@ -43,7 +43,6 @@ public class StudentService {
 	// 학생리스트를 옮겨주기 위해 dto로 변환하여 담아주는 절차
 	public List<StudentDto> selectStudentList(StudentDto studentDto){
 		List<Student> studentList = studentRepository.findAll();
-		System.out.println(studentList);
 		List<StudentDto> studentDtoList = new ArrayList<StudentDto>();
 		for(Student s : studentList) {
 			StudentDto dto = new StudentDto().toDto(s);

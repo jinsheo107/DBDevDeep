@@ -70,7 +70,7 @@ div.dataTables_wrapper div.dataTables_paginate ul.pagination {
 								</div>
 							</div>
 							<div class="table-responsive">
-								<table id="class_by_year" class="table table-hover table-bordered no-wrap" style="width: 100%">
+								<table id="class_by_year" class="table table-bordered no-wrap" style="width: 100%">
 									<thead>
 										<th:block th:if="${#lists.isEmpty(resultList)}">
 											<tr>
@@ -79,23 +79,21 @@ div.dataTables_wrapper div.dataTables_paginate ul.pagination {
 										</th:block>
 										<th:block th:if="${!#lists.isEmpty(resultList)}">
 											<tr>
-												<th scope="col">학년</th>
+												<th scope="col" style="width: 10%;">학년\반</th>
 												<th th:each="i : ${#numbers.sequence(1, maxClass)}" th:text="${i} + ' 반'"></th>
 											</tr>
 										</th:block>
 									</thead>
 									<tbody>
-										<th:block th:if="${#lists.isEmpty(resultList)}">
-											<tr>
-												<td colspan="7">반 배정 목록이 없습니다.</td>
-											</tr>
-										</th:block>
-										<th:block th:if="${!#lists.isEmpty(resultList)}">
-												<tr th:each="i : ${#numbers.sequence(1, 6)}">
-											        <th th:text="${i} + ' 학년'"></th>
-											        <!-- <td th:text="${history.teach_emp_name == null ? '-': history.teach_emp_name}"></td> -->
-											    </tr>
-										</th:block>
+										<tr th:each="grade : ${#numbers.sequence(1, 6)}">
+											<td th:text="${grade} + ' 학년'"></td>
+											<td th:each="i : ${#numbers.sequence(1, maxClass)}" data-toggle="modal" data-target="#addClass" style="cursor: pointer;">
+												<span th:if="${gradeToClassMap[grade + ''] != null and #lists.size(gradeToClassMap[grade + '']) >= i}" 
+													th:text="${gradeToClassMap[grade + ''][i-1].teach_emp_name == 'null' ? '미배정' : gradeToClassMap[grade + ''][i-1].teach_emp_name}"> 
+												</span> 
+												<span th:if="${gradeToClassMap[grade + ''] == null or #lists.size(gradeToClassMap[grade + '']) < i}"> </span>
+											</td>
+										</tr>
 									</tbody>
 								</table>
 
@@ -104,6 +102,50 @@ div.dataTables_wrapper div.dataTables_paginate ul.pagination {
 					</div>
 				</div>
 			</div>
+
+			<div id="addClass" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+				<div class="modal-dialog">
+					<div class="modal-content">
+						<div class="modal-header modal-colored-header bg-info">
+							<h4 class="modal-title" id="info-header-modalLabel">직원 반 배정</h4>
+							<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+						</div>
+						<div class="modal-body">
+							<form class="pl-3 pr-3" action="#">
+
+								<div class="form-group">
+									<label for="username">반배정번호</label> <input class="form-control" type="email" id="teacher_no" readonly>
+								</div>
+
+								<div class="form-group">
+									<label for="emailaddress">직원번호</label> <input class="form-control" type="email" id="emp_id">
+								</div>
+
+								<div class="form-group">
+									<label for="password">학년</label> <input class="form-control" type="password" id="grade">
+								</div>
+
+								<div class="form-group">
+									<label for="password">반</label> <input class="form-control" type="password" id="grade_class">
+								</div>
+								
+								<div class="form-group">
+									<label for="password">학년도</label> <input class="form-control" type="password" readonly id="t_year">
+								</div>
+
+								<div class="form-group text-center">
+									<button class="btn btn-primary" type="submit">Sign Up Free</button>
+								</div>
+
+							</form>
+
+						</div>
+					</div>
+					<!-- /.modal-content -->
+				</div>
+				<!-- /.modal-dialog -->
+			</div>
+			<!-- /.modal -->
 
 			<!-- ============================================================== -->
 			<!-- End PAge Content -->
@@ -160,10 +202,5 @@ div.dataTables_wrapper div.dataTables_paginate ul.pagination {
 	<script src="/assets/extra-libs/datatables.net/js/jquery.dataTables.min.js"></script>
 	<script src="/dist/js/pages/datatable/datatable-basic.init.js"></script>
 
-    <script>
-	    function moveToDetailPage(t_year) {
-	        window.location.href = '/grade-class/' + t_year;
-	    }
-	</script>
 	</body>
 </html>
