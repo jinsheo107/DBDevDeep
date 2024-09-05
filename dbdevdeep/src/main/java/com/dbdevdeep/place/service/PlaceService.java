@@ -38,6 +38,7 @@ public class PlaceService {
 		for(Place p : placeList) {
 			PlaceDto dto = new PlaceDto().toDto(p);
 			placeDtoList.add(dto);
+			
 		}
 		return placeDtoList;
 	}

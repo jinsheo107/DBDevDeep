@@ -18,10 +18,10 @@ import lombok.ToString;
 @ToString
 @Builder
 public class PlaceDto {
-	//엔티티로 연결했으니, 얘는 가공해서 사용하는애야
+	
 
 	private Long place_no;
-	private String emp_id; // 엔티티에선 Employee employee가 맞지만 여기선 가공해서 사용하기에 String타입으로
+	private String emp_id; 
 	private String place_name;
 	private String place_location;
 	private String place_content;
