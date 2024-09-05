@@ -1,5 +1,7 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{include/adress_book_layout}">
+<html xmlns:th="http://www.thymeleaf.org" 
+		xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" 
+		layout:decorate="~{include/student_layout}">
 <th:block layout:fragment="content">
 	<body>
 	<style>
@@ -63,14 +65,12 @@
 										<thead>
 											<tr>
 												<th scope="col">번호</th>
-												<th scope="col">직원번호</th>
-												<th scope="col">직원명</th>
-												<th scope="col">출근여부</th>
-												<th scope="col">부서</th>
-												<th scope="col">직급</th>
-												<th scope="col">담당</th>
-												<th scope="col">내선전화</th>
-												<th scope="col">전화번호</th>
+												<th scope="col">구분</th>
+												<th scope="col">학년</th>
+												<th scope="col">반</th>
+												<th scope="col">번호</th>
+												<th scope="col">성명</th>
+												<th scope="col">생년월일</th>
 											</tr>
 										</thead>
 										<tbody>
@@ -80,16 +80,16 @@
 												</tr>
 											</th:block>
 											<th:block th:if="${!#lists.isEmpty(resultList)}">
-												<tr th:each="employee, employeeStat : ${resultList}">
-													<td scope="row" th:text="${employeeStat.count}"></td>
-													<td th:text="${employee.emp_id}"></td>
-													<td th:text="${employee.emp_name}"></td>
-													<td></td>
-													<td th:text="${employee.dept_title}"></td>
-													<td th:text="${employee.job_title}"></td>
-													<td></td>
-													<td th:text="${employee.emp_internal_phone}"></td>
-													<td th:text="${employee.emp_phone}"></td>
+												<tr th:each="student, studentStat : ${resultList}">
+													<td scope="row" th:text="${studentStat.count}"></td>
+													<td th:text="${student.student_status}"></td>
+													<td>학년</td>
+													<td>반</td>
+													<td>번호</td>
+													<td th:text="${student.student_name}"></td>
+													<td>
+														<a th:text="${student.student_birth}" th:href="@{/student/{no}(no=${student.student_no})}"></a> 
+													</td>
 												</tr>
 											</th:block>
 										</tbody>
@@ -135,24 +135,24 @@
 		<!-- ============================================================== -->
 		<!-- All Jquery -->
 		<!-- ============================================================== -->
-		<script src="assets/libs/jquery/dist/jquery.min.js"></script>
+		<script src="/assets/libs/jquery/dist/jquery.min.js"></script>
 		<!-- Bootstrap tether Core JavaScript -->
-		<script src="assets/libs/popper.js/dist/umd/popper.min.js"></script>
-		<script src="assets/libs/bootstrap/dist/js/bootstrap.min.js"></script>
+		<script src="/assets/libs/popper.js/dist/umd/popper.min.js"></script>
+		<script src="/assets/libs/bootstrap/dist/js/bootstrap.min.js"></script>
 		<!-- apps -->
 		<!-- apps -->
-		<script src="dist/js/app-style-switcher.js"></script>
-		<script src="dist/js/feather.min.js"></script>
+		<script src="/dist/js/app-style-switcher.js"></script>
+		<script src="/dist/js/feather.min.js"></script>
 		<!-- slimscrollbar scrollbar JavaScript -->
-		<script src="assets/libs/perfect-scrollbar/dist/perfect-scrollbar.jquery.min.js"></script>
-		<script src="assets/extra-libs/sparkline/sparkline.js"></script>
+		<script src="/assets/libs/perfect-scrollbar/dist/perfect-scrollbar.jquery.min.js"></script>
+		<script src="/assets/extra-libs/sparkline/sparkline.js"></script>
 		<!--Wave Effects -->
 		<!-- themejs -->
 		<!--Menu sidebar -->
-		<script src="dist/js/sidebarmenu.js"></script>
+		<script src="/dist/js/sidebarmenu.js"></script>
 		<!--Custom JavaScript -->
-		<script src="dist/js/custom.min.js"></script>
-		<script src="assets/extra-libs/datatables.net/js/jquery.dataTables.min.js"></script>
-		<script src="dist/js/pages/datatable/datatable-basic.init.js"></script>
+		<script src="/dist/js/custom.min.js"></script>
+		<script src="/assets/extra-libs/datatables.net/js/jquery.dataTables.min.js"></script>
+		<script src="/dist/js/pages/datatable/datatable-basic.init.js"></script>
 	</body>
 </html>

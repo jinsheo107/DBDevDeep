@@ -39,20 +39,20 @@ public class Employee {
 	@Column(name="emp_name")
 	private String empName;
 	
-	@Column(name="emp_no")
-	private String empNo;
+	@Column(name="emp_rrn")
+	private String empRrn;
 	
 	@Column(name="emp_phone")
 	private String empPhone;
 	
-	@Column(name="ori_pic")
-	private String oriPic;
+	@Column(name="ori_pic_name")
+	private String oriPicName;
 	
-	@Column(name="new_pic")
-	private String newPic;
+	@Column(name="new_pic_name")
+	private String newPicName;
 	
-	@Column(name="emp_post")
-	private String empPost;
+	@Column(name="emp_post_code")
+	private String empPostCode;
 	
 	@Column(name="emp_addr")
 	private String empAddr;
@@ -71,8 +71,8 @@ public class Employee {
 	@Column(name="emp_internal_phone")
 	private String empInternalPhone;
 	
-	@Column(name="vacation_time")
-	private int vacationTime;
+	@Column(name="vacation_hour")
+	private int vacationHour;
 	
 	@Column(name="hire_date")
 	private LocalDate hireDate;
