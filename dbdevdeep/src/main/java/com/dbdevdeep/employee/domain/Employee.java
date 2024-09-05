@@ -3,7 +3,6 @@ package com.dbdevdeep.employee.domain;
 import java.time.LocalDate;
 import java.util.List;
 
-import com.dbdevdeep.approve.domain.Approve;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -94,5 +93,6 @@ public class Employee {
 	
 	@OneToMany(mappedBy = "employee")
 	private List<TeacherHistory> teacherHistorys;
+	
 	
 }
