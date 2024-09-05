@@ -37,8 +37,8 @@ public class StudentApiController {
 		resultMap.put("res_msg", "게시글 등록중 오류가 발생했습니다.");
 		String savedFileName = studentFileService.upload(file);
 		if(savedFileName != null) {
-			dto.setStudent_ori_profile(file.getOriginalFilename());
-			dto.setStudent_new_profile(savedFileName);
+			dto.setStudent_ori_pic(file.getOriginalFilename());
+			dto.setStudent_new_pic(savedFileName);
 			if(studentService.createStudent(dto) != null) {
 				resultMap.put("res_code", "200");
 				resultMap.put("res_msg", "게시글이 성공적으로 등록되었습니다.");
