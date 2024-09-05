@@ -36,23 +36,23 @@ public class Student {
 	@Column(name="student_gender")
 	private String studentGender;
 	
-	@Column(name="student_address_no")
-	private String studentAddressNo;
+	@Column(name="student_post_code")
+	private String studentPostCode;
 	
-	@Column(name="student_address")
-	private String studentAddress;
+	@Column(name="student_addr")
+	private String studentAddr;
 	
-	@Column(name="student_detail_address")
-	private String studentDetailAddress;
+	@Column(name="student_detail_addr")
+	private String studentDetailAddr;
 	
 	@Column(name="student_phone")
 	private String studentPhone;
 	
-	@Column(name="student_ori_profile")
-	private String studentOriProfile;
+	@Column(name="student_ori_pic")
+	private String studentOriPic;
 	
-	@Column(name="student_new_profile")
-	private String studentNewProfile;
+	@Column(name="student_new_pic")
+	private String studentNewPic;
 	
 	@Column(name="student_status")
 	private String studentStatus;

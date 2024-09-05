@@ -8,6 +8,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 @Service
 public class StudentFileService {
+
+	// 6. 파일 저장 경로 설정(위에 전역 변수로)
 	private String fileDir = "C:\\student\\upload\\";
 	
 	public String upload(MultipartFile file) {
@@ -25,7 +27,6 @@ public class StudentFileService {
 			String uniqueName = uuid.toString().replaceAll("-", "");
 			// 5. 새로운 파일명
 			newFileName = uniqueName+fileExt;
-			// 6. 파일 저장 경로 설정(위에 전역 변수로)
 			// 7. 파일 껍데기 생성
 			File saveFile = new File(fileDir+newFileName);
 			// 8. 경로 존재 여부 확인
