@@ -4,6 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -80,14 +83,14 @@ public class EmployeeService {
 			dto.setAccount_status("Y");
 			dto.setLogin_yn("N");
 			dto.setEnt_status("Y");
-			dto.setVacation_time(120);
+			dto.setVacation_hour(120);
 
 			Employee e = Employee.builder()
 					.empId(emp_id).empPw(dto.getEmp_pw()).govId(dto.getGov_id())
-					.empName(dto.getEmp_name()).empNo(dto.getEmp_no()).empPhone(dto.getEmp_phone())
-					.oriPic(dto.getOri_pic()).newPic(dto.getNew_pic()).empPost(dto.getEmp_post())
+					.empName(dto.getEmp_name()).empRrn(dto.getEmp_rrn()).empPhone(dto.getEmp_phone())
+					.oriPicName(dto.getOri_pic_name()).newPicName(dto.getNew_pic_name()).empPostCode(dto.getEmp_post_code())
 					.empAddr(dto.getEmp_addr()).empDetailAddr(dto.getEmp_detail_addr())
-					.empInternalPhone(dto.getEmp_internal_phone()).vacationTime(dto.getVacation_time())
+					.empInternalPhone(dto.getEmp_internal_phone()).vacationHour(dto.getVacation_hour())
 					.hireDate(dto.getHire_date()).endDate(dto.getEnd_date()).entStatus(dto.getEnt_status())
 					.loginYn(dto.getLogin_yn()).accountStatus(dto.getAccount_status())
 					.chatStatusMsg(dto.getChat_status_msg())
@@ -110,9 +113,9 @@ public class EmployeeService {
 		for(Employee e : employeeList) {
 			EmployeeDto dto = new EmployeeDto().toDto(e);
 			dto.setDept_code(e.getDepartment().getDeptCode());
-			dto.setDept_title(e.getDepartment().getDeptTitle());
+			dto.setDept_name(e.getDepartment().getDeptName());
 			dto.setJob_code(e.getJob().getJobCode());
-			dto.setJob_title(e.getJob().getJobTitle());
+			dto.setJob_name(e.getJob().getJobName());
 			employeeDtoList.add(dto);
 		}
 		return employeeDtoList;

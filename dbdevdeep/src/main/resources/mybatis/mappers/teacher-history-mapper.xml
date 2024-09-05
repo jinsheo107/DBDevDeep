@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC
+"-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dbdevdeep.employee.mybatis.mapper.TeacherHistoryVoMapper">	
+	<select id="selectGroupByYear" resultType="com.dbdevdeep.employee.vo.GradeClassGroup">
+		SELECT t_year, COUNT(*) AS total, COUNT(CASE WHEN emp_id IS NOT NULL THEN 1 END) AS is_assign
+		FROM teacher_history
+		GROUP BY t_year;
+	</select>
+</mapper>

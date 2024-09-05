@@ -16,15 +16,15 @@ import lombok.ToString;
 public class JobDto {
 
 	private String job_code;
-	private String job_title;
+	private String job_name;
 	
 	public Job toEntity() {
 		return Job.builder()
-				.jobCode(job_code).jobTitle(job_title).build();
+				.jobCode(job_code).jobName(job_name).build();
 	}
 	
 	public JobDto toDto(Job job) {
 		return JobDto.builder()
-				.job_code(job.getJobCode()).job_title(job.getJobTitle()).build();
+				.job_code(job.getJobCode()).job_name(job.getJobName()).build();
 	}
 }
