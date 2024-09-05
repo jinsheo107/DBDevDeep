@@ -94,7 +94,8 @@ public class Employee {
 	
 	@OneToMany(mappedBy = "employee")
 	private List<TeacherHistory> teacherHistorys;
-	
+
 	@OneToMany(mappedBy = "employee")
 	private List<Schedule> shcedules;
+
 }

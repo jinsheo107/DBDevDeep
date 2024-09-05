@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+     xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+     layout:decorate="~{include/notice_layout}">
+<th:block layout:fragment="content">
+<style>
+	/* 읽기 전용 입력 필드 스타일 */
+	input[type="text"][readonly] {
+	    border: none; /* 테두리 제거 */
+	    background-color: transparent; /* 배경색 투명으로 설정 */
+	    outline: none; /* 포커스 시 외곽선 제거 */
+	    color: #000; /* 텍스트 색상 설정 (예: 검정색) */
+	    padding: 0; /* 기본 패딩 제거 */
+	    font-size: inherit; /* 상속된 폰트 크기 사용 */
+	}
+</style>
+<body>
+		<!-- ============================================================== -->
+		<!-- Page wrapper  -->
+		<!-- ============================================================== -->
+		<div class="page-wrapper">
+            <!-- ============================================================== -->
+            <!-- Container fluid  -->
+            <!-- ============================================================== -->
+            <div class="container-fluid">
+                <!-- ============================================================== -->
+                <!-- Start Page Content -->
+                <!-- ============================================================== -->
+                <div class="row">
+                	<div class="col-sm-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <h3 class="card-title">공지사항 게시글 작성</h3>
+                                <hr>
+                                <form id="noticeCreateForm" method="post" action="/noticeCreateEnd">
+                                	<div class="row form-group">
+	                                    <div class="col-md-2">
+	                                        <select class="custom-select mr-sm-2" id="category_no">
+	                                            <option value="0" selected>공지분류</option>
+	                                            <option value="1">학사일정</option>
+	                                            <option value="2">사이트</option>
+	                                            <option value="3">공고</option>
+	                                        </select>
+	                                    </div>
+		                                <div class="custom-control custom-checkbox">
+		                                    <input type="checkbox" class="custom-control-input" id="is_impoltant">
+		                                    <label class="custom-control-label mr-sm-3" for="is_impoltant">상단 고정</label>
+		                                </div>
+		                                <div class="custom-control custom-checkbox">
+		                                    <input type="checkbox" class="custom-control-input" id="is_cmt">
+		                                    <label class="custom-control-label" for="is_cmt">댓글 작성 허용</label>
+		                                </div>
+                                	</div>
+                                	<div class="row form-group">
+                                		<div class="col-md-10">
+                                			<small id="title" class="form-text text-muted">제목</small>
+	                               			<input type="text" class="form-control" id="notice_title" placeholder="제목을 입력하세요.">
+                                		</div>
+                                		
+                                		<div class=" col-md-2 ">
+                                        	<small id="name" class="form-text text-muted">작성자</small>
+                                			<input type="text" class="form-control" id="writer_name" th:value="${writer.emp_name}" readonly>
+                                			<input type="hidden" class="form-control" id="writer_id" th:value="${writer.emp_id}">
+                                		</div>
+                                	</div>
+                                	<div class="row form-group">
+                                		<div class="col-md-12">
+                                        	<small id="notice_content" class="form-text text-muted">내용</small>
+                                			<textarea class="form-control" rows="20" placeholder="내용을 입력해주세요."></textarea>
+                                		</div>
+                                	</div>
+                                	<div class="row">
+                                        <div class="col-md-10">
+                                            <label class="form-control" for="notice_attr_file">파일을 선택하세요.</label>
+                                            <input type="file" class="custom-file-input" id="notice_attr_file">
+                                        </div>
+                                        <div class="col-md-2">
+                                            <button class="btn btn-outline-secondary" type="button" onclick="fileInput()">첨부</button>
+                                        </div>
+                                    </div>
+                                    <div class="row m-2">
+			                        	<div class="col-12 d-flex justify-content-center">
+				                            <button type="button" class="btn waves-effect waves-light btn-light m-2">취소</button>
+				                            <button type="button" class="btn waves-effect waves-light btn-primary m-2" 
+				                            onclick="location.href='/notice/create'">작성</button>
+			                        	</div>
+		                            </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- ============================================================== -->
+                <!-- End Page Content -->
+                <!-- ============================================================== -->
+                <!-- ============================================================== -->
+                <!-- Right sidebar -->
+                <!-- ============================================================== -->
+                <!-- .right-sidebar -->
+                <!-- ============================================================== -->
+                <!-- End Right sidebar -->
+                <!-- ============================================================== -->
+            </div>
+            <!-- ============================================================== -->
+            <!-- End Container fluid  -->
+            <!-- ============================================================== -->
+            <!-- ============================================================== -->
+            <!-- footer -->
+            <!-- ============================================================== -->
+            <footer class="footer text-center text-muted">
+                All Rights Reserved by Adminmart. Designed and Developed by <a
+                    href="https://wrappixel.com">WrapPixel</a>.
+            </footer>
+            <!-- ============================================================== -->
+            <!-- End footer -->
+            <!-- ============================================================== -->
+        </div>
+        <!-- ============================================================== -->
+        <!-- End Page wrapper  -->
+        <!-- ============================================================== -->
+    <!-- Custom script -->
+    <!-- ============================================================== -->   
+    <script>
+	    function fileInput() {
+	        // 파일 입력 요소를 찾고 클릭 이벤트를 트리거
+	        document.getElementById('notice_attr_file').click();
+	    }
+    </script>
+    <!-- ============================================================== -->
+    <!-- All Jquery -->
+    <!-- ============================================================== -->
+    <script src="/assets/libs/jquery/dist/jquery.min.js"></script>
+    <!-- Bootstrap tether Core JavaScript -->
+    <script src="/assets/libs/popper.js/dist/umd/popper.min.js"></script>
+    <script src="/assets/libs/bootstrap/dist/js/bootstrap.min.js"></script>
+    <!-- apps -->
+    <!-- apps -->
+    <script src="/dist/js/app-style-switcher.js"></script>
+    <script src="/dist/js/feather.min.js"></script>
+    <!-- slimscrollbar scrollbar JavaScript -->
+    <script src="/assets/libs/perfect-scrollbar/dist/perfect-scrollbar.jquery.min.js"></script>
+    <script src="/assets/extra-libs/sparkline/sparkline.js"></script>
+    <!--Wave Effects -->
+    <!-- themejs -->
+    <!--Menu sidebar -->
+    <script src="/dist/js/sidebarmenu.js"></script>
+    <!--Custom JavaScript -->
+    <script src="/dist/js/custom.min.js"></script>
+    <!--This page plugins -->
+    <script src="/assets/extra-libs/datatables.net/js/jquery.dataTables.min.js"></script>
+    <script src="/dist/js/pages/datatable/datatable-basic.init.js"></script>
+</body>
+
+</html>
