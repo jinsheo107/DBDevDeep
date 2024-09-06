@@ -4,11 +4,23 @@
      layout:decorate="~{include/notice_layout}">
 <th:block layout:fragment="content">
 <style>
+	/* datatable css */
 	div.dataTables_wrapper div.dataTables_paginate ul.pagination {
 	  margin: 2px 0;
 	  white-space: nowrap;
 	  justify-content: center;
+	}
+	/* a 태그 속성 제거 */
+	a {
+	    text-decoration: none; /* 밑줄 제거 */
+	    color: inherit;        /* 기본 색상 제거, 부모 요소의 색상 사용 */
+	    cursor: pointer;       /* 커서 스타일 변경 */
 	}	
+	/* a 태그 호버 시 스타일 */
+	a:hover {
+	    text-decoration: none; /* 호버 시 밑줄 추가 */
+	    color: inherit;           /* 호버 시 색상 변경 */
+	}
 </style>
 
 
@@ -25,6 +37,7 @@
 				<!-- ============================================================== -->
 				<!-- Start Page Content -->
 				<!-- ============================================================== -->
+				<script>console.log("test1");</script>
                 <div class="row">
                     <div class="col-12">
                         <div class="card">
@@ -32,17 +45,13 @@
                             	<h3 class="card-title">공지사항 게시판</h3>
                                 <hr>
 		                        <div class="row mb-2">
-		                        	<div class="col-6 d-flex justify-content-start">
-			                            <button type="button" class="btn waves-effect waves-light btn-primary m-1">btn1</button>
-			                            <button type="button" class="btn waves-effect waves-light btn-light m-1">btn2</button>
-		                        	</div>
-		                        	<div class="col-6 d-flex justify-content-end">
-			                            <button type="button" class="btn waves-effect waves-light btn-light m-1">btn3</button>
+		                        	<div class="col-12 d-flex justify-content-end">
 			                            <button type="button" class="btn waves-effect waves-light btn-primary m-1" 
-			                            onclick="location.href='/notice/create'">게시글 작성</button>
+			                            onclick="location.href='/notice/new'">게시글 작성</button>
 		                        	</div>
 	                            </div>
                                 <div class="table-responsive">
+                                <script>console.log("test2");</script>
                                     <table id="notice_config" class="table table-hover table-bordered no-wrap" style="width:100%">
                                         <thead>
                                             <tr>
@@ -55,6 +64,7 @@
                                             </tr>
                                         </thead>
                                         <tbody>
+                                        <script>console.log("test3");</script>
                                         	<th:block th:if="${#lists.isEmpty(resultList)}">
                                         		<tr>
                                         			<td colspan="6">게시글이 존재하지 않습니다.</td>
@@ -65,13 +75,17 @@
                                         			<td th:text="${notice.read_check ? 'V' : ''}"></td>
                                         			<td th:text="${noticeStat.count}"></td>
                                         			<td th:text="${notice.category_name}"></td>
-                                        			<td th:text="${notice.notice_title}"></td>
+                                        			<td>
+                                        				<a th:href="@{/notice/{noticeNo}(noticeNo=${notice.notice_no})}">
+											                <span th:text="${notice.notice_title}"></span>
+											            </a>
+                                        			</td>
                                         			<td th:text="${notice.writer_name}"></td>
-                                        			<td th:text="${notice.reg_time}"></td>
-                                        		</tr>
+                                        			<td th:text="${#temporals.format(notice.reg_time, 'yyyy.MM.dd')}"></td>
                                         	</th:block>
                                         </tbody>
                                     </table>
+                                    <script>console.log("test4");</script>
                                 </div>
                             </div>
                         </div>

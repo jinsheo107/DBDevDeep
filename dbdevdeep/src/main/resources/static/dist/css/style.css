@@ -1392,7 +1392,7 @@ pre {
   .form-control::placeholder {
     color: #b8c3d5;
     opacity: 1; }
-  .form-control:disabled, .form-control[readonly] {
+  .form-control:disabled, .form-control[disabled] {
     background-color: #e9ecef;
     opacity: 1; }
 

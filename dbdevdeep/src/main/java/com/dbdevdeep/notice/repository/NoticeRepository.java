@@ -6,5 +6,5 @@ import com.dbdevdeep.notice.domain.Notice;
 
 public interface NoticeRepository extends JpaRepository<Notice,Long> {
 	
-	
+	Notice findBynoticeNo(Long notice_no);
 }
