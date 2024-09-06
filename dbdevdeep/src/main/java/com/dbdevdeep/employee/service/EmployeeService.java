@@ -126,8 +126,6 @@ public class EmployeeService {
 		EmployeeDto dto = null;
 		if(employee!=null) {
 			dto = new EmployeeDto().toDto(employee);
-			
-			System.out.println(dto);
 		}
 		return dto;
 	}

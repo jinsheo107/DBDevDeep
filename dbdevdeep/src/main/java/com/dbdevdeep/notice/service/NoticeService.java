@@ -26,7 +26,7 @@ public class NoticeService {
 		this.noticeReadCheckRepository = noticeReadCheckRepository;
 	}
 	
-	
+	// 공지사항 목록 조회
 	public List<NoticeDto> selectNoticeList(NoticeDto noticeDto){
 		// 게시글 리스트 불러오기
 		List<Notice> noticeList = noticeRepository.findAll();
@@ -64,6 +64,29 @@ public class NoticeService {
 		}
 		
 		return noticeDtoList;
+	}
+	
+	// 공지사항 게시글 상세조회
+	public NoticeDto selectNoticeOne(Long notice_no) {
+		
+		Notice n = noticeRepository.findBynoticeNo(notice_no);
+		
+		NoticeDto dto = NoticeDto.builder()
+				.notice_no(n.getNoticeNo())
+				.writer_id(n.getEmployee().getEmpId())
+				.writer_name(n.getEmployee().getEmpName())
+				.category_no(n.getNoticeCategory().getCategoryNo())
+				.category_name(n.getNoticeCategory().getCategoryName())
+				.notice_title(n.getNoticeTitle())
+				.notice_content(n.getNoticeContent())
+				.is_important(n.isImportant())
+				.is_cmt(n.isCmt())
+				.reg_time(n.getRegTime())
+				.mod_time(n.getModTime())
+				.is_att(n.isAtt())
+				.build();
+		
+		return dto;
 	}
 
 }
