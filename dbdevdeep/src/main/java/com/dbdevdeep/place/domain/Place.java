@@ -31,7 +31,7 @@ public class Place {
 	
 	// 장소 번호(관리번호로 사용될 애)
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
+//	@GeneratedValue(strategy = GenerationType.IDENTITY) ==> 관리번호0번이 포함되기때문에
 	@Column(name = "place_no")
 	private Long placeNo;
 	

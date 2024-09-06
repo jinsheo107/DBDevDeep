@@ -2,8 +2,6 @@ package com.dbdevdeep.place.domain;
 
 import java.time.LocalDateTime;
 
-import com.dbdevdeep.employee.domain.Employee;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -36,6 +34,8 @@ public class PlaceDto {
 	private LocalDateTime reg_date;
 	private LocalDateTime mod_date;
 
+	// 포맷된 시간 범위
+	private String formattedTimeRange;
 	
 	public Place toEntity() {
 		return Place.builder()
@@ -57,6 +57,9 @@ public class PlaceDto {
 	}
 	
 	public PlaceDto toDto (Place place) {
+		// 시간데이터 포맷 HH:mm 형식
+		String formattedTimeRange = String.format("%02d:00 - %02d:00", place.getPlaceStarttime(), place.getPlaceEndtime());
+		
 		return PlaceDto.builder()
 				.place_no(place.getPlaceNo())
 				.emp_id(place.getEmployee().getEmpId())
@@ -66,6 +69,7 @@ public class PlaceDto {
 				.place_status(place.getPlaceStatus())
 				.place_start_time(place.getPlaceStarttime())
 				.place_end_time(place.getPlaceEndtime())
+				.formattedTimeRange(formattedTimeRange) // 포맷된 시간 범위 추가
 				.unuseable_reason(place.getUnuseableReason())
 				.unuseable_start_date(place.getUnuseableStartDate())
 				.unuseable_end_date(place.getUnuseableEndDate())

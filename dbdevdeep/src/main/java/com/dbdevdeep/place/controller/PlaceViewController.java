@@ -23,17 +23,7 @@ public class PlaceViewController {
 		this.employeeService = employeeService;
 	}
 	
-	 // 사용 불가 시작일과 종료일 데이터를 조회하여 화면에 전달
-    @GetMapping("/place/dates")
-    public String showDates(Model model) {
-        List<String> unuseableStartDates = placeService.getFormattedUnuseableStartDate();
-        List<String> unuseableEndDates = placeService.getFormattedUnuseableEndDate();
-        
-        model.addAttribute("unuseableStartDates", unuseableStartDates);
-        model.addAttribute("unuseableEndDates", unuseableEndDates);
 
-        return "place/dates"; // 뷰 파일 이름
-    }
 	
 	// 조회
 	@GetMapping("/place")
