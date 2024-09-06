@@ -68,19 +68,19 @@
                                         </thead>
                                         <tbody>
                                         <!-- 게시글이 없는 경우 -->
-                                        <th:block th:if="${#lists.isEmpty(resultList.content)}">
+                                        <th:block th:if="${#lists.isEmpty(resultList)}">
                                         	<tr>
                                         			<td colspan="4">요청된 결재건이 없습니다.</td>
                                         	</tr>
                                         </th:block>
                                         
                                         <!-- 게시글이 존재하는 경우 -->
-                                        <th:block th:if="${!lists.isEmpty(resultList.content)}">
-                                        	<tr th:each="board, boardStat : ${resultList.content}">
-                                        		<td th:text="${board.appro_title}"></td>
-                                        		<td th:text="${board.appro_time}"></td>
-                                        		<td th:text="${board.appro_type}"></td>
-                                        		<td th:text="${board.appro_status}"></td>
+                                        <th:block th:if="${!#lists.isEmpty(resultList)}">
+                                        	<tr th:each="approve, approveStat : ${resultList}">
+                                        		<td th:text="${approve.appro_title}"></td>
+                                        		<td th:text="${approve.appro_time}"></td>
+                                        		<td th:text="${approve.appro_type}"></td>
+                                        		<td th:text="${approve.appro_status}"></td>
                                         	</tr>
                                         <th:block>
                                         </tbody>

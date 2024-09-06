@@ -1,26 +1,18 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-     layout:decorate="~{include/employee_layout}">
+     layout:decorate="~{include/approve_layout}">
      
 <head>
-    <!-- 꼭 필요한지 확인해 볼 것  -->
+    <!-- 꼭 필요한지 확인해 볼 것
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <!-- Tell the browser to be responsive to screen width -->
+    Tell the browser to be responsive to screen width
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="">
     <meta name="author" content="">
-    <!-- Favicon icon -->
-    <link rel="icon" type="image/png" sizes="16x16" href="assets/images/favicon.png">
-    <title>Adminmart Template - The Ultimate Multipurpose admin template</title>
-    <!-- Custom CSS -->
-    <link href="dist/css/style.min.css" rel="stylesheet">
-     
-     
-     <!-- CKEditor의 CDN 스타일 시트를 불러옵니다 -->
-    <link rel="stylesheet" href="dist/css/ck.css">
-    <link rel="stylesheet" href="https://cdn.ckeditor.com/ckeditor5/43.0.0/ckeditor5.css">
+    Custom CSS
+    <link href="dist/css/style.min.css" rel="stylesheet"> -->
      
      <!-- 
      Tree 가 사용하는 jQuery로 상위에 선언 되어야 tree 가 문제 없이 작동합니다. 아래에 jQuery 가 선언되어있으면 아래 코드 삭제 필요합니다.
@@ -186,14 +178,13 @@
                     <td>성명</td>
                     <td><input type="text" name="emp_name" th:value="${#authentication.principal.dto.emp_name}" readonly style="border: 0; outline: none;"></td>	
                     <td>부서</td>
-                    
-                    <td><input type="text" name="dept_code" th:value="${#authentication.principal.dto.dept_code}" readonly style="border: 0; outline: none;"></td>
+                    <td><input type="text" name="dept_code" th:value="${#authentication.principal.dto.dept_name}" readonly style="border: 0; outline: none;"></td>
                 </tr>
                 <tr>
                     <td>직원번호</td>
                     <td><input type="text" name="emp_id" th:value="${#authentication.principal.dto.emp_id}" readonly style="border: 0; outline: none;"></td>
                     <td>직급</td>
-                    <td><input type="text" name="job_code" th:value="${#authentication.principal.dto.emp_phone}" readonly style="border: 0; outline: none;"></td>
+                    <td><input type="text" name="job_code" th:value="${#authentication.principal.dto.job_name}" readonly style="border: 0; outline: none;"></td>
                 </tr>
                 <tr>
                 	<td>제목</td>
@@ -205,8 +196,9 @@
                     <div style="display: flex; gap: 15px; justify-content: space-evenly; align-items: center;">
                         <div><label><input type="radio" name="vac_type" value="0" onclick="toggleHalfDay(false)"> 연차</label></div>
                         <div><label><input type="radio" name="vac_type" value="1" onclick="toggleHalfDay(true)"> 반차</label></div>
-                        <div><label><input type="radio" name="vac_type" value="2" onclick="toggleHalfDay(false)"> 공가</label></div>
-                        <div><label><input type="radio" name="vac_type" value="3" onclick="toggleHalfDay(false)"> 병가</label></div>
+                        <div><label><input type="radio" name="vac_type" value="8" onclick="toggleHalfDay(false)"> 공가</label></div>
+                        <div><label><input type="radio" name="vac_type" value="2" onclick="toggleHalfDay(false)"> 병가</label></div>
+                        <div><label><input type="radio" name="vac_type" value="3" onclick="toggleHalfDay(false)"> 조퇴</label></div>
                         <div><label><input type="radio" name="vac_type" value="4" onclick="toggleHalfDay(false)"> 경조사</label></div>
                         <div><label><input type="radio" name="vac_type" value="5" onclick="toggleHalfDay(false)"> 출산휴가</label></div>
                         </div>
@@ -214,12 +206,12 @@
                 </tr>
                 <tr>
                 	<td>일정</td>
-                	<td><input type="datetime" class="form-control" name="start_date"><input type="datetime" class="form-control" name="end_date"></td>
+                	<td><input type="datetime-local" id="datetime" class="form-control" name="start_date"><input type="datetime-local" class="form-control" name="end_date"></td>
                 	<td>반차</td>
                 	<td>
                 	<div style="display: flex; gap: 15px; justify-content: space-evenly; align-items: center;">
-                	<div><label><input type="radio" name="half_first" value="6" id="half_one" disabled>오전</label></div>
-                	<div><label><input type="radio" name="half_two" value="7" id="half_two" disabled>오후</label></div>
+                	<div><label><input type="radio" name="vac_type" value="6" id="half_one" disabled>오전</label></div>
+                	<div><label><input type="radio" name="vac_type" value="7" id="half_two" disabled>오후</label></div>
                 	</div>
                 	</td>
                 </tr>
@@ -234,17 +226,13 @@
 								*경조사 - 사전/사후에 행사일을 증명할 수 있는 서류 제출부탁드립니다.<br>
 								*명시된 결재자의 순서에 따라 결재라인이 생성됩니다. (대분류는 협의 > 결재 순)
 						</td>
-                </tr>
-          <tr>
+	                </tr>
+	          	<tr>
              <td colspan="4">
-        <!-- CKEditor가 적용될 영역 -->
-                <div>
-			        <div class="main-container">
-			            <div class="editor-container editor-container_classic-editor editor-container_include-block-toolbar" id="editor-container">
-			                <div class="editor-container__editor"><div id="editor"></div></div>
-			            </div>
-			        </div>
-			    </div>
+             <div style="text-align: center;"><h4>상기와 같이 휴가를 신청하오니 검토 후 승인하여 주시기 바랍니다.</h4></div>
+             <br><br>
+             <h1 style="text-align: center;">물망초등학교</h1>
+             
              </td>
            </tr>
                 
@@ -275,26 +263,15 @@
             </tbody>
         </table>
         </form>
-        <div>
-        <!-- CKEditor가 적용될 영역 -->
-        <div class="main-container">
-            <div class="editor-container editor-container_classic-editor editor-container_include-block-toolbar" id="editor-container">
-                <div class="editor-container__editor"><div id="editor"></div></div>
-            </div>
-        </div>
-    </div>
-
         <div style= "display: flex; justify-content: space-between; align-items: center;">
         <div class="text-center mt-3">
-        	<button class="btn btn-success">목록</button>
+        	<input type="button" value="목록" class="btn btn-success" th:onclick="|location.href='@{/approve}'|"></button>
         </div>
         <div class="text-center mt-3">
             <button class="btn btn-primary">임시 저장</button>
 			<button class="btn btn-success" id="approSubmit">결재 요청</button>
-
         </div>
         </div>
-       
     </div>
     
     <div class="modal fade" id="treeModal" tabindex="-1" role="dialog" aria-labelledby="treeModalLabel" aria-hidden="true">
@@ -317,18 +294,6 @@
             </div>
         </div>
     </div>
-    <!--  -->
-    
-                <!-- ============================================================== -->
-                <!-- End PAge Content -->
-                <!-- ============================================================== -->
-                <!-- ============================================================== -->
-                <!-- Right sidebar -->
-                <!-- ============================================================== -->
-                <!-- .right-sidebar -->
-                <!-- ============================================================== -->
-                <!-- End Right sidebar -->
-                <!-- ============================================================== -->
             </div>
 						</div>
 					</div>
@@ -386,6 +351,7 @@
 	<!--Custom JavaScript -->
 	<script src="dist/js/custom.min.js"></script>
 	
+	<!-- 반차 선택시 오전/오후 선택기능 활성화 -->
 	 <script type="text/javascript">
     function toggleHalfDay(enable) {
         document.getElementById("half_one").disabled = !enable;
@@ -393,6 +359,27 @@
     }
     
     </script>
+    
+    <script>
+    document.getElementById("datetime").addEventListener("input", function (e) {
+        // 사용자가 입력한 값에서 시간과 분을 가져오기
+        let value = e.target.value;
+        let date = new Date(value);
+
+        // 분을 00으로 설정
+        date.setMinutes(0);
+
+        // 업데이트된 날짜와 시간을 다시 설정 (로컬 시간대 기준)
+        let year = date.getFullYear();
+        let month = ("0" + (date.getMonth() + 1)).slice(-2); // 월은 0부터 시작하므로 +1 필요
+        let day = ("0" + date.getDate()).slice(-2);
+        let hours = ("0" + date.getHours()).slice(-2);
+        let minutes = "00"; // 항상 00분으로 설정
+
+        let updatedValue = `${year}-${month}-${day}T${hours}:${minutes}`;
+        e.target.value = updatedValue;
+    });
+</script>
     
     <script>
     // 결재 요청 버튼만 유효성 검사를 실행하도록 설정
@@ -437,19 +424,7 @@
 </script>
 
     
-    <!-- CKEditer 를 위한 코드  -->
-    <script type="importmap">
-    {
-        "imports": {
-            "ckeditor5": "https://cdn.ckeditor.com/ckeditor5/43.0.0/ckeditor5.js",
-            "ckeditor5/": "https://cdn.ckeditor.com/ckeditor5/43.0.0/"
-        }
-    }
-    </script>
-
-    <!-- CKEditor 설정을 위한 main.js 파일을 불러옵니다 -->
-    <script type="module" src="dist/js/main.js"></script>
-
+    
 	
 </th:block>
 </html>
