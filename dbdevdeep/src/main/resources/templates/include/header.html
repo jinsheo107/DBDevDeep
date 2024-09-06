@@ -221,10 +221,14 @@
             <li class="nav-item dropdown">
               <a class="nav-link dropdown-toggle" href="javascript:void(0)" data-toggle="dropdown" aria-haspopup="true"
                 aria-expanded="false">
-                <img src="/assets/images/users/user-profile.png" alt="user" class="rounded-circle" width="40"
-                  style="margin-top:-3px;">
-                <span class="ml-2 d-none d-lg-inline-block"><span>안녕하세요,</span> <span class="text-dark">유저님!</span> <i
-                    data-feather="chevron-down" class="svg-icon"></i></span>
+                <img th:src="@{'/UploadImg/employee/' + ${#authentication.principal.dto.new_pic_name}}" alt="user" class="rounded-circle" style="margin-top:-3px; width: 40px; height: 40px; object-fit: cover;">
+
+                <span class="ml-2 d-none d-lg-inline-block">
+                	<span>안녕하세요, </span>
+                	<span class="text-dark" sec:authentication="principal.dto.emp_name"></span>
+					<span class="text-dark">님!</span> 
+					<i data-feather="chevron-down" class="svg-icon"></i>
+				</span>
               </a>
               <div class="dropdown-menu dropdown-menu-right user-dd animated flipInY">
 				    <div class="dropdown-divider" style="margin-top: -2px;"></div>
