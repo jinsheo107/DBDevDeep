@@ -7,6 +7,17 @@ div.dataTables_wrapper div.dataTables_paginate ul.pagination {
 	white-space: nowrap;
 	justify-content: center;
 }
+
+td span {
+    display: block;
+    width: 100%;
+    height: 56px;        
+    box-sizing: border-box;
+    cursor: pointer;
+    text-align: center;
+    line-height: 56px;
+}
+
 </style>
 
 	<!-- ============================================================== -->
@@ -61,11 +72,10 @@ div.dataTables_wrapper div.dataTables_paginate ul.pagination {
 							<hr>
 							<div class="row mb-2">
 								<div class="col-6 d-flex justify-content-start">
-									<button type="button" class="btn waves-effect waves-light btn-primary m-1">btn1</button>
-									<button type="button" class="btn waves-effect waves-light btn-light m-1">btn2</button>
+									<button type="button" class="btn waves-effect waves-light btn-outline-secondary">목록</button>
 								</div>
 								<div class="col-6 d-flex justify-content-end">
-									<button type="button" class="btn waves-effect waves-light btn-primary m-1" data-toggle="modal" data-target="#class_create_modal">반 생성</button>
+									<button type="button" class="btn waves-effect waves-light btn-primary m-1" data-toggle="modal" data-target="#class_create_modal">반 수정</button>
 
 								</div>
 							</div>
@@ -87,11 +97,14 @@ div.dataTables_wrapper div.dataTables_paginate ul.pagination {
 									<tbody>
 										<tr th:each="grade : ${#numbers.sequence(1, 6)}">
 											<td th:text="${grade} + ' 학년'"></td>
-											<td th:each="i : ${#numbers.sequence(1, maxClass)}" data-toggle="modal" data-target="#addClass" style="cursor: pointer;">
-												<span th:if="${gradeToClassMap[grade + ''] != null and #lists.size(gradeToClassMap[grade + '']) >= i}" 
-													th:text="${gradeToClassMap[grade + ''][i-1].teach_emp_name == 'null' ? '미배정' : gradeToClassMap[grade + ''][i-1].teach_emp_name}"> 
+											<td th:each="i : ${#numbers.sequence(1, maxClass)}" style="padding: 0px; justify-content: center; ">
+												<span th:if="${gradeToClassMap[grade + ''] != null and #lists.size(gradeToClassMap[grade + '']) >= i and gradeToClassMap[grade + ''][i-1].teach_emp_name != 'null'}" 
+													th:text="${gradeToClassMap[grade + ''][i-1].teach_emp_name}"
+													data-toggle="modal" data-target="#editClass"> 
 												</span> 
-												<span th:if="${gradeToClassMap[grade + ''] == null or #lists.size(gradeToClassMap[grade + '']) < i}"> </span>
+												<span th:if="${gradeToClassMap[grade + ''] != null and #lists.size(gradeToClassMap[grade + '']) >= i and gradeToClassMap[grade + ''][i-1].teach_emp_name == 'null'}" 
+													th:text="미배정" data-toggle="modal" data-target="#addClass"></span>
+												<span th:if="${gradeToClassMap[grade + ''] == null or #lists.size(gradeToClassMap[grade + '']) < i}" style="cursor: default;"> </span>
 											</td>
 										</tr>
 									</tbody>
@@ -131,6 +144,50 @@ div.dataTables_wrapper div.dataTables_paginate ul.pagination {
 								
 								<div class="form-group">
 									<label for="password">학년도</label> <input class="form-control" type="password" readonly id="t_year">
+								</div>
+
+								<div class="form-group text-center">
+									<button class="btn btn-primary" type="submit">Sign Up Free</button>
+								</div>
+
+							</form>
+
+						</div>
+					</div>
+					<!-- /.modal-content -->
+				</div>
+				<!-- /.modal-dialog -->
+			</div>
+			<!-- /.modal -->
+			
+			<div id="editClass" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+				<div class="modal-dialog">
+					<div class="modal-content">
+						<div class="modal-header modal-colored-header bg-info">
+							<h4 class="modal-title" id="info-header-modalLabel">직원 반 수정</h4>
+							<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+						</div>
+						<div class="modal-body">
+							<form class="pl-3 pr-3" action="#">
+
+								<div class="form-group">
+									<label for="username">반배정번호</label> <input class="form-control" type="email" id="edit_teacher_no" readonly>
+								</div>
+
+								<div class="form-group">
+									<label for="emailaddress">직원번호</label> <input class="form-control" type="email" id="edit_emp_id">
+								</div>
+
+								<div class="form-group">
+									<label for="password">학년</label> <input class="form-control" type="password" id="edit_grade">
+								</div>
+
+								<div class="form-group">
+									<label for="password">반</label> <input class="form-control" type="password" id="edit_grade_class">
+								</div>
+								
+								<div class="form-group">
+									<label for="password">학년도</label> <input class="form-control" type="password" readonly id="edit_t_year">
 								</div>
 
 								<div class="form-group text-center">
@@ -201,6 +258,24 @@ div.dataTables_wrapper div.dataTables_paginate ul.pagination {
 	<!--This page plugins -->
 	<script src="/assets/extra-libs/datatables.net/js/jquery.dataTables.min.js"></script>
 	<script src="/dist/js/pages/datatable/datatable-basic.init.js"></script>
-
+	<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // 모든 td 요소를 가져온다
+        document.querySelectorAll('td[data-teach-emp-name]').forEach(td => {
+            td.addEventListener('click', function() {
+                // 데이터 속성에서 teach_emp_name 값을 가져온다
+                const teachEmpName = this.getAttribute('data-teach-emp-name');
+                
+                if (teachEmpName === '미배정') {
+                    // 미배정인 경우 직원 등록 모달을 연다
+                    $('#addClass').modal('show');
+                } else if (teachEmpName !== 'null') {
+                    // teach_emp_name이 null이 아닌 경우 직원 수정 모달을 연다
+                    $('#editClass').modal('show');
+                }
+            });
+        });
+    });
+</script>
 	</body>
 </html>
