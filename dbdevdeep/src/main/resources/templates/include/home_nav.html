@@ -183,15 +183,20 @@
                                 <tbody>
                                     <tr>
                                         <td class="info_label">부서</td>
-                                        <td class="info_value">2학년</td>
+                                        <td class="info_value" sec:authentication="principal.dto.dept_name"></td>
                                     </tr>
                                     <tr>
                                         <td class="info_label">직급</td>
-                                        <td class="info_value">교사</td>
+                                        <td class="info_value">
+                                        	<span th:if="${#authentication.principal.dto.dept_code != 'D4'}" sec:authentication="principal.dto.job_name"></span>
+                                        	<span th:if="${#authentication.principal.dto.dept_code == 'D4'}" th:text="-"></span>
+										</td>
                                     </tr>
                                     <tr>
                                         <td class="info_label">내선번호</td>
-                                        <td class="info_value" sec:authentication="principal.dto.emp_internal_phone"></td>
+                                        <td class="info_value" sec:authentication="principal.dto.emp_internal_phone">
+                                        	
+                                        </td>
                                     </tr>
                                 </tbody>
                             </table>
