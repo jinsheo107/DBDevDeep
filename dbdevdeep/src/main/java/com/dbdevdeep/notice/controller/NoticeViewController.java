@@ -39,7 +39,7 @@ public class NoticeViewController {
 		return "notice/list";
 	}
 	
-	// 새 글 작성
+	// 새 글 작성 폼
 	@GetMapping("/notice/new")
 	public String createNotice(Model model) {
 		

@@ -9,9 +9,12 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
 
+import com.dbdevdeep.employee.domain.Employee;
+import com.dbdevdeep.employee.repository.EmployeeRepository;
 import com.dbdevdeep.notice.domain.Notice;
 import com.dbdevdeep.notice.domain.NoticeReadCheck;
 import com.dbdevdeep.notice.dto.NoticeDto;
+import com.dbdevdeep.notice.repository.NoticeCategoryRepository;
 import com.dbdevdeep.notice.repository.NoticeReadCheckRepository;
 import com.dbdevdeep.notice.repository.NoticeRepository;
 
@@ -20,10 +23,17 @@ public class NoticeService {
 	
 	private final NoticeRepository noticeRepository;
 	private final NoticeReadCheckRepository noticeReadCheckRepository;
+	private final EmployeeRepository employeeRepository;
+	private final NoticeCategoryRepository noticeCategoryRepository;
 	@Autowired
-	public NoticeService(NoticeRepository noticeRepository, NoticeReadCheckRepository noticeReadCheckRepository) {
+	public NoticeService(NoticeRepository noticeRepository, 
+			NoticeReadCheckRepository noticeReadCheckRepository, 
+			EmployeeRepository employeeRepository,
+			NoticeCategoryRepository noticeCategoryRepository) {
 		this.noticeRepository = noticeRepository;
 		this.noticeReadCheckRepository = noticeReadCheckRepository;
+		this.employeeRepository = employeeRepository;
+		this.noticeCategoryRepository = noticeCategoryRepository;
 	}
 	
 	// 공지사항 목록 조회
@@ -87,6 +97,28 @@ public class NoticeService {
 				.build();
 		
 		return dto;
+	}
+	
+	// 공지사항 게시글 작성
+	public int createNotice(NoticeDto dto) {
+		int result = -1;
+		
+		try {
+			Employee e = employeeRepository.findByempId(dto.getWriter_id());
+			
+			
+//			Notice n = Notice.builder()
+//					.noticeNo(dto.getNotice_no())
+//					.employee(e)
+////					.noticeCategory(nc)
+			
+			
+//			noticeRepository.save(n);
+			result = 1;
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		return result;
 	}
 
 }
