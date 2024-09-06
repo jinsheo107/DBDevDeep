@@ -35,7 +35,6 @@ public class NoticeViewController {
 		List<NoticeDto> resultList = noticeService.selectNoticeList(dto);
 		
 		model.addAttribute("resultList",resultList);
-		
 		return "notice/list";
 	}
 	

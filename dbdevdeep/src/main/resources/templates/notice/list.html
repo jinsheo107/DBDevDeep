@@ -37,6 +37,7 @@
 				<!-- ============================================================== -->
 				<!-- Start Page Content -->
 				<!-- ============================================================== -->
+				<script>console.log("test1");</script>
                 <div class="row">
                     <div class="col-12">
                         <div class="card">
@@ -50,6 +51,7 @@
 		                        	</div>
 	                            </div>
                                 <div class="table-responsive">
+                                <script>console.log("test2");</script>
                                     <table id="notice_config" class="table table-hover table-bordered no-wrap" style="width:100%">
                                         <thead>
                                             <tr>
@@ -62,6 +64,7 @@
                                             </tr>
                                         </thead>
                                         <tbody>
+                                        <script>console.log("test3");</script>
                                         	<th:block th:if="${#lists.isEmpty(resultList)}">
                                         		<tr>
                                         			<td colspan="6">게시글이 존재하지 않습니다.</td>
@@ -82,6 +85,7 @@
                                         	</th:block>
                                         </tbody>
                                     </table>
+                                    <script>console.log("test4");</script>
                                 </div>
                             </div>
                         </div>
