@@ -188,7 +188,7 @@
                                         <td class="info_label">직급</td>
                                         <td class="info_value">
                                         	<span th:if="${#authentication.principal.dto.dept_code != 'D4'}" sec:authentication="principal.dto.job_name"></span>
-                                        	<span th:if="${#authentication.principal.dto.dept_code == 'D4'}" th:text="-"></span>
+                                        	<span th:if="${#authentication.principal.dto.dept_code == 'D4'}" th:text="${'-'}"></span>
 										</td>
                                     </tr>
                                     <tr>

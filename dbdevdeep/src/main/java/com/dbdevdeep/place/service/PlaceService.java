@@ -80,7 +80,8 @@ public class PlaceService {
 			PlaceDto dto = new PlaceDto().toDto(p);
 			
 			// 시간 데이터 포맷 시간범위
-
+			String formattedTimeRange = getFormattedTimeRange(p);
+			dto.setFormattedTimeRange(formattedTimeRange);
 			
 			// 날짜 데이터를 포맷해서 DTO에 추가
 			if(p.getUnuseableStartDate() != null) {
