@@ -2,142 +2,148 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <th:block th:fragment="homeNavLayout">
 	<style>
-            /* 사이드바 컨테이너 스타일링 */
+		/* 화면 크기에 따라 사이드바의 너비 고정 */
+        @media (max-width: 1200px) {
             .sidebar_container {
-                display: flex;
-                flex-direction: column;
-                gap: 20px; /* sidebar_div 사이의 간격 */
-                padding: 20px; /* sidebar_container와 사이드바의 간격 */
-                height: calc(100vh - 100px); /* 컨테이너의 높이를 뷰포트의 높이에서 패딩을 뺀 값으로 설정 */
+                overflow-x: hidden; /* 가로 스크롤을 숨기기 */
             }
+        }
+        /* 사이드바 컨테이너 스타일링 */
+        .sidebar_container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px; /* sidebar_div 사이의 간격 */
+            padding: 20px; /* sidebar_container와 사이드바의 간격 */
+            height: calc(100vh - 100px); /* 컨테이너의 높이를 뷰포트의 높이에서 패딩을 뺀 값으로 설정 */
+            max-width: 300px; /* 사이드바의 최대 너비 설정 */
+        }
 
-            /* 사이드바 내 div 스타일링 */
-            .sidebar_div {
-                border: 3px solid rgb(219, 219, 219); /* 테두리 색상 및 두께 */
-                width: 100%; /* 너비를 컨테이너에 맞추기 */
-                height: calc((100% - 20px) / 2); /* 높이를 컨테이너의 반절로 설정 (간격을 고려) */
-                border-radius: 10px;
-            }
+        /* 사이드바 내 div 스타일링 */
+        .sidebar_div {
+            border: 3px solid rgb(219, 219, 219); /* 테두리 색상 및 두께 */
+            width: 100%; /* 너비를 컨테이너에 맞추기 */
+            height: calc((100% - 20px) / 2); /* 높이를 컨테이너의 반절로 설정 (간격을 고려) */
+            border-radius: 10px;
+        }
 
-            /* 프로필 섹션 스타일링 */
-            .profile_section {
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                justify-content: center;
-            }
+        /* 프로필 섹션 스타일링 */
+        .profile_section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
 
-            /* 프로필 이미지 스타일링 */
-            .profile_image {
-                width: 120px; /* 프로필 이미지의 너비 */
-                height: 120px; /* 프로필 이미지의 높이 */
-                border-radius: 50%; /* 원형으로 만들기 */
-                overflow: hidden; /* 원형 테두리 안에서 이미지가 잘리도록 설정 */
-                margin-bottom: 20px; /* 이미지와 이름 사이의 간격 */
-                border: 3px solid rgb(219, 219, 219);
-            }
+        /* 프로필 이미지 스타일링 */
+        .profile_image {
+            width: 120px; /* 프로필 이미지의 너비 */
+            height: 120px; /* 프로필 이미지의 높이 */
+            border-radius: 50%; /* 원형으로 만들기 */
+            overflow: hidden; /* 원형 테두리 안에서 이미지가 잘리도록 설정 */
+            margin-bottom: 20px; /* 이미지와 이름 사이의 간격 */
+        }
 
-            .profile_image img {
-                width: 100%; /* 이미지의 너비를 컨테이너에 맞추기 */
-                height: 100%; /* 이미지의 높이를 컨테이너에 맞추기 */
-                object-fit: cover; /* 이미지 비율 유지하며 자르기 */
-            }
+        .profile_image img {
+            width: 100%; /* 이미지의 너비를 컨테이너에 맞추기 */
+            height: 100%; /* 이미지의 높이를 컨테이너에 맞추기 */
+            object-fit: cover; /* 이미지 비율 유지하며 자르기 */
+         }
 
-            /* 이름 스타일링 */
-            .profile_name div {
-                margin: 0; /* 기본 여백 제거 */
-                font-size: 18px; /* 이름의 글자 크기 */
-                font-weight:bolder; /* 이름을 굵게 표시 */
-                color: black;
-            }
+         /* 이름 스타일링 */
+         .profile_name div {
+            margin: 0; /* 기본 여백 제거 */
+            font-size: 18px; /* 이름의 글자 크기 */
+            font-weight:bolder; /* 이름을 굵게 표시 */
+            color: black;
+         }
 
-            /* 프로필 정보 테이블 스타일링 */
-            .profile_info {
-                display: flex;
-                justify-content: center; /* 가운데 정렬 */
-                width: 100%; /* 너비를 전체로 설정 */
-                margin-top: 10px;
-            }
+         /* 프로필 정보 테이블 스타일링 */
+         .profile_info {
+            display: flex;
+            justify-content: center; /* 가운데 정렬 */
+            width: 100%; /* 너비를 전체로 설정 */
+            margin-top: 10px;
+         }
 
-            .profile_info table {
-                border-collapse: collapse; /* 테두리 겹침 방지 */
-            }
+         .profile_info table {
+            border-collapse: collapse; /* 테두리 겹침 방지 */
+         }
 
-            .profile_info td {
-                padding: 5px 10px; /* 셀 안의 여백 */
-                text-align: left; /* 왼쪽 정렬 */
-            }
+         .profile_info td {
+            padding: 5px 10px; /* 셀 안의 여백 */
+            text-align: left; /* 왼쪽 정렬 */
+         }
 
-            .info_label {
-                font-weight: bolder; /* 라벨을 굵게 표시 */
-                color: black;
-            }
+         .info_label {
+            font-weight: bolder; /* 라벨을 굵게 표시 */
+            color: black;
+         }
 
-            .info_value{
-                color: rgb(66, 66, 66);
-            }
+         .info_value{
+            color: rgb(66, 66, 66);
+         }
 
-            /* 오늘 섹션 스타일링 */
-            .today_section {
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                justify-content: center;
-                padding: 20px; /* 패딩 추가 */
-            }
+         /* 오늘 섹션 스타일링 */
+         .today_section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px; /* 패딩 추가 */
+         }
 
-            .today_title {
-                font-size: 20px; /* 제목 글자 크기 */
-                font-weight: bold; /* 제목 굵게 */
-                color: black; /* 제목 색상 */
-                margin-bottom: 15px; /* 제목과 날짜 사이의 간격 */
-            }
+         .today_title {
+			font-size: 20px; /* 제목 글자 크기 */
+			font-weight: bold; /* 제목 굵게 */
+			color: black; /* 제목 색상 */
+			margin-bottom: 15px; /* 제목과 날짜 사이의 간격 */
+		}
 
-            .today_date {
-                font-size: 15px; /* 날짜 글자 크기 */
-                color: black; /* 날짜 색상 */
-                margin-bottom: 20px; /* 날짜와 테이블 사이의 간격 */
-            }
+			.today_date {
+				font-size: 15px; /* 날짜 글자 크기 */
+				color: black; /* 날짜 색상 */
+				margin-bottom: 20px; /* 날짜와 테이블 사이의 간격 */
+			}
 
-            /* 오늘의 정보 테이블 스타일링 */
-            .today_info {
-                display: flex;
-                justify-content: center; /* 가운데 정렬 */
-                width: 100%; /* 너비를 전체로 설정 */
-            }
+			/* 오늘의 정보 테이블 스타일링 */
+			.today_info {
+				display: flex;
+				justify-content: center; /* 가운데 정렬 */
+				width: 100%; /* 너비를 전체로 설정 */
+			}
 
-            .today_info table {
-                border-collapse: collapse; /* 테두리 겹침 방지 */
-            }
+			.today_info table {
+				border-collapse: collapse; /* 테두리 겹침 방지 */
+			}
 
-            .today_info td {
-                padding: 5px 14px; /* 셀 안의 여백 */
-                text-align: center; /* 왼쪽 정렬 */
-            }
+			.today_info td {
+				padding: 5px 14px; /* 셀 안의 여백 */
+				text-align: center; /* 왼쪽 정렬 */
+			}
 
-            /* 출근 및 퇴근 버튼 스타일링 */
-            .attendance_buttons {
-                display: flex;
-                flex-direction: column;
-                gap: 10px; /* 버튼 간의 간격 */
-                margin-top: 20px;
-                width: 100%; /* 버튼의 너비를 전체로 설정 */
-            }
+			/* 출근 및 퇴근 버튼 스타일링 */
+			.attendance_buttons {
+				display: flex;
+				flex-direction: column;
+				gap: 10px; /* 버튼 간의 간격 */
+				margin-top: 20px;
+				width: 100%; /* 버튼의 너비를 전체로 설정 */
+			}
 
-            .attendance_btn {
-                padding: 8px; /* 버튼 여백 */
-                font-size: 16px; /* 버튼 글자 크기 */
-                border: none; /* 버튼 테두리 제거 */
-                border-radius: 5px; /* 버튼 모서리 둥글게 */
-                cursor: pointer; /* 마우스 커서 포인터로 변경 */
-                width: 100%; /* 버튼의 너비를 전체로 설정 */
-                box-sizing: border-box; /* 패딩과 테두리를 너비에 포함 */
-            }
+			.attendance_btn {
+				padding: 8px; /* 버튼 여백 */
+				font-size: 16px; /* 버튼 글자 크기 */
+				border: none; /* 버튼 테두리 제거 */
+				border-radius: 5px; /* 버튼 모서리 둥글게 */
+				cursor: pointer; /* 마우스 커서 포인터로 변경 */
+				width: 100%; /* 버튼의 너비를 전체로 설정 */
+				box-sizing: border-box; /* 패딩과 테두리를 너비에 포함 */
+			}
 
-            .check-in {
-                background-color: #0031AE; /* 출근 버튼 색상 */
-                color: white; /* 출근 버튼 글자 색상 */
-            }
+			.check-in {
+				background-color: #0031AE; /* 출근 버튼 색상 */
+				color: white; /* 출근 버튼 글자 색상 */
+			}
 
             .check-out {
                 background-color: #424242; /* 퇴근 버튼 색상 */
@@ -166,25 +172,30 @@
                 <div class="sidebar_container">
                     <div class="sidebar_div profile_section">
                         <div class="profile_image">
-                            <img src="/assets/images/users/profile_img.jpg" alt="Profile Picture">
+                            <img th:src="@{'/UploadImg/employee/' + ${#authentication.principal.dto.new_pic_name}}" alt="Profile Picture">
                         </div>
                         <div class="profile_name">
-                            <div>이주빈</div> <!-- 이름을 여기에 입력 -->
+                            <div><span class="text-dark" sec:authentication="principal.dto.emp_name"></span></div> <!-- 이름을 여기에 입력 -->
                         </div>
                         <div class="profile_info">
                             <table>
                                 <tbody>
                                     <tr>
                                         <td class="info_label">부서</td>
-                                        <td class="info_value">2학년</td>
+                                        <td class="info_value" sec:authentication="principal.dto.dept_name"></td>
                                     </tr>
                                     <tr>
                                         <td class="info_label">직급</td>
-                                        <td class="info_value">교사</td>
+                                        <td class="info_value">
+                                        	<span th:if="${#authentication.principal.dto.dept_code != 'D4'}" sec:authentication="principal.dto.job_name"></span>
+                                        	<span th:if="${#authentication.principal.dto.dept_code == 'D4'}" th:text="-"></span>
+										</td>
                                     </tr>
                                     <tr>
                                         <td class="info_label">내선번호</td>
-                                        <td class="info_value">0451</td>
+                                        <td class="info_value" sec:authentication="principal.dto.emp_internal_phone">
+                                        	
+                                        </td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -192,7 +203,7 @@
                     </div>
                     <div class="sidebar_div today_section">
                         <div class="today_title">TODAY</div>
-                        <div class="today_date">2024년 9월 1일 월요일</div> <!-- 오늘의 날짜를 여기에 입력 -->
+                        <div class="today_date" id="toDay"></div> <!-- 오늘의 날짜를 여기에 입력 -->
                         <div class="today_info">
                             <table>
                                 <tbody>
@@ -218,6 +229,35 @@
                     </div>
                 </div>
             </div>
+            <script>
+	            let today = new Date();   
+	
+	            let year = today.getFullYear(); // 년도
+	            let month = today.getMonth() + 1;  // 월
+	            let date = today.getDate();  // 날짜
+	            let day = today.getDay();  // 요일
+	            
+	            if(day == 0) {
+	            	day = '일';
+	            } else if(day == 1) {
+	            	day = '월';
+	            } else if(day == 2) {
+	            	day = '화';
+	            } else if(day == 3) {
+	            	day = '수';
+	            } else if(day == 4) {
+	            	day = '목';
+	            } else if(day == 5) {
+	            	day = '금';
+	            } else if(day == 6) {
+	            	day = '토';
+	            } 
+				
+	            const toDay = document.getElementById('toDay');
+	            toDay.innerText = year + '년 ' + month + '월 ' + date + '일 ' + day + '요일';
+	            
+
+            </script>
         </aside>
 </th:block>
 </html>

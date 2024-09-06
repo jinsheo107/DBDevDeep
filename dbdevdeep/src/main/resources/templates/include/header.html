@@ -2,9 +2,16 @@
 <html xmlns:th="http://www.thymeleaf.org">
 	<th:block th:fragment="headerLayout">
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.4.10/dist/sweetalert2.min.css">
+	<link href="https://hangeul.pstatic.net/hangeul_static/css/nanum-square-neo.css" rel="stylesheet">
 	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.4.10/dist/sweetalert2.min.js"></script>
-
+	<script src="/assets/libs/jquery/dist/jquery.min.js"></script>
 	<header class="topbar" data-navbarbg="skin6">
+		<div class="preloader">
+			<div class="lds-ripple">
+				<div class="lds-pos"></div>
+				<div class="lds-pos"></div>
+			</div>
+		</div>
       <nav class="navbar top-navbar navbar-expand-md">
         <div class="navbar-header" data-logobg="skin6">
           <!-- sidebar toggle -->
@@ -30,29 +37,71 @@
         <!-- 헤더 -->
         <!-- ============================================================== -->
         <style>
+          /* 기본 스타일 */
+		  .left-nav {
+		    margin-right: 20px;
+		  }
+		
+		  /* 창 크기가 줄어들면 간격을 줄이기 위한 스타일 */
+		  @media (max-width: 768px) {
+		    .left-nav {
+		      margin-right: 10px; /* 간격 줄이기 */
+		    }
+		  }
+		
+		  /* 매우 작은 화면에서는 더욱 간격을 줄이기 위한 스타일 */
+		  @media (max-width: 576px) {
+		    .left-nav {
+		      margin-right: 5px; /* 간격 더 줄이기 */
+		    }
+		  }
           .left-nav {
             margin-right: 20px;
           }
 
           .nav_text {
             color: black;
+            white-space: nowrap; /* 텍스트가 줄 바꿈되지 않도록 */
+  			font-weight:500;
           }
 
           .nav_text:hover {
             color: #0031AE;
-            font-weight: bolder;
+            font-weight:bolder;
           }
+          
+          .nav-item.active .nav_text {
+			  color: #0031AE; /* 활성화된 항목의 글씨 색 */
+			  font-weight: bold; /* 활성화된 항목의 글씨 굵기 */
+			}
+          	body{
+				font-family: 'NanumSquareNeo';
+			}
         </style>
+        <script>
+	        document.addEventListener('DOMContentLoaded', function () {
+	            const navItems = document.querySelectorAll('.navbar-nav .nav-item'); // 모든 nav-item을 선택
+	
+	            navItems.forEach(function (item) {
+	                const link = item.querySelector('.nav-link'); // 각 nav-item의 링크를 선택
+	
+	                if (link && link.href === window.location.href) { // 링크의 href와 현재 페이지 URL이 일치하면
+	                    item.classList.add('active'); // active 클래스 추가
+	                }
+	            });
+	        });
+	        
+	        $(".preloader ").fadeOut();
+        </script>
         <div class="navbar-collapse collapse" id="navbarSupportedContent">
           <ul class="navbar-nav float-left mr-auto ml-3 pl-1">
             <li class="nav-item left-nav">
-              <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown"
-                aria-haspopup="true" aria-expanded="false">
+              <a class="nav-link" th:href="@{/approve}" role="button" aria-haspopup="true" aria-expanded="false">
                 <span class="nav_text">전자결재</span>
               </a>
             </li>
             <li class="nav-item left-nav">
-              <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown"
+              <a class="nav-link" href="#" id="navbarDropdown" role="button" data-toggle="dropdown"
                 aria-haspopup="true" aria-expanded="false">
                 <span class="nav_text">근태관리</span>
               </a>
@@ -63,20 +112,19 @@
               </a>
             </li>
             <li class="nav-item left-nav">
-              <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown"
+              <a class="nav-link" th:href="@{/holiday}" role="button"
                 aria-haspopup="true" aria-expanded="false">
                 <span class="nav_text">일정관리</span>
               </a>
             </li>
             <li class="nav-item left-nav">
-              <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown"
-                aria-haspopup="true" aria-expanded="false">
+              <a class="nav-link" th:href="@{/place}" role="button" aria-haspopup="true" aria-expanded="false">
                 <span class="nav_text">자원관리</span>
               </a>
             </li>
             <li class="nav-item left-nav">
-              <a class="nav-link" th:href="@{/student}" role="button"
-                aria-haspopup="true" aria-expanded="false">
+              <a class="nav-link" th:href="@{/student}" role="button" 
+              aria-haspopup="true" aria-expanded="false">
                 <span class="nav_text">학생관리</span>
               </a>
             </li>
@@ -87,7 +135,7 @@
               </a>
             </li>
             <li class="nav-item left-nav">
-              <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown"
+              <a class="nav-link" href="#" id="navbarDropdown" role="button" data-toggle="dropdown"
                 aria-haspopup="true" aria-expanded="false">
                 <span class="nav_text">문서관리</span>
               </a>
@@ -173,26 +221,30 @@
             <li class="nav-item dropdown">
               <a class="nav-link dropdown-toggle" href="javascript:void(0)" data-toggle="dropdown" aria-haspopup="true"
                 aria-expanded="false">
-                <img src="/assets/images/users/user-profile.png" alt="user" class="rounded-circle" width="40"
-                  style="margin-top:-3px;">
-                <span class="ml-2 d-none d-lg-inline-block"><span>안녕하세요,</span> <span class="text-dark">유저님!</span> <i
-                    data-feather="chevron-down" class="svg-icon"></i></span>
+                <img th:src="@{'/UploadImg/employee/' + ${#authentication.principal.dto.new_pic_name}}" alt="user" class="rounded-circle" style="margin-top:-3px; width: 40px; height: 40px; object-fit: cover;">
+
+                <span class="ml-2 d-none d-lg-inline-block">
+                	<span>안녕하세요, </span>
+                	<span class="text-dark" sec:authentication="principal.dto.emp_name"></span>
+					<span class="text-dark">님!</span> 
+					<i data-feather="chevron-down" class="svg-icon"></i>
+				</span>
               </a>
               <div class="dropdown-menu dropdown-menu-right user-dd animated flipInY">
-                <div class="dropdown-divider" style="margin-top: -2px;"></div>
-                <a class="dropdown-item" href="javascript:void(0)"><i data-feather="user"
-                    class="svg-icon mr-2 ml-1"></i>
-                  내 정보</a>
-                <div class="dropdown-divider"></div>
-                <a class="dropdown-item" href="javascript:void(0)">
-                
-                    <form method="post" th:action="@{/logout}">
-						<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"> 
-						<i data-feather="power" class="svg-icon mr-2 ml-1"></i>
-						<input type="submit" value="로그아웃" style="background: none; border: none;">
-					</form>
-				</a>
-              </div>
+				    <div class="dropdown-divider" style="margin-top: -2px;"></div>
+				    <a class="dropdown-item" href="javascript:void(0)" style="font-size:17px; margin-top:4px;">
+				        <i data-feather="user" class="svg-icon mr-2 ml-1"></i>
+				        내 정보
+				    </a>
+				    <div class="dropdown-divider"></div>
+				    <a class="dropdown-item" href="javascript:void(0)" onclick="document.getElementById('logoutForm').submit();">
+				        <i data-feather="power" class="svg-icon mr-2 ml-1"></i>
+				        로그아웃
+				    </a>
+				    <form id="logoutForm" method="post" th:action="@{/logout}" style="display: none;">
+				        <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}">
+				    </form>
+			  </div>
             </li>
           </ul>
         </div>
