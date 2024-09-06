@@ -2,7 +2,6 @@ package com.dbdevdeep.employee.domain;
 
 import java.time.LocalDate;
 import java.util.List;
-<<<<<<< HEAD
 
 import com.dbdevdeep.approve.domain.ApproDraft;
 import com.dbdevdeep.approve.domain.Approve;
@@ -11,10 +10,7 @@ import com.dbdevdeep.approve.domain.Attendance;
 import com.dbdevdeep.approve.domain.LineDraft;
 import com.dbdevdeep.approve.domain.Reference;
 import com.dbdevdeep.approve.domain.ReferenceDraft;
-=======
-
 import com.dbdevdeep.schedule.domain.Schedule;
->>>>>>> branch 'develop' of https://github.com/bo-gyung/DBDevDeep.git
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -105,7 +101,10 @@ public class Employee {
 	
 	@OneToMany(mappedBy = "employee")
 	private List<TeacherHistory> teacherHistorys;
-	
+
+	@OneToMany(mappedBy = "employee")
+	private List<Schedule> shcedules;
+
 	@OneToMany(mappedBy = "employee")
     private List<Approve> approves;
 
@@ -126,8 +125,5 @@ public class Employee {
 
     @OneToMany(mappedBy = "employee")
     private List<LineDraft> lineDrafts;
-	
-	@OneToMany(mappedBy = "employee")
-	private List<Schedule> shcedules;
-
+    
 }
