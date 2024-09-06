@@ -184,7 +184,12 @@
                     <td>직원번호</td>
                     <td><input type="text" name="emp_id" th:value="${#authentication.principal.dto.emp_id}" readonly style="border: 0; outline: none;"></td>
                     <td>직급</td>
-                    <td><input type="text" name="job_code" th:value="${#authentication.principal.dto.job_name}" readonly style="border: 0; outline: none;"></td>
+					<td>
+					    <input type="text" name="job_code"
+					        th:value="${#authentication.principal.dto.dept_name == '행정부' ? '행정직원' : 
+					                  (#authentication.principal.dto.dept_name == '교무부' && #authentication.principal.dto.job_name == '직원' ? '교직원' : #authentication.principal.dto.job_name)}"
+					        readonly style="border: 0; outline: none;">
+					</td>
                 </tr>
                 <tr>
                 	<td>제목</td>
@@ -205,8 +210,6 @@
                     </td>
                 </tr>
                 <tr>
-                	<td>일정</td>
-                	<td><input type="datetime-local" id="datetime" class="form-control" name="start_date"><input type="datetime-local" class="form-control" name="end_date"></td>
                 	<td>반차</td>
                 	<td>
                 	<div style="display: flex; gap: 15px; justify-content: space-evenly; align-items: center;">
@@ -214,6 +217,11 @@
                 	<div><label><input type="radio" name="vac_type" value="7" id="half_two" disabled>오후</label></div>
                 	</div>
                 	</td>
+                	<td>일정</td>
+                	<td>
+				        <input type="date" id="start_date" class="form-control" name="start_date">
+				        <input type="date" id="end_date" class="form-control" name="end_date">
+				    </td>
                 </tr>
                 <tr>
                 <td>신청사유</td>
@@ -359,6 +367,23 @@
     }
     
     </script>
+    
+    <script>
+    function updateInputType(radio) {
+        // 일정 input 요소를 가져옵니다.
+        const startDateInput = document.getElementById("start_date");
+        const endDateInput = document.getElementById("end_date");
+
+        // "조퇴"가 선택되었는지 확인
+        if (radio.value === "3") {  
+            startDateInput.type = "datetime-local";
+            endDateInput.type = "datetime-local";
+        } else {
+            startDateInput.type = "date";
+            endDateInput.type = "date";
+        }
+    }
+</script>
     
     <script>
     document.getElementById("datetime").addEventListener("input", function (e) {
