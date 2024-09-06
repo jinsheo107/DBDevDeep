@@ -1,4 +1,4 @@
-package com.dbdevdeep.employee.service;
+package com.dbdevdeep;
 
 import java.io.File;
 import java.net.URLDecoder;
@@ -15,7 +15,7 @@ import com.dbdevdeep.employee.repository.EmployeeRepository;
 @Service
 public class FileService {
 
-private String fileDir = "C:\\employee\\upload\\";
+private String fileDir = "C:\\dbdevdeep\\";
 	
 	private final EmployeeRepository employeeRepository;
 	
@@ -30,8 +30,7 @@ private String fileDir = "C:\\employee\\upload\\";
 		try {
 			Employee e = employeeRepository.findByempId(emp_id);
 			String newFileName = e.getNewPicName();	// UUID
-			String oriFileName = e.getOriPicName();	// 사용자가 아는 파일명
-			String resultDir = fileDir + URLDecoder.decode(newFileName,"UTF-8");
+			String resultDir = fileDir + "employee\\" + URLDecoder.decode(newFileName,"UTF-8");
 			if(resultDir != null && resultDir.isEmpty() == false) {
 				File file = new File(resultDir);
 				if(file.exists()) {
@@ -59,10 +58,10 @@ private String fileDir = "C:\\employee\\upload\\";
 			// 4. 8자리마다 포함되는 하이픈 제거
 			String uniqueName = uuid.toString().replaceAll("-", "");
 			// 5. 새로운 파일명
-			newFileName = uniqueName+fileExt;
+			newFileName = uniqueName + fileExt;
 			// 6. 파일 저장 경로 설정
 			// 7. 파일 껍데기 생성
-			File saveFile = new File(fileDir+newFileName);
+			File saveFile = new File(fileDir + "employee\\" + newFileName);
 			// 8. 경로 존재 여부 확인
 			if(!saveFile.exists()) {
 				saveFile.mkdirs();

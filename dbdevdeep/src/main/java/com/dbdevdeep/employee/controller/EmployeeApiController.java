@@ -11,9 +11,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.dbdevdeep.FileService;
 import com.dbdevdeep.employee.domain.EmployeeDto;
 import com.dbdevdeep.employee.service.EmployeeService;
-import com.dbdevdeep.employee.service.FileService;
 
 @Controller
 public class EmployeeApiController {

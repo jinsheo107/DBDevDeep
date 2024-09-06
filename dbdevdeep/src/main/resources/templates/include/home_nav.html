@@ -173,10 +173,10 @@
                 <div class="sidebar_container">
                     <div class="sidebar_div profile_section">
                         <div class="profile_image">
-                            <img src="/assets/images/users/profile_img.jpg" alt="Profile Picture">
+                            <img th:src="@{'/UploadImg/employee/' + ${#authentication.principal.dto.new_pic_name}}" alt="Profile Picture">
                         </div>
                         <div class="profile_name">
-                            <div>이주빈</div> <!-- 이름을 여기에 입력 -->
+                            <div><span class="text-dark" sec:authentication="principal.dto.emp_name"></span></div> <!-- 이름을 여기에 입력 -->
                         </div>
                         <div class="profile_info">
                             <table>
@@ -191,7 +191,7 @@
                                     </tr>
                                     <tr>
                                         <td class="info_label">내선번호</td>
-                                        <td class="info_value">0451</td>
+                                        <td class="info_value" sec:authentication="principal.dto.emp_internal_phone"></td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -199,7 +199,7 @@
                     </div>
                     <div class="sidebar_div today_section">
                         <div class="today_title">TODAY</div>
-                        <div class="today_date">2024년 9월 1일 월요일</div> <!-- 오늘의 날짜를 여기에 입력 -->
+                        <div class="today_date" id="toDay"></div> <!-- 오늘의 날짜를 여기에 입력 -->
                         <div class="today_info">
                             <table>
                                 <tbody>
@@ -225,6 +225,35 @@
                     </div>
                 </div>
             </div>
+            <script>
+	            let today = new Date();   
+	
+	            let year = today.getFullYear(); // 년도
+	            let month = today.getMonth() + 1;  // 월
+	            let date = today.getDate();  // 날짜
+	            let day = today.getDay();  // 요일
+	            
+	            if(day == 0) {
+	            	day = '일';
+	            } else if(day == 1) {
+	            	day = '월';
+	            } else if(day == 2) {
+	            	day = '화';
+	            } else if(day == 3) {
+	            	day = '수';
+	            } else if(day == 4) {
+	            	day = '목';
+	            } else if(day == 5) {
+	            	day = '금';
+	            } else if(day == 6) {
+	            	day = '토';
+	            } 
+				
+	            const toDay = document.getElementById('toDay');
+	            toDay.innerText = year + '년 ' + month + '월 ' + date + '일 ' + day + '요일';
+	            
+
+            </script>
         </aside>
 </th:block>
 </html>
