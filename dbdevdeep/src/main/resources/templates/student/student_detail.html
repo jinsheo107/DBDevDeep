@@ -60,41 +60,24 @@
 						<div class="card">
 							<div class="card-body">
 								<h4 class="card-title">주소록</h4>
-								<div class="table-responsive">
-									<table id="address_book" class="table table-hover table-bordered no-wrap">
-										<thead>
-											<tr>
-												<th scope="col">번호</th>
-												<th scope="col">구분</th>
-												<th scope="col">학년</th>
-												<th scope="col">반</th>
-												<th scope="col">번호</th>
-												<th scope="col">성명</th>
-												<th scope="col">생년월일</th>
-											</tr>
-										</thead>
-										<tbody>
-											<th:block th:if="${#lists.isEmpty(resultList)}">
-												<tr>
-													<td colspan="7">주소록이 없습니다.</td>
-												</tr>
-											</th:block>
-											<th:block th:if="${!#lists.isEmpty(resultList)}">
-												<tr th:each="student, studentStat : ${resultList}">
-													<td scope="row" th:text="${studentStat.count}"></td>
-													<td th:text="${student.student_status}"></td>
-													<td>학년</td>
-													<td>반</td>
-													<td>번호</td>
-													<td th:text="${student.student_name}"></td>
-													<td>
-														<a th:text="${student.student_birth}" th:href="@{/student/{no}(no=${student.student_no})}"></a> 
-													</td>
-												</tr>
-											</th:block>
-										</tbody>
-									</table>
-								</div>
+								<div class="student-info">
+							        <img src="https://via.placeholder.com/150" alt="학생 사진">
+							        <div class="student-details">
+							        <input type="hidden" id="csrf_token" th:value="${_csrf.token}">
+							            <ul>
+							            	<img src=""/>
+							            	<li>
+												<p th:text="'이름 : '+${dto.student_name}"></p>
+							            		<p>몇학년 몇반 몇번</p>
+												<p th:text="'생년월일 : '+${dto.student_birth}"></p>
+												<p th:text="'주소 : '+${dto.student_addr}+${dto.student_detail_addr}+'('+${dto.student_post_code}+')'"></p>
+												<p th:text="'전화번호 : '+${dto.student_phone}"></p>
+							            	</li>
+							            </ul>
+							        </div>
+							        <a th:href="@{/student/update/{no}(no=${dto.student_no})}">수정</button>
+							        <a th:onclick="studentDelete([[${dto.student_no}]])">삭제</button>
+							    </div>
 							</div>
 						</div>
 					</div>
@@ -154,5 +137,36 @@
 		<script src="/dist/js/custom.min.js"></script>
 		<script src="/assets/extra-libs/datatables.net/js/jquery.dataTables.min.js"></script>
 		<script src="/dist/js/pages/datatable/datatable-basic.init.js"></script>
+		<script>
+		const studentDelete = function(studentNo){
+			if(confirm("정말 삭제하시겠습니까?")){
+				const csrfToken = document.getElementById('csrf_token').value;
+				 fetch('/student/'+studentNo,{
+					 method : 'delete',
+					 headers : {
+							'X-CSRF-TOKEN':csrfToken}
+				 })
+				 .then(response => response.json())
+				 .then(data => {
+					 if(data.res_code == '200'){
+							Swal.fire({
+								icon :'success',
+								title:'성공',
+								text : data.res_msg ,
+								confirmButtonText:"닫기"
+							}).then((result)=>{
+								location.href="/student";
+							});
+						} else{
+							Swal.fire({
+								icon:'error',
+								title:'실패',
+								text: data.res_msg,
+								confirmButtonText:"닫기"
+					 		});
+						}
+					})
+			}}
+	</script>	
 	</body>
 </html>

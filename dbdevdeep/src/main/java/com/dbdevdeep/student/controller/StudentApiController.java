@@ -5,6 +5,8 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -49,4 +51,54 @@ public class StudentApiController {
 		return resultMap;
 	}
 	
+	@ResponseBody
+	@PostMapping("/student/{student_no}")
+	public Map<String,String> updateStudent(StudentDto dto,
+			@RequestParam(name="file",required=false)MultipartFile file){
+		Map<String,String> resultMap = new HashMap<String,String>();
+		resultMap.put("res_code", "404");
+		resultMap.put("res_msg", "게시글 수정 중 오류가 발생했습니다.");
+		
+		if(file != null && "".equals(file.getOriginalFilename()) == false) {
+			String savedFileName = studentFileService.upload(file);
+			if(savedFileName != null) {
+				dto.setStudent_ori_pic(file.getOriginalFilename());
+				dto.setStudent_new_pic(savedFileName);
+				
+				if(studentFileService.delete(dto.getStudent_no()) > 0){
+					resultMap.put("res_msg", "기존 파일이 정상적으로 삭제되었습니다");
+				}
+				
+			}else {
+				resultMap.put("res_msg", "파일 업로드가 실패하였습니다.");
+			}
+		}
+		
+		if(studentService.updateStudentInfo(dto) != null) {
+			resultMap.put("res_code", "200");
+			resultMap.put("res_msg", "게시글이 성공적으로 수정되었습니다.");
+		}
+		
+		return resultMap;
+	}
+	
+	@ResponseBody
+	@DeleteMapping("/student/{student_no}")
+	public Map<String,String> deleteStudent(@PathVariable("student_no")Long student_no){
+		Map<String,String> map = new HashMap<String,String>();
+		map.put("res_code", "404");
+		map.put("res_msg", "게시글 삭제 중 오류가 발생했습니다");
+		
+		if(studentFileService.delete(student_no) > 0) {
+			map.put("res_msg","기존 파일이 정상적으로 삭제되었습니다.");
+			if(studentService.deleteStudent(student_no)>0) {				
+				map.put("res_code", "200");
+				map.put("res_msg","정상적으로 게시글이 삭제되었습니다.");
+			}
+		}
+		return map;
+	}
+	
+
+		
 }

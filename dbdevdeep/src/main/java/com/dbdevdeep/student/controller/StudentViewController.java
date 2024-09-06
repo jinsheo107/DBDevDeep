@@ -50,5 +50,11 @@ public class StudentViewController {
 		return "student/student_detail";
 	}
 	
+	@GetMapping("/student/update/{student_no}")
+	public String updateStudentInfo(@PathVariable("student_no") Long student_no,Model model) {
+		StudentDto dto = studentService.selectStudentOne(student_no);
+		model.addAttribute("dto",dto);
+		return "student/student_update";
+	}
 	
 }

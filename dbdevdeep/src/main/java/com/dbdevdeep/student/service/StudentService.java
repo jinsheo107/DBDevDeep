@@ -10,6 +10,8 @@ import com.dbdevdeep.student.domain.Student;
 import com.dbdevdeep.student.domain.StudentDto;
 import com.dbdevdeep.student.repository.StudentRepository;
 
+import jakarta.transaction.Transactional;
+
 @Service
 public class StudentService {
 	
@@ -43,7 +45,6 @@ public class StudentService {
 	// 학생리스트를 옮겨주기 위해 dto로 변환하여 담아주는 절차
 	public List<StudentDto> selectStudentList(StudentDto studentDto){
 		List<Student> studentList = studentRepository.findAll();
-		System.out.println(studentList);
 		List<StudentDto> studentDtoList = new ArrayList<StudentDto>();
 		for(Student s : studentList) {
 			StudentDto dto = new StudentDto().toDto(s);
@@ -71,6 +72,40 @@ public class StudentService {
 			return dto;
 	}
 	
+	// 수정 정보를 담아 entity로 변환 후에 DB에 저장하는 과정
+	@Transactional
+	public Student updateStudentInfo(StudentDto dto) {
+		StudentDto temp = selectStudentOne(dto.getStudent_no());
+		temp.setStudent_name(dto.getStudent_name());
+		temp.setStudent_birth(dto.getStudent_birth());
+		temp.setStudent_gender(dto.getStudent_gender());
+		temp.setStudent_post_code(dto.getStudent_post_code());
+		temp.setStudent_addr(dto.getStudent_addr());
+		temp.setStudent_detail_addr(dto.getStudent_detail_addr());
+		temp.setStudent_phone(dto.getStudent_phone());
+		temp.setStudent_ori_pic(dto.getStudent_ori_pic());
+		temp.setStudent_new_pic(dto.getStudent_new_pic());
+		temp.setStudent_status(dto.getStudent_status());
+		if(dto.getStudent_ori_pic() != null
+				&& "".equals(dto.getStudent_ori_pic()) == false) {
+			temp.setStudent_ori_pic(dto.getStudent_ori_pic());
+			temp.setStudent_new_pic(dto.getStudent_new_pic());
+		}
+		Student std = temp.toEntity();
+		Student result = studentRepository.save(std);
+		return result;
+	}
+	
+	public int deleteStudent(Long student_no) {
+		int result = 0;
+		try {
+			studentRepository.deleteById(student_no);
+			result = 1;
+		}catch(Exception e) {
+			e.printStackTrace();
+		}
+		return result;
+	}
 	
 	
 }
