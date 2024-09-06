@@ -25,7 +25,7 @@ private String fileDir = "C:\\dbdevdeep\\";
 		this.employeeRepository = employeeRepository;
 	}
 	
-	public int delete(String emp_id){
+	public int employeePicDelete(String emp_id){
 		int result = -1;
 		
 		try {
@@ -45,7 +45,7 @@ private String fileDir = "C:\\dbdevdeep\\";
 		return result;
 	}
 	
-	public String upload(MultipartFile file) {
+	public String employeePicUpload(MultipartFile file) {
 		
 		String newFileName = null;
 		

@@ -55,7 +55,7 @@ public class EmployeeApiController {
 		resultMap.put("res_code", "404");
 		resultMap.put("res_msg", "계정 등록 중 오류가 발생하였습니다.");
 		
-		String savedFileName = fileService.upload(file);
+		String savedFileName = fileService.employeePicUpload(file);
 		
 		if(savedFileName != null) {
 			dto.setOri_pic_name(file.getOriginalFilename());
