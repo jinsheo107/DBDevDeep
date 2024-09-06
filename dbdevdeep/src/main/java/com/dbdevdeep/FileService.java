@@ -15,6 +15,7 @@ import com.dbdevdeep.employee.repository.EmployeeRepository;
 @Service
 public class FileService {
 
+	// fileDir 변경 X
 private String fileDir = "C:\\dbdevdeep\\";
 	
 	private final EmployeeRepository employeeRepository;
@@ -30,7 +31,7 @@ private String fileDir = "C:\\dbdevdeep\\";
 		try {
 			Employee e = employeeRepository.findByempId(emp_id);
 			String newFileName = e.getNewPicName();	// UUID
-			String resultDir = fileDir + "employee\\" + URLDecoder.decode(newFileName,"UTF-8");
+			String resultDir = fileDir + "employee\\" + URLDecoder.decode(newFileName,"UTF-8"); // 본인 폴더 지정
 			if(resultDir != null && resultDir.isEmpty() == false) {
 				File file = new File(resultDir);
 				if(file.exists()) {
