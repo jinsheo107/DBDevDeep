@@ -15,25 +15,27 @@ import lombok.ToString;
 @ToString
 public class EmployeeVo {
 
-	private String empId;
-	private String empPw;
-	private String govId;
-	private String empName;
-	private String empRrn;
-	private String empPhone;
-	private String oriPicName;
-	private String newPicName;
-	private String empPostCode;
-	private String empAddr;
-	private String empDetailAddr;
-	private String deptCode;
-	private String jobCode;
-	private String empInternalPhone;
-	private int vacationHour;
-	private LocalDate hireDate;
-	private LocalDate endDate;
-	private String entStatus;
-	private String loginYn;
-	private String accountStatus;
-	private String chatStatusMsg;
+	private String emp_id;
+	private String emp_pw;
+	private String gov_id;
+	private String emp_name;
+	private String emp_rrn;
+	private String emp_phone;
+	private String ori_pic_name;
+	private String new_pic_name;
+	private String emp_post_code;
+	private String emp_addr;
+	private String emp_detail_addr;
+	
+	private String dept_code;
+	private String job_code;
+	
+	private String emp_internal_phone;
+	private int vacation_hour;
+	private LocalDate hire_date;
+	private LocalDate end_date;
+	private String ent_status;
+	private String login_yn;
+	private String account_status;
+	private String chat_status_msg;
 }

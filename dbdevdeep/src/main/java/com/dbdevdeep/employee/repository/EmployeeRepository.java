@@ -18,4 +18,6 @@ public interface EmployeeRepository extends JpaRepository<Employee, String>{
 	@Modifying
 	@Query("UPDATE Employee e SET e.loginYn = :loginYn WHERE e.empId = :empId")
 	int updateByEmpidToLoginyn(@Param("empId") String empId, @Param("loginYn") String loginYn);
+	
+	
 }

@@ -4,9 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -14,9 +11,11 @@ import com.dbdevdeep.employee.domain.Department;
 import com.dbdevdeep.employee.domain.Employee;
 import com.dbdevdeep.employee.domain.EmployeeDto;
 import com.dbdevdeep.employee.domain.Job;
+import com.dbdevdeep.employee.mybatis.mapper.EmployeeVoMapper;
 import com.dbdevdeep.employee.repository.DepartmentRepository;
 import com.dbdevdeep.employee.repository.EmployeeRepository;
 import com.dbdevdeep.employee.repository.JobRepository;
+import com.dbdevdeep.employee.vo.EmployeeVo;
 
 @Service
 public class EmployeeService {
@@ -25,14 +24,17 @@ public class EmployeeService {
 	private final PasswordEncoder passwordEncoder;
 	private final JobRepository jobRepository;
 	private final DepartmentRepository departmentRepository;
+	private final EmployeeVoMapper employeeVoMapper;
 
 	@Autowired
 	public EmployeeService(EmployeeRepository employeeRepository, PasswordEncoder passwordEncoder,
-			JobRepository jobRepository, DepartmentRepository departmentRepository) {
+			JobRepository jobRepository, DepartmentRepository departmentRepository,
+			EmployeeVoMapper employeeVoMapper) {
 		this.employeeRepository = employeeRepository;
 		this.passwordEncoder = passwordEncoder;
 		this.jobRepository = jobRepository;
 		this.departmentRepository = departmentRepository;
+		this.employeeVoMapper = employeeVoMapper;
 	}
 
 	public int govIdCheck(String govId) {
@@ -129,6 +131,26 @@ public class EmployeeService {
 			
 		}
 		return dto;
+	}
+	
+	public List<EmployeeDto> selectEmployeeByNotTeacher(String t_year) {
+		List<EmployeeVo> EmployeeByNotTeach = employeeVoMapper.selectEmployeeByNotTeacher(t_year);
+		
+		List<EmployeeDto> resultList = new ArrayList<EmployeeDto>();
+		
+		for(EmployeeVo e : EmployeeByNotTeach) {
+			EmployeeDto dto = new EmployeeDto().toDto(e);
+			
+			Department dept = departmentRepository.findByDeptCode(dto.getDept_code());
+			Job job = jobRepository.findByJobCode(dto.getJob_code());
+			
+			dto.setDept_name(dept.getDeptName());
+			dto.setJob_name(job.getJobName());
+			
+			resultList.add(dto);
+		}
+		
+		return resultList;
 	}
 
 }
