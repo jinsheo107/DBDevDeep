@@ -62,8 +62,7 @@ public class EmployeeDto {
 				.empInternalPhone(emp_internal_phone).vacationHour(vacation_hour)
 				.hireDate(hire_date).endDate(end_date).entStatus(ent_status)
 				.loginYn(login_yn).accountStatus(account_status).chatStatusMsg(chat_status_msg)
-				.build();
-				
+				.build();	
 	}
 	
 	public EmployeeDto toDto(Employee employee) {
@@ -87,6 +86,7 @@ public class EmployeeDto {
 				.build();
 	}
 	
+	// MyBatis
 	public EmployeeDto toDto(EmployeeVo employee) {
 		return EmployeeDto.builder()
 				.emp_id(employee.getEmp_id())

@@ -71,7 +71,7 @@ td span {
 							<hr>
 							<div class="row mb-2">
 								<div class="col-6 d-flex justify-content-start">
-									<button type="button" class="btn waves-effect waves-light btn-outline-secondary">목록</button>
+									<button type="button" class="btn waves-effect waves-light btn-outline-secondary" style="margin: 4px;" onclick="location.href='/class-year';">목록</button>
 								</div>
 								<div class="col-6 d-flex justify-content-end">
 									<button type="button" class="btn waves-effect waves-light btn-primary m-1" data-toggle="modal" data-target="#class_create_modal">반 수정</button>
@@ -114,6 +114,7 @@ td span {
 													th:text="미배정"
 													th:data-grade="${grade}"
 													th:data-class="${i}"
+													th:data-teacherno="${gradeToClassMap[grade + ''][i-1].teacher_no}"
 													th:data-tyear="${gradeToClassMap[grade + ''][i-1].t_year}"
 													data-toggle="modal" 
 													data-target="#addClass"
@@ -138,11 +139,14 @@ td span {
 							<h4 class="modal-title" id="info-header-modalLabel">직원 반 배정</h4>
 							<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
 						</div>
+						
 						<div class="modal-body">
-							<form class="pl-3 pr-3">
-
+						<input type="hidden" id="csrf_token" th:value="${_csrf.token}">
+							<form class="pl-3 pr-3" id="addClassFrm">
+								<input type="hidden" name="teacher_no" id="add_teacher_no">
+							
 								<div class="form-group">
-									<select class="form-control" name="emp_name">
+									<select class="form-control" name="teach_emp_id">
 										<option value="0">직원을 선택하세요</option>
 										<th:block th:each="emp : ${empList}">
 											<option th:text="${emp.emp_name}" th:value="${emp.emp_id}"></option>
@@ -152,21 +156,21 @@ td span {
 
 								<div class="form-group">
 									<label for="password">학년</label>
-									<input class="form-control" type="text" id="add_grade" readonly>
+									<input class="form-control" type="text" name="grade" id="add_grade" readonly>
 								</div>
 
 								<div class="form-group">
 									<label for="password">반</label> 
-									<input class="form-control" type="text" id="add_grade_class" readonly>
+									<input class="form-control" type="text" name="grade_class" id="add_grade_class" readonly>
 								</div>
 
 								<div class="form-group">
 									<label for="password">학년도</label> 
-									<input class="form-control" type="text" readonly id="add_t_year">
+									<input class="form-control" type="text" name="t_year" readonly id="add_t_year">
 								</div>
 
 								<div class="form-group text-center">
-									<button class="btn btn-primary" type="button" onclick="addTeacher">직원 등록</button>
+									<button class="btn btn-primary" type="submit" id="addTeacherBtn">직원 등록</button>
 								</div>
 
 							</form>
@@ -187,20 +191,15 @@ td span {
 							<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
 						</div>
 						<div class="modal-body">
-							<form class="pl-3 pr-3" action="#">
-
+							<form class="pl-3 pr-3" id="editClassFrm">
 								<div class="form-group">
-									<input class="form-control" type="hidden" name="teacher_no" id="edit_teacher_no">
-								</div>
-
-								<div class="form-group">
-									<input class="form-control" type="hidden" name="emp_id" id="edit_emp_id">
+									<input class="form-control" type="text" name="teacher_no" id="edit_teacher_no">
 								</div>
 								
 								<div class="form-group">
 									<label for="emailaddress">직원명</label> 
 									<!-- <input class="form-control" type="text" name="emp_id" id="edit_emp_name"> -->
-									<select class="form-control" name="emp_name">
+									<select class="form-control" name="teach_emp_id">
 										<option id="selectTeacher"></option>
 										<th:block th:each="emp : ${empList}">
 											<option th:text="${emp.emp_name}" th:value="${emp.emp_id}"></option>
@@ -264,6 +263,91 @@ td span {
 			        $('#add_grade_class').val(classNumber);
 			        $('#add_teacher_no').val(teacher_no);
 			    });
+				
+				const addForm = document.getElementById('addClassFrm')
+				addForm.addEventListener('submit', (e) => {
+					e.preventDefault();
+					if(addForm.teach_emp_id.value == 0) {
+						addForm.teach_emp_id.focus();
+						Swal.fire({
+							icon : 'info',
+							title : '직원을 선택하세요'
+						});
+					} else {
+						const payload = new FormData(addForm);
+						const csrfToken = document.getElementById("csrf_token").value;
+						fetch('/class-year/' + addForm.t_year.value, {
+							method:'POST',
+							headers : {
+								'X-CSRF-TOKEN': csrfToken
+							},
+							body:payload
+						})
+						.then(response => response.json())
+						.then(data=>{
+							if(data.res_code == '200'){
+								Swal.fire({
+									icon :'success',
+									title:'성공',
+									text : data.res_msg,
+									confirmButtonText:"닫기"
+								}).then((result)=>{
+									location.href="/class-year/" + addForm.t_year.value;
+								});
+							} else{
+								Swal.fire({
+									icon:'error',
+									title:'실패',
+									text: data.res_msg,
+									confirmButtonText:"닫기"
+								});
+							}
+						});
+					}
+				});
+				
+				const editForm = document.getElementById('editClassFrm');
+				
+				editForm.addEventListener('submit', (e) => {
+					e.preventDefault();
+					if(editForm.teach_emp_id.value == 0) {
+						editForm.teach_emp_id.focus();
+						Swal.fire({
+							icon : 'info',
+							title : '직원을 선택하세요'
+						});
+					} else {
+						const payload = new FormData(editForm);
+						const csrfToken = document.getElementById("csrf_token").value;
+						fetch('/class-year/' + editForm.t_year.value, {
+							method:'POST',
+							headers : {
+								'X-CSRF-TOKEN': csrfToken
+							},
+							body:payload
+						})
+						.then(response => response.json())
+						.then(data=>{
+							if(data.res_code == '200'){
+								Swal.fire({
+									icon :'success',
+									title:'성공',
+									text : data.res_msg,
+									confirmButtonText:"닫기"
+								}).then((result)=>{
+									location.href="/class-year/" + editForm.t_year.value;
+								});
+							} else{
+								Swal.fire({
+									icon:'error',
+									title:'실패',
+									text: data.res_msg,
+									confirmButtonText:"닫기"
+								});
+							}
+						});
+					}
+				});
 				
 				
 			</script>

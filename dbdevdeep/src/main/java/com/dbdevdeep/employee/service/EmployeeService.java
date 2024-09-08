@@ -108,7 +108,7 @@ public class EmployeeService {
 		return result;
 	}
 	
-	public List<EmployeeDto> selectEmployeeList(EmployeeDto employeeDto) {
+	public List<EmployeeDto> selectEmployeeList() {
 		List<Employee> employeeList = employeeRepository.findAll();
 
 		List<EmployeeDto> employeeDtoList = new ArrayList<EmployeeDto>();
