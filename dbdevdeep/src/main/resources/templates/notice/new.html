@@ -32,7 +32,7 @@
                             <div class="card-body">
                                 <h3 class="card-title">공지사항 게시글 작성</h3>
                                 <hr>
-                                <!-- CSRF정보를 담을 히든 인풋을 폼 밖에 작성 -->
+                                <!-- CSRF정보를 담은 히든 인풋 -->
 								<input type="hidden" id="csrf_token" th:value="${_csrf.token}">
                                 <form id="noticeCreateForm">
                                 	<div class="row form-group">
@@ -49,11 +49,13 @@
 	                                    	<small id="check_list_help" class="form-text text-muted">체크여부</small>
 	                                    	<div class="row" >
 		                                    	<div class="custom-control custom-checkbox col-md-2">
-			                                        <input type="checkbox" class="custom-control-input" id="is_impoltant" name="is_impoltant" >
-				                                    <label class="custom-control-label mr-sm-3" for="is_impoltant">상단 고정</label>
+			                                        <input type="checkbox" class="custom-control-input" 
+			                                        id="is_important" name="is_important" value="1">
+				                                    <label class="custom-control-label mr-sm-3" for="is_important">상단 고정</label>
 			                                	</div>
 			                                	<div class="custom-control custom-checkbox col-md-2">
-				                                    <input type="checkbox" class="custom-control-input" id="is_cmt" name="is_cmt">
+				                                    <input type="checkbox" class="custom-control-input" 
+				                                    id="is_cmt" name="is_cmt" value="1">
 				                                    <label class="custom-control-label" for="is_cmt">댓글 작성 허용</label>
 			                                	</div>
 	                                    	</div>
@@ -201,7 +203,7 @@
 						title:'성공',
 						text : data.res_msg
 					}).then((result)=>{
-						location.href="/notice/list";
+						location.href="/notice";
 					});
 				} else{
 					Swal.fire({

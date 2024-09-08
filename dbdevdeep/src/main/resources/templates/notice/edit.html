@@ -32,31 +32,40 @@
                             <div class="card-body">
                                 <h3 class="card-title">공지사항 게시글 수정</h3>
                                 <hr>
-                                <form id="notiEditForm" method="post" action="/noticeEditEnd">
+                                <!-- CSRF정보를 담은 히든 인풋 -->
+								<input type="hidden" id="csrf_token" th:value="${_csrf.token}">
+                                <form id="notiEditForm">
                                 	<div class="row form-group">
 	                                    <div class="col-md-2">
 	                                    	<small id="category_help" class="form-text text-muted">공지분류</small>
 	                                        <select style="color:black;" class="custom-select mr-sm-2" id="category_no" name="category_no">
 	                                            <option value="0">공지분류</option>
-	                                            <option value="1" th:selected="${dto.category_name}=='1'">학사일정</option>
-	                                            <option value="2" th:selected="${dto.category_name}=='2'">사이트</option>
-	                                            <option value="3" th:selected="${dto.category_name}=='3'">공고</option>
+	                                            <option value="1" th:selected="${dto.category_no}=='1'">학사일정</option>
+	                                            <option value="2" th:selected="${dto.category_no}=='2'">사이트</option>
+	                                            <option value="3" th:selected="${dto.category_no}=='3'">공고</option>
 	                                        </select>
 	                                    </div>
-		                                <div class="col-md-10">
+		                                <div class="col-md-8">
 	                                    	<small id="check_list_help" class="form-text text-muted">체크여부</small>
 	                                    	<div class="row" >
 		                                    	<div class="custom-control custom-checkbox col-md-2">
-			                                        <input type="checkbox" class="custom-control-input" id="is_impoltant" name="is_impoltant" 
-			                                        th:checked="${dto.is_important}" disabled>
-				                                    <label class="custom-control-label mr-sm-3" for="is_impoltant">상단 고정</label>
+			                                        <input type="checkbox" class="custom-control-input" 
+			                                        id="is_important" name="is_important" value="1" 
+			                                        th:checked="${dto.is_important}">
+				                                    <label class="custom-control-label mr-sm-3" for="is_important">상단 고정</label>
 			                                	</div>
 			                                	<div class="custom-control custom-checkbox col-md-2">
-				                                    <input type="checkbox" class="custom-control-input" id="is_cmt" name="is_cmt" 
-				                                    th:checked="${dto.is_cmt}" disabled>
+				                                    <input type="checkbox" class="custom-control-input" 
+				                                    id="is_cmt" name="is_cmt" value="1" 
+				                                    th:checked="${dto.is_cmt}">
 				                                    <label class="custom-control-label" for="is_cmt">댓글 작성 허용</label>
 			                                	</div>
 	                                    	</div>
+	                                    </div>
+	                                    <div class="col-md-2">
+	                                    	<small id="time_help" class="form-text text-muted">작성일시</small>
+                                			<input type="text" class="form-control" id="reg_time"  
+                                			th:value="${#temporals.format(dto.reg_time, 'yyyy.MM.dd HH:mm')}" disabled>
 	                                    </div>
                                 	</div>
                                 	<div class="row form-group">
@@ -68,7 +77,7 @@
                                 		<div class=" col-md-2 ">
                                         	<small id="name_help" class="form-text text-muted">작성자</small>
                                 			<input type="text" class="form-control" id="writer_name" name="writer_name" 
-                                			th:value="${dto.writer_name}" disabled>
+                                			th:value="${writerDto.emp_name}" disabled>
                                 		</div>
                                 	</div>
                                 	<div class="row form-group">
@@ -79,19 +88,21 @@
                                 	</div>
                                 	<div class="row">
                                         <div class="col-md-11">
-                                            <label class="form-control" for="inputGroupFile04">파일을 선택하세요.</label>
-                                            <input type="file" class="custom-file-input" id="inputGroupFile04">
+                                            <label class="form-control" for="notice_attr_file">파일을 선택하세요.</label>
+                                            <input type="file" class="custom-file-input" id="notice_attr_file">
                                         </div>
                                         <div class="col-md-1">
-                                            <button class="btn btn-outline-secondary" type="button">첨부</button>
+                                            <button class="btn btn-outline-secondary" type="button" onclick="fileInput()" 
+                                            style="cursor: pointer;">첨부</button>
                                         </div>
                                     </div>
+                                    <input type="hidden" id="notice_no" name="notice_no" th:value="${dto.notice_no}">
+                                    <input type="hidden" id="writer_no" name="writer_id" th:value="${writerDto.emp_id}">
                                     <div class="row m-2">
 			                        	<div class="col-12 d-flex justify-content-center">
 				                            <button type="button" class="btn waves-effect waves-light btn-light m-2" 
 			                            	onclick="location.href='/notice'">취소</button>
-				                            <button type="button" class="btn waves-effect waves-light btn-primary m-2" 
-				                            onclick="">작성</button>
+				                            <button type="submit" class="btn waves-effect waves-light btn-primary m-2">수정</button>
 			                        	</div>
 		                            </div>
                                 </form>
@@ -127,6 +138,94 @@
         <!-- ============================================================== -->
         <!-- End Page wrapper  -->
         <!-- ============================================================== -->
+        <!-- Custom script -->
+    <!-- ============================================================== -->   
+    <script>
+   	const fileInput = function(){
+        // 파일 입력 요소를 찾고 클릭 이벤트를 트리거
+        document.getElementById('notice_attr_file').click();
+   	}
+   	
+   	// 새 글 작성 관련
+   	const form = document.getElementById("notiEditForm");
+   	form.addEventListener('submit',(e)=>{
+ 		e.preventDefault();
+ 		
+ 		// 유효성 검사
+ 		let vali_check = false;
+ 		let vali_text ="";
+ 		
+ 		if(form.category_no.value=="0"){
+ 			vali_text += "공지 분류를 선택하세요.";
+ 			form.category_no.focus();
+ 		} else if(form.notice_title.value==""){
+ 			vali_text += "제목을 입력하세요.";
+ 			form.notice_title.focus();
+ 		} else if(form.notice_content.value==""){
+ 				vali_text += "내용을 입력하세요.";
+ 				form.notice_content.focus();
+ 		} else{
+ 			vali_check = true;
+ 		}
+ 		
+ 		if(vali_check == false){
+ 			// vali_check == false
+ 			
+ 			Swal.fire({
+				icon:'error',
+				title:'실패',
+				text: vali_text,
+				confirmButten:'닫기'
+ 			});
+ 		} else{
+ 			// vali_check == true
+ 			
+			const payload = new FormData(form);
+			let obj = {};
+			payload.forEach(function(value,key){
+				obj[key]=value;
+			})
+			const jsonData = JSON.stringify(obj);
+			const csrfToken = document.getElementById("csrf_token").value;
+			
+			const noticeNo = document.getElementById('notice_no').value;
+			
+			// fetch
+			fetch('/notice/edit/${noticeNo}',{
+				method:'post',
+				headers:{
+					"Content-Type": "application/json;charset=utf-8",
+					"Accept": "application/json",
+					'X-CSRF-TOKEN': csrfToken
+				},
+				body:jsonData
+			})
+			.then(response=>response.json())
+			.then(data=>{
+				if(data.res_code == '200'){
+					Swal.fire({
+						icon :'success',
+						title:'성공',
+						text : data.res_msg
+					}).then((result)=>{
+						location.href="/notice";
+					});
+				} else{
+					Swal.fire({
+						icon:'error',
+						title:'실패',
+						text: data.res_msg
+					});
+				}
+			})	
+ 		}
+ 	});	
+ 		
+   	
+   	
+
+    </script>
+    <!-- ============================================================== -->
     <!-- All Jquery -->
     <!-- ============================================================== -->
     <script src="/assets/libs/jquery/dist/jquery.min.js"></script>
