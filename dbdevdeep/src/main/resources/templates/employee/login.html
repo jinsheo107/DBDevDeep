@@ -108,6 +108,28 @@
 			</div>
 		</div>
 	</div>
+	
+	<script>
+	document.addEventListener("DOMContentLoaded", function () {
+        // Load saved username from local storage if it exists
+        const savedUsername = localStorage.getItem('savedUsername');
+        if (savedUsername) {
+            document.getElementById('uname').value = savedUsername;
+            document.getElementById('remember-id').checked = true;
+        }
+
+        // Save username to local storage when form is submitted
+        document.querySelector('form[name="login_form"]').addEventListener('submit', function () {
+            const username = document.getElementById('uname').value;
+            const rememberId = document.getElementById('remember-id').checked;
+            if (rememberId) {
+                localStorage.setItem('savedUsername', username);
+            } else {
+                localStorage.removeItem('savedUsername');
+            }
+        });
+    });
+	</script>
 
 	<script th:src="@{/assets/libs/jquery/dist/jquery.min.js}"></script>
 	<script th:src="@{/assets/libs/popper.js/dist/umd/popper.min.js}"></script>

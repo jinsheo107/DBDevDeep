@@ -343,15 +343,12 @@
 					})
 					.then(response => response.json())
 					.then(data=>{
-						console.log('data:', data);
 						if(data.res_code == '200'){
 							Swal.fire({
 								icon :'success',
 								title:'성공',
 								text : data.res_msg,
 								confirmButtonText:"닫기"
-							}).then((result)=>{
-								location.href="/";
 							});
 						} else{
 							Swal.fire({
@@ -530,7 +527,6 @@
 	    	   firstempRrn.classList.add('is-valid');
 	           empRrnFeedback.textContent = '';
 	           secondempRrn.focus();
-	           console.log("check");
 	       } else {
 	    	   empRrnFeedback.textContent = '주민번호 앞 6자리를 입력해주세요';
 	           empRrnFeedback.style.color = 'red';
