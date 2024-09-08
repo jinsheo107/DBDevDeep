@@ -92,7 +92,6 @@ public class TeacherHistoryApiController {
 		resultMap.put("res_code", "404");
 		resultMap.put("res_msg", "직원 반 등록 중 오류가 발생하였습니다.");
 		
-		System.out.println(dto.getTeach_emp_id());
 		
 		if(teacherHistoryService.addTeacher(dto) > 0) {
 			resultMap.put("res_code", "200");

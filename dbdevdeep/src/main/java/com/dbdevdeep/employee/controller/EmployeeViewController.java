@@ -35,7 +35,7 @@ public class EmployeeViewController {
 	@GetMapping("/addressbook")
 	public String selectAddressbookList(Model model, EmployeeDto dto) {
 		
-		List<EmployeeDto> resultList = employeeService.selectEmployeeList();
+		List<EmployeeDto> resultList = employeeService.selectYEmployeeList();
 		
 		model.addAttribute("resultList", resultList);
 		

@@ -3,6 +3,7 @@ package com.dbdevdeep.employee.domain;
 import java.time.LocalDate;
 import java.util.List;
 
+import com.dbdevdeep.attendance.domain.Attendance;
 import com.dbdevdeep.schedule.domain.Schedule;
 
 import jakarta.persistence.Column;
@@ -92,10 +93,15 @@ public class Employee {
 	@Column(name="chat_status_msg")
 	private String chatStatusMsg;
 	
+	// 직원 반 배정 관련
 	@OneToMany(mappedBy = "employee")
 	private List<TeacherHistory> teacherHistorys;
 
 	@OneToMany(mappedBy = "employee")
 	private List<Schedule> shcedules;
+	
+	// 근태관리 관련
+	@OneToMany(mappedBy = "employee")
+	private List<Attendance> attendances;
 
 }

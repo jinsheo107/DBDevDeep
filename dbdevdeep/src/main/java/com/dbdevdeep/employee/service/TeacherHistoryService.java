@@ -58,6 +58,8 @@ public class TeacherHistoryService {
 	
 	
 	
+	
+	
 	public int tYearCheck(String t_year) {
 		int result = -1;
 		
@@ -104,6 +106,28 @@ public class TeacherHistoryService {
 		}
 		
 		return result;
+	}
+	
+	public List<TeacherHistoryDto> selectClassByOrderLastesList() {
+		String recentYear = teacherHistoryRepository.findMostRecentYear();
+		
+		List<TeacherHistory> teacherHistoryList = teacherHistoryRepository.findByClassByYear(recentYear);
+		
+		List<TeacherHistoryDto> teacherHistoryDtoList = new ArrayList<TeacherHistoryDto>();
+		for(TeacherHistory t : teacherHistoryList) {
+			TeacherHistoryDto dto = new TeacherHistoryDto().toDto(t);
+			
+			if (t.getEmployee() != null) {				
+	            dto.setTeach_emp_id(t.getEmployee().getEmpId());
+	            dto.setTeach_emp_name(t.getEmployee().getEmpName());
+	        } else {
+	        	dto.setTeach_emp_id(null);
+	            dto.setTeach_emp_name("null");
+	        }
+			teacherHistoryDtoList.add(dto);
+		}
+		
+		return teacherHistoryDtoList;
 	}
 	
 	
