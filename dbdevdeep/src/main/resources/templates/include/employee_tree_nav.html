@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<th:block th:fragment="employeeTreeNavLayout">
+
+
+	<aside class="left-sidebar">
+		<div class="scroll-sidebar">
+			<nav class="sidebar-nav">
+				<ul id="sidejstree"></ul>
+			</nav>
+		</div>
+	</aside>
+
+
+
+	<script>
+				
+        $(document).ready(function() {
+            fetch('/api/emp-tree')
+                .then(response => response.json())
+                .then(data => {
+                    const D1Data = D1(data.employees, data.teacherHistory);
+                    
+                    
+                    $('#sidejstree').jstree({
+                    	'core': {
+		        					'data': D1Data
+		        				}
+                    });
+                    
+                    
+                });
+            
+            function getTeacherHistory(empId, teacherHistory) {
+                const history = teacherHistory.find(t => t.teach_emp_id === empId);
+                return history ? { grade: history.grade, grade_class: history.grade_class } : { grade: null, grade_class: null };
+            }
+            
+            function D1(items, historys) {
+            	return items
+            		.filter(item => item.dept_code == 'D1')
+            		.map(item => {
+            			return {
+            				"text": item.dept_name + " " + item.emp_name,
+            				"state" : { "opened" : true },
+            				"children" : D2(items, historys)
+            			};
+            		});
+            }
+            
+            function D2(items, historys) {
+            	return items
+            		.filter(item => item.dept_code == 'D2')
+            		.map(item => {
+            			return {
+            				"text": item.dept_name + " " + item.emp_name,
+            				"state" : { "opened" : true },
+            				"children" : [...D3(items), ...D4(items, historys)]
+            				
+            			}
+            		})
+            }
+            
+            function D3(items) {
+            	return items
+            		.filter(item => item.dept_code == 'D3' && item.job_code == 'J3')
+            		.map(item => {
+            			return {
+            				"text": item.dept_name + " " + item.emp_name,
+            				"state" : { "opened" : true },
+            				"children" : D3J4(items)
+            			}
+            		})
+            }
+            
+            function D3J4(items) {
+            	return items
+            		.filter(item => item.dept_code == 'D3' && item.job_code == 'J4')
+            		.map(item => {
+            			return {
+            				"text": item.dept_name + " " + item.emp_name,
+            				"state" : { "opened" : false }
+            			}
+            		})
+            }
+            
+            function D4(items, historys) {
+            	return items
+            		.filter(item => item.dept_code == 'D4' && item.job_code == 'J3')
+            		.map(item => {
+            			const history = getTeacherHistory(item.emp_id, historys);
+            			return {
+            				"text": history.grade + "학년 " + history.grade_class + "반 " + item.emp_name,
+            				"state" : { "opened" : true },
+            				"children" : D4J4(items, historys)
+            			}
+            		})
+            }
+            
+            function D4J4(items, historys) {
+            	return items
+            		.filter(item => item.dept_code == 'D4' && item.job_code == 'J4')
+            		.map(item => {
+            			const history = getTeacherHistory(item.emp_id, historys);
+            			return {
+            				"text": history.grade + "학년 " + history.grade_class + "반 " + item.emp_name,
+            				"state" : { "opened" : false }
+            			}
+            		}).sort((a, b) => {
+                        const gradeA = parseInt(a.text.split('학년')[0], 10);
+                        const gradeB = parseInt(b.text.split('학년')[0], 10);
+                        const classA = parseInt(a.text.split('반')[0].split('학년')[1], 10);
+                        const classB = parseInt(b.text.split('반')[0].split('학년')[1], 10);
+                        
+                        // First sort by grade, then by class
+                        if (gradeA === gradeB) {
+                            return classA - classB;
+                        } else {
+                            return gradeA - gradeB;
+                        }
+            		});
+            }
+            		
+        });
+            	
+	</script>	
+</th:block>
+</html>
