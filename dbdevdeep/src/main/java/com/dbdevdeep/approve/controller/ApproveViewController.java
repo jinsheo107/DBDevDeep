@@ -3,9 +3,12 @@ package com.dbdevdeep.approve.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.dbdevdeep.approve.domain.ApproveDto;
 import com.dbdevdeep.approve.service.ApproveService;
@@ -22,9 +25,12 @@ public class ApproveViewController {
 	
 	//목록조회
 	@GetMapping("/approve")
-	public String selectApproveList(Model model , ApproveDto dto) {
+	public String selectApproveList(Model model) {
 		
-		List<ApproveDto> resultList = approveService.selectApproveList(dto);
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+		
+		List<ApproveDto> resultList = approveService.selectApproveList(username);
 		model.addAttribute("resultList",resultList);
 		return "approve/approList";
 	}

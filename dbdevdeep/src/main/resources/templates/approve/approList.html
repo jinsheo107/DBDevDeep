@@ -53,7 +53,7 @@
 		                        <div class="row mb-2">
 		                        	
 		                        	<div class="col-12 d-flex justify-content-end">
-			                            <button type="button" class="btn waves-effect waves-light btn-primary m-1" onclick="create();">작성</button>
+			                            <button type="button" class="btn waves-effect waves-light btn-primary m-1" th:onclick="|location.href='@{/approCreate}'|">작성</button>
 		                        	</div>
 	                            </div>
                                 <div class="table-responsive">
@@ -82,7 +82,7 @@
                                         		<td th:text="${approve.appro_type}"></td>
                                         		<td th:text="${approve.appro_status}"></td>
                                         	</tr>
-                                        <th:block>
+                                        </th:block>
                                         </tbody>
                                     </table>
                                 </div>
@@ -162,11 +162,6 @@
 	<script src="/assets/extra-libs/datatables.net/js/jquery.dataTables.min.js"></script>
     <script src="/dist/js/pages/datatable/datatable-basic.init.js"></script>
     
-    <script>
-        function create() {
-            window.location.href = '/approCreate'; // approCreate.html로 이동
-        }
-    </script>
-	
+    	
 </th:block>
 </html>
