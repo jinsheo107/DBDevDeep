@@ -188,7 +188,7 @@
                                         <td class="info_label">직급</td>
                                         <td class="info_value">
                                         	<span th:if="${#authentication.principal.dto.dept_code != 'D4'}" sec:authentication="principal.dto.job_name"></span>
-                                        	<span th:if="${#authentication.principal.dto.dept_code == 'D4'}" th:text="${'-'}"></span>
+                                        	<span th:if="${#authentication.principal.dto.dept_code == 'D4'}">-</span>
 										</td>
                                     </tr>
                                     <tr>
@@ -205,33 +205,43 @@
                         <div class="today_title">TODAY</div>
                         <div class="today_date" id="toDay"></div> <!-- 오늘의 날짜를 여기에 입력 -->
                         <div class="today_info">
+                        <input type="hidden" id="csrf_token" th:value="${_csrf.token}">
                             <table>
                                 <tbody>
                                     <tr>
                                         <td class="info_label">출근 시간</td>
-                                        <td class="info_value">07:55</td>
+                                        <td class="info_value" id="checkInTime">-</td>
                                     </tr>
                                     <tr>
                                         <td class="info_label">퇴근 시간</td>
-                                        <td class="info_value">미등록</td>
+                                        <td class="info_value" id="checkOutTime">-</td>
                                     </tr>
                                     <tr>
                                         <td class="info_label">업무 상태</td>
-                                        <td class="info_value work_status">출근</td>
+                                        <td class="info_value work_status" id="checkStatus">출근 전</td>
                                     </tr>
                                 </tbody>
                             </table>
                         </div>
                         <div class="attendance_buttons">
-                            <button class="attendance_btn check-in">출근</button>
-                            <button class="attendance_btn check-out">퇴근</button>
+                        	<form id="checkIn">
+                        		<input type="hidden" name="emp_id" th:value="${#authentication.principal.dto.emp_id}">
+                            <button class="attendance_btn check-in" id="checkInBtn">출근</button>
+                        	</form>
+                        	<form id="checkOut">
+                        		<input type="hidden" name="attend_no" id="attend_no">
+                        		<input type="hidden" name="attend_date" id="attend_date">
+                        		<input type="hidden" name="check_in_time" id="check_in_time">
+                        		<input type="hidden" name="emp_id" th:value="${#authentication.principal.dto.emp_id}">
+                            <button class="attendance_btn check-out" disabled id="checkOutBtn">퇴근</button>
+                        	</form>
                         </div>
                     </div>
                 </div>
             </div>
             <script>
 	            let today = new Date();   
-	
+	            
 	            let year = today.getFullYear(); // 년도
 	            let month = today.getMonth() + 1;  // 월
 	            let date = today.getDate();  // 날짜
@@ -256,8 +266,146 @@
 	            const toDay = document.getElementById('toDay');
 	            toDay.innerText = year + '년 ' + month + '월 ' + date + '일 ' + day + '요일';
 	            
-
+							const checkIn = document.getElementById('checkIn');
+							const csrfToken = document.getElementById("csrf_token").value;
+							checkIn.addEventListener('submit', (e) => {
+								e.preventDefault();
+								fetch('/check-in', {
+									method: 'POST',
+									headers : {
+										"Content-Type": "application/json;charset=utf-8",
+										"Accept": "application/json",
+										'X-CSRF-TOKEN': csrfToken
+									},
+									body: checkIn.emp_id.value
+								})
+								.then(response => response.json())
+								.then(data => {
+									if(data.res_code == '200'){
+										Swal.fire({
+											icon :'success',
+											title:'성공',
+											text : data.res_msg,
+											confirmButtonText:"닫기"
+										}).then((result)=>{
+											location.href="/";
+										});
+									} else{
+										Swal.fire({
+											icon:'error',
+											title:'실패',
+											text: data.res_msg,
+											confirmButtonText:"닫기"
+										});
+									}
+								})
+							})
+							
+							const checkOut = document.getElementById('checkOut');
+							checkOut.addEventListener('submit', (e) => {
+								e.preventDefault(); 
+								
+								Swal.fire({
+								      title: '퇴근하시겠습니까?',
+								      icon: 'warning',
+								      showCancelButton: true,
+								      confirmButtonColor: '#3085d6',
+								      cancelButtonColor: '#d33',
+								      confirmButtonText: '승인',
+								      cancelButtonText: '취소'
+								    })
+								    .then((result) => {
+								    	if (result.isConfirmed) { // 승인 시
+									    	const payload = new FormData(checkOut);
+									    	fetch('/check-out', {
+									            method: 'POST',
+									            headers: {
+									                'X-CSRF-TOKEN': csrfToken
+									            },
+									            body: payload
+									        })
+											.then(response => response.json())
+											.then(data => {
+												if(data.res_code == '200'){
+													Swal.fire({
+														icon :'success',
+														title:'성공',
+														text : data.res_msg,
+														confirmButtonText:"닫기"
+													})
+													.then((result)=>{
+														location.href="/";
+													});
+													} else{
+														Swal.fire({
+															icon:'error',
+															title:'실패',
+															text: data.res_msg,
+															confirmButtonText:"닫기"
+														});
+													}
+										    })
+								    	}
+									}) 
+							})
+							
+							
             </script>
+            
+            <script th:inline="javascript">
+            // javascript에서 thymeleaf를 사용 시 /**/'' 사용
+            // /**/ 안에 공백 X
+            // /**/ 뒤에 '' 사용
+            let attendNo = /*[[${checktime.attend_no}]]*/'';
+            let attendDate = /*[[${checktime.attend_date}]]*/'';
+            let checkInTime = /*[[${checktime.check_in_time}]]*/'';
+            let checkOutTime = /*[[${checktime.check_out_time}]]*/'';
+            let workStatus = /*[[${checktime.work_status}]]*/'';
+            
+						  
+						  if(checkInTime != null) {
+							  let checkInTimeDate = new Date(checkInTime);
+
+								// 시간:분 형식으로 변환
+								let timeString = checkInTimeDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false });
+							  
+							  document.getElementById('checkInTime').innerText = timeString;
+						  } 
+						  
+						  if(checkOutTime != null && checkInTime != checkOutTime) {
+							  checkOutTime = new Date(checkOutTime);
+
+								// 시간:분 형식으로 변환
+								let timeString = checkOutTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false });
+							  
+							  document.getElementById('checkOutTime').innerText = timeString;
+							  
+						  }
+						  
+						  if(workStatus == 0) {
+							  document.getElementById('checkStatus').innerText = '출근 전';
+						  } else if(workStatus == 1) {
+							  document.getElementById('checkStatus').innerText = '출근';
+							  document.getElementById('checkInBtn').disabled = true;
+							  document.getElementById('checkOutBtn').disabled = false;
+							  
+							  document.getElementById('attend_no').value = attendNo;
+							  document.getElementById('attend_date').value = attendDate;
+							  document.getElementById('check_in_time').value = checkInTime;
+							  
+						  } else {
+							  document.getElementById('checkStatus').innerText = '퇴근';
+							  document.getElementById('checkOutBtn').disabled = true;
+							  document.getElementById('checkInBtn').disabled = true;
+						  }
+						  
+						  if(attendNo != null) {
+							  document.getElementById('attend_no').value = attendNo;
+						  }
+						  
+						  
+						  
+						</script>
         </aside>
 </th:block>
 </html>

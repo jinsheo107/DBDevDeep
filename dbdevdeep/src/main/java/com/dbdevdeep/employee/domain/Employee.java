@@ -10,11 +10,11 @@ import com.dbdevdeep.approve.domain.Attendance;
 import com.dbdevdeep.approve.domain.LineDraft;
 import com.dbdevdeep.approve.domain.Reference;
 import com.dbdevdeep.approve.domain.ReferenceDraft;
+//github.com/bo-gyung/DBDevDeep.git
 import com.dbdevdeep.schedule.domain.Schedule;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
@@ -100,6 +100,7 @@ public class Employee {
 	@Column(name="chat_status_msg")
 	private String chatStatusMsg;
 	
+	// 직원 반 배정 관련
 	@OneToMany(mappedBy = "employee")
 	private List<TeacherHistory> teacherHistorys;
 
@@ -108,9 +109,6 @@ public class Employee {
 
 	@OneToMany(mappedBy = "employee")
     private List<Approve> approves;
-
-    @OneToMany(mappedBy = "employee")
-    private List<Attendance> attendances;
 
     @OneToMany(mappedBy = "employee")
     private List<ApproveLine> approveLines;
@@ -127,4 +125,8 @@ public class Employee {
     @OneToMany(mappedBy = "employee")
     private List<LineDraft> lineDrafts;
     
+	// 근태관리 관련
+	@OneToMany(mappedBy = "employee")
+	private List<Attendance> attendances;
+
 }

@@ -100,7 +100,7 @@
                     min: this.$.data('min') !== undefined ? this.$.data('min') : 0,
                     max: this.$.data('max') !== undefined ? this.$.data('max') : 100,
                     stopper: true,
-                    readOnly: this.$.data('readonly') || (this.$.attr('readonly') === 'readonly'),
+                    disabled: this.$.data('disabled') || (this.$.attr('disabled') === 'disabled'),
 
                     // UI
                     cursor: this.$.data('cursor') === true && 30
@@ -400,7 +400,7 @@
         };
 
         this._listen = function () {
-            if (!this.o.readOnly) {
+            if (!this.o.disabled) {
                 this.$c
                     .bind(
                         "mousedown",
@@ -419,7 +419,7 @@
 
                 this.listen();
             } else {
-                this.$.attr('readonly', 'readonly');
+                this.$.attr('disabled', 'disabled');
             }
 
             if (this.relative) {
