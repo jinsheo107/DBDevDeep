@@ -36,14 +36,23 @@ public class CategoryService {
 	}
 
 	public List<CategoryDto> selectPrivateCategoryList(String empId) {
-		List<Category> categoryList = categoryRepository.findByCategoryTypeAndEmployee_EmpId(1, empId);
-		
-		List<CategoryDto> categoryDtoList = new ArrayList<CategoryDto>();
-		for(Category c : categoryList) {
-			CategoryDto dto = new CategoryDto().toDto(c);
-			categoryDtoList.add(dto);
-		}
-		return categoryDtoList;
+        // 기본 개인 범주는 모든 사용자에게 보여야 함
+        List<Category> defaultPersonalCategories = categoryRepository.findByCategoryTypeAndIsDefault(1, "Y");
+
+        // 사용자의 개인 범주만 추가적으로 가져옴
+        List<Category> userPersonalCategories = categoryRepository.findByCategoryTypeAndEmployee_EmpId(1, empId);
+        
+        // 두 리스트를 합침
+        List<Category> combinedList = new ArrayList<>(defaultPersonalCategories);
+        combinedList.addAll(userPersonalCategories);
+        
+        // DTO로 변환
+        List<CategoryDto> categoryDtoList = new ArrayList<>();
+        for(Category c : combinedList) {
+            CategoryDto dto = new CategoryDto().toDto(c);
+            categoryDtoList.add(dto);
+        }
+        return categoryDtoList;
 	}
 
 	public CategoryDto selectCategoryOne(Long category_no) {

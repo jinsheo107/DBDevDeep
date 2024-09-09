@@ -575,6 +575,11 @@
 	    } else {
 	        showPublicCategories(); // 공용 범주 보여줌
 	    }
+		
+	 	// "취소" 버튼으로 변경 및 resetForm() 이벤트 핸들러 설정
+        $('#cancel-delete-button').text('취소').off('click').on('click', function () {
+            resetForm();
+        });
 
 	    // 색상 클릭 이벤트 추가
 	    document.querySelectorAll('.color-list-item').forEach(item => {

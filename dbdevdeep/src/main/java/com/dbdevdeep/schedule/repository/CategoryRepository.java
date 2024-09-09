@@ -14,5 +14,7 @@ public interface CategoryRepository extends JpaRepository<Category, Long>{
 
 	List<Category> findByCategoryType(int categoryType);
 	
-	List<Category> findByCategoryTypeAndEmployee_EmpId(int categoryType, String empId); 
+	List<Category> findByCategoryTypeAndEmployee_EmpId(int categoryType, String empId);
+
+	List<Category> findByCategoryTypeAndIsDefault(int categoryType, String string); 
 }
