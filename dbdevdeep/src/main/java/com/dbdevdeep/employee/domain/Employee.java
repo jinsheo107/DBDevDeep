@@ -3,6 +3,7 @@ package com.dbdevdeep.employee.domain;
 import java.time.LocalDate;
 import java.util.List;
 
+import com.dbdevdeep.schedule.domain.Category;
 import com.dbdevdeep.schedule.domain.Schedule;
 
 import jakarta.persistence.Column;
@@ -96,6 +97,9 @@ public class Employee {
 	private List<TeacherHistory> teacherHistorys;
 
 	@OneToMany(mappedBy = "employee")
-	private List<Schedule> shcedules;
+	private List<Schedule> schedules;
+	
+	@OneToMany(mappedBy = "employee")
+	private List<Category> categories;
 
 }

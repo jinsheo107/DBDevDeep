@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+     xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+     layout:decorate="~{include/schedule_layout}">
+<head>
+    <!-- This page plugin CSS -->
+    <link href="/assets/extra-libs/datatables.net-bs4/css/dataTables_holiday.bootstrap4.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link href="/dist/css/style.min.css" rel="stylesheet">
+    <style>
+    	.swal-custom-button {
+			background-color: #5f76e8 !important;
+			color: white; /* 버튼 텍스트 색상 */
+			border: none; /* 버튼 테두리 제거 */
+			padding: 10px 20px; /* 버튼 패딩 */
+			font-size: 16px; /* 버튼 폰트 크기 */
+			cursor: pointer; /* 마우스 커서 포인터 */
+		}
+		
+		.swal-custom-button:hover {
+		  background-color: #3e59e3 !important;
+		}
+		.list-group-item{
+			border: none;
+			text-align: center;
+			font-size:20px;
+			margin-bottom:0px !important;
+			cursor: pointer;
+		}
+		thead tr td, tbody tr td{
+	        border: 2px solid gray !important; /* 각 셀의 테두리 설정 */
+	        font-size:20px;
+	        height:80px !important;
+	    }
+	    
+	    td:first-child{
+	        text-align: center !important; /* 텍스트 가운데 정렬 */
+	        vertical-align: middle !important; /* 텍스트 수직 가운데 정렬 */	    	
+	    }
+	    
+	    .register-button-container {
+	    	position: absolute; /* 절대 위치 */
+	        width: 100%; /* 전체 너비 */
+			bottom: 5px; /* 아래쪽에 고정 */
+	        text-align: center; /* 버튼을 가운데 정렬 */
+	        margin-top: 20px; /* 위쪽에 약간의 간격 */
+	        padding: 10px 0; /* 패딩 추가 */
+	    }
+	
+	    .register-button {
+	        width: 90%; /* 버튼을 거의 꽉 차게 */
+	        padding: 10px; /* 버튼 내부 여백 */
+	        font-size: 16px; /* 버튼 글자 크기 */
+	    }
+	    
+	    .btn-group-custom{
+	    	width:150px;
+	    	height:50px;
+	    }
+	    
+	    .scrollable-list {
+	        max-height: calc(100% - 155px); /* ul의 최대 높이를 등록 버튼 위까지로 설정 */
+	        overflow-y: auto; /* 수직 스크롤바 추가 */
+	        margin-bottom: 60px; /* 하단 마진 */
+	        padding-right: 10px; /* 스크롤바와 내용 간의 간격 */
+	    }
+	    
+		.color-list {
+	        list-style: none; /* 기본 리스트 스타일 제거 */
+	        padding: 0; /* 패딩 제거 */
+	        margin: 0; /* 마진 제거 */
+	        vertical-align: middle !important;
+	        align-items: center; /* 수직 가운데 정렬 */
+	        display:flex;
+	    }
+	
+	    .color-list-item {
+	        width: 20px;
+	        height: 20px;
+	        cursor: pointer; /* 클릭 가능 커서 */
+	        border: 1px solid #ddd; /* 기본 테두리 */
+	        margin-right: 3px; /* 색상 간격 */
+	    }
+	    
+	    .color-list-item.selected { /* 선택된 색상의 테두리 강조 */
+            border: 2px solid #555; /* 선택된 색상 테두리 강조 */
+        }
+	
+	    .color-list-item:hover {
+	        border: 2px solid #555; /* 호버 시 테두리 강조 */
+	    }
+	    
+	    /* 버튼 활성화 스타일 (Bootstrap의 기본 버튼 스타일 사용) */
+		.btn-group-custom .btn.active {
+		    background-color: #007bff;
+		    color: white;
+		}
+		
+		.color-list-item.selected { /* 선택된 색상의 테두리 강조 */
+		    border: 2px solid #555; /* 선택된 색상 테두리 강조 */
+		}
+	</style>
+</head>
+<th:block layout:fragment="content">
+<body>
+	<!-- ============================================================== -->
+		<!-- Page wrapper  -->
+		<!-- ============================================================== -->
+		<div class="page-wrapper">
+
+			<div class="container-fluid" style="margin-bottom:-10px;">
+
+                <div class="row">
+				    <div class="col-12">
+				        <div class="card">
+				            <div class="card-body" style="padding:50px 80px">
+				                <!-- "범주관리" 타이틀과 하단 선 -->
+				                <div class="row mb-2" style="border-bottom: 2px solid gray; padding-bottom: 20px; display:flex; align-items: center;">
+				                    <div class="col d-flex justify-content-start align-items-center" style="padding-left:0px; max-width:170px;">
+				                        <div style="font-size:36px; font-weight:bolder;">범주관리</div>
+				                    </div>
+				                    <!-- 공용/개인 선택 버튼 -->
+						            <div class="btn-group btn-group-custom" role="group" aria-label="범주 유형 선택" style="margin-right: 10px;">
+									    <button type="button" class="btn btn-outline-primary active" id="public-button" onclick="showPublicCategories()">공용</button>
+									    <button type="button" class="btn btn-outline-primary" id="private-button" onclick="showPrivateCategories()">개인</button>
+									</div>
+
+				                </div>
+				                
+				                <!-- 좌측 네모난 div와 오른쪽 콘텐츠를 같은 행에 배치 -->
+				                <div class="row mt-4" style="">
+				                    <!-- 좌측 네모난 div -->
+				                    <div class="col" style="padding-right: 30px; padding-left:0px; max-width: 320px;">
+				                        <div style="border: 2px solid gray; height: calc(100vh - 360px); min-height: 200px; border-radius:10px; position: relative;">
+				                        	<!-- 범주목록 타이틀 -->
+				                            <div style="font-size: 25px; font-weight: bold; border-bottom: 2px solid gray; text-align: center;
+				                            display: flex; align-items: center; justify-content: center; height: 80px; background-color:#E8EAEC;
+				                            border-top-left-radius: 10px; border-top-right-radius: 10px;">
+				                                범주목록
+				                            </div>
+				                            <!-- 공용 범주 목록 -->
+											<ul id="public-category-list" class="list-group scrollable-list" style="list-style: none; padding: 20px;">
+											    <li th:each="category : ${publicCategoryList}" class="list-group-item" 
+											    	th:attr="onclick=|showCategoryDetails(${category.category_no})|"
+											        style="display:flex; align-items: center; cursor: pointer;">
+											        <div th:style="'width: 20px; height: 20px; background-color: #' + ${category.category_color} + '; margin-right: 10px;'"></div>
+											        <div th:text="${category.category_name}"></div>
+											    </li>
+											</ul>
+											
+											<!-- 개인 범주 목록 -->
+											<ul id="private-category-list" class="list-group scrollable-list" style="list-style: none; padding: 20px; display: none;"> <!-- 처음에는 숨김 -->
+											    <li th:each="category : ${privateCategoryList}" class="list-group-item" 
+											    	th:attr="onclick=|showCategoryDetails(${category.category_no})|"
+											        style="display:flex; align-items: center; cursor: pointer;">
+											        <div th:style="'width: 20px; height: 20px; background-color: #' + ${category.category_color} + '; margin-right: 10px;'"></div>
+											        <div th:text="${category.category_name}"></div>
+											    </li>
+											</ul>
+				                            <!-- 등록 버튼을 포함한 컨테이너 -->
+									        <div class="register-button-container">
+									            <button class="register-button btn waves-effect waves-light btn-primary" onclick="showRegistrationForm()">등록</button>
+									        </div>
+				                        </div>
+				                    </div>
+				                    <!-- 우측 테이블 컨텐츠 -->
+									<div class="col" style="padding-right: 0;"> <!-- 오른쪽 패딩 조정 -->
+										<form id="categoryCreateFrm">
+										<input type="hidden" id="csrf_token" th:value="${_csrf.token}">
+									    <!-- 나머지 오른쪽 테이블 영역 -->
+									    <table class="table custom-table"> <!-- 테이블에 커스텀 클래스 적용 -->
+									        <thead>
+									            <tr>
+									                <td style="width: 20%;">색상</td>
+									                <td style="width: 80%; vertical-align:middle !important">
+									                    <!-- 색상 옵션 나열 -->
+									                    <ul class="color-list">
+									                        <li class="color-list-item" style="background-color: #FFFFFF;"></li>
+									                        <li class="color-list-item" style="background-color: #D9D9D9;"></li>
+									                        <li class="color-list-item" style="background-color: #B0B0B0;"></li>
+									                        <li class="color-list-item" style="background-color: #FFCFCF;"></li>
+									                        <li class="color-list-item" style="background-color: #FFCCAF;"></li>
+									                        <li class="color-list-item" style="background-color: #FFEF9D;"></li>
+									                        <li class="color-list-item" style="background-color: #CFFFB8;"></li>
+									                        <li class="color-list-item" style="background-color: #CADFC6;"></li>
+									                        <li class="color-list-item" style="background-color: #D7EEFF;"></li>
+									                        <li class="color-list-item" style="background-color: #81B3FF;"></li>
+									                        <li class="color-list-item" style="background-color: #E5DCFF;"></li>
+									                        <li class="color-list-item" style="background-color: #FFDCFB;"></li>
+									                        <li class="color-list-item" style="background-color: #FF95C1;"></li>
+									                        <li class="color-list-item" style="background-color: #FF7373;"></li>
+									                    </ul>
+									                </td>
+									            </tr>
+									        </thead>
+									        <tbody>
+									            <tr>
+									                <td style="width: 20%;">범주명</td>
+									                <td style="width: 80%; vertical-align:middle !important">
+									                	<input type="text" id="categoryName" class="form-control" style="width: 100%; border-radius:10px;" placeholder="범주명을 입력하세요.">
+									                </td>
+									            </tr>
+									        </tbody>
+									    </table>
+									    <!-- 등록/취소 버튼 -->
+									    <div id="form-container" style="float:right; display: flex; align-items: center;">
+									        <button type="button" id="cancel-delete-button" class="btn waves-effect waves-light btn-light" style="width:80px; height:40px;">취소</button>
+									        <button type="submit" class="btn waves-effect waves-light btn-primary m-1" style="width:80px; height:40px;">등록</button>
+									    </div>
+									    </form>
+									</div>
+				            </div>
+				        </div>
+				    </div>
+				</div>
+                <!-- ============================================================== -->
+                <!-- End PAge Content -->
+                <!-- ============================================================== -->
+                <!-- ============================================================== -->
+                <!-- Right sidebar -->
+                <!-- ============================================================== -->
+                <!-- .right-sidebar -->
+                <!-- ============================================================== -->
+                <!-- End Right sidebar -->
+                <!-- ============================================================== -->
+            </div>
+            <!-- ============================================================== -->
+            <!-- End Container fluid  -->
+            <!-- ============================================================== -->
+            <!-- ============================================================== -->
+            <!-- footer -->
+            <!-- ============================================================== -->
+            <!-- ============================================================== -->
+            <!-- End footer -->
+            <!-- ============================================================== -->
+        </div>
+        <!-- ============================================================== -->
+        <!-- End Page wrapper  -->
+        <!-- ============================================================== -->
+    </div>
+    
+	<script src="/assets/libs/jquery/dist/jquery.min.js"></script>
+    <!-- Bootstrap tether Core JavaScript -->
+    <script src="/assets/libs/popper.js/dist/umd/popper.min.js"></script>
+    <script src="/assets/libs/bootstrap/dist/js/bootstrap.min.js"></script>
+    <!-- apps -->
+    <!-- apps -->
+    <script src="/dist/js/app-style-switcher.js"></script>
+    <script src="/dist/js/feather.min.js"></script>
+    <!-- slimscrollbar scrollbar JavaScript -->
+    <script src="/assets/libs/perfect-scrollbar/dist/perfect-scrollbar.jquery.min.js"></script>
+    <script src="/assets/extra-libs/sparkline/sparkline.js"></script>
+    <!--Wave Effects -->
+    <!-- themejs -->
+    <!--Menu sidebar -->
+    <script src="/dist/js/sidebarmenu.js"></script>
+    <!--Custom JavaScript -->
+    <script src="/dist/js/custom.min.js"></script>
+    <!--This page plugins -->
+    <script src="/assets/extra-libs/datatables.net/js/jquery.dataTables.min.js"></script>
+    <script src="/dist/js/pages/datatable/datatable-basic.init.js"></script>
+	<script>
+	
+	// 전역 변수로 현재 범주 유형 설정
+	let currentCategoryType = 0; // 기본값: 공용 (0)
+	
+	// 로컬 스토리지에서 범주 유형을 로드
+	const savedCategoryType = localStorage.getItem('currentCategoryType');
+	if (savedCategoryType) {
+	    currentCategoryType = parseInt(savedCategoryType, 10); // 저장된 값을 불러와 현재 범주 유형으로 설정
+	}
+	
+	// 공용 범주 목록 표시 함수
+	window.showPublicCategories = function () {
+	    // 공용 범주를 보이게 하고, 개인 범주는 숨김
+	    document.getElementById('public-category-list').style.display = 'block';
+	    document.getElementById('private-category-list').style.display = 'none';
+
+	    // 버튼 상태 업데이트
+	    document.getElementById('public-button').classList.add('active');
+	    document.getElementById('private-button').classList.remove('active');
+	    
+	 	// 현재 범주 유형 설정: 공용
+	    currentCategoryType = 0;
+	    
+	    // 로컬 스토리지에 저장
+	    localStorage.setItem('currentCategoryType', currentCategoryType);
+	};
+
+	// 개인 범주 목록 표시 함수
+	window.showPrivateCategories = function () {
+	    // 개인 범주를 보이게 하고, 공용 범주는 숨김
+	    document.getElementById('public-category-list').style.display = 'none';
+	    document.getElementById('private-category-list').style.display = 'block';
+
+	    // 버튼 상태 업데이트
+	    document.getElementById('private-button').classList.add('active');
+	    document.getElementById('public-button').classList.remove('active');
+	    
+	 	// 현재 범주 유형 설정: 개인
+	    currentCategoryType = 1;
+	    
+	 	// 로컬 스토리지에 저장
+	    localStorage.setItem('currentCategoryType', currentCategoryType);
+	};
+
+	// 범주 클릭 시 상세 정보 표시 함수
+	window.showCategoryDetails = function (categoryNo) {
+	    fetch(`/category/${categoryNo}`, {
+	        method: 'GET',
+	        headers: {
+	            'Accept': 'application/json',
+	            'Content-Type': 'application/json'
+	        }
+	    })
+	    .then(response => response.json())
+	    .then(data => {
+	        const categoryData = data; // 서버에서 가져온 데이터
+
+	        // 범주명 입력 필드 업데이트
+	        const categoryNameInput = document.getElementById('categoryName');
+	        categoryNameInput.value = categoryData.category_name;
+	        
+	     	// 삭제 버튼 참조
+	        const deleteButton = document.getElementById('cancel-delete-button');
+
+	        // 기본 범주인지 확인하여 삭제 버튼 활성화/비활성화
+	        if (categoryData.is_default === 'Y') {
+	            deleteButton.disabled = true;  // 삭제 버튼 비활성화
+	        } else {
+	            deleteButton.disabled = false; // 삭제 버튼 활성화
+	        }
+
+	        // 경고 메시지 div가 이미 있는지 확인하여 제거
+	        const alertMessage = document.querySelector('.alert-message');
+	        if (alertMessage) {
+	            alertMessage.remove();
+	        }
+
+	        // 범주가 기본 범주인지 확인하여 입력 필드를 비활성화하고 경고 메시지 추가
+	        if (categoryData.is_default === 'Y') {
+	            categoryNameInput.disabled = true; // input 비활성화
+
+	            // 기본 범주 경고 메시지 추가
+	            const alertDiv = document.createElement('div');
+	            alertDiv.className = 'alert-message'; // 클래스 이름 지정
+	            alertDiv.style.color = '#FF7373';
+	            alertDiv.style.marginRight = '15px';
+	            alertDiv.style.fontSize = '16px';
+	            alertDiv.innerHTML = '<i data-feather="alert-circle" style="color: #FF7373; margin-right: 5px; width:16px;"></i>기본 범주는 범주명 수정과 삭제가 불가능합니다.';
+				
+	         	// form-container 내의 취소 버튼 왼쪽에 추가
+	            const formContainer = document.getElementById('form-container'); // form-container 요소 찾기
+	            const cancelButton = document.getElementById('cancel-delete-button'); // 취소 버튼 요소 찾기
+	            formContainer.insertBefore(alertDiv, cancelButton); // 경고 메시지를 취소 버튼 앞에 추가
+
+	            feather.replace(); // Feather Icons 다시 렌더링
+	        } else {
+	            categoryNameInput.disabled = false; // input 활성화
+	        }
+
+	        // 색상 선택
+	        selectColor(categoryData.category_color);
+
+	        // 수정 폼으로 전환 (등록 버튼을 "수정" 버튼으로 변경)
+	        const submitButton = document.querySelector('#form-container button[type="submit"]');
+	        if (submitButton) {
+	            submitButton.innerText = "수정";
+	            submitButton.onclick = function () {
+	                updateCategory(categoryNo);
+	            };
+	        }
+
+	        // "삭제" 버튼으로 변경 및 deleteCategory() 이벤트 핸들러 설정
+	        $('#cancel-delete-button').text('삭제').off('click').on('click', function () {
+	            deleteCategory(categoryNo);
+	        });
+	    })
+	    .catch(error => console.error('Error fetching category details:', error));
+	};
+
+	// 선택된 색상 요소에 테두리 강조 함수
+	window.selectColor = function (color) {
+	    // 모든 색상 요소의 선택 상태 제거
+	    document.querySelectorAll('.color-list-item').forEach(item => {
+	        item.classList.remove('selected');
+	    });
+
+	    if (color === "") return; // 색상이 빈 문자열이면 초기화 후 종료
+
+	    // color 값에 #이 없는 경우 추가
+	    const formattedColor = color.startsWith('#') ? color : `#${color}`;
+
+	    // 선택된 색상 요소에 테두리 강조 추가
+	    const selectedColor = document.querySelector(`.color-list-item[style*="background-color: ${formattedColor}"]`);
+	    if (selectedColor) {
+	        selectedColor.classList.add('selected');
+	    }
+	};
+
+	// 등록 폼 표시 함수
+	window.showRegistrationForm = function () {
+	    resetForm(); // 폼 초기화
+	    selectColor(""); // 선택된 색상 초기화
+
+	    // 등록 폼으로 전환 (버튼 텍스트 "등록"으로 변경)
+	    const submitButton = document.querySelector('#form-container button[type="submit"]');
+	    if (submitButton) {
+	        submitButton.innerText = "등록";
+	        submitButton.onclick = function () {
+	            registerCategory();
+	        };
+	    }
+	    
+	 	// "취소" 버튼으로 변경 및 resetForm() 이벤트 핸들러 설정
+        $('#cancel-delete-button').text('취소').off('click').on('click', function () {
+            resetForm();
+        });
+	};
+
+	// 폼 초기화 함수
+	window.resetForm = function () {
+	    document.getElementById('categoryName').value = ""; // 입력 필드 초기화
+	    selectColor(""); // 선택된 색상 초기화
+	};
+
+	// 유효성 검사 함수
+	window.validateForm = function (categoryName, selectedColor) {
+		let vali_check = true;
+		let vali_text = "";
+	    if (!categoryName) {
+	       	vali_text = "범주명을 입력해주세요.";
+	       	document.getElementById('categoryName').focus();
+	       	vali_check = false;
+	    } 
+	    if (!selectedColor) {
+	    	vali_text = "색상을 선택해주세요.";
+	    	vali_check = false;
+	    } 
+
+	    if (!vali_check) {
+            Swal.fire({
+                icon: 'warning',
+                title: '경고',
+                text: vali_text,
+                confirmButtonText: '확인',
+                customClass: {
+                    confirmButton: 'swal-custom-button'
+                }
+            });
+        }
+	    
+	    return vali_check;
+	};
+
+	// 공통 함수: API 응답 처리
+	window.handleResponse = function (data) {
+	    if (data.res_code === '200') {
+	        Swal.fire({
+	            icon: 'success',
+	            title: '성공',
+	            text: data.res_msg,
+	            confirmButtonText: '확인',
+	            customClass: {
+	                confirmButton: 'swal-custom-button'
+	            }
+	        }).then(() => {
+	            location.href = "/category";
+	        });
+	    } else {
+	        Swal.fire({
+	            icon: 'error',
+	            title: '실패',
+	            text: data.res_msg,
+	            confirmButtonText: '확인',
+	            customClass: {
+	                confirmButton: 'swal-custom-button'
+	            }
+	        });
+	    }
+	};
+
+	// 수정 함수 예시
+	function updateCategory(categoryNo) {
+		event.preventDefault(); // submit 동작 막기
+		
+	    // 범주명과 선택된 색상 가져오기
+	    const categoryName = document.getElementById('categoryName').value;
+	    const selectedColorElement = document.querySelector('.color-list-item.selected');
+	    let selectedColor = selectedColorElement ? selectedColorElement.style.backgroundColor : "";
+
+	    // 유효성 검사
+	    if (!validateForm(categoryName, selectedColor)) {
+	        return; // 유효성 검사가 실패하면 함수 종료
+	    }
+
+	    // 색상값이 "rgb(...)" 형식일 경우 "#RRGGBB" 형식으로 변환
+	    if (selectedColor.startsWith("rgb")) {
+	        selectedColor = rgbToHex(selectedColor);
+	    }
+
+	    // 색상 값에서 # 제거
+	    if (selectedColor.startsWith("#")) {
+	        selectedColor = selectedColor.substring(1);
+	    }
+
+	    // CSRF 토큰 가져오기
+	    const csrfToken = $('#csrf_token').val();
+
+	    // 업데이트할 데이터 준비
+	    const payload = {
+	        category_name: categoryName,
+	        category_color: selectedColor,
+	        category_type: currentCategoryType,
+	        category_no: categoryNo
+	    };
+
+	    // 서버로 업데이트 요청 보내기
+	    fetch(`/category/${categoryNo}`, {
+	        method: 'PUT', // HTTP 메서드 PUT 사용
+	        body: JSON.stringify(payload), // 데이터 JSON 문자열로 변환
+	        headers: {
+	            'X-CSRF-TOKEN': csrfToken,
+	            'Content-Type': 'application/json',
+	            'Accept': 'application/json'
+	        }
+	    })
+	    .then(response => response.json())
+	    .then(data => handleResponse(data)) // 응답 처리
+	    .catch(error => console.error('수정 오류:', error));
+	};
+	
+	// RGB 형식을 HEX로 변환하는 함수
+	function rgbToHex(rgb) {
+	    const rgbArray = rgb.match(/\d+/g);
+	    return `#${((1 << 24) + (parseInt(rgbArray[0]) << 16) + (parseInt(rgbArray[1]) << 8) + parseInt(rgbArray[2])).toString(16).slice(1).toUpperCase()}`;
+	}
+	
+	// 삭제 버튼 클릭 이벤트 핸들러 추가
+	function deleteCategory(categoryNo) {
+		const csrfToken = $('#csrf_token').val();
+	    Swal.fire({
+	        icon: 'warning',
+	        title: '삭제 확인',
+	        text: '정말로 삭제하시겠습니까?',
+	        showCancelButton: true,
+	        confirmButtonText: '삭제',
+	        cancelButtonText: '취소',
+	        customClass: {
+	            confirmButton: 'swal-custom-button',
+	            cancelButton: 'swal-cancel-button'
+	        }
+	    }).then((result) => {
+	        if (result.isConfirmed) {
+	            // 삭제 요청을 서버에 전송
+	            fetch(`/category/${categoryNo}`, {
+	                method: 'DELETE',
+	                headers: {
+	                	'X-CSRF-TOKEN': csrfToken,
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+	                }
+	            })
+	            .then(response => response.json())
+	            .then(data => handleResponse(data))
+	            .catch(error => console.error('삭제 오류:', error));
+	        }
+	    });
+	}
+
+	$(document).ready(function () {
+		// 초기화: 로컬 스토리지에 저장된 값에 따라 범주 목록을 보여줌
+	    if (currentCategoryType === 1) {
+	        showPrivateCategories(); // 개인 범주 보여줌
+	    } else {
+	        showPublicCategories(); // 공용 범주 보여줌
+	    }
+
+	    // 색상 클릭 이벤트 추가
+	    document.querySelectorAll('.color-list-item').forEach(item => {
+	        item.addEventListener('click', function () {
+	            // 모든 색상 요소의 선택 상태 제거
+	            document.querySelectorAll('.color-list-item').forEach(i => i.classList.remove('selected'));
+
+	            // 현재 클릭된 색상 요소에 테두리 강조 추가
+	            this.classList.add('selected');
+	        });
+	    });
+
+	    // 등록 모달 폼 제출 이벤트
+	    $('#categoryCreateFrm').on('submit', function (e) {
+	        e.preventDefault();
+	        
+	        const categoryName = $('#categoryName').val();
+	        const csrfToken = $('#csrf_token').val();
+	        const selectedColorElement = $('.color-list-item.selected');
+	        let selectedColor = selectedColorElement.length ? selectedColorElement.css('background-color') : "";
+
+	        // 유효성 검사
+	        if (!validateForm(categoryName, selectedColor)) {
+	            return;
+	        }
+	        
+	        // 색상값이 "rgb(...)" 형식일 경우 "#RRGGBB" 형식으로 변환
+	        if (selectedColor.startsWith("rgb")) {
+	            selectedColor = rgbToHex(selectedColor);
+	        }
+
+	        // 색상 값에서 # 제거
+	        if (selectedColor.startsWith("#")) {
+	            selectedColor = selectedColor.substring(1);
+	        }
+	        
+	        // FormData 객체 생성
+	        const payload = new FormData(this);
+	        payload.set('category_name', categoryName);
+	        payload.set('category_color', selectedColor);
+	        payload.set('category_type', currentCategoryType);
+
+	        fetch('/category', {
+	            method: 'POST',
+	            body: JSON.stringify(Object.fromEntries(payload)),
+	            headers: {
+	                'X-CSRF-TOKEN': csrfToken,
+	                'Content-Type': 'application/json',
+	                'Accept': 'application/json'
+	            }
+	        })
+	        .then(response => response.json())
+	        .then(data => handleResponse(data))
+	        .catch(error => console.error('등록 오류:', error));
+	    });
+	});
+</script>
+	</th:block>
+</body>
+</html>
