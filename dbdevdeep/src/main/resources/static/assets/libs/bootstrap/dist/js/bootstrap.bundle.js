@@ -2995,7 +2995,7 @@
    * @static
    * @type {Array}
    * @enum {String}
-   * @readonly
+   * @disabled
    * @method placements
    * @memberof Popper
    */

@@ -9,15 +9,14 @@ div.dataTables_wrapper div.dataTables_paginate ul.pagination {
 }
 
 td span {
-    display: block;
-    width: 100%;
-    height: 56px;        
-    box-sizing: border-box;
-    cursor: pointer;
-    text-align: center;
-    line-height: 56px;
+	display: block;
+	width: 100%;
+	height: 56px;
+	box-sizing: border-box;
+	cursor: pointer;
+	text-align: center;
+	line-height: 56px;
 }
-
 </style>
 
 	<!-- ============================================================== -->
@@ -72,7 +71,7 @@ td span {
 							<hr>
 							<div class="row mb-2">
 								<div class="col-6 d-flex justify-content-start">
-									<button type="button" class="btn waves-effect waves-light btn-outline-secondary">목록</button>
+									<button type="button" class="btn waves-effect waves-light btn-outline-secondary" style="margin: 4px;" onclick="location.href='/class-year';">목록</button>
 								</div>
 								<div class="col-6 d-flex justify-content-end">
 									<button type="button" class="btn waves-effect waves-light btn-primary m-1" data-toggle="modal" data-target="#class_create_modal">반 수정</button>
@@ -90,26 +89,43 @@ td span {
 										<th:block th:if="${!#lists.isEmpty(resultList)}">
 											<tr>
 												<th scope="col" style="width: 10%;">학년\반</th>
-												<th th:each="i : ${#numbers.sequence(1, maxClass)}" th:text="${i} + ' 반'"></th>
+												<th scope="col" th:each="i : ${#numbers.sequence(1, maxClass)}" th:text="${i} + ' 반'"></th>
 											</tr>
 										</th:block>
 									</thead>
 									<tbody>
 										<tr th:each="grade : ${#numbers.sequence(1, 6)}">
-											<td th:text="${grade} + ' 학년'"></td>
-											<td th:each="i : ${#numbers.sequence(1, maxClass)}" style="padding: 0px; justify-content: center; ">
+											<td th:text="${grade} + ' 학년'" class="gradeTextCenter"></td>
+											<td th:each="i : ${#numbers.sequence(1, maxClass)}" style="padding: 0px;">
 												<span th:if="${gradeToClassMap[grade + ''] != null and #lists.size(gradeToClassMap[grade + '']) >= i and gradeToClassMap[grade + ''][i-1].teach_emp_name != 'null'}" 
-													th:text="${gradeToClassMap[grade + ''][i-1].teach_emp_name}"
-													data-toggle="modal" data-target="#editClass"> 
+													th:text="${gradeToClassMap[grade + ''][i-1].teach_emp_name}" 
+													th:data-grade="${grade}"
+													th:data-class="${i}" 
+													th:data-empname="${gradeToClassMap[grade + ''][i-1].teach_emp_name}"
+													th:data-empid="${gradeToClassMap[grade + ''][i-1].teach_emp_id}"
+													th:data-teacherno="${gradeToClassMap[grade + ''][i-1].teacher_no}"
+													th:data-tyear="${gradeToClassMap[grade + ''][i-1].t_year}"
+													class="teacher-span"
+													data-toggle="modal" 
+													data-target="#editClass"
+													> 
 												</span> 
 												<span th:if="${gradeToClassMap[grade + ''] != null and #lists.size(gradeToClassMap[grade + '']) >= i and gradeToClassMap[grade + ''][i-1].teach_emp_name == 'null'}" 
-													th:text="미배정" data-toggle="modal" data-target="#addClass"></span>
+													th:text="미배정"
+													th:data-grade="${grade}"
+													th:data-class="${i}"
+													th:data-teacherno="${gradeToClassMap[grade + ''][i-1].teacher_no}"
+													th:data-tyear="${gradeToClassMap[grade + ''][i-1].t_year}"
+													data-toggle="modal" 
+													data-target="#addClass"
+													class="add-span">
+												</span> 
 												<span th:if="${gradeToClassMap[grade + ''] == null or #lists.size(gradeToClassMap[grade + '']) < i}" style="cursor: default;"> </span>
 											</td>
 										</tr>
 									</tbody>
 								</table>
-
+								
 							</div>
 						</div>
 					</div>
@@ -123,31 +139,38 @@ td span {
 							<h4 class="modal-title" id="info-header-modalLabel">직원 반 배정</h4>
 							<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
 						</div>
+						
 						<div class="modal-body">
-							<form class="pl-3 pr-3" action="#">
-
+						<input type="hidden" id="csrf_token" th:value="${_csrf.token}">
+							<form class="pl-3 pr-3" id="addClassFrm">
+								<input type="hidden" name="teacher_no" id="add_teacher_no">
+							
 								<div class="form-group">
-									<label for="username">반배정번호</label> <input class="form-control" type="email" id="teacher_no" readonly>
+									<select class="form-control" name="teach_emp_id">
+										<option value="0">직원을 선택하세요</option>
+										<th:block th:each="emp : ${empList}">
+											<option th:text="${emp.emp_name}" th:value="${emp.emp_id}"></option>
+										</th:block>
+									</select>
 								</div>
 
 								<div class="form-group">
-									<label for="emailaddress">직원번호</label> <input class="form-control" type="email" id="emp_id">
+									<label for="password">학년</label>
+									<input class="form-control" type="text" name="grade" id="add_grade" readonly>
 								</div>
 
 								<div class="form-group">
-									<label for="password">학년</label> <input class="form-control" type="password" id="grade">
+									<label for="password">반</label> 
+									<input class="form-control" type="text" name="grade_class" id="add_grade_class" readonly>
 								</div>
 
 								<div class="form-group">
-									<label for="password">반</label> <input class="form-control" type="password" id="grade_class">
-								</div>
-								
-								<div class="form-group">
-									<label for="password">학년도</label> <input class="form-control" type="password" readonly id="t_year">
+									<label for="password">학년도</label> 
+									<input class="form-control" type="text" name="t_year" readonly id="add_t_year">
 								</div>
 
 								<div class="form-group text-center">
-									<button class="btn btn-primary" type="submit">Sign Up Free</button>
+									<button class="btn btn-primary" type="submit" id="addTeacherBtn">직원 등록</button>
 								</div>
 
 							</form>
@@ -159,7 +182,7 @@ td span {
 				<!-- /.modal-dialog -->
 			</div>
 			<!-- /.modal -->
-			
+
 			<div id="editClass" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
 				<div class="modal-dialog">
 					<div class="modal-content">
@@ -168,30 +191,39 @@ td span {
 							<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
 						</div>
 						<div class="modal-body">
-							<form class="pl-3 pr-3" action="#">
-
+							<form class="pl-3 pr-3" id="editClassFrm">
 								<div class="form-group">
-									<label for="username">반배정번호</label> <input class="form-control" type="email" id="edit_teacher_no" readonly>
-								</div>
-
-								<div class="form-group">
-									<label for="emailaddress">직원번호</label> <input class="form-control" type="email" id="edit_emp_id">
-								</div>
-
-								<div class="form-group">
-									<label for="password">학년</label> <input class="form-control" type="password" id="edit_grade">
-								</div>
-
-								<div class="form-group">
-									<label for="password">반</label> <input class="form-control" type="password" id="edit_grade_class">
+									<input class="form-control" type="text" name="teacher_no" id="edit_teacher_no">
 								</div>
 								
 								<div class="form-group">
-									<label for="password">학년도</label> <input class="form-control" type="password" readonly id="edit_t_year">
+									<label for="emailaddress">직원명</label> 
+									<!-- <input class="form-control" type="text" name="emp_id" id="edit_emp_name"> -->
+									<select class="form-control" name="teach_emp_id">
+										<option id="selectTeacher"></option>
+										<th:block th:each="emp : ${empList}">
+											<option th:text="${emp.emp_name}" th:value="${emp.emp_id}"></option>
+										</th:block>
+									</select>
 								</div>
 
+								<div class="form-group">
+									<label for="password">학년</label> 
+									<input class="form-control" type="text" name="grade" id="edit_grade" readonly>
+								</div>
+
+								<div class="form-group">
+									<label for="password">반</label> 
+									<input class="form-control" type="text" name="grade_class" id="edit_grade_class" readonly>
+								</div>
+
+								<div class="form-group">
+									<label for="password">학년도</label> 
+									<input class="form-control" type="text" name="t_year" readonly id="edit_t_year">
+								</div>
+								<br>
 								<div class="form-group text-center">
-									<button class="btn btn-primary" type="submit">Sign Up Free</button>
+									<button class="btn btn-primary" type="submit">직원 수정</button>
 								</div>
 
 							</form>
@@ -203,7 +235,122 @@ td span {
 				<!-- /.modal-dialog -->
 			</div>
 			<!-- /.modal -->
-
+			<script>
+				$('.teacher-span').on('click', function() {
+			        var grade = $(this).data('grade');
+			        var classNumber = $(this).data('class');
+			        var empName = $(this).data('empname');
+			        var empId = $(this).data('empid');
+			        var teacher_no = $(this).data('teacherno')
+			        var year = $(this).data('tyear');
+				
+			        $('#edit_t_year').val(year);
+			        $('#edit_grade').val(grade);
+			        $('#edit_grade_class').val(classNumber);
+			        $('#selectTeacher').text(empName);
+			        $('#selectTeacher').val(empId);
+			        $('#edit_teacher_no').val(teacher_no);
+			    });
+				
+				$('.add-span').on('click', function() {
+			        var grade = $(this).data('grade');
+			        var classNumber = $(this).data('class');
+			        var teacher_no = $(this).data('teacherno')
+			        var year = $(this).data('tyear');
+				
+			        $('#add_t_year').val(year);
+			        $('#add_grade').val(grade);
+			        $('#add_grade_class').val(classNumber);
+			        $('#add_teacher_no').val(teacher_no);
+			    });
+				
+				const addForm = document.getElementById('addClassFrm')
+				addForm.addEventListener('submit', (e) => {
+					e.preventDefault();
+					if(addForm.teach_emp_id.value == 0) {
+						addForm.teach_emp_id.focus();
+						Swal.fire({
+							icon : 'info',
+							title : '직원을 선택하세요'
+						});
+					} else {
+						const payload = new FormData(addForm);
+						const csrfToken = document.getElementById("csrf_token").value;
+						fetch('/class-year/' + addForm.t_year.value, {
+							method:'POST',
+							headers : {
+								'X-CSRF-TOKEN': csrfToken
+							},
+							body:payload
+						})
+						.then(response => response.json())
+						.then(data=>{
+							if(data.res_code == '200'){
+								Swal.fire({
+									icon :'success',
+									title:'성공',
+									text : data.res_msg,
+									confirmButtonText:"닫기"
+								}).then((result)=>{
+									location.href="/class-year/" + addForm.t_year.value;
+								});
+							} else{
+								Swal.fire({
+									icon:'error',
+									title:'실패',
+									text: data.res_msg,
+									confirmButtonText:"닫기"
+								});
+							}
+						});
+					}
+				});
+				
+				const editForm = document.getElementById('editClassFrm');
+				
+				editForm.addEventListener('submit', (e) => {
+					e.preventDefault();
+					if(editForm.teach_emp_id.value == 0) {
+						editForm.teach_emp_id.focus();
+						Swal.fire({
+							icon : 'info',
+							title : '직원을 선택하세요'
+						});
+					} else {
+						const payload = new FormData(editForm);
+						const csrfToken = document.getElementById("csrf_token").value;
+						fetch('/class-year/' + editForm.t_year.value, {
+							method:'POST',
+							headers : {
+								'X-CSRF-TOKEN': csrfToken
+							},
+							body:payload
+						})
+						.then(response => response.json())
+						.then(data=>{
+							if(data.res_code == '200'){
+								Swal.fire({
+									icon :'success',
+									title:'성공',
+									text : data.res_msg,
+									confirmButtonText:"닫기"
+								}).then((result)=>{
+									location.href="/class-year/" + editForm.t_year.value;
+								});
+							} else{
+								Swal.fire({
+									icon:'error',
+									title:'실패',
+									text: data.res_msg,
+									confirmButtonText:"닫기"
+								});
+							}
+						});
+					}
+				});
+				
+				
+			</script>
 			<!-- ============================================================== -->
 			<!-- End PAge Content -->
 			<!-- ============================================================== -->
@@ -258,24 +405,6 @@ td span {
 	<!--This page plugins -->
 	<script src="/assets/extra-libs/datatables.net/js/jquery.dataTables.min.js"></script>
 	<script src="/dist/js/pages/datatable/datatable-basic.init.js"></script>
-	<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // 모든 td 요소를 가져온다
-        document.querySelectorAll('td[data-teach-emp-name]').forEach(td => {
-            td.addEventListener('click', function() {
-                // 데이터 속성에서 teach_emp_name 값을 가져온다
-                const teachEmpName = this.getAttribute('data-teach-emp-name');
-                
-                if (teachEmpName === '미배정') {
-                    // 미배정인 경우 직원 등록 모달을 연다
-                    $('#addClass').modal('show');
-                } else if (teachEmpName !== 'null') {
-                    // teach_emp_name이 null이 아닌 경우 직원 수정 모달을 연다
-                    $('#editClass').modal('show');
-                }
-            });
-        });
-    });
-</script>
+	
 	</body>
 </html>

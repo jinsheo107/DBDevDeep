@@ -1,3 +1,4 @@
+
 package com.dbdevdeep.notice.domain;
 
 import java.time.LocalDateTime;
