@@ -93,7 +93,6 @@ public class ApproveService {
 					.build();
 			
 			approveDtoList.add(dto);
-			System.out.println(approveDtoList);
 		}
 		return approveDtoList;
 	}
@@ -102,7 +101,7 @@ public class ApproveService {
 	public int approUp(ApproveDto approveDto, VacationRequestDto vacationRequestDto, List<ApproveLineDto> approveLineDtos,
 			List<ReferenceDto> referenceDto , ApproFileDto approFileDto, MultipartFile file) {
 
-		Employee employee1 = employeeRepository.findByempId(approveDto.getEmp_id());
+		Employee employee = employeeRepository.findByempId(approveDto.getEmp_id());
 	    Department department = departmentRepository.findByDeptCode(approveDto.getDept_code());
 	    Job job = jobRepository.findByJobCode(approveDto.getJob_code());
 		
@@ -111,13 +110,13 @@ public class ApproveService {
 	        tempEdit = tempEditRepository.findById(approveDto.getTemp_no()).orElse(null);
 	    }
 	    
-	    if (employee1 == null || department == null || job == null) {
+	    if (employee == null || department == null || job == null) {
 	        // 필요한 엔티티가 없는 경우 예외를 던지거나 오류를 처리합니다.
 	        return 0;
 	    }
 	    
 			// 1. approve 테이블에 저장
-		    Approve approve = approveDto.toEntity(employee1, department, job, tempEdit);
+		    Approve approve = approveDto.toEntity(employee, department, job, tempEdit);
 		    approve = approveRepository.save(approve);
             
             // 저장 후 생성된 appro_no 가져오기
@@ -132,7 +131,7 @@ public class ApproveService {
             // 3. approve_Line 테이블에 저장
             for (ApproveLineDto lineDto : approveLineDtos) {
                 lineDto.setAppro_no(approNo); // Approve의 appro_no 설정
-                ApproveLine approveLine = lineDto.toEntity(approve, employee1);
+                ApproveLine approveLine = lineDto.toEntity(approve, employee);
               //  approveLine.setApprove(approve); // Approve와 연관관계 설정
                 approveLineRepository.save(approveLine);
             }
@@ -140,16 +139,35 @@ public class ApproveService {
             // 4. reference 테이블에 저장
             for (ReferenceDto refDto : referenceDto) {
                 refDto.setAppro_no(approNo); // Approve의 appro_no 설정
-                Reference reference = refDto.toEntity(approve, employee1);
+                Reference reference = refDto.toEntity(approve, employee);
               //  reference.setApprove(approve); // Approve와 연관관계 설정
                 referenceRepository.save(reference);
             }
             
-            // 5. appro_file 테이블에 저장
-            approFileDto.setAppro_no(approNo); // Approve의 appro_no 설정
-            ApproFile approFile = approFileDto.toEntity(approve);
-           // approFile.setApprove(approve); // Approve와 연관관계 설정
-            approFileRepository.save(approFile);
+         // 5. appro_file 테이블에 저장
+            if (approFileDto != null) { // approFileDto가 null이 아닐 때만 저장
+                approFileDto.setAppro_no(approNo); // Approve의 appro_no 설정
+                ApproFile approFile = approFileDto.toEntity(approve);
+                approFileRepository.save(approFile);
+            }
+            
+            // 6. 휴가 시간 차감 로직 추가
+            int vacationType = vacationRequestDto.getVac_type();
+            if (vacationType == 0 || vacationType == 1 || vacationType == 7 || vacationType == 8 || vacationType == 4) {
+                // 사용자가 선택한 휴가 유형에 따른 차감 시간 계산
+                int hoursToDeduct = minusVac(vacationRequestDto);
+
+                // 기존 vacation_hour에서 차감
+                EmployeeDto employeeDto = new EmployeeDto().toDto(employee); // Employee 객체를 DTO로 변환
+                int updatedVacationHour = employeeDto.getVacation_hour() - hoursToDeduct;
+                employeeDto.setVacation_hour(Math.max(updatedVacationHour, 0)); // 0 미만으로 가지 않도록 설정
+                
+                employeeDto.setDepartment(department); // Department 엔티티 설정
+                employeeDto.setJob(job); // Job 엔티티 설정
+
+                // 업데이트된 DTO를 엔티티로 변환하여 저장
+                employeeRepository.save(employeeDto.toEntity());
+            }
 			return 1;
             
 	}

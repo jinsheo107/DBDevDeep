@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -77,14 +78,22 @@ public class ApproveApiController {
 			approveDto.setAppro_content(approContent);
 			
 		VacationRequestDto vacationRequestDto = new VacationRequestDto();
-			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+			LocalDateTime startDateTime;
+			LocalDateTime endDateTime;
 
-			LocalDate startDateLocal = LocalDate.parse(startDate, formatter);
-			LocalDate endDateLocal = LocalDate.parse(endDate, formatter);
-
-			// LocalDate를 LocalDateTime으로 변환 (자정 시간으로 설정)
-			LocalDateTime startDateTime = startDateLocal.atStartOfDay();
-			LocalDateTime endDateTime = endDateLocal.atStartOfDay();
+			try {
+				// datetime-local 형식으로 파싱 시도
+				DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm");
+				startDateTime = LocalDateTime.parse(startDate, dateTimeFormatter);
+				endDateTime = LocalDateTime.parse(endDate, dateTimeFormatter);
+			} catch (DateTimeParseException e) {
+				// datetime-local 형식이 아니면 date 형식으로 파싱
+				DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+				LocalDate startDateLocal = LocalDate.parse(startDate, dateFormatter);
+				LocalDate endDateLocal = LocalDate.parse(endDate, dateFormatter);
+				startDateTime = startDateLocal.atStartOfDay();
+				endDateTime = endDateLocal.atStartOfDay();
+			}
 
 			vacationRequestDto.setVac_yn("Y");
 			vacationRequestDto.setVac_type(vacType);
@@ -93,10 +102,10 @@ public class ApproveApiController {
 			
 		List<ApproveLineDto> approveLineDtos = new ArrayList<>();
 		LocalDateTime currentTime = LocalDateTime.now();
+		int order = 1;
 		
 		if(consult !=null && !consult.isEmpty()) {
 			String[] consults = consult.split(">");
-			int order = 1;
 			for(String c : consults) {
 				String consultId = pullId(c);
 				approveLineDtos.add(new ApproveLineDto(null, null, consultId, order++, 0, currentTime ,null, "Y"));
@@ -105,10 +114,9 @@ public class ApproveApiController {
 		
 		if(approval != null && !approval.isEmpty()) {
 			String[] approvals = approval.split(">");
-			int order = (consult != null ? consult.split(">").length + 1 : 1);
 			for(String a : approvals) {
 				String approvalId = pullId(a);
-				approveLineDtos.add(new ApproveLineDto(null, null, approvalId , order++ , 0 , currentTime ,null, "Y"));
+				approveLineDtos.add(new ApproveLineDto(null, null, approvalId , order++ , 0 , currentTime ,null, "N"));
 			}
 		}
 		
@@ -122,18 +130,19 @@ public class ApproveApiController {
 			}
 			
 		// 파일 업로드 설정
-			ApproFileDto approFileDto = new ApproFileDto();
-		    if (file != null && !file.isEmpty()) {
-		        // 파일 저장 및 정보 설정
-		        String savedFileName = fileService.employeePicUpload(file);
-		        if (savedFileName != null) {
-		            approFileDto.setNew_file(savedFileName);
-		            approFileDto.setOri_file(file.getOriginalFilename());
-		        } else {
-		            resultMap.put("res_msg", "파일 업로드가 실패하였습니다.");
-		            return resultMap; 
-		        }
-		    }
+			ApproFileDto approFileDto = null; // 파일이 없는 경우 null로 설정
+			if (file != null && !file.isEmpty()) {
+			    // 파일 저장 및 정보 설정
+			    String savedFileName = fileService.approveUpload(file);
+			    if (savedFileName != null) {
+			        approFileDto = new ApproFileDto(); // 파일이 있을 경우에만 객체 생성
+			        approFileDto.setNew_file(savedFileName);
+			        approFileDto.setOri_file(file.getOriginalFilename());
+			    } else {
+			        resultMap.put("res_msg", "파일 업로드가 실패하였습니다.");
+			        return resultMap; 
+			    }
+			}
 		
 		
 			int result = approveService.approUp(approveDto, vacationRequestDto, approveLineDtos, referenceDto ,approFileDto, file);
