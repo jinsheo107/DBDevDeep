@@ -24,9 +24,10 @@ public class VacationRequestDto {
 	private LocalDateTime start_time;
 	private LocalDateTime end_time;
 	
-	public VacationRequest toEntity() {
+	public VacationRequest toEntity(Approve approve) {
 		return VacationRequest.builder()
 				.vacNo(vac_no)
+				.approve(approve)
 				.vacYn(vac_yn)
 				.vacType(vac_type)
 				.startTime(start_time)

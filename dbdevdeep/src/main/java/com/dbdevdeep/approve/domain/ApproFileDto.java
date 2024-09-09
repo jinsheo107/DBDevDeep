@@ -21,9 +21,10 @@ public class ApproFileDto {
 	private String new_file;
 	private String appro_root;
 	
-	public ApproFile toEntity() {
+	public ApproFile toEntity(Approve approve) {
 		return ApproFile.builder()
 				.fileNo(file_no)
+				.approve(approve)
 				.oriFile(ori_file)
 				.newFile(new_file)
 				.approRoot(appro_root)

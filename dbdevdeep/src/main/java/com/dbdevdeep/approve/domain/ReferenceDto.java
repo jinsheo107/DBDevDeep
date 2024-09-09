@@ -1,5 +1,7 @@
 package com.dbdevdeep.approve.domain;
 
+import com.dbdevdeep.employee.domain.Employee;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -19,9 +21,11 @@ public class ReferenceDto {
 	private Long appro_no;
 	private String emp_id;
 	
-	public Reference toEntity() {
+	public Reference toEntity(Approve approve , Employee employee) {
 		return Reference.builder()
 				.refNo(ref_no)
+				.approve(approve)
+				.employee(employee)
 				.build();
 	}
 	

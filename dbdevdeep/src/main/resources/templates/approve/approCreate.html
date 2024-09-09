@@ -34,20 +34,20 @@
 	
 	        $j(document).ready(function() {
 	            // CSRF 토큰 가져오기
-	            var csrfToken = $j('meta[name="_csrf"]').attr('content');  
+	            var csrfToken = $j('meta[name="_csrf"]').attr('content');
 	            var csrfHeader = $j('meta[name="_csrf_header"]').attr('content');
-	
+
 	            let targetCellId;
-	
+
 	            $j('#openTreeButton1, #openTreeButton2, #openTreeButton3').click(function() {
 	                targetCellId = '#' + $j(this).attr('id').replace('openTreeButton', 'selectedNodesTable');
 	                $j('#treeModal').modal('show');
 	                initializeTree();
 	            });
-	
+
 	            function initializeTree() {
 	                $j('#jstree_modal').jstree("destroy").empty();
-	
+
 	                // API로부터 트리 데이터를 가져옴
 	                $j.ajax({
 	                    url: '/api/tree-data',
@@ -80,26 +80,26 @@
 	                    }
 	                });
 	            }
-	
+
 	            // 부모 노드 클릭 시 아무런 동작도 하지 않도록 설정
 	            $j('#jstree_modal').on("select_node.jstree", function(e, data) {
 	                if (data.node.type === "non_selectable") {
 	                    data.instance.deselect_node(data.node);
 	                }
 	            });
-	
+
 	            $j('#confirmSelection').click(function() {
 	                var selectedNodes = $j('#jstree_modal').jstree("get_selected", true);
 	                var names = selectedNodes.map(function(node) {
 	                    return node.text;
 	                });
-	
-	                $j(targetCellId).val(names.join('>'));
-	
+
+	                $j(targetCellId).val(names.join('>')); // 선택한 노드들의 텍스트를 조합하여 표시
+
 	                $j('#treeModal').modal('hide');
 	            });
 	        });
-    </script>
+	    </script>
 
 </head>
 
@@ -141,26 +141,26 @@
 				                    <td>성명</td>
 				                    <td><input type="text" name="emp_name" th:value="${#authentication.principal.dto.emp_name}" readonly style="border: 0; outline: none;"></td>	
 				                    <td>부서</td>
-				                    <td><input type="text" name="dept_code" th:value="${#authentication.principal.dto.dept_name}" readonly style="border: 0; outline: none;"></td>
+				                    <td>
+									    <input type="text" name="dept_name" th:value="${#authentication.principal.dto.dept_name}" readonly style="border: 0; outline: none;">
+									    <!-- 숨겨진 필드로 dept_code 값을 유지 -->
+									    <input type="hidden" name="dept_code" th:value="${#authentication.principal.dto.dept_code}">
+									</td>
 				                </tr>
 				                <tr>
 				                    <td>직원번호</td>
 				                    <td><input type="text" name="emp_id" th:value="${#authentication.principal.dto.emp_id}" readonly style="border: 0; outline: none;"></td>
 				                    <td>직급</td>
 									<td>
-									    <input type="text" name="job_code" 
-									           th:if="${#authentication.principal.dto.dept_name == '행정부' && #authentication.principal.dto.job_name == '부장'}"
-									           value="행정부장" readonly style="border: 0; outline: none;">
-									    <input type="text" name="job_code" 
-									           th:if="${#authentication.principal.dto.dept_name == '행정부' && #authentication.principal.dto.job_name != '부장'}"
-									           value="행정직원" readonly style="border: 0; outline: none;">
-									    <input type="text" name="job_code" 
-									           th:if="${#authentication.principal.dto.dept_name == '교무부' && #authentication.principal.dto.job_name == '부장'}"
-									           value="교무부장" readonly style="border: 0; outline: none;">
-									    <input type="text" name="job_code" 
-									           th:if="${#authentication.principal.dto.dept_name == '교무부' && #authentication.principal.dto.job_name != '부장'}"
-									           value="교직원" readonly style="border: 0; outline: none;">
+									    <input type="text" name="job_name_display" 
+									           th:value="${#authentication.principal.dto.job_code == 'J1' ? '교장' : 
+									                       #authentication.principal.dto.job_code == 'J2' ? '교감' :
+									                       #authentication.principal.dto.job_code == 'J3' ? '부장' : '직원'}"
+									           readonly style="border: 0; outline: none;">
+									    <!-- 실제 job_code를 숨겨진 필드로 추가 -->
+									    <input type="hidden" name="job_code" th:value="${#authentication.principal.dto.job_code}">
 									</td>
+
 				                </tr>
 				                <tr>
 				                	<td>제목</td>
@@ -384,7 +384,7 @@
     
     	let valiCount = 0;
     
-	    const form = document.getElementById("approCreateFrm");
+	    const form = document.getElementById('approCreateFrm');
 
 	    form.addEventListener('submit', (e) => {
 	        e.preventDefault();  
@@ -429,7 +429,7 @@
 					confirmButtonText:"닫기"
 				});
 	        	form.end_date.focus()
-	        } else if (form.appro_context.value == ""){
+	        } else if (form.appro_content.value == ""){
 	        	Swal.fire({
 					icon:'error',
 					title:'신청사유를 입력해주세요',
@@ -443,6 +443,7 @@
 					confirmButtonText:"닫기"
 				});
 	        	form.approval.focus()
+	        	
 	        } else {
 	        	vali_check = true;
 	        }

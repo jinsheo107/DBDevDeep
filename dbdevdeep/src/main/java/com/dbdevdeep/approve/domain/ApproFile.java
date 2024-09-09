@@ -2,6 +2,8 @@ package com.dbdevdeep.approve.domain;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
@@ -21,6 +23,7 @@ import lombok.NoArgsConstructor;
 public class ApproFile {
 	
 	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "file_no")
     private Long fileNo;
 
@@ -28,13 +31,13 @@ public class ApproFile {
     @JoinColumn(name = "appro_no")
     private Approve approve;
 
-    @Column(name = "ori_file")
+    @Column(name = "ori_file", nullable = true)
     private String oriFile;
 
-    @Column(name = "new_file")
+    @Column(name = "new_file", nullable = true)
     private String newFile;
 
-    @Column(name = "appro_root")
+    @Column(name = "appro_root", nullable = true)
     private String approRoot;
 	
 }

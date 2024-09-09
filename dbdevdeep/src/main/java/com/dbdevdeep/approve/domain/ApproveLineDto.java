@@ -2,6 +2,8 @@ package com.dbdevdeep.approve.domain;
 
 import java.time.LocalDateTime;
 
+import com.dbdevdeep.employee.domain.Employee;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -26,9 +28,11 @@ public class ApproveLineDto {
 	private String reason_back;
 	private String consult_yn;
 	
-	public ApproveLine toEntity() {
+	public ApproveLine toEntity(Approve approve , Employee employee) {
 		return ApproveLine.builder()
 				.approLineNo(appro_line_no)
+				.approve(approve)
+				.employee(employee)
 				.approLineOrder(appro_line_order)
 				.approLineStatus(appro_line_status)
 				.approPermitTime(appro_permit_time)

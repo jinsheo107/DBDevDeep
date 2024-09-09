@@ -2,6 +2,10 @@ package com.dbdevdeep.approve.domain;
 
 import java.time.LocalDateTime;
 
+import com.dbdevdeep.employee.domain.Department;
+import com.dbdevdeep.employee.domain.Employee;
+import com.dbdevdeep.employee.domain.Job;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -31,9 +35,13 @@ public class ApproveDto {
 	private int search_type = 1;
 	private String search_text;
 	
-	public Approve toEntity() {
+	public Approve toEntity(Employee employee, Department department, Job job, TempEdit tempEdit) {
 		return Approve.builder()
 				.approNo(appro_no)
+				.employee(employee)
+				.tempEdit(tempEdit)
+				.department(department)
+				.job(job)
 				.approTime(appro_time)
 				.approType(appro_type)
 				.approStatus(appro_status)

@@ -17,18 +17,22 @@ import com.dbdevdeep.approve.domain.ApproveLine;
 import com.dbdevdeep.approve.domain.ApproveLineDto;
 import com.dbdevdeep.approve.domain.Reference;
 import com.dbdevdeep.approve.domain.ReferenceDto;
+import com.dbdevdeep.approve.domain.TempEdit;
 import com.dbdevdeep.approve.domain.VacationRequest;
 import com.dbdevdeep.approve.domain.VacationRequestDto;
 import com.dbdevdeep.approve.repository.ApproFileRepository;
 import com.dbdevdeep.approve.repository.ApproveLineRepository;
 import com.dbdevdeep.approve.repository.ApproveRepository;
 import com.dbdevdeep.approve.repository.ReferenceRepository;
+import com.dbdevdeep.approve.repository.TempEditRepository;
 import com.dbdevdeep.approve.repository.VacationRequestRepository;
 import com.dbdevdeep.employee.domain.Department;
 import com.dbdevdeep.employee.domain.Employee;
 import com.dbdevdeep.employee.domain.EmployeeDto;
 import com.dbdevdeep.employee.domain.Job;
+import com.dbdevdeep.employee.repository.DepartmentRepository;
 import com.dbdevdeep.employee.repository.EmployeeRepository;
+import com.dbdevdeep.employee.repository.JobRepository;
 
 import jakarta.transaction.Transactional;
 
@@ -42,6 +46,9 @@ public class ApproveService {
     private final ReferenceRepository referenceRepository;
     private final EmployeeRepository employeeRepository;
     private final FileService fileService;
+	private final DepartmentRepository departmentRepository;
+	private final JobRepository jobRepository;
+	private final TempEditRepository tempEditRepository;
 	
 	@Autowired
 	public ApproveService(ApproveRepository approveRepository, 
@@ -50,6 +57,9 @@ public class ApproveService {
             ApproFileRepository approFileRepository,
             ReferenceRepository referenceRepository,
             EmployeeRepository employeeRepository,
+            DepartmentRepository departmentRepository,
+            JobRepository jobRepository,
+            TempEditRepository tempEditRepository,
             FileService fileService) {
 		this.approveRepository = approveRepository;
 		this.vacationRequestRepository = vacationRequestRepository;
@@ -57,18 +67,22 @@ public class ApproveService {
         this.approFileRepository = approFileRepository;
         this.referenceRepository = referenceRepository;
         this.employeeRepository = employeeRepository;
+        this.departmentRepository = departmentRepository;
+        this.jobRepository = jobRepository;
+        this.tempEditRepository = tempEditRepository;
         this.fileService = fileService;
 	}
 	
 	public List<ApproveDto> selectApproveList(String empId){
 		List<Approve> approveList = approveRepository.findByEmployeeEmpId(empId);
-		
 		List<ApproveDto> approveDtoList = new ArrayList<ApproveDto>();
+		
 		for(Approve a : approveList) {
+			
+		
 			ApproveDto dto = ApproveDto.builder()
 					.appro_no(a.getApproNo())
 					.emp_id(a.getEmployee().getEmpId())
-					.temp_no(a.getTempEdit().getTempNo())
 					.dept_code(a.getDepartment().getDeptCode())
 					.job_code(a.getJob().getJobCode())
 					.appro_time(a.getApproTime())
@@ -87,24 +101,38 @@ public class ApproveService {
 	@Transactional
 	public int approUp(ApproveDto approveDto, VacationRequestDto vacationRequestDto, List<ApproveLineDto> approveLineDtos,
 			List<ReferenceDto> referenceDto , ApproFileDto approFileDto, MultipartFile file) {
+
+		Employee employee1 = employeeRepository.findByempId(approveDto.getEmp_id());
+	    Department department = departmentRepository.findByDeptCode(approveDto.getDept_code());
+	    Job job = jobRepository.findByJobCode(approveDto.getJob_code());
 		
-		
+	    TempEdit tempEdit = null;
+	    if (approveDto.getTemp_no() != null) {  // temp_no가 null이 아닐 때만 findById를 호출합니다.
+	        tempEdit = tempEditRepository.findById(approveDto.getTemp_no()).orElse(null);
+	    }
+	    
+	    if (employee1 == null || department == null || job == null) {
+	        // 필요한 엔티티가 없는 경우 예외를 던지거나 오류를 처리합니다.
+	        return 0;
+	    }
+	    
 			// 1. approve 테이블에 저장
-			Approve approve = approveDto.toEntity();
-            approve = approveRepository.save(approve);
+		    Approve approve = approveDto.toEntity(employee1, department, job, tempEdit);
+		    approve = approveRepository.save(approve);
             
             // 저장 후 생성된 appro_no 가져오기
             Long approNo = approve.getApproNo();
             
             // 2. vacation_request 테이블에 저장
-            VacationRequest vacationRequest = vacationRequestDto.toEntity();
+            vacationRequestDto.setAppro_no(approNo);
+            VacationRequest vacationRequest = vacationRequestDto.toEntity(approve);
             // vacationRequest.setApprove(approve); // Approve와 연관관계 설정
             vacationRequestRepository.save(vacationRequest);
             
             // 3. approve_Line 테이블에 저장
             for (ApproveLineDto lineDto : approveLineDtos) {
                 lineDto.setAppro_no(approNo); // Approve의 appro_no 설정
-                ApproveLine approveLine = lineDto.toEntity();
+                ApproveLine approveLine = lineDto.toEntity(approve, employee1);
               //  approveLine.setApprove(approve); // Approve와 연관관계 설정
                 approveLineRepository.save(approveLine);
             }
@@ -112,32 +140,19 @@ public class ApproveService {
             // 4. reference 테이블에 저장
             for (ReferenceDto refDto : referenceDto) {
                 refDto.setAppro_no(approNo); // Approve의 appro_no 설정
-                Reference reference = refDto.toEntity();
+                Reference reference = refDto.toEntity(approve, employee1);
               //  reference.setApprove(approve); // Approve와 연관관계 설정
                 referenceRepository.save(reference);
             }
             
             // 5. appro_file 테이블에 저장
             approFileDto.setAppro_no(approNo); // Approve의 appro_no 설정
-            ApproFile approFile = approFileDto.toEntity();
+            ApproFile approFile = approFileDto.toEntity(approve);
            // approFile.setApprove(approve); // Approve와 연관관계 설정
             approFileRepository.save(approFile);
+			return 1;
             
-            // 6. 직원 휴가 시간 차감
-            Employee employee = employeeRepository.findByempId(approveDto.getEmp_id());
-            if (employee != null) {
-            	int deductedHours = minusVac(vacationRequestDto);
-            	EmployeeDto employeeDto = new EmployeeDto();
-            	employeeDto.setVacation_hour(employee.getVacationHour() - minusVac(vacationRequestDto));
-            	Employee updateVac = employeeDto.toEntity();
-            	employeeRepository.save(updateVac);
-            } else {
-                return 0; // 직원 정보가 없을 경우 실패 반환
-            }
-            
-            return 1; // 성공시 1 반환
-            
-		}
+	}
 	
 	private int minusVac(VacationRequestDto vacationRequestDto) {
 	    LocalDateTime startDate = vacationRequestDto.getStart_time();

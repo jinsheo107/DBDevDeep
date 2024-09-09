@@ -1,7 +1,9 @@
 package com.dbdevdeep.approve.controller;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -34,6 +36,8 @@ public class ApproveApiController {
 	    return input.substring(input.indexOf('(') + 1, input.indexOf(')'));
 	}
 	
+	
+	
 	@Autowired
 	public ApproveApiController(ApproveService approveService, FileService fileService) {
 		this.approveService = approveService;
@@ -57,10 +61,15 @@ public class ApproveApiController {
 		    @RequestParam("reference") String reference,
 		    @RequestParam("file_name") MultipartFile file) {
 		
+		System.out.println("잡코드"+jobCode);
+		
 		Map<String,String> resultMap = new HashMap<String,String>();
 		resultMap.put("res_code", "404");
 		resultMap.put("res_msg", "결재 요청 중 오류가 발생하였습니다.");
 		
+		try {
+			
+			
 		ApproveDto approveDto = new ApproveDto();
 			approveDto.setEmp_id(empId);
 			approveDto.setDept_code(deptCode);
@@ -69,9 +78,19 @@ public class ApproveApiController {
 			approveDto.setAppro_content(approContent);
 			
 		VacationRequestDto vacationRequestDto = new VacationRequestDto();
+			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
+			LocalDate startDateLocal = LocalDate.parse(startDate, formatter);
+			LocalDate endDateLocal = LocalDate.parse(endDate, formatter);
+
+			// LocalDate를 LocalDateTime으로 변환 (자정 시간으로 설정)
+			LocalDateTime startDateTime = startDateLocal.atStartOfDay();
+			LocalDateTime endDateTime = endDateLocal.atStartOfDay();
+
+			vacationRequestDto.setVac_yn("Y");
 			vacationRequestDto.setVac_type(vacType);
-			vacationRequestDto.setStart_time(LocalDateTime.parse(startDate)); // String을 LocalDateTime으로 변환
-			vacationRequestDto.setEnd_time(LocalDateTime.parse(endDate));
+			vacationRequestDto.setStart_time(startDateTime);
+			vacationRequestDto.setEnd_time(endDateTime);
 			
 		List<ApproveLineDto> approveLineDtos = new ArrayList<>();
 		LocalDateTime currentTime = LocalDateTime.now();
@@ -104,17 +123,18 @@ public class ApproveApiController {
 			}
 			
 		// 파일 업로드 설정
-		ApproFileDto approFileDto = new ApproFileDto();
-
-		// 파일 저장 및 정보 설정
-		String savedFileName = fileService.employeePicUpload(file);
-		if (savedFileName != null) {
-			approFileDto.setNew_file(savedFileName);
-			approFileDto.setOri_file(file.getOriginalFilename());
-		} else {
-			resultMap.put("res_msg", "파일 업로드가 실패하였습니다.");
-			return resultMap; 
-		}
+			ApproFileDto approFileDto = new ApproFileDto();
+		    if (file != null && !file.isEmpty()) {
+		        // 파일 저장 및 정보 설정
+		        String savedFileName = fileService.employeePicUpload(file);
+		        if (savedFileName != null) {
+		            approFileDto.setNew_file(savedFileName);
+		            approFileDto.setOri_file(file.getOriginalFilename());
+		        } else {
+		            resultMap.put("res_msg", "파일 업로드가 실패하였습니다.");
+		            return resultMap; 
+		        }
+		    }
 		
 		
 			int result = approveService.approUp(approveDto, vacationRequestDto, approveLineDtos, referenceDto ,approFileDto, file);
@@ -123,7 +143,12 @@ public class ApproveApiController {
 				resultMap.put("res_code", "200");
 				resultMap.put("res_msg", "결재요청 하였습니다.");
 			}
+		} catch (Exception e) {
+	        e.printStackTrace();  // 서버 로그에 오류 출력
+	        resultMap.put("res_msg", "서버 내부 오류: " + e.getMessage());
+	    }
 		
 		return resultMap;
 	}
+	
 }

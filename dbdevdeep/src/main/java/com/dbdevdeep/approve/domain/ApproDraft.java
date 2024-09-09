@@ -7,6 +7,8 @@ import com.dbdevdeep.employee.domain.Employee;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.Lob;
@@ -28,6 +30,7 @@ import lombok.NoArgsConstructor;
 public class ApproDraft {
 	
 	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "draft_no")
     private Long draftNo;
 
