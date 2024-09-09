@@ -2,6 +2,8 @@ package com.dbdevdeep.employee.domain;
 
 import java.util.List;
 
+import com.dbdevdeep.approve.domain.Approve;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -30,4 +32,7 @@ public class Department {
 	
 	@OneToMany(mappedBy = "department")
 	private List<Employee> employees;
+	
+	@OneToMany(mappedBy = "department")
+	private List<Approve> approves;
 }
