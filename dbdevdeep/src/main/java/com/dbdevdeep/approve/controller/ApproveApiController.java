@@ -61,7 +61,6 @@ public class ApproveApiController {
 		    @RequestParam("reference") String reference,
 		    @RequestParam("file_name") MultipartFile file) {
 		
-		System.out.println("잡코드"+jobCode);
 		
 		Map<String,String> resultMap = new HashMap<String,String>();
 		resultMap.put("res_code", "404");

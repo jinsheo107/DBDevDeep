@@ -25,6 +25,4 @@ public interface EmployeeRepository extends JpaRepository<Employee, String>{
 	@Query("UPDATE Employee e SET e.loginYn = :loginYn WHERE e.empId = :empId")
 	int updateByEmpidToLoginyn(@Param("empId") String empId, @Param("loginYn") String loginYn);
 	
-	@Query("SELECT e FROM Employee e LEFT JOIN e.teacherHistorys th WHERE th.tYear = :tYear ORDER BY e.empId DESC")
-    List<Employee> findAllByYear(@Param("tYear") String tYear);
 }
