@@ -32,12 +32,6 @@ public class HolidayDto {
     
     private String repeat_type;
     
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
-    private Date repeat_start_date;
-    
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
-    private Date repeat_end_date;
-    
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm", timezone = "Asia/Seoul")
     private LocalDateTime reg_time;
     
@@ -52,8 +46,6 @@ public class HolidayDto {
                 .startDate(start_date)
                 .endDate(end_date)
                 .repeatType(repeat_type)
-                .repeatStartDate(repeat_start_date)
-                .repeatEndDate(repeat_end_date)
                 .regTime(reg_time)
                 .modTime(mod_time)
                 .build();
@@ -67,8 +59,6 @@ public class HolidayDto {
     			.start_date(holiday.getStartDate())
     			.end_date(holiday.getEndDate())
     			.repeat_type(holiday.getRepeatType())
-    			.repeat_start_date(holiday.getRepeatStartDate())
-    			.repeat_end_date(holiday.getRepeatEndDate())
     			.reg_time(holiday.getRegTime())
     			.mod_time(holiday.getModTime())
     			.build();

@@ -1,5 +1,6 @@
 package com.dbdevdeep.schedule.service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,30 +40,11 @@ public class HolidayService {
 				.startDate(dto.getStart_date())
 				.endDate(dto.getEnd_date())
 				.repeatType(dto.getRepeat_type())
-				.repeatStartDate(dto.getRepeat_start_date())
-				.repeatEndDate(dto.getRepeat_end_date())
 				.build();
 		
 		Holiday result = holidayRepository.save(holiday);
 		
 		return result;
-	}
-
-	public HolidayDto selectBoardOne(Long holiday_no) {
-		Holiday holiday = holidayRepository.findByHolidayNo(holiday_no);
-		
-		HolidayDto dto = HolidayDto.builder()
-				.holiday_no(holiday.getHolidayNo())
-				.holiday_name(holiday.getHolidayName())
-				.is_period(holiday.getIsPeriod())
-				.start_date(holiday.getStartDate())
-				.end_date(holiday.getEndDate())
-				.repeat_type(holiday.getRepeatType())
-				.repeat_start_date(holiday.getRepeatStartDate())
-				.repeat_end_date(holiday.getRepeatEndDate())
-				.reg_time(holiday.getRegTime())
-				.build();
-		return dto;
 	}
 
 	public int deleteHoliday(Long holiday_no) {
@@ -73,6 +55,37 @@ public class HolidayService {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		return result;
+	}
+	
+	public HolidayDto selectHolidayOne(Long holiday_no) {
+		Holiday holiday = holidayRepository.findByHolidayNo(holiday_no);
+		
+		HolidayDto dto = HolidayDto.builder()
+				.holiday_no(holiday.getHolidayNo())
+				.holiday_name(holiday.getHolidayName())
+				.is_period(holiday.getIsPeriod())
+				.start_date(holiday.getStartDate())
+				.end_date(holiday.getEndDate())
+				.repeat_type(holiday.getRepeatType())
+				.reg_time(holiday.getRegTime())
+				.mod_time(holiday.getModTime())
+				.build();
+		return dto;
+	}
+
+	public Holiday updateHoliday(HolidayDto dto) {
+		HolidayDto temp = selectHolidayOne(dto.getHoliday_no());
+		
+		temp.setHoliday_name(dto.getHoliday_name());
+		temp.setIs_period(dto.getIs_period());
+		temp.setStart_date(dto.getStart_date());
+		temp.setEnd_date(dto.getEnd_date());
+		temp.setRepeat_type(dto.getRepeat_type());
+		temp.setMod_time(LocalDateTime.now());
+		
+		Holiday holiday = temp.toEntity();
+		Holiday result = holidayRepository.save(holiday);
 		return result;
 	}
 

@@ -8,6 +8,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -51,6 +52,21 @@ public class HolidayApiController {
 		if(holidayService.deleteHoliday(holiday_no) > 0) {
 			resultMap.put("res_code", "200");
 			resultMap.put("res_msg", "휴일이 성공적으로 삭제되었습니다.");
+		} 
+		
+		return resultMap;
+	}
+	
+	@ResponseBody
+	@PutMapping("/holiday/{holiday_no}")
+	public Map<String,String> updateHoliday(@RequestBody HolidayDto dto){
+		Map<String,String> resultMap = new HashMap<String,String>();
+		resultMap.put("res_code", "404");
+		resultMap.put("res_msg", "휴일 수정 중 오류가 발생하였습니다.");
+		
+		if(holidayService.updateHoliday(dto) != null) {
+			resultMap.put("res_code", "200");
+			resultMap.put("res_msg", "휴일이 성공적으로 수정되었습니다.");
 		} 
 		
 		return resultMap;
