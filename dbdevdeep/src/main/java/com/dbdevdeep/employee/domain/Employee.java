@@ -6,11 +6,10 @@ import java.util.List;
 import com.dbdevdeep.approve.domain.ApproDraft;
 import com.dbdevdeep.approve.domain.Approve;
 import com.dbdevdeep.approve.domain.ApproveLine;
-import com.dbdevdeep.approve.domain.Attendance;
 import com.dbdevdeep.approve.domain.LineDraft;
 import com.dbdevdeep.approve.domain.Reference;
 import com.dbdevdeep.approve.domain.ReferenceDraft;
-//github.com/bo-gyung/DBDevDeep.git
+import com.dbdevdeep.attendance.domain.Attendance;
 import com.dbdevdeep.schedule.domain.Schedule;
 
 import jakarta.persistence.Column;
