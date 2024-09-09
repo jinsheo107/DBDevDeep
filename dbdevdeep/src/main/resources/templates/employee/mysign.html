@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{include/mypage_layout}">
+<th:block layout:fragment="content">
+	<style>
+#eye_icon_login {
+	display: flex;
+	position: absolute;
+	z-index: 999;
+	left: 320px;
+	bottom: 27px;
+	cursor: pointer;
+}
+</style>
+	<!-- ============================================================== -->
+	<!-- End Left Sidebar - style you can find in sidebar.scss  -->
+	<!-- ============================================================== -->
+	<!-- ============================================================== -->
+	<!-- Page wrapper  -->
+	<!-- ============================================================== -->
+	<div class="page-wrapper">
+		<!-- Container fluid  -->
+		<!-- ============================================================== -->
+		<div class="container-fluid">
+			<!-- ============================================================== -->
+			<!-- Start Page Content -->
+			<!-- ============================================================== -->
+			<div class="row">
+				<div class="col-12">
+					<div class="card">
+						<div class="card-body" id="pwcheck">
+							<h4 class="card-title">비밀번호 확인</h4>
+							<input type="hidden" id="csrf_token" th:value="${_csrf.token}">
+							<form id="pwcheckFrm">
+								<div class="form-body">
+									<div class="row">
+										<div class="col-md-3">
+											<div class="form-group">
+												<input type="password" class="form-control" name="emp_pw" id="pwd" placeholder="비밀번호를 입력하세요."> <i class="fa fa-eye-slash text-left" id="eye_icon_login"></i>
+											</div>
+										</div>
+									</div>
+									<button>확인</button>
+								</div>
+							</form>
+						</div>
+
+						<div class="card-body" id="sign">
+							<h4 class="card-title">내 서명</h4>
+							<form action="#">
+								<div class="form-body">
+									<label></label>
+									<div class="row">
+										<div class="col-md-3">
+											<div class="form-group">
+												<input type="text" class="form-control" placeholder="col-md-3">
+											</div>
+										</div>
+									</div>
+								</div>
+							</form>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<!-- ============================================================== -->
+			<!-- End PAge Content -->
+			<!-- ============================================================== -->
+			<!-- ============================================================== -->
+			<!-- Right sidebar -->
+			<!-- ============================================================== -->
+			<!-- .right-sidebar -->
+			<!-- ============================================================== -->
+			<!-- End Right sidebar -->
+			<!-- ============================================================== -->
+		</div>
+		<!-- ============================================================== -->
+		<!-- End Container fluid  -->
+		<!-- ============================================================== -->
+		<!-- ============================================================== -->
+		<!-- footer -->
+		<!-- ============================================================== -->
+		<footer class="footer text-center text-muted">
+			All Rights Reserved by Adminmart. Designed and Developed by <a href="https://wrappixel.com">WrapPixel</a>.
+		</footer>
+		<!-- ============================================================== -->
+		<!-- End footer -->
+		<!-- ============================================================== -->
+	</div>
+	<!-- ============================================================== -->
+	<!-- End Page wrapper  -->
+	<!-- ============================================================== -->
+	<!-- ============================================================== -->
+	<!-- End Wrapper -->
+	<!-- ============================================================== -->
+	<!-- End Wrapper -->
+	<!-- ============================================================== -->
+	<!-- All Jquery -->
+	<!-- ============================================================== -->
+	<script src="/assets/libs/jquery/dist/jquery.min.js"></script>
+	<!-- Bootstrap tether Core JavaScript -->
+	<script src="/assets/libs/popper.js/dist/umd/popper.min.js"></script>
+	<script src="/assets/libs/bootstrap/dist/js/bootstrap.min.js"></script>
+	<!-- apps -->
+	<!-- apps -->
+	<script src="/dist/js/app-style-switcher.js"></script>
+	<script src="/dist/js/feather.min.js"></script>
+	<!-- slimscrollbar scrollbar JavaScript -->
+	<script src="/assets/libs/perfect-scrollbar/dist/perfect-scrollbar.jquery.min.js"></script>
+	<script src="/assets/extra-libs/sparkline/sparkline.js"></script>
+	<!--Wave Effects -->
+	<!-- themejs -->
+	<!--Menu sidebar -->
+	<script src="/dist/js/sidebarmenu.js"></script>
+	<!--Custom JavaScript -->
+	<script src="/dist/js/custom.min.js"></script>
+	<!--This page plugins -->
+	<script src="/assets/extra-libs/datatables.net/js/jquery.dataTables.min.js"></script>
+	<script src="/dist/js/pages/datatable/datatable-basic.init.js"></script>
+	<script th:src="@{/login.js}"></script>
+
+	<script>
+		document.getElementById('pwcheckFrm').addEventListener('submit', (e) => {
+			const pw = document.getElementById('pwd');
+			e.preventDefault();
+			
+			const csrfToken = document.getElementById("csrf_token").value;
+			fetch('/check-pw/' + pw.value, {
+				method: 'GET',
+				headers : {
+					'Accept': 'application/json',
+		            'Content-Type': 'application/json',
+					'X-CSRF-TOKEN': csrfToken
+				},
+			})
+			.then(response => response.json())
+			.then(data=>{
+				if(data.res_code == '200'){
+					Swal.fire({
+						icon :'success',
+						title:'성공',
+						text : data.res_msg,
+						confirmButtonText:"닫기"
+					});
+				} else{
+					Swal.fire({
+						icon:'error',
+						title:'실패',
+						text: data.res_msg,
+						confirmButtonText:"닫기"
+					});
+				}
+			});
+		})
+	</script>
+</th:block>
+</html>

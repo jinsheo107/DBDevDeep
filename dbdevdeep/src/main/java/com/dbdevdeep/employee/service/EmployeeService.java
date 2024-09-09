@@ -4,6 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -150,6 +153,24 @@ public class EmployeeService {
 		}
 		
 		return resultList;
+	}
+	
+	public int checkPw(String pwd) {
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		User user = (User)authentication.getPrincipal();
+		
+		int result = -1;
+		
+		Employee employee = employeeRepository.findByempId(user.getUsername());
+		
+		System.out.println(passwordEncoder.encode(pwd));
+		System.out.println(employee.getEmpPw());
+		
+		if(passwordEncoder.encode(pwd) == employee.getEmpPw()) {
+			result = 1;
+		}
+		
+		return result;
 	}
 
 }
