@@ -25,6 +25,7 @@ public class WebSecurityConfig {
     public SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests(requests -> requests
                 .requestMatchers("/assets/**", "/dbdevdeepcss/**", "/dbdevdeepjs/**", "/dist/**", "/docs/**", "/scss/**", "/login.js").permitAll()
+                .requestMatchers("/signup").hasAnyAuthority("D3")
                 .anyRequest().authenticated()  // 나머지 모든 요청은 인증 필요
             )
             // 로그인 설정
