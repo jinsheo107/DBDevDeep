@@ -188,7 +188,7 @@
                                         <td class="info_label">직급</td>
                                         <td class="info_value">
                                         	<span th:if="${#authentication.principal.dto.dept_code != 'D4'}" sec:authentication="principal.dto.job_name"></span>
-                                        	<span th:if="${#authentication.principal.dto.dept_code == 'D4'}" th:text="${'-'}"></span>
+                                        	<span th:if="${#authentication.principal.dto.dept_code == 'D4'}">-</span>
 										</td>
                                     </tr>
                                     <tr>
@@ -353,7 +353,7 @@
             </script>
             
             <script th:inline="javascript">
-            // javascript에서 thymeleaf를 사용 시 /*[[${}]]*/'' 사용
+            // javascript에서 thymeleaf를 사용 시 /**/'' 사용
             // /**/ 안에 공백 X
             // /**/ 뒤에 '' 사용
             let attendNo = /*[[${checktime.attend_no}]]*/'';
