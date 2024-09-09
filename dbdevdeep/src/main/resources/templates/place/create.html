@@ -2,7 +2,300 @@
 <html xmlns:th="http://www.thymeleaf.org"
      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{include/place_layout}">
 <th:block layout:fragment="content">
+
+  <!-- 부트스트랩 CSS 추가 -->
+  
+  <style>
+ 
+    /* 사용 불가능한 사유와 기간을 숨기는 초기 상태 */
+    .unusable-fields {
+      display: none;
+    }
+ 
+  </style>
+
 <body>
 
+<!-- 등록폼 -->
+<!-- ============================================================== -->
+		<!-- Page wrapper  -->
+		<!-- ============================================================== -->
+		<div class="page-wrapper">
+            <!-- ============================================================== -->
+            <!-- Container fluid  -->
+            <!-- ============================================================== -->
+            <div class="container-fluid">
+                <!-- ============================================================== -->
+                <!-- Start Page Content -->
+                <!-- ============================================================== -->
+<div class="container mt-5">
+    <form id="createForm">
+      <!-- CSRF 토큰 추가 -->
+        <input type="hidden" id="csrf_token" th:value="${_csrf.token}">
+        <div class="row mb-3">
+            <!-- 1. 장소명 입력 -->
+            <input type="hidden" class="form-control" id="emp_id" name="emp_id" th:value="${writer.emp_id}">
+            <label for="placeName" class="col-sm-2 col-form-label">장소명</label>
+            <div class="col-sm-10">
+                <input type="text" class="form-control" id="placeName" name="placeName" required>
+            </div>
+        </div>
+
+        <div class="row mb-3">
+            <!-- 2. 사용 가능 여부 -->
+            <label for="usable" class="col-sm-2 col-form-label">사용 가능 여부</label>
+            <div class="col-sm-10">
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" id="usable" name="isUsable" value="true" checked onchange="toggleUnusableFields()">
+                    <label class="form-check-label" for="usable">사용 가능</label>
+                </div>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" id="unusable" name="isUsable" value="false" onchange="toggleUnusableFields()">
+                    <label class="form-check-label" for="unusable">사용 불가능</label>
+                </div>
+            </div>
+        </div>
+
+        <!-- 3. 사용 가능 시간 -->
+        <div class="row mb-3">
+            <label for="startTime" class="col-sm-2 col-form-label">사용 가능 시간</label>
+            <div class="col-sm-5">
+                <input type="time" class="form-control" id="startTime" name="startTime" required>
+            </div>
+            <label class="col-sm-1 col-form-label text-center">~</label>
+            <div class="col-sm-4">
+                <input type="time" class="form-control" id="endTime" name="endTime" required>
+            </div>
+        </div>
+
+        <!-- 숨겨진 필드: 사용 불가능한 사유 및 기간 -->
+        <div class="unusable-fields" id="unusableFields">
+            <!-- 4. 사유 (사용 불가능한 사유) -->
+            <div class="row mb-3">
+                <label for="reason" class="col-sm-2 col-form-label">사유</label>
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" id="reason" name="reason">
+                </div>
+            </div>
+
+            <!-- 5. 사용 불가 기간 -->
+            <div class="row mb-3">
+                <label for="startDate" class="col-sm-2 col-form-label">사용 불가 기간</label>
+                <div class="col-sm-5">
+                    <input type="date" class="form-control" id="startDate" name="startDate">
+                </div>
+                <label class="col-sm-1 col-form-label text-center">~</label>
+                <div class="col-sm-4">
+                    <input type="date" class="form-control" id="endDate" name="endDate">
+                </div>
+            </div>
+        </div>
+
+        <div class="row mb-3">
+            <!-- 6. 설명 (장소에 대한 설명) -->
+            <label for="content" class="col-sm-2 col-form-label">설명</label>
+            <div class="col-sm-10">
+                <input type="text" class="form-control" id="content" name="content">
+            </div>
+        </div>
+
+        <div class="row mb-3">
+            <!-- 7. 위치 선택 -->
+            <label for="location" class="col-sm-2 col-form-label">위치</label>
+            <div class="col-sm-10">
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" id="floor_1" name="location" value="1층" checked>
+                    <label class="form-check-label" for="floor_1">학교 1층</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" id="floor_2" name="location" value="2층">
+                    <label class="form-check-label" for="floor_2">학교 2층</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" id="floor_3" name="location" value="3층">
+                    <label class="form-check-label" for="floor_3">학교 3층</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" id="playground" name="location" value="운동장">
+                    <label class="form-check-label" for="playground">운동장</label>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mb-3">
+            <!-- 8. 파일 업로드 -->
+            <label for="file" class="col-sm-2 col-form-label">이미지</label>
+            <div class="col-sm-10">
+                <input type="file" class="form-control" id="file" name="file" accept="image/*">
+            </div>
+        </div>
+
+        <div class="row mb-3">
+            <!-- 등록 버튼 -->
+            <div class="col-sm-10 offset-sm-2">
+                <button type="submit" class="btn btn-primary">등록</button>
+            </div>
+        </div>
+    </form>
+</div>
+<script>
+	function toggleUnusableFields(){
+		// 사용 가능 여부 라디오 버튼의 값
+		const isUsable = document.getElementById('usable').checked ? 'true' : 'false';
+		
+		// 사용 불가 선택될때 사유,기간 포함된 필드
+		 const unusableFields = document.getElementById('unusableFields');
+		
+		// 사용불가 선택될때 사유, 기간 보이기
+		if(isUsable === 'false'){
+			unusableFields.style.display = 'block';
+		} else {
+			unusableFields.style.display = 'none';
+		}
+	}
+	// 페이지 로드시 초기상태 설정
+	document.addEventListener('DOMContentLoaded', function () {
+	    toggleUnusableFields();  // 페이지 로드 시 필드 초기 상태 설정
+	});
+	
+
+	const form = document.getElementById("createForm");
+	
+	form.addEventListener('submit', (e) => {
+		e.preventDefault(); // 기본폼 제출 방지코드
+		
+		  let valid = true; // 유효성 검사 플래그
+		  let alertMessage = ''; // 경고 메시지를 저장할 변수
+		    
+		// 입력된 값 가져오기
+			const placeName = form.placeName.value.trim();
+			const startTime = form.startTime.value;
+			const endTime = form.endTime.value;
+			const reason = form.reason.value.trim();
+			const startDate = form.startDate.value;
+			const endDate = form.endDate.value;
+			const content = form.content.value.trim(); 
+			const location = document.querySelector('input[name="location"]:checked');
+			const fileInput = form.file;
+
+			// 장소명 유효성 검사
+			if (placeName === '') {
+				alertMessage += '장소명을 입력하세요.';
+				form.placeName.focus();
+				valid = false;
+			}
+
+			// 장소 설명 유효성 검사 추가
+			if (content === '') {
+				alertMessage += '장소 설명을 입력하세요.';
+				form.content.focus();
+				valid = false;
+			}
+
+			// 사용 가능 시간 유효성 검사
+			if (startTime === '' || endTime === '') {
+				alertMessage += '사용 가능 시간을 입력하세요.';
+				valid = false;
+			}
+
+			// '사용 불가능' 선택 시, 사유 및 기간 필드 검사
+			const isUsable = document.getElementById('unusable').checked; // '사용 불가능' 선택 여부 확인
+			if (isUsable) {
+				if (reason === '') {
+					alertMessage += '사유를 입력하세요.';
+					form.reason.focus();
+					valid = false;
+				}
+
+				if (startDate === '' || endDate === '') {
+					alertMessage += '사용 불가 기간을 입력하세요.';
+					valid = false;
+				}
+			}
+
+			// 위치 선택 유효성 검사
+			if (!location) {
+				alertMessage += '위치를 선택하세요.';
+				valid = false;
+			}
+
+			// 파일 업로드 유효성 검사
+			if (fileInput.files.length === 0) {
+				alertMessage += '이미지 파일을 선택하세요.';
+				valid = false;
+			}
+
+			// 유효성 검사가 실패하면 경고 메시지 표시
+			if (!valid) {
+				alert(alertMessage);
+			} else {
+				// 유효성 검사가 성공하면 서버에 데이터 전송
+				const payload = new FormData(form);
+				
+				  // 파일을 FormData에 추가 (만약 파일이 없다면 자동으로 처리됨)
+		        if (fileInput.files.length > 0) {
+		            payload.append('file', fileInput.files[0]);
+		        }
+
+		        // CSRF 토큰 추가
+		        const csrfToken = document.getElementById('csrf_token').value;
+
+		        fetch('/place', {
+		            method: 'POST',
+		            headers: {
+		                'X-CSRF-TOKEN': csrfToken // CSRF 토큰 헤더 추가
+		            },
+		            body: payload
+		        })
+		        .then(response => response.json())
+		        .then(data => {
+		            console.log(data); // 서버로부터 받은 응답 확인
+		            if (data.res_code === '200') {
+		                Swal.fire({
+		                    icon: 'success',
+		                    title: '성공',
+		                    text: data.res_msg
+		                }).then(() => {
+		                    location.href = "/place";
+		                });
+		            } else {
+		                Swal.fire({
+		                    icon: 'error',
+		                    title: '실패',
+		                    text: data.res_msg
+		                });
+		            }
+		        })
+		        .catch(error => {
+		            console.error('Error:', error);
+		        });
+		    }
+		});
+</script>
+<!-- 부트스트랩 JS 및 의존성 추가 -->
+<!-- ============================================================== -->
+    <!-- All Jquery -->
+    <!-- ============================================================== -->
+    <script src="/assets/libs/jquery/dist/jquery.min.js"></script>
+    <!-- Bootstrap tether Core JavaScript -->
+    <script src="/assets/libs/popper.js/dist/umd/popper.min.js"></script>
+    <script src="/assets/libs/bootstrap/dist/js/bootstrap.min.js"></script>
+    <!-- apps -->
+    <!-- apps -->
+    <script src="/dist/js/app-style-switcher.js"></script>
+    <script src="/dist/js/feather.min.js"></script>
+    <!-- slimscrollbar scrollbar JavaScript -->
+    <script src="/assets/libs/perfect-scrollbar/dist/perfect-scrollbar.jquery.min.js"></script>
+    <script src="/assets/extra-libs/sparkline/sparkline.js"></script>
+    <!--Wave Effects -->
+    <!-- themejs -->
+    <!--Menu sidebar -->
+    <script src="/dist/js/sidebarmenu.js"></script>
+    <!--Custom JavaScript -->
+    <script src="/dist/js/custom.min.js"></script>
+    <!--This page plugins -->
+    <script src="/assets/extra-libs/datatables.net/js/jquery.dataTables.min.js"></script>
+    <script src="/dist/js/pages/datatable/datatable-basic.init.js"></script>
 </body>
+
 </html>

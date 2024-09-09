@@ -6,8 +6,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
 
+import com.dbdevdeep.employee.domain.Employee;
+import com.dbdevdeep.employee.repository.EmployeeRepository;
 import com.dbdevdeep.place.domain.Place;
 import com.dbdevdeep.place.domain.PlaceDto;
 import com.dbdevdeep.place.repository.PlaceRepository;
@@ -16,11 +21,67 @@ import com.dbdevdeep.place.repository.PlaceRepository;
 public class PlaceService {
 	
 	private final PlaceRepository placeRepository;
+	private final EmployeeRepository employeeRepository;
 	
 	@Autowired
-	public PlaceService(PlaceRepository placeRepository) {
+	public PlaceService(PlaceRepository placeRepository, EmployeeRepository employeeRepository) {
 		this.placeRepository = placeRepository;
+		this.employeeRepository = employeeRepository;
 	}
+	
+	// 로그인한 사용자 정보 가져오기
+    public String getLoggedInUserId() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null && authentication.isAuthenticated()) {
+            User user = (User) authentication.getPrincipal();
+            return user.getUsername(); // 로그인한 사용자의 emp_id를 반환
+        }
+        return null; // 로그인이 안 되어 있으면 null 반환
+    }
+
+ // 장소 등록
+    public Place createPlace(PlaceDto dto) {
+        try {
+        	// 로그인한 사용자의 아이디
+        	String empId = getLoggedInUserId();
+        	if(empId == null) {
+        		throw new RuntimeException("로그인된 사용자가 없어요");
+        	}
+        	
+        	// Employee 정보 가져오기
+            Employee employee = employeeRepository.findById(empId)
+                    .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
+            
+            // 가장 큰 placeNo 값을 찾아서, 없으면 0을 할당하고, 있으면 +1
+            Long maxPlaceNo = placeRepository.findMaxPlaceNo();  // 가장 큰 placeNo 값 찾기
+            Long nextPlaceNo = (maxPlaceNo == null) ? 0L : maxPlaceNo + 1;  // 없으면 0, 있으면 +1
+
+            // Dto를 엔티티로 변환할 때 Employee 정보 포함
+            Place place = Place.builder()
+                    .placeNo(nextPlaceNo) // placeNo 수동 할당
+                    .employee(employee)
+                    .placeName(dto.getPlace_name())
+                    .placeLocation(dto.getPlace_location()) // 위치
+                    .placeContent(dto.getPlace_content())  // 설명
+                    .placeStatus(dto.getPlace_status())    // 상태
+                    .placeStarttime(dto.getPlace_start_time()) // 사용 가능 시작 시간
+                    .placeEndtime(dto.getPlace_end_time())    // 사용 가능 종료 시간
+                    .unuseableReason(dto.getUnuseable_reason()) // 사용 불가 사유
+                    .unuseableStartDate(dto.getUnuseable_start_date()) // 사용 불가 시작 날짜
+                    .unuseableEndDate(dto.getUnuseable_end_date())   // 사용 불가 종료 날짜
+                    .oriPicname(dto.getOri_pic_name())   // 원본 파일명
+                    .newPicname(dto.getNew_pic_name())   // 저장 파일명
+                    .regDate(dto.getReg_date())        // 등록일
+                    .modDate(dto.getMod_date())        // 수정일
+                    .build();
+
+            return placeRepository.save(place);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+	
 	
 	// 시간을 포맷팅하는 곳
 	public String formatTime(int time) {
