@@ -5,6 +5,8 @@ import java.util.List;
 
 import org.springframework.security.core.GrantedAuthority;
 
+import com.dbdevdeep.employee.vo.EmployeeVo;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -60,8 +62,7 @@ public class EmployeeDto {
 				.empInternalPhone(emp_internal_phone).vacationHour(vacation_hour)
 				.hireDate(hire_date).endDate(end_date).entStatus(ent_status)
 				.loginYn(login_yn).accountStatus(account_status).chatStatusMsg(chat_status_msg)
-				.build();
-				
+				.build();	
 	}
 	
 	public EmployeeDto toDto(Employee employee) {
@@ -82,6 +83,33 @@ public class EmployeeDto {
 				.job_name(employee.getJob().getJobName())
 				.dept_code(employee.getDepartment().getDeptCode())
 				.dept_name(employee.getDepartment().getDeptName())
+				.build();
+	}
+	
+	// MyBatis
+	public EmployeeDto toDto(EmployeeVo employee) {
+		return EmployeeDto.builder()
+				.emp_id(employee.getEmp_id())
+				.emp_pw(employee.getEmp_pw())
+				.gov_id(employee.getGov_id())
+				.emp_name(employee.getEmp_name())
+				.emp_rrn(employee.getEmp_rrn())
+				.emp_phone(employee.getEmp_phone())
+				.ori_pic_name(employee.getOri_pic_name())
+				.new_pic_name(employee.getNew_pic_name())
+				.emp_post_code(employee.getEmp_post_code())
+				.emp_addr(employee.getEmp_addr())
+				.emp_detail_addr(employee.getEmp_detail_addr())
+				.emp_internal_phone(employee.getEmp_internal_phone())
+				.vacation_hour(employee.getVacation_hour())
+				.hire_date(employee.getHire_date())
+				.end_date(employee.getEnd_date())
+				.ent_status(employee.getEnt_status())
+				.login_yn(employee.getLogin_yn())
+				.account_status(employee.getAccount_status())
+				.chat_status_msg(employee.getChat_status_msg())
+				.job_code(employee.getJob_code())
+				.dept_code(employee.getDept_code())
 				.build();
 	}
 	

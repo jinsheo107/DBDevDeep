@@ -6,10 +6,11 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.dbdevdeep.employee.domain.Employee;
 import com.dbdevdeep.employee.domain.TeacherHistory;
 import com.dbdevdeep.employee.domain.TeacherHistoryDto;
-import com.dbdevdeep.employee.mybatis.mapper.EmployeeVoMapper;
 import com.dbdevdeep.employee.mybatis.mapper.TeacherHistoryVoMapper;
+import com.dbdevdeep.employee.repository.EmployeeRepository;
 import com.dbdevdeep.employee.repository.TeacherHistoryRepository;
 import com.dbdevdeep.employee.vo.GradeClassGroup;
 
@@ -18,12 +19,15 @@ public class TeacherHistoryService {
 
 	private final TeacherHistoryRepository teacherHistoryRepository;
 	private final TeacherHistoryVoMapper teacherHistoryVoMapper;
+	private final EmployeeRepository employeeRepository;
 	
 	@Autowired
 	public TeacherHistoryService(TeacherHistoryRepository teacherHistoryRepository,
-			TeacherHistoryVoMapper teacherHistoryVoMapper) {
+			TeacherHistoryVoMapper teacherHistoryVoMapper,
+			EmployeeRepository employeeRepository) {
 		this.teacherHistoryRepository = teacherHistoryRepository;
 		this.teacherHistoryVoMapper = teacherHistoryVoMapper;
+		this.employeeRepository = employeeRepository;
 	}
 	
 	public List<TeacherHistoryDto> selectClassByYearList(String t_year) {
@@ -54,6 +58,8 @@ public class TeacherHistoryService {
 	
 	
 	
+	
+	
 	public int tYearCheck(String t_year) {
 		int result = -1;
 		
@@ -79,4 +85,50 @@ public class TeacherHistoryService {
 		
 		teacherHistoryRepository.save(th);
 	}
+	
+	public int addTeacher(TeacherHistoryDto dto) {
+		int result = -1;
+		
+		try {
+			
+			Employee emp = employeeRepository.findByempId(dto.getTeach_emp_id());
+			
+			TeacherHistory th = TeacherHistory.builder()
+					.teacherNo(dto.getTeacher_no()).grade(dto.getGrade())
+					.gradeClass(dto.getGrade_class()).tYear(dto.getT_year())
+					.employee(emp)
+					.build();
+			
+			teacherHistoryRepository.save(th);
+			result = 1;
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+		
+		return result;
+	}
+	
+	public List<TeacherHistoryDto> selectClassByOrderLastesList() {
+		String recentYear = teacherHistoryRepository.findMostRecentYear();
+		
+		List<TeacherHistory> teacherHistoryList = teacherHistoryRepository.findByClassByYear(recentYear);
+		
+		List<TeacherHistoryDto> teacherHistoryDtoList = new ArrayList<TeacherHistoryDto>();
+		for(TeacherHistory t : teacherHistoryList) {
+			TeacherHistoryDto dto = new TeacherHistoryDto().toDto(t);
+			
+			if (t.getEmployee() != null) {				
+	            dto.setTeach_emp_id(t.getEmployee().getEmpId());
+	            dto.setTeach_emp_name(t.getEmployee().getEmpName());
+	        } else {
+	        	dto.setTeach_emp_id(null);
+	            dto.setTeach_emp_name("null");
+	        }
+			teacherHistoryDtoList.add(dto);
+		}
+		
+		return teacherHistoryDtoList;
+	}
+	
+	
 }
