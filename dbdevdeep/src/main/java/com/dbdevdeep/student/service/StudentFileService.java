@@ -63,6 +63,11 @@ public class StudentFileService {
 			String newFileName = student.getStudentNewPic();	// UUID
 			String oriFileName = student.getStudentOriPic();	// 사용자가 아는 파일명
 			
+			if (newFileName == null || newFileName.isEmpty()) {
+	            // 파일명이 null 또는 빈 문자열일 경우 바로 성공 처리
+	            return 1;
+	        }
+			
 			String resultDir = fileDir + URLDecoder.decode(newFileName,"UTF-8");
 			
 			if(resultDir != null && resultDir.isEmpty() == false) {
