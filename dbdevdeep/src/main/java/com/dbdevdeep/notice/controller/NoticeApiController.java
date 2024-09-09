@@ -50,7 +50,7 @@ public class NoticeApiController {
 		
 		if(noticeService.updateNotice(dto)>0) {
 			resultMap.put("res_code", "200");
-			resultMap.put("res_msg", "게시글 작성에 성공하였습니다.");
+			resultMap.put("res_msg", "게시글 수정에 성공하였습니다.");
 		}
 		
 		return resultMap;

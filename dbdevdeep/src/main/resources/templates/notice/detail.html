@@ -80,9 +80,9 @@
                                 	<div class="row form-group">
                                 		<div class="col-md-12">
                                         	<small id="content_help" class="form-text text-muted">내용</small>
-                                			<div class="form-control" style="height: 50vh; padding:1%; border:none;" 
-                                			th:text="${dto.notice_content}">
-                                			</div>
+	                                		<!-- Create the editor container -->
+											<div id="editor" style="height:30vh; border: none;">
+											</div>
                                 		</div>
                                 	</div>
                                 	<hr>
@@ -97,6 +97,7 @@
                                     </div>
                                     <input type="hidden" id="notice_no" name="notice_no" th:value="${dto.notice_no}">
                                     <input type="hidden" id="writer_no" name="writer_id" th:value="${dto.writer_id}">
+                                    <input type="hidden" th:value="${dto.notice_content}" style="display: none" id="ori_content">
                                     <div class="row mb-2">
 			                        	<div class="col-6 d-flex justify-content-start">
 				                            <button type="button" class="btn btn-outline-secondary m-1" 
@@ -198,10 +199,42 @@
         <!-- ============================================================== -->
         <!-- End Page wrapper  -->
         <!-- ============================================================== -->
-    <!-- Custom script -->
-    <!-- ============================================================== -->   
+    <!-- Include the Quill library -->
+	<script src="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.js"></script>
+	<!-- ============================================================== -->
+	<!-- Quill editor를 이용해 게시글 조회 --> 
     <script>
- 
+
+    // 에디터 초기화
+    const quill = new Quill('#editor', {
+    	readOnly: true,
+		modules: {
+			toolbar: false,
+		},
+		placeholder: '내용을 입력하세요.',
+		theme: 'snow'
+	});
+    
+ 	// 기존에 작성한 글 내용
+    const oriContentDelta = document.getElementById("ori_content").value;
+    function loadSavedHtml() {
+    	// JSON 문자열을 Delta 객체로 변환
+        const delta = JSON.parse(oriContentDelta);
+        // Delta 데이터를 Quill 에디터에 적용
+        quill.setContents(delta);
+   	}
+    
+	// 함수 호출
+    loadSavedHtml();
+    
+    // 수정 폼 이동
+    const modNotice = function(){
+    	const noticeNo = document.getElementById('notice_no').value;
+    	const url = '/notice/edit/' + encodeURIComponent(noticeNo);
+    	window.location.href = url;
+    }
+    
+ 	// 게시글 삭제
     const deleteNotice = function(){
     	const noticeNo = document.getElementById("notice_no").value;
     	const csrfToken = document.getElementById("csrf_token").value;
@@ -235,14 +268,7 @@
 			})
 		}
     }
-	
-
-    const modNotice = function(){
-	    	const noticeNo = document.getElementById('notice_no').value;
-	    	const url = '/notice/edit/' + encodeURIComponent(noticeNo);
-	    	window.location.href = url;
-	    }
-    </script>
+	</script>
     <!-- ============================================================== -->
     <!-- All Jquery -->
     <!-- ============================================================== -->

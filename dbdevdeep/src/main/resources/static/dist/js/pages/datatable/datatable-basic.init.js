@@ -12,13 +12,14 @@ $('#notice_config').DataTable({
 	 "responsive": true,
 	 // 컬럼 width 비율 조절
 	 "columnDefs": [
-	    { "width": "5%", "targets": 0, "className": "text-center", "orderable": false},
-		{ "width": "7%", "targets": 1 },
-	    { "width": "53%", "targets": 2 },
-	    { "width": "30%", "targets": 3 },
-	    { "width": "10%", "targets": 4, "orderable": false }
-	],
-	"order": [[1, "desc"]], // 여기서 2는 'start_date'가 위치한 컬럼 인덱스
+        { "width": "5%", "targets": 0 },
+        { "width": "5%", "targets": 1 },
+        { "width": "10%", "targets": 2 },
+        { "width": "50%", "targets": 3 },
+        { "width": "10%", "targets": 4 },
+        { "width": "20%", "targets": 5 }
+    ],
+	"order": [[1, "desc"]], 
 	// 정보 표시 해제
 	info: false, 
 	// DataTables의 DOM 구조를 재정의
