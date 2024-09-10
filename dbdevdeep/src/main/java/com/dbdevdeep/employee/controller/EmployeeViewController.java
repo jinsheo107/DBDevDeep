@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.dbdevdeep.employee.domain.EmployeeDto;
+import com.dbdevdeep.employee.domain.MySignDto;
 import com.dbdevdeep.employee.service.EmployeeService;
 
 @Controller
@@ -62,14 +63,21 @@ public class EmployeeViewController {
 		resultMap.put("res_code", "404");
 		resultMap.put("res_msg", "비밀번호 확인에 실패하였습니다.");
 		
-		System.out.println("pwd: " + pwd);
-		
 		if(employeeService.checkPw(pwd) > 0) {
 			resultMap.put("res_code", "200");
 			resultMap.put("res_msg", "비밀번호 확인에 성공하였습니다.");			
 		} 
 		
 		return resultMap;
+	}
+	
+	@ResponseBody
+	@GetMapping("/mysign/{emp_id}")
+	public List<MySignDto> employeeSignPage(@PathVariable("emp_id") String emp_id) {
+		
+		List<MySignDto> resultList = employeeService.employeeSignGet(emp_id);
+	
+		return resultList;
 	}
 	
 

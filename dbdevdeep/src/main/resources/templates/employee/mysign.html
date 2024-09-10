@@ -10,6 +10,46 @@
 	bottom: 27px;
 	cursor: pointer;
 }
+
+.hidden {
+	display: none;
+}
+
+.show {
+	display: block;
+}
+</style>
+
+	<style>
+.clicked_sign {
+	background-color: rgba(150, 150, 150, 0.1);
+	padding: 10px 20px;
+	width: 100px;
+	height: 100px;
+	border-radius: 10px;
+}
+
+.form-group:hover {
+	background-color: rgba(0, 0, 0, 0.1);
+}
+
+.none_clicked_sign {
+	padding: 10px 20px;
+	width: 100px;
+	height: 100px;
+	border-radius: 10px;
+}
+
+.add_sign {
+	background-color: rgba(150, 150, 150, 0.1);
+	padding: 10px 20px;
+	width: 100px;
+	height: 100px;
+	border-radius: 10px;
+	text-align: center;
+	line-height: 80px;
+	font-weight: bolder;
+}
 </style>
 	<!-- ============================================================== -->
 	<!-- End Left Sidebar - style you can find in sidebar.scss  -->
@@ -26,8 +66,8 @@
 			<!-- ============================================================== -->
 			<div class="row">
 				<div class="col-12">
-					<div class="card">
-						<div class="card-body" id="pwcheck">
+					<div class="card" style="padding: 40px;">
+						<div class="card-body show" id="pwcheck">
 							<h4 class="card-title">비밀번호 확인</h4>
 							<input type="hidden" id="csrf_token" th:value="${_csrf.token}">
 							<form id="pwcheckFrm">
@@ -35,7 +75,8 @@
 									<div class="row">
 										<div class="col-md-3">
 											<div class="form-group">
-												<input type="password" class="form-control" name="emp_pw" id="pwd" placeholder="비밀번호를 입력하세요."> <i class="fa fa-eye-slash text-left" id="eye_icon_login"></i>
+												<input type="password" class="form-control" name="emp_pw" id="pwd" placeholder="비밀번호를 입력하세요."> 
+												<i class="fa fa-eye-slash text-left" id="eye_icon_login"></i>
 											</div>
 										</div>
 									</div>
@@ -44,20 +85,64 @@
 							</form>
 						</div>
 
-						<div class="card-body" id="sign">
+						<div class="card-body hidden" id="signDiv">
 							<h4 class="card-title">내 서명</h4>
-							<form action="#">
-								<div class="form-body">
-									<label></label>
+								<div class="form-body" style="margin-bottom: 40px;">
 									<div class="row">
-										<div class="col-md-3">
-											<div class="form-group">
-												<input type="text" class="form-control" placeholder="col-md-3">
+										<th:block th:each="sign : ${resultList}">
+											<div class="col-md-2">
+												<div class="form-group clicked_sign">
+													<div>
+														<img src="">
+													</div>
+													<label>Label</label>
+												</div>
 											</div>
-										</div>
+										</th:block>
+										<th:block th:each="i : ${#numbers.sequence(1, 3 - (#lists.isEmpty(resultList) ? 0 : #lists.size(resultList)))}">
+											<div class="col-md-2">
+												<div class="form-group add_sign" data-target="#addSign" data-toggle="modal">+</div>
+											</div>
+										</th:block>
 									</div>
 								</div>
-							</form>
+								<div class="hidden">
+									<table class="table">
+										<colgroup>
+											<col style="width: 20%;">
+											<col style="width: 80%;">
+										</colgroup>
+										<tr>
+											<td>서명 제목</td>
+											<td>a</td>
+										</tr>
+										<tr>
+											<td>서명 종류</td>
+											<td>a</td>
+										</tr>
+										<tr>
+											<td>서명 등록일</td>
+											<td>a</td>
+										</tr>
+										<tr>
+											<td>서명 수정일</td>
+											<td>a</td>
+										</tr>
+										<tr>
+											<td>대표 서명</td>
+											<td>a</td>
+										</tr>
+									</table>
+								</div>
+								<div id="addSign" class="modal fade" aria-hidden="true" style="position: static;">
+									a
+								</div>
+								<div class="form-actions">
+									<div class="text-right">
+										<button type="submit" class="btn btn-info">Submit</button>
+										<button type="reset" class="btn btn-dark">Reset</button>
+									</div>
+								</div>
 						</div>
 					</div>
 				</div>
@@ -120,38 +205,69 @@
 	<script th:src="@{/login.js}"></script>
 
 	<script>
+	
 		document.getElementById('pwcheckFrm').addEventListener('submit', (e) => {
 			const pw = document.getElementById('pwd');
 			e.preventDefault();
 			
-			const csrfToken = document.getElementById("csrf_token").value;
-			fetch('/check-pw/' + pw.value, {
-				method: 'GET',
-				headers : {
-					'Accept': 'application/json',
-		            'Content-Type': 'application/json',
-					'X-CSRF-TOKEN': csrfToken
-				},
-			})
-			.then(response => response.json())
-			.then(data=>{
-				if(data.res_code == '200'){
-					Swal.fire({
-						icon :'success',
-						title:'성공',
-						text : data.res_msg,
-						confirmButtonText:"닫기"
-					});
-				} else{
-					Swal.fire({
-						icon:'error',
-						title:'실패',
-						text: data.res_msg,
-						confirmButtonText:"닫기"
-					});
-				}
-			});
-		})
+			let vali_check = false;
+			let vali_text = "";
+			
+			if(pw.value.length == 0) {
+				vali_text = "비밀번호를 입력하세요";
+			} else {
+				vali_check = true;
+			}
+			
+			if(vali_check) {
+				const csrfToken = document.getElementById("csrf_token").value;
+				
+				fetch('/check-pw/' + pw.value, {
+					method: 'GET',
+					headers : {
+						'Accept': 'application/json',
+			            'Content-Type': 'application/json',
+						'X-CSRF-TOKEN': csrfToken
+					},
+				})
+				.then(response => response.json())
+				.then(data=>{
+					if(data.res_code == '200'){
+						Swal.fire({
+							icon :'success',
+							title:'성공',
+							text : data.res_msg,
+							confirmButtonText:"닫기"
+						})
+						.then(() => {
+							document.getElementById('pwcheck').classList.add('hidden');
+							document.getElementById('pwcheck').classList.remove('show');
+							document.getElementById('signDiv').classList.add('show');
+							document.getElementById('signDiv').classList.remove('hidden');
+							
+							
+						});
+						
+					} else{
+						Swal.fire({
+							icon:'error',
+							title:'실패',
+							text: data.res_msg,
+							confirmButtonText:"닫기"
+						});
+					}
+				});
+			} else {
+				Swal.fire({
+					icon: 'error',
+					title: '실패',
+					text: vali_text,
+					confirmButtonText:"닫기"
+				})
+			}
+		});
+		
+	
 	</script>
 </th:block>
 </html>
