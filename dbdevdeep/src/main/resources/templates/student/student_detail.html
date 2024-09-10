@@ -75,7 +75,8 @@
 							            	</li>
 							            </ul>
 							        </div>
-							        <a th:href="@{/student/update/{no}(no=${dto.student_no})}">수정</a>
+							        <a th:href="@{/student/class/{std_no}(std_no=${dto.student_no})}">학년 이력 수정</a>
+							        <a th:href="@{/student/update/{student_no}(student_no=${dto.student_no})}">수정</a>
 							        <a th:onclick="studentDelete([[${dto.student_no}]])">삭제</a>
 							    </div>
 							</div>

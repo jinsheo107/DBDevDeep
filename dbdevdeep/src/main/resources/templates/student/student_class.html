@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" 
+		xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" 
+		layout:decorate="~{include/student_layout}">
+<th:block layout:fragment="content">
+	<body>
+	<style>
+		div.dataTables_wrapper div.dataTables_paginate ul.pagination {
+		  margin: 2px 0;
+		  white-space: nowrap;
+		  justify-content: center;
+		}	
+	</style>
+		<!-- ============================================================== -->
+		<!-- End Left Sidebar - style you can find in sidebar.scss  -->
+		<!-- ============================================================== -->
+		<!-- ============================================================== -->
+		<!-- Page wrapper  -->
+		<!-- ============================================================== -->
+		<div class="page-wrapper">
+			<!-- ============================================================== -->
+			<!-- Bread crumb and right sidebar toggle -->
+			<!-- ============================================================== -->
+			<div class="page-breadcrumb">
+				<div class="row">
+					<div class="col-7 align-self-center">
+						<h4 class="page-title text-truncate text-dark font-weight-medium mb-1">Basic Table</h4>
+						<div class="d-flex align-items-center">
+							<nav aria-label="breadcrumb">
+								<ol class="breadcrumb m-0 p-0">
+									<li class="breadcrumb-item"><a href="index.html" class="text-muted">Home</a></li>
+									<li class="breadcrumb-item text-muted active" aria-current="page">Library</li>
+								</ol>
+							</nav>
+						</div>
+					</div>
+					<div class="col-5 align-self-center">
+						<div class="customize-input float-right">
+							<select class="custom-select custom-select-set form-control bg-white border-0 custom-shadow custom-radius">
+								<option selected>Aug 19</option>
+								<option value="1">July 19</option>
+								<option value="2">Jun 19</option>
+							</select>
+						</div>
+					</div>
+				</div>
+			</div>
+			<!-- ============================================================== -->
+			<!-- End Bread crumb and right sidebar toggle -->
+			<!-- ============================================================== -->
+			<!-- ============================================================== -->
+			<!-- Container fluid  -->
+			<!-- ============================================================== -->
+			<div class="container-fluid">
+				<!-- ============================================================== -->
+				<!-- Start Page Content -->
+				<!-- ============================================================== -->
+				<div class="row">
+					<div class="col-12">
+						<div class="card">
+							<div class="card-body">
+								<h4 class="card-title">학생 정보</h4>
+								<div class="student-info">
+							        <img src="https://via.placeholder.com/150" alt="학생 사진">
+							        <div class="student-details">
+							        <input type="hidden" id="csrf_token" th:value="${_csrf.token}">
+							            <ul>
+							            	<li>
+												<p th:text="'이름 : '+${sdto.student_name}"></p>
+												<p th:text="'생년월일 : '+${sdto.student_birth}"></p>
+												<p th:text="'주소 : '+${sdto.student_addr}+${sdto.student_detail_addr}+'('+${sdto.student_post_code}+')'"></p>
+												<p th:text="'전화번호 : '+${sdto.student_phone}"></p>
+							            	</li>
+							            </ul>
+							            	<div class="form-group">
+							            		<div class="form-group">
+												    <select id="t_year" name="t_year" onchange="fetchDataByYear()">
+												        <option th:each="ty : ${Tyear}" th:text="${ty}" th:value="${ty}"></option>
+												    </select>
+												    <label for="t_year">학년도</label>
+												    <select id="grade" name="grade" onchange="fetchDataByGrade()">
+												    </select>
+												    <label for="grade">학년</label>
+							            		<select id="assign_class" name="assign_class" onchange="fectchDataByClass()">
+							            			<option>선택하세요</option>
+							            		</select>
+							            		<div>
+							            			<input type="hidden" name="student_no" th:value="${sdto.student_no}">
+							            			<input type="hidden" name="teacher_no">
+							            			<input type="text" id="student_id" name="student_id">
+							                    	<label for="student_id">번</label>
+							            		</div>
+							                </div>
+							        </div>
+							       	<input type="button" value="취소" th:onclick="history.back();">
+							        <input type="submit" value="등록">
+							    </div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+			</div>
+		</div>
+		<script src="/assets/libs/jquery/dist/jquery.min.js"></script>
+		<script src="/assets/libs/popper.js/dist/umd/popper.min.js"></script>
+		<script src="/assets/libs/bootstrap/dist/js/bootstrap.min.js"></script>
+		<script src="/dist/js/app-style-switcher.js"></script>
+		<script src="/dist/js/feather.min.js"></script>
+		<script src="/assets/libs/perfect-scrollbar/dist/perfect-scrollbar.jquery.min.js"></script>
+		<script src="/assets/extra-libs/sparkline/sparkline.js"></script>
+		<script src="/dist/js/sidebarmenu.js"></script>
+		<script src="/dist/js/custom.min.js"></script>
+		<script src="/assets/extra-libs/datatables.net/js/jquery.dataTables.min.js"></script>
+		<script src="/dist/js/pages/datatable/datatable-basic.init.js"></script>
+		<script>
+			window.onload = function() {
+		        fetchDataByYear(); // 페이지 로드 시 실행
+		    };
+		    function fetchDataByYear() {
+		    	const selectedYear = document.getElementById('t_year').value;
+		    	console.log(selectedYear);
+		    	fetch(`/student/student_class/selectByYear/${selectedYear}`)
+		    	.then(response=>response.json())
+		    	.then(data=>{
+		    		const gradeSelect = document.getElementById('grade');
+		    		gradeSelect.innerHTML = ''; 
+		    		const defaultOption = document.createElement('option');
+					defaultOption.value = '';  // 선택되지 않은 값(null)을 빈 값으로 설정
+					defaultOption.text = '선택하세요';  // 표시할 텍스트
+					gradeSelect.appendChild(defaultOption);
+		    		const uniqueGrades = Array.from(new Set(data.map(item => item.grade))).sort((a, b) => a - b);
+		    		console.log(uniqueGrades);
+	                uniqueGrades.forEach(grade => {
+	                    const option1 = document.createElement('option');
+	                    option1.value = grade;
+	                    option1.text = grade;
+	                    gradeSelect.appendChild(option1);
+		    		});
+	                
+		    	});
+		    	
+		    }
+		    function fetchDataByGrade(){
+		    	const selectedYear = document.getElementById('t_year').value;
+		    	console.log("두번째 콘솔 : "+selectedYear);
+		    	const selectedGrade = document.getElementById('grade').value;
+		    	console.log("두번째 콘솔 : "+selectedGrade);
+		    	
+		    	
+		    	fetch(`/student/student_class/selectByYearAndGrade/${selectedYear}/${selectedGrade}`)
+		    	.then(response=>response.json())
+		    	.then(data=>{
+		    		const classSelect = document.getElementById('assign_class');
+		    		classSelect.innerHTML = ''; 
+		    		const defaultOption2 = document.createElement('option');
+					defaultOption2.value = '';  // 선택되지 않은 값(null)을 빈 값으로 설정
+					defaultOption2.text = '선택하세요';  // 표시할 텍스트
+					classSelect.appendChild(defaultOption2);
+		    		
+					if (Array.isArray(data)) {
+			            // 데이터가 비어있을 경우
+			            if (data.length === 0) {
+			                const noDataOption = document.createElement('option');
+			                noDataOption.value = '';
+			                noDataOption.text = '존재하는 반이 없습니다';
+			                classSelect.appendChild(noDataOption);
+			            } else {
+	                data.forEach(item2 => {
+	                    const option2 = document.createElement('option');
+	                    option2.value = item2.teacher_no;
+	                    option2.text = item2.grade_class +"반 " + item2.teach_emp_name+" 선생님";
+	                    classSelect.appendChild(option2);
+		    		});
+	                }
+			    }
+	                
+		    	});
+		    	
+		    }
+		</script>
+		
+	</body>
+</html>

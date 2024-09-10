@@ -16,7 +16,7 @@ import lombok.ToString;
 @Setter
 @ToString
 @Builder
-public class AttendanceDto {
+public class StudentAttendanceDto {
 	private Long attendance_no;
 	
 	private Long student_no;
@@ -29,8 +29,8 @@ public class AttendanceDto {
 	private LocalDateTime reg_time;
 	private LocalDateTime mod_time;
 	
-	public Attendance toEntity() {
-		return Attendance.builder()
+	public StudentAttendance toEntity() {
+		return StudentAttendance.builder()
 				.attendanceNo(attendance_no)
 				.attendanceStatus(attendance_status)
 				.attendanceReason(attendance_reason)
@@ -40,8 +40,8 @@ public class AttendanceDto {
 				.build();
 	}
 	
-	public AttendanceDto toDto(Attendance att) {
-		return AttendanceDto.builder()
+	public StudentAttendanceDto toDto(StudentAttendance att) {
+		return StudentAttendanceDto.builder()
 				.attendance_no(att.getAttendanceNo())
 				.attendance_status(att.getAttendanceStatus())
 				.attendance_reason(att.getAttendanceReason())

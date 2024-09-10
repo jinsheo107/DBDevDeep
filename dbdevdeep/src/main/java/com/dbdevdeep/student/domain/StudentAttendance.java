@@ -24,7 +24,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Getter
 @Builder
-public class Attendance {
+public class StudentAttendance {
 	@Id
 	@Column(name="attendance_no")
 	@GeneratedValue(strategy=GenerationType.IDENTITY)

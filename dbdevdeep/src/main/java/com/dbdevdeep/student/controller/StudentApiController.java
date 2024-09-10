@@ -1,18 +1,23 @@
 package com.dbdevdeep.student.controller;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.dbdevdeep.student.domain.ParentDto;
+import com.dbdevdeep.employee.domain.TeacherHistoryDto;
+import com.dbdevdeep.employee.service.TeacherHistoryService;
 import com.dbdevdeep.student.domain.StudentDto;
 import com.dbdevdeep.student.service.StudentFileService;
 import com.dbdevdeep.student.service.StudentService;
@@ -23,11 +28,13 @@ public class StudentApiController {
 	// 의존성 주입
 	private final StudentFileService studentFileService;
 	private final StudentService studentService;
+	private final TeacherHistoryService teacherHistoryService;
 	
 	@Autowired
-	public StudentApiController(StudentService studentService, StudentFileService studentFileService) {
+	public StudentApiController(StudentService studentService, StudentFileService studentFileService, TeacherHistoryService teacherHistoryService) {
 		this.studentService = studentService;
 		this.studentFileService = studentFileService;
+		this.teacherHistoryService = teacherHistoryService;
 	}
 	
 	// 게시글 등록
@@ -103,7 +110,7 @@ public class StudentApiController {
 		return resultMap;
 	}
 	
-	
+	// 삭제 처리
 	@ResponseBody
 	@DeleteMapping("/student/{student_no}")
 	public Map<String,String> deleteStudent(@PathVariable("student_no") Long student_no){
@@ -121,6 +128,29 @@ public class StudentApiController {
 		return map;
 	}
 	
+	// 반배정시 학년도에 따른 학년 데이터 가져오기
+	@GetMapping("/student/student_class/selectByYear/{t_year}")
+	@ResponseBody
+	public List<TeacherHistoryDto> getDataByYear(@PathVariable("t_year") String t_year) {
+		// 학년도에 해당하는 데이터를 가져옵니다.
+	    List<TeacherHistoryDto> data = teacherHistoryService.selectClassByYearList(t_year);
+	    System.out.println("여기까지오냐?"+data);
+	    // 데이터를 JSON 형식으로 반환합니다.
+	    return data;
+	}
+	
+	@GetMapping("/student/student_class/selectByYearAndGrade/{t_year}/{grade}")
+	@ResponseBody
+	public List<TeacherHistoryDto> getDataByYearAndGrade(@PathVariable("t_year") String t_year, @PathVariable("grade") String grade) {
+	    // t_year와 grade에 해당하는 데이터를 조회
+	    List<TeacherHistoryDto> data = teacherHistoryService.getDataByYearAndGradeList(t_year, grade);
+	    System.out.println("이건 왜안가져가노?"+data);
+	    List<TeacherHistoryDto> filteredData = data.stream()
+                .filter(Objects::nonNull) // null이 아닌 객체만 필터링
+                .collect(Collectors.toList());
 
+		System.out.println("필터링된 데이터: " + filteredData);
+	    return filteredData;
+	}
 		
 }
