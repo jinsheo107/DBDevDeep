@@ -46,12 +46,6 @@ public class Holiday {
     @Column(name = "repeat_type")
     private String repeatType;
 
-    @Column(name = "repeat_start_date")
-    private Date repeatStartDate;
-
-    @Column(name = "repeat_end_date")
-    private Date repeatEndDate;
-
     @Column(name = "reg_time")
     @CreationTimestamp
     private LocalDateTime regTime;
