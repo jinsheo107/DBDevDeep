@@ -1,5 +1,6 @@
 package com.dbdevdeep.notice.service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Service;
 import com.dbdevdeep.employee.domain.Employee;
 import com.dbdevdeep.employee.repository.EmployeeRepository;
 import com.dbdevdeep.notice.domain.Notice;
+import com.dbdevdeep.notice.domain.NoticeCategory;
 import com.dbdevdeep.notice.domain.NoticeReadCheck;
 import com.dbdevdeep.notice.dto.NoticeDto;
 import com.dbdevdeep.notice.repository.NoticeCategoryRepository;
@@ -58,16 +60,16 @@ public class NoticeService {
 					.category_name(n.getNoticeCategory().getCategoryName())
 					.notice_title(n.getNoticeTitle())
 					.notice_content(n.getNoticeContent())
-					.is_important(n.isImportant())
-					.is_cmt(n.isCmt())
+					.is_important(n.getIsImportant())
+					.is_cmt(n.getIsCmt())
 					.reg_time(n.getRegTime())
 					.mod_time(n.getModTime())
-					.is_att(n.isAtt())
+					.is_att(n.getIsAtt())
 					.build();
 			
 			for(NoticeReadCheck nrc : nrcList) {
 				if(n.getNoticeNo()==nrc.getNotice().getNoticeNo()) {
-					dto.setRead_check(true);
+					dto.setRead_check(1);
 				}
 			}
 			noticeDtoList.add(dto);
@@ -89,14 +91,33 @@ public class NoticeService {
 				.category_name(n.getNoticeCategory().getCategoryName())
 				.notice_title(n.getNoticeTitle())
 				.notice_content(n.getNoticeContent())
-				.is_important(n.isImportant())
-				.is_cmt(n.isCmt())
+				.is_important(n.getIsImportant())
+				.is_cmt(n.getIsCmt())
 				.reg_time(n.getRegTime())
 				.mod_time(n.getModTime())
-				.is_att(n.isAtt())
+				.is_att(n.getIsAtt())
 				.build();
 		
 		return dto;
+	}
+	
+	// 읽음 확인
+	public int readCheck(String read_id, Long notice_no) {
+		int result=-1;
+		NoticeReadCheck nrc = noticeReadCheckRepository.findByEmployeeIdAndNoticeId(read_id, notice_no);
+		if(nrc==null) {
+			Employee e = employeeRepository.findByempId(read_id);
+			Notice n = noticeRepository.findBynoticeNo(notice_no);
+			
+			NoticeReadCheck newNrc = NoticeReadCheck.builder()
+					.employee(e)
+					.notice(n)
+					.build();
+			
+			noticeReadCheckRepository.save(newNrc);
+			result=1;
+		}
+		return result;
 	}
 	
 	// 공지사항 게시글 작성
@@ -105,17 +126,61 @@ public class NoticeService {
 		
 		try {
 			Employee e = employeeRepository.findByempId(dto.getWriter_id());
+			NoticeCategory nc = noticeCategoryRepository.findBycategoryNo(dto.getCategory_no());
 			
+			Notice n = Notice.builder()
+					.noticeNo(dto.getNotice_no())
+					.employee(e)
+					.noticeCategory(nc)
+					.noticeTitle(dto.getNotice_title())
+					.noticeContent(dto.getNotice_content())
+					.isImportant(dto.getIs_important())
+					.isCmt(dto.getIs_cmt())
+					.isAtt(dto.getIs_att())
+					.build();
 			
-//			Notice n = Notice.builder()
-//					.noticeNo(dto.getNotice_no())
-//					.employee(e)
-////					.noticeCategory(nc)
-			
-			
-//			noticeRepository.save(n);
+			noticeRepository.save(n);
 			result = 1;
 		}catch(Exception e){
+			e.printStackTrace();
+		}
+		return result;
+	}
+	
+	// 공지사항 게시글 수정
+	public int updateNotice(NoticeDto dto) {
+		int result = -1;
+		
+		try {
+			Employee e = employeeRepository.findByempId(dto.getWriter_id());
+			NoticeCategory nc = noticeCategoryRepository.findBycategoryNo(dto.getCategory_no());
+			
+			Notice n = Notice.builder()
+					.noticeNo(dto.getNotice_no())
+					.employee(e)
+					.noticeCategory(nc)
+					.noticeTitle(dto.getNotice_title())
+					.noticeContent(dto.getNotice_content())
+					.isImportant(dto.getIs_important())
+					.isCmt(dto.getIs_cmt())
+					.isAtt(dto.getIs_att())
+					.build();
+			
+			noticeRepository.save(n);
+			result = 1;
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		return result;
+	}
+	
+	// 공지사항 게시글 삭제
+	public int deleteNotice(Long notice_no) {
+		int result = -1;
+		try {
+			noticeRepository.deleteById(notice_no);
+			result = 1;
+		} catch(Exception e) {
 			e.printStackTrace();
 		}
 		return result;
