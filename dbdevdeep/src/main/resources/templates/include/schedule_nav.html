@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <style>
@@ -12,7 +11,7 @@
         <nav class="sidebar-nav">
           <ul id="sidebarnav">
 
-            <li class="sidebar-item"> <a class="sidebar-link" th:href="@{/holiday}"
+            <li class="sidebar-item"> <a class="sidebar-link" href="#"
                 aria-expanded="false"><span class="hide-menu">일정관리</span></a>
             </li>
 
@@ -20,7 +19,7 @@
                 aria-expanded="false"><span class="hide-menu">범주관리</span></a>
             </li>
 
-			<li class="sidebar-item"> <a class="sidebar-link" th:href="@{/schedule/holidayList}"
+			<li class="sidebar-item"> <a class="sidebar-link" th:href="@{/holiday}"
                 aria-expanded="false"><span class="hide-menu">휴일관리</span></a>
             </li>
             
@@ -29,36 +28,4 @@
       </div>
     </aside>
 </th:block>
-=======
-<!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<style>
-</style>
-<th:block th:fragment="scheduleNavLayout">
-	 <aside class="left-sidebar" data-sidebarbg="skin6">
-      <!-- Sidebar scroll-->
-      <div class="scroll-sidebar" data-sidebarbg="skin6">
-        <!-- Sidebar navigation-->
-	
-        <nav class="sidebar-nav">
-          <ul id="sidebarnav">
-
-            <li class="sidebar-item"> <a class="sidebar-link" th:href="@{/holiday}"
-                aria-expanded="false"><span class="hide-menu">일정관리</span></a>
-            </li>
-
-			<li class="sidebar-item"> <a class="sidebar-link" href="javascript:void(0)"
-                aria-expanded="false"><span class="hide-menu">범주관리</span></a>
-            </li>
-
-			<li class="sidebar-item"> <a class="sidebar-link" th:href="@{/schedule/holidayList}"
-                aria-expanded="false"><span class="hide-menu">휴일관리</span></a>
-            </li>
-            
-          </ul>
-        </nav>
-      </div>
-    </aside>
-</th:block>
->>>>>>> branch 'develop' of https://github.com/bo-gyung/DBDevDeep.git
 </html>
