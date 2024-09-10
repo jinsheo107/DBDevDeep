@@ -32,7 +32,7 @@
                             <div class="card-body">
                                 <h3 class="card-title">공지사항 게시글 작성</h3>
                                 <hr>
-                                <!-- CSRF정보를 담을 히든 인풋을 폼 밖에 작성 -->
+                                <!-- CSRF정보를 담은 히든 인풋 -->
 								<input type="hidden" id="csrf_token" th:value="${_csrf.token}">
                                 <form id="noticeCreateForm">
                                 	<div class="row form-group">
@@ -49,11 +49,13 @@
 	                                    	<small id="check_list_help" class="form-text text-muted">체크여부</small>
 	                                    	<div class="row" >
 		                                    	<div class="custom-control custom-checkbox col-md-2">
-			                                        <input type="checkbox" class="custom-control-input" id="is_impoltant" name="is_impoltant" >
-				                                    <label class="custom-control-label mr-sm-3" for="is_impoltant">상단 고정</label>
+			                                        <input type="checkbox" class="custom-control-input" 
+			                                        id="is_important" name="is_important" value="1">
+				                                    <label class="custom-control-label mr-sm-3" for="is_important">상단 고정</label>
 			                                	</div>
 			                                	<div class="custom-control custom-checkbox col-md-2">
-				                                    <input type="checkbox" class="custom-control-input" id="is_cmt" name="is_cmt">
+				                                    <input type="checkbox" class="custom-control-input" 
+				                                    id="is_cmt" name="is_cmt" value="1">
 				                                    <label class="custom-control-label" for="is_cmt">댓글 작성 허용</label>
 			                                	</div>
 	                                    	</div>
@@ -69,14 +71,15 @@
                                         	<small id="name_help" class="form-text text-muted">작성자</small>
                                 			<input type="text" class="form-control" id="writer_name" name="writer_name" 
                                 			th:value="${writer.emp_name}" disabled>
-                                			<input type="hidden" class="form-control" id="writer_id" name="writer_id" th:value="${writer.emp_id}">
-                                		</div>
+                               			</div>
                                 	</div>
                                 	<div class="row form-group">
                                 		<div class="col-md-12">
-                                        	<small id="content_help" class="form-text text-muted">내용</small>
-                                			<textarea id="notice_content" name="notice_content" class="form-control" rows="20" placeholder="내용을 입력해주세요."></textarea>
-                                		</div>
+                                			<small id="content_help" class="form-text text-muted">내용</small>
+	                                		<!-- Create the editor container -->
+											<div id="editor" style="height:30vh;">
+											</div>
+									    </div>
                                 	</div>
                                 	<div class="row">
                                         <div class="col-md-10">
@@ -87,7 +90,9 @@
                                             <button class="btn btn-outline-secondary" type="button" onclick="fileInput()" 
                                             style="cursor: pointer;">첨부</button>
                                         </div>
-                                    </div>
+                                        <input type="hidden" id="notice_content" name="notice_content">
+                                        <input type="hidden" class="form-control" id="writer_id" name="writer_id" th:value="${writer.emp_id}">
+                               		</div>
                                     <div class="row m-2">
 			                        	<div class="col-12 d-flex justify-content-center">
 				                            <button type="button" class="btn waves-effect waves-light btn-light m-2" 
@@ -128,96 +133,106 @@
         <!-- ============================================================== -->
         <!-- End Page wrapper  -->
         <!-- ============================================================== -->
-    <!-- Custom script -->
-    <!-- ============================================================== -->   
-    <script>
-   	const fileInput = function(){
-        // 파일 입력 요소를 찾고 클릭 이벤트를 트리거
-        document.getElementById('notice_attr_file').click();
-   	}
-   	
-   	// 새 글 작성 관련
-   	const form = document.getElementById("noticeCreateForm");
-   	form.addEventListener('submit',(e)=>{
- 		e.preventDefault();
- 		
- 		// 유효성 검사
- 		let vali_check = false;
- 		let vali_text ="";
- 		
- 		if(form.category_no.value=="0"){
- 			vali_text += "공지 분류를 선택하세요.";
- 			form.category_no.focus();
- 		} else if(form.notice_title.value==""){
- 			vali_text += "제목을 입력하세요.";
- 			form.notice_title.focus();
- 		} else if(form.notice_content.value==""){
- 				vali_text += "내용을 입력하세요.";
- 				form.notice_content.focus();
- 		} else{
- 			vali_check = true;
- 		}
- 		
- 		if(vali_check == false){
- 			// vali_check == false
- 			
- 			Swal.fire({
-				icon:'error',
-				title:'실패',
-				text: vali_text,
-				confirmButten:'닫기'
- 			});
- 		} else{
- 			// vali_check == true
- 			
- 			// 1. noticeCreateForm(form)을 FormData(payload) 객체로 변환
-			const payload = new FormData(form);
-			// 2. FormData(payload) 객체를 자바스크립트(obj)화
-			let obj = {};
-			payload.forEach(function(value,key){
-				obj[key]=value;
-			})
-			// 3. 자바스크립트(obj)화된 데이터를 제이슨 문자열(jsonData)화
-			const jsonData = JSON.stringify(obj);
-			
-			// 4. CSRF(Cross-Site Request Forgery, 사이트 간 요청 위조)방지를 위한 토큰
-			const csrfToken = document.getElementById("csrf_token").value;
-			
-			// 5. fetch
-			fetch('/notice',{
-				method:'post',
-				headers:{
-					"Content-Type": "application/json;charset=utf-8",
-					"Accept": "application/json",
-					'X-CSRF-TOKEN': csrfToken
-				},
-				body:jsonData
-			})
-			.then(response=>response.json())
-			.then(data=>{
-				if(data.res_code == '200'){
-					Swal.fire({
-						icon :'success',
-						title:'성공',
-						text : data.res_msg
-					}).then((result)=>{
-						location.href="/notice/list";
-					});
-				} else{
-					Swal.fire({
-						icon:'error',
-						title:'실패',
-						text: data.res_msg
-					});
-				}
-			})	
- 		}
- 	});	
- 		
-   	
-   	
+	<!-- Include the Quill library -->
+	<script src="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.js"></script>
+	<!-- ============================================================== -->
+	<!-- Quill editor를 이용해 게시글 작성 -->
+	<script>
+		// 에디터 초기화
+  		const quill = new Quill('#editor', {
+  			modules: {
+				toolbar: true,
+ 			},
+ 			placeholder: '내용을 입력하세요.',
+  			theme: 'snow'
+		});
+		
+  		// 새 글 작성 관련
+  	   	const form = document.getElementById("noticeCreateForm");
+  	   	form.addEventListener('submit',(e)=>{
+  	 		e.preventDefault();
+  			
+  			// 유효성 검사
+  			let vali_check = false;
+  			let vali_text ="";
+  		    		
+  			if(form.category_no.value=="0"){
+  				vali_text += "공지 분류를 선택하세요.";
+  				form.category_no.focus();
+  			} else if(form.notice_title.value==""){
+  				vali_text += "제목을 입력하세요.";
+  				form.notice_title.focus();
+  			} else if(quill.getText().trim().length === 0){
+  					vali_text += "내용을 입력하세요.";
+  					quill.focus();
+  			} else{
+  				vali_check = true;
+  			}
+  	    		
+  	   		if(vali_check == false){
+  	   			// vali_check == false
+  	   			
+  	   			Swal.fire({
+  	  				icon:'error',
+  	  				title:'실패',
+  	  				text: vali_text
+  	   			});
+  	   		} else{
+  	   			// vali_check == true
 
-    </script>
+  	   			// Delta 형식으로 에디터의 콘텐츠 저장
+  	   			document.getElementById('notice_content').value = JSON.stringify(quill.getContents());
+  	   			
+  	   			// 1. noticeCreateForm(form)을 FormData(payload) 객체로 변환
+  	  			const payload = new FormData(form);
+  	  			// 2. FormData(payload) 객체를 자바스크립트(obj)화
+  	  			let obj = {};
+  	  			payload.forEach(function(value,key){
+  	  				obj[key]=value;
+  	  			})
+  	  			// 3. 자바스크립트(obj)화된 데이터를 제이슨 문자열(jsonData)화
+  	  			const jsonData = JSON.stringify(obj);
+  	  			
+  	  			// 4. CSRF(Cross-Site Request Forgery, 사이트 간 요청 위조)방지를 위한 토큰
+  	  			const csrfToken = document.getElementById("csrf_token").value;
+  	  			
+  	  			// 5. fetch
+  	  			fetch('/notice',{
+  	  				method:'post',
+  	  				headers:{
+  	  					"Content-Type": "application/json;charset=utf-8",
+  	  					"Accept": "application/json",
+  	  					'X-CSRF-TOKEN': csrfToken
+  	  				},
+  	  				body:jsonData
+  	  			})
+  	  			.then(response=>response.json())
+  	  			.then(data=>{
+  	  				if(data.res_code == '200'){
+  	  					Swal.fire({
+  	  						icon :'success',
+  	  						title:'성공',
+  	  						text : data.res_msg
+  	  					}).then((result)=>{
+  	  						location.href="/notice";
+  	  					});
+  	  				} else{
+  	  					Swal.fire({
+  	  						icon:'error',
+  	  						title:'실패',
+  	  						text: data.res_msg
+  	  					});
+  	  				}
+  	  			})	
+  	   		}
+  	  	});	
+  	   	
+	// 버튼 클릭시 인풋 파일 클릭 이벤트
+	const fileInput = function(){
+	    // 파일 입력 요소를 찾고 클릭 이벤트를 트리거
+	    document.getElementById('notice_attr_file').click();
+	}
+	</script>
     <!-- ============================================================== -->
     <!-- All Jquery -->
     <!-- ============================================================== -->
@@ -241,6 +256,7 @@
     <!--This page plugins -->
     <script src="/assets/extra-libs/datatables.net/js/jquery.dataTables.min.js"></script>
     <script src="/dist/js/pages/datatable/datatable-basic.init.js"></script>
+    
 </body>
 
 </html>

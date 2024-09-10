@@ -34,7 +34,7 @@ public class HolidayViewController {
 	@ResponseBody
 	@GetMapping("/holiday/{holiday_no}")
 	public HolidayDto selectHolidayOne(@PathVariable("holiday_no") Long holiday_no) {
-		HolidayDto dto = holidayService.selectBoardOne(holiday_no);
+		HolidayDto dto = holidayService.selectHolidayOne(holiday_no);
 		
 		return dto;
 	}
