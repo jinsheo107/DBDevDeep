@@ -4,6 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -11,10 +14,13 @@ import com.dbdevdeep.employee.domain.Department;
 import com.dbdevdeep.employee.domain.Employee;
 import com.dbdevdeep.employee.domain.EmployeeDto;
 import com.dbdevdeep.employee.domain.Job;
+import com.dbdevdeep.employee.domain.MySign;
+import com.dbdevdeep.employee.domain.MySignDto;
 import com.dbdevdeep.employee.mybatis.mapper.EmployeeVoMapper;
 import com.dbdevdeep.employee.repository.DepartmentRepository;
 import com.dbdevdeep.employee.repository.EmployeeRepository;
 import com.dbdevdeep.employee.repository.JobRepository;
+import com.dbdevdeep.employee.repository.MySignRepository;
 import com.dbdevdeep.employee.vo.EmployeeVo;
 
 @Service
@@ -25,16 +31,19 @@ public class EmployeeService {
 	private final JobRepository jobRepository;
 	private final DepartmentRepository departmentRepository;
 	private final EmployeeVoMapper employeeVoMapper;
+	private final MySignRepository mySignRepository;
 
 	@Autowired
 	public EmployeeService(EmployeeRepository employeeRepository, PasswordEncoder passwordEncoder,
 			JobRepository jobRepository, DepartmentRepository departmentRepository,
-			EmployeeVoMapper employeeVoMapper) {
+			EmployeeVoMapper employeeVoMapper, 
+			MySignRepository mySignRepository) {
 		this.employeeRepository = employeeRepository;
 		this.passwordEncoder = passwordEncoder;
 		this.jobRepository = jobRepository;
 		this.departmentRepository = departmentRepository;
 		this.employeeVoMapper = employeeVoMapper;
+		this.mySignRepository = mySignRepository;
 	}
 
 	public int govIdCheck(String govId) {
@@ -128,7 +137,6 @@ public class EmployeeService {
 		EmployeeDto dto = null;
 		if(employee!=null) {
 			dto = new EmployeeDto().toDto(employee);
-			
 		}
 		return dto;
 	}
@@ -151,6 +159,70 @@ public class EmployeeService {
 		}
 		
 		return resultList;
+	}
+	
+	public int checkPw(String pwd) {
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		User user = (User)authentication.getPrincipal();
+		
+		int result = -1;
+		
+		Employee employee = employeeRepository.findByempId(user.getUsername());
+		
+		if(passwordEncoder.matches(pwd, employee.getEmpPw())) {
+			result = 1;
+		}
+		
+		return result;
+	}
+	
+	public List<MySignDto> employeeSignGet(String emp_id) {
+		List<MySignDto> resultList = new ArrayList<MySignDto>();
+		
+		try {
+			List<MySign> signList = mySignRepository.mySignfindAllByEmpid(emp_id);
+			
+			for(MySign sign : signList) {
+				MySignDto dto = new MySignDto().toDto(sign);
+				resultList.add(dto);
+			}
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+		
+		return resultList;
+	}
+	
+	public int employeeSignAdd(MySignDto dto) {
+		int result = -1;
+		
+		try {
+			Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+			User user = (User)authentication.getPrincipal();
+			
+			Employee employee = employeeRepository.findByempId(user.getUsername());
+			
+			MySign ms = MySign.builder()
+					.signNo(dto.getSign_no())
+					.signTitle(dto.getSign_title())
+					.signType(dto.getSign_type())
+					.oriPicName(dto.getOri_pic_name())
+					.newPicName(dto.getNew_pic_name())
+					.regTime(null)
+					.modTime(null)
+					.repYn(dto.getRep_yn() == null ? "N" : "Y")
+					.employee(employee)
+					.build();
+			
+			mySignRepository.save(ms);
+			
+			result = 1;
+			
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+		
+		return result;
 	}
 
 }

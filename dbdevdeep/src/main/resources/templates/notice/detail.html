@@ -4,8 +4,8 @@
      layout:decorate="~{include/notice_layout}">
 <th:block layout:fragment="content">
 <style>
-	/* 읽기 전용 입력 필드 스타일 */
-	input[type="text"][readonly] {
+	/* disabled 전용 입력 필드 스타일 */
+	input[type="text"][disabled] {
 	    border: none; /* 테두리 제거 */
 	    background-color: transparent; /* 배경색 투명으로 설정 */
 	    outline: none; /* 포커스 시 외곽선 제거 */
@@ -13,6 +13,7 @@
 	    padding: 0; /* 기본 패딩 제거 */
 	    font-size: inherit; /* 상속된 폰트 크기 사용 */
 	}
+
 </style>
 <body>
 		<!-- ============================================================== -->
@@ -32,61 +33,143 @@
                             <div class="card-body">
                                 <h3 class="card-title">공지사항 게시글 조회</h3>
                                 <hr>
-                                <form id="noticeCreateForm" method="post" action="/noticeCreateEnd">
+                                <!-- CSRF정보를 담은 히든 인풋 -->
+								<input type="hidden" id="csrf_token" th:value="${_csrf.token}">
+                                <form id="noticeDetailForm" method="post" action="#">
                                 	<div class="row form-group">
 	                                    <div class="col-md-2">
-	                                        <select class="custom-select mr-sm-2" id="category_no">
-	                                            <option value="0" selected>공지분류</option>
-	                                            <option value="1">학사일정</option>
-	                                            <option value="2">사이트</option>
-	                                            <option value="3">공고</option>
-	                                        </select>
+	                                    	<small id="category_help" class="form-text text-muted">공지분류</small>
+	                                        <input type="text" class="form-control" id="category_name"  
+	                                        th:value="${dto.category_name}" disabled>
 	                                    </div>
-		                                <div class="custom-control custom-checkbox">
-		                                    <input type="checkbox" class="custom-control-input" id="is_impoltant">
-		                                    <label class="custom-control-label mr-sm-3" for="is_impoltant">상단 고정</label>
-		                                </div>
-		                                <div class="custom-control custom-checkbox">
-		                                    <input type="checkbox" class="custom-control-input" id="is_cmt">
-		                                    <label class="custom-control-label" for="is_cmt">댓글 작성 허용</label>
-		                                </div>
-                                	</div>
+	                                    <div class="col-md-8">
+	                                    	<small id="check_list_help" class="form-text text-muted">체크여부</small>
+	                                    	<div class="row" >
+		                                    	<div class="custom-control custom-checkbox col-md-2">
+			                                        <input type="checkbox" class="custom-control-input" id="is_important" 
+			                                        th:checked="${dto.is_important==1}" disabled>
+				                                    <label class="custom-control-label mr-sm-3" for="is_important">상단 고정</label>
+			                                	</div>
+			                                	<div class="custom-control custom-checkbox col-md-2">
+				                                    <input type="checkbox" class="custom-control-input" id="is_cmt" 
+				                                    th:checked="${dto.is_cmt==1}" disabled>
+				                                    <label class="custom-control-label" for="is_cmt">댓글 작성 허용</label>
+			                                	</div>
+	                                    	</div>
+	                                    </div>
+	                                    <div class="col-md-2">
+	                                    	<small id="time_help" class="form-text text-muted">작성일시</small>
+                                			<input type="text" class="form-control" id="reg_time"  
+                                			th:value="${#temporals.format(dto.reg_time, 'yyyy.MM.dd HH:mm')}" disabled>
+	                                    </div>
+                                    </div>
                                 	<div class="row form-group">
                                 		<div class="col-md-10">
-                                			<small id="title" class="form-text text-muted">제목</small>
-	                               			<input type="text" class="form-control" id="notice_title" placeholder="제목을 입력하세요." readonly>
+                                			<small id="title_help" class="form-text text-muted">제목</small>
+	                               			<input type="text" class="form-control" id="notice_title" style="padding:1%;" 
+	                               			th:value="${dto.notice_title}" disabled>
                                 		</div>
                                 		<div class=" col-md-2 ">
-                                        	<small id="name" class="form-text text-muted">작성자</small>
-                                			<input type="text" class="form-control" id="writer_id" value=""  readonly>
+                                        	<small id="name_help" class="form-text text-muted">작성자</small>
+                                			<input type="text" class="form-control" id="writer_name"  
+                                			th:value="${dto.writer_name}" disabled>
+                                			
                                 		</div>
                                 	</div>
+                                	<hr>
                                 	<div class="row form-group">
                                 		<div class="col-md-12">
-                                        	<small id="textHelp" class="form-text text-muted">내용</small>
-                                			<textarea class="form-control" rows="20" placeholder="내용을 입력해주세요."  readonly></textarea>
+                                        	<small id="content_help" class="form-text text-muted">내용</small>
+	                                		<!-- Create the editor container -->
+											<div id="editor" style="height:30vh; border: none;">
+											</div>
                                 		</div>
                                 	</div>
+                                	<hr>
                                 	<div class="row">
                                         <div class="col-md-11">
-                                            <label class="form-control" for="inputGroupFile04">파일을 선택하세요.</label>
-                                            <input type="file" class="custom-file-input" id="inputGroupFile04">
+                                            <label class="form-control" for="notice_file">파일을 선택하세요.</label>
+                                            <input type="file" class="custom-file-input" id="notice_file">
                                         </div>
                                         <div class="col-md-1">
-                                            <button class="btn btn-outline-secondary" type="button">첨부</button>
+                                            <button class="btn waves-effect waves-light btn-light m-1" type="button">첨부</button>
                                         </div>
                                     </div>
-                                    <div class="row m-2">
-			                        	<div class="col-12 d-flex justify-content-center">
-				                            <button type="button" class="btn waves-effect waves-light btn-light m-2">취소</button>
-				                            <button type="button" class="btn waves-effect waves-light btn-primary m-2" 
-				                            onclick="location.href='/notice/create'">작성</button>
+                                    <input type="hidden" id="notice_no" name="notice_no" th:value="${dto.notice_no}">
+                                    <input type="hidden" id="writer_no" name="writer_id" th:value="${dto.writer_id}">
+                                    <input type="hidden" th:value="${dto.notice_content}" style="display: none" id="ori_content">
+                                    <div class="row mb-2">
+			                        	<div class="col-6 d-flex justify-content-start">
+				                            <button type="button" class="btn btn-outline-secondary m-1" 
+				                            onclick="location.href='/notice'">목록</button>
+				                            
 			                        	</div>
+			                        	<th:block th:if="${dto.writer_id != readDto.emp_id}">
+				                        	
+			                        	</th:block>
+			                        	<th:block th:if="${dto.writer_id == readDto.emp_id}">
+				                        	<div class="col-6 d-flex justify-content-end">
+					                            <button type="button" class="btn waves-effect waves-light btn-light m-1" 
+					                            onclick="deleteNotice()">삭제</button>
+					                            <button type="button" class="btn waves-effect waves-light btn-primary m-1" 
+					                            onclick="modNotice()">수정</button>
+				                        	</div>
+			                        	</th:block>
 		                            </div>
                                 </form>
                             </div>
                         </div>
-                    </div>
+                        <!-- 1. 댓글창 생성여부 : false -->
+						<th:block th:if="${dto.is_cmt==0}">
+							<div class="card">
+		                    	<div class="card-body">
+		                    		<h4 class="card-title">댓글을 작성할 수 없는 게시글입니다.</h4>
+		                    	</div>
+		                    </div>
+						</th:block>
+						<!-- 1. 댓글창 생성여부 : true -->
+						<th:block th:if="${dto.is_cmt==1}">
+							<div class="card">
+		                    	<div class="card-body">
+		                    		<h4 class="card-title">댓글</h4>
+		                    		<hr>
+		                    		<!-- 댓글창 시작 -->
+									<div class="comment_list" id="comment_place">
+										댓글 리스트를 불러와서 if문으로 없으면 없다고 표시, 있으면 댓글창 출력
+										
+										<!-- <c:choose>
+											<c:when test="${empty c_list }">
+												<div class="card mb-4">
+														<div class="card-body">
+															<p>작성된 댓글이 없습니다.</p>
+														</div>
+													</div>
+											</c:when>
+											<c:otherwise>
+												<c:forEach items="${c_list }" var="c" varStatus="status">
+													<div class="card mb-4">
+														<div class="card-body">
+															<p>${c.comment_main }</p>
+															<div class="d-flex justify-content-between">
+																<div class="d-flex flex-row align-items-center">
+																	<p class="small mb-0 ms-2">${c.user_name }</p>
+																</div>
+																<div class="d-flex flex-row align-items-center">
+																	<p class="small text-muted mb-0">${c.reg_time }</p>
+																</div>
+															</div>
+														</div>
+													</div>
+												</c:forEach>
+											</c:otherwise>
+										</c:choose> -->
+									</div>
+						            <!-- 댓글창 종료 -->
+		                    	</div>
+		                    </div>
+						</th:block>
+	                    
+                    </div>                    
                 </div>
                 <!-- ============================================================== -->
                 <!-- End Page Content -->
@@ -116,6 +199,77 @@
         <!-- ============================================================== -->
         <!-- End Page wrapper  -->
         <!-- ============================================================== -->
+    <!-- Include the Quill library -->
+	<script src="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.js"></script>
+	<!-- ============================================================== -->
+	<!-- Quill editor를 이용해 게시글 조회 --> 
+    <script>
+
+    // 에디터 초기화
+    const quill = new Quill('#editor', {
+    	readOnly: true,
+		modules: {
+			toolbar: false,
+		},
+		placeholder: '내용을 입력하세요.',
+		theme: 'snow'
+	});
+    
+ 	// 기존에 작성한 글 내용
+    const oriContentDelta = document.getElementById("ori_content").value;
+    function loadSavedHtml() {
+    	// JSON 문자열을 Delta 객체로 변환
+        const delta = JSON.parse(oriContentDelta);
+        // Delta 데이터를 Quill 에디터에 적용
+        quill.setContents(delta);
+   	}
+    
+	// 함수 호출
+    loadSavedHtml();
+    
+    // 수정 폼 이동
+    const modNotice = function(){
+    	const noticeNo = document.getElementById('notice_no').value;
+    	const url = '/notice/edit/' + encodeURIComponent(noticeNo);
+    	window.location.href = url;
+    }
+    
+ 	// 게시글 삭제
+    const deleteNotice = function(){
+    	const noticeNo = document.getElementById("notice_no").value;
+    	const csrfToken = document.getElementById("csrf_token").value;
+    	
+    	if(confirm("정말 삭제하시겠습니까?")){
+			fetch('/notice/'+noticeNo,{
+				method : 'delete',
+				headers:{
+					'X-CSRF-TOKEN': csrfToken
+				}
+			})
+			.then(response => response.json())
+			.then(data => {
+				if(data.res_code == '200'){
+					Swal.fire({
+						icon :'success',
+						title:'성공',
+						text : data.res_msg,
+						confirmButtonText : '닫기'
+					}).then((result)=>{
+						location.href="/notice";
+					});
+				} else{
+					Swal.fire({
+						icon:'error',
+						title:'실패',
+						text: data.res_msg,
+						confirmButtonText : '닫기'
+					});
+				}
+			})
+		}
+    }
+	</script>
+    <!-- ============================================================== -->
     <!-- All Jquery -->
     <!-- ============================================================== -->
     <script src="/assets/libs/jquery/dist/jquery.min.js"></script>

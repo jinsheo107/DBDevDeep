@@ -5,7 +5,7 @@
 <th:block layout:fragment="content">
 <style>
 	/* 읽기 전용 입력 필드 스타일 */
-	input[type="text"][readonly] {
+	input[type="text"][disabled] {
 	    border: none; /* 테두리 제거 */
 	    background-color: transparent; /* 배경색 투명으로 설정 */
 	    outline: none; /* 포커스 시 외곽선 제거 */
@@ -32,55 +32,81 @@
                             <div class="card-body">
                                 <h3 class="card-title">공지사항 게시글 수정</h3>
                                 <hr>
-                                <form id="noticeCreateForm" method="post" action="/noticeCreateEnd">
+                                <!-- CSRF정보를 담은 히든 인풋 -->
+								<input type="hidden" id="csrf_token" th:value="${_csrf.token}">
+                                <form id="notiEditForm">
                                 	<div class="row form-group">
 	                                    <div class="col-md-2">
-	                                        <select class="custom-select mr-sm-2" id="category_no">
-	                                            <option value="0" selected>공지분류</option>
-	                                            <option value="1">학사일정</option>
-	                                            <option value="2">사이트</option>
-	                                            <option value="3">공고</option>
+	                                    	<small id="category_help" class="form-text text-muted">공지분류</small>
+	                                        <select style="color:black;" class="custom-select mr-sm-2" id="category_no" name="category_no">
+	                                            <option value="0">공지분류</option>
+	                                            <option value="1" th:selected="${dto.category_no}=='1'">학사일정</option>
+	                                            <option value="2" th:selected="${dto.category_no}=='2'">사이트</option>
+	                                            <option value="3" th:selected="${dto.category_no}=='3'">공고</option>
 	                                        </select>
 	                                    </div>
-		                                <div class="custom-control custom-checkbox">
-		                                    <input type="checkbox" class="custom-control-input" id="is_impoltant">
-		                                    <label class="custom-control-label mr-sm-3" for="is_impoltant">상단 고정</label>
-		                                </div>
-		                                <div class="custom-control custom-checkbox">
-		                                    <input type="checkbox" class="custom-control-input" id="is_cmt">
-		                                    <label class="custom-control-label" for="is_cmt">댓글 작성 허용</label>
-		                                </div>
+		                                <div class="col-md-8">
+	                                    	<small id="check_list_help" class="form-text text-muted">체크여부</small>
+	                                    	<div class="row" >
+		                                    	<div class="custom-control custom-checkbox col-md-2">
+			                                        <input type="checkbox" class="custom-control-input" 
+			                                        id="is_important" name="is_important" value="1" 
+			                                        th:checked="${dto.is_important}">
+				                                    <label class="custom-control-label mr-sm-3" for="is_important">상단 고정</label>
+			                                	</div>
+			                                	<div class="custom-control custom-checkbox col-md-2">
+				                                    <input type="checkbox" class="custom-control-input" 
+				                                    id="is_cmt" name="is_cmt" value="1" 
+				                                    th:checked="${dto.is_cmt}">
+				                                    <label class="custom-control-label" for="is_cmt">댓글 작성 허용</label>
+			                                	</div>
+	                                    	</div>
+	                                    </div>
+	                                    <div class="col-md-2">
+	                                    	<small id="time_help" class="form-text text-muted">작성일시</small>
+                                			<input type="hidden" class="form-control" id="reg_time"  
+                                			th:value="${#temporals.format(dto.reg_time, 'yyyy.MM.dd HH:mm')}" disabled>
+	                                    </div>
                                 	</div>
                                 	<div class="row form-group">
                                 		<div class="col-md-10">
-                                			<small id="title" class="form-text text-muted">제목</small>
-	                               			<input type="text" class="form-control" id="notice_title" placeholder="제목을 입력하세요.">
+                                			<small id="title_help" class="form-text text-muted">제목</small>
+	                               			<input type="text" class="form-control" id="notice_title" name="notice_title" 
+	                               			th:value="${dto.notice_title}">
                                 		</div>
                                 		<div class=" col-md-2 ">
-                                        	<small id="name" class="form-text text-muted">작성자</small>
-                                			<input type="text" class="form-control" id="writer_id" value="테스트" readonly>
+                                        	<small id="name_help" class="form-text text-muted">작성자</small>
+                                			<input type="text" class="form-control" id="writer_name" name="writer_name" 
+                                			th:value="${writerDto.emp_name}" disabled>
                                 		</div>
                                 	</div>
                                 	<div class="row form-group">
                                 		<div class="col-md-12">
-                                        	<small id="textHelp" class="form-text text-muted">내용</small>
-                                			<textarea class="form-control" rows="20" placeholder="내용을 입력해주세요."></textarea>
-                                		</div>
+                                   			<small id="content_help" class="form-text text-muted">내용</small>
+	                                		<!-- Create the editor container -->
+											<div id="editor" style="height:30vh;">
+											</div>
+                                       	</div>
                                 	</div>
                                 	<div class="row">
                                         <div class="col-md-11">
-                                            <label class="form-control" for="inputGroupFile04">파일을 선택하세요.</label>
-                                            <input type="file" class="custom-file-input" id="inputGroupFile04">
+                                            <label class="form-control" for="notice_attr_file">파일을 선택하세요.</label>
+                                            <input type="file" class="custom-file-input" id="notice_attr_file" name="notice_attr_file">
                                         </div>
                                         <div class="col-md-1">
-                                            <button class="btn btn-outline-secondary" type="button">첨부</button>
+                                            <button class="btn btn-outline-secondary" type="button" onclick="fileInput()" 
+                                            style="cursor: pointer;">첨부</button>
                                         </div>
                                     </div>
+                                    <input type="hidden" id="notice_no" name="notice_no" th:value="${dto.notice_no}">
+                                    <input type="hidden" th:value="${dto.notice_content}" style="display: none" id="ori_content">
+                                    <input type="hidden" id="notice_content" name="notice_content">
+                                    <input type="hidden" id="writer_no" name="writer_id" th:value="${writerDto.emp_id}">
                                     <div class="row m-2">
 			                        	<div class="col-12 d-flex justify-content-center">
-				                            <button type="button" class="btn waves-effect waves-light btn-light m-2">취소</button>
-				                            <button type="button" class="btn waves-effect waves-light btn-primary m-2" 
-				                            onclick="location.href='/notice/create'">작성</button>
+				                            <button type="button" class="btn waves-effect waves-light btn-light m-2" 
+			                            	onclick="location.href='/notice'">취소</button>
+				                            <button type="submit" class="btn waves-effect waves-light btn-primary m-2">수정</button>
 			                        	</div>
 		                            </div>
                                 </form>
@@ -116,6 +142,121 @@
         <!-- ============================================================== -->
         <!-- End Page wrapper  -->
         <!-- ============================================================== -->
+    <!-- Include the Quill library -->
+	<script src="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.js"></script>
+	<!-- ============================================================== -->
+	<!-- Quill editor를 이용해 게시글 수정 --> 
+    <script>
+    
+    // 에디터 초기화
+    const quill = new Quill('#editor', {
+    	modules: {
+			toolbar: true,
+		},
+		placeholder: '내용을 입력하세요.',
+		theme: 'snow'
+	});
+    
+    // 기존에 작성한 글 내용
+    const oriContentDelta = document.getElementById("ori_content").value;
+    function loadSavedHtml() {
+    	// JSON 문자열을 Delta 객체로 변환
+        const delta = JSON.parse(oriContentDelta);
+        // Delta 데이터를 Quill 에디터에 적용
+        quill.setContents(delta);
+   	}
+    
+	// 함수 호출
+    loadSavedHtml();
+    
+	// 수정 관련
+   	
+   	const form = document.getElementById("notiEditForm");
+   	form.addEventListener('submit',(e)=>{
+ 		e.preventDefault();
+ 		
+ 		// 유효성 검사
+ 		let vali_check = false;
+ 		let vali_text ="";
+ 		
+ 		if(form.category_no.value=="0"){
+    		vali_text += "공지 분류를 선택하세요.";
+    		form.category_no.focus();
+    	} else if(form.notice_title.value==""){
+    		vali_text += "제목을 입력하세요.";
+    		form.notice_title.focus();
+    	} else if(quill.getText().trim().length === 0){
+    			vali_text += "내용을 입력하세요.";
+    			quill.focus();
+    	} else{
+    		vali_check = true;
+    	}
+	 		
+	 	if(vali_check == false){
+      		// vali_check == false
+      		
+      		Swal.fire({
+ 	  			icon:'error',
+ 	  			title:'실패',
+ 	  			text: vali_text
+ 	   		});
+      		
+      	} else{
+	 		// vali_check == true
+	 		
+	 		// Delta 형식으로 에디터의 콘텐츠 저장
+  	   		document.getElementById('notice_content').value = JSON.stringify(quill.getContents());
+	 		
+			const payload = new FormData(form);
+			let obj = {};
+			payload.forEach(function(value,key){
+				obj[key]=value;
+			})
+			const jsonData = JSON.stringify(obj);
+			const csrfToken = document.getElementById("csrf_token").value;
+				
+			const noticeNo = document.getElementById('notice_no').value;
+				
+			// fetch
+			fetch('/notice/edit/${noticeNo}',{
+				method:'post',
+				headers:{
+					"Content-Type": "application/json;charset=utf-8",
+					"Accept": "application/json",
+					'X-CSRF-TOKEN': csrfToken
+				},
+				body:jsonData
+			})
+			.then(response=>response.json())
+			.then(data=>{
+				if(data.res_code == '200'){
+					Swal.fire({
+						icon :'success',
+						title:'성공',
+						text : data.res_msg
+					}).then((result)=>{
+						location.href="/notice";
+					});
+				} else{
+					Swal.fire({
+						icon:'error',
+						title:'실패',
+						text: data.res_msg
+					});
+				}
+			})	
+	 	}
+	 	
+ 	});	
+ 		
+ 	// 버튼 클릭시 인풋 파일 클릭 이벤트
+	const fileInput = function(){
+	    // 파일 입력 요소를 찾고 클릭 이벤트를 트리거
+	    document.getElementById('notice_attr_file').click();
+ 	}
+
+    </script>
+    <!-- ============================================================== -->
     <!-- All Jquery -->
     <!-- ============================================================== -->
     <script src="/assets/libs/jquery/dist/jquery.min.js"></script>

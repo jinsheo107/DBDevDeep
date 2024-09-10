@@ -53,7 +53,7 @@ public class AttendanceApiController {
 		Map<String, String> resultMap = new HashMap<String, String>();
 		
 		resultMap.put("res_code", "404");
-		resultMap.put("res_msg", "출근시간 기록 중 오류가 발생하였습니다");
+		resultMap.put("res_msg", "퇴근시간 기록 중 오류가 발생하였습니다");
 		
 		AttendanceDto dto = new AttendanceDto();
 		dto.setAttend_no(Long.parseLong(attendNo));
@@ -63,7 +63,7 @@ public class AttendanceApiController {
 		
 		if(attendanceService.employeeCheckOut(dto) == 1) {
 			resultMap.put("res_code", "200");
-			resultMap.put("res_msg", "출근시간 기록에 성공하였습니다");
+			resultMap.put("res_msg", "퇴근시간 기록에 성공하였습니다");
 		}
 		
 		return resultMap;

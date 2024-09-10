@@ -188,7 +188,7 @@
                                         <td class="info_label">직급</td>
                                         <td class="info_value">
                                         	<span th:if="${#authentication.principal.dto.dept_code != 'D4'}" sec:authentication="principal.dto.job_name"></span>
-                                        	<span th:if="${#authentication.principal.dto.dept_code == 'D4'}" th:text="${'-'}"></span>
+                                        	<span th:if="${#authentication.principal.dto.dept_code == 'D4'}">-</span>
 										</td>
                                     </tr>
                                     <tr>
@@ -303,9 +303,7 @@
 							
 							const checkOut = document.getElementById('checkOut');
 							checkOut.addEventListener('submit', (e) => {
-								e.preventDefault();
-								
-						    	
+								e.preventDefault(); 
 								
 								Swal.fire({
 								      title: '퇴근하시겠습니까?',
@@ -315,17 +313,17 @@
 								      cancelButtonColor: '#d33',
 								      confirmButtonText: '승인',
 								      cancelButtonText: '취소'
-								      
 								    })
 								    .then((result) => {
-								    	const payload = new FormData(checkOut);
-								    	fetch('/check-out', {
-								            method: 'POST',
-								            headers: {
-								                'X-CSRF-TOKEN': csrfToken
-								            },
-								            body: payload
-								        })
+								    	if (result.isConfirmed) { // 승인 시
+									    	const payload = new FormData(checkOut);
+									    	fetch('/check-out', {
+									            method: 'POST',
+									            headers: {
+									                'X-CSRF-TOKEN': csrfToken
+									            },
+									            body: payload
+									        })
 											.then(response => response.json())
 											.then(data => {
 												if(data.res_code == '200'){
@@ -334,25 +332,30 @@
 														title:'성공',
 														text : data.res_msg,
 														confirmButtonText:"닫기"
-													}).then((result)=>{
+													})
+													.then((result)=>{
 														location.href="/";
 													});
-												} else{
-													Swal.fire({
-														icon:'error',
-														title:'실패',
-														text: data.res_msg,
-														confirmButtonText:"닫기"
-													});
-												}
-									    })
-										}) 
+													} else{
+														Swal.fire({
+															icon:'error',
+															title:'실패',
+															text: data.res_msg,
+															confirmButtonText:"닫기"
+														});
+													}
+										    })
+								    	}
+									}) 
 							})
 							
 							
             </script>
             
             <script th:inline="javascript">
+            // javascript에서 thymeleaf를 사용 시 /**/'' 사용
+            // /**/ 안에 공백 X
+            // /**/ 뒤에 '' 사용
             let attendNo = /*[[${checktime.attend_no}]]*/'';
             let attendDate = /*[[${checktime.attend_date}]]*/'';
             let checkInTime = /*[[${checktime.check_in_time}]]*/'';
