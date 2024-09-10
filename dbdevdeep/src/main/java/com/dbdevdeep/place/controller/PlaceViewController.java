@@ -52,7 +52,7 @@ public class PlaceViewController {
 	    boolean isAuthorized = authentication.getAuthorities().stream()
 	    		.anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("D3"));
 	    
-	    System.out.println("토큰"+isAuthorized);
+	    
 	    model.addAttribute("isAuthorized", isAuthorized);
 	    model.addAttribute("writer", dto);
 	    

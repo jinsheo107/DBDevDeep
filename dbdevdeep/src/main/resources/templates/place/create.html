@@ -37,7 +37,7 @@
             <input type="hidden" class="form-control" id="emp_id" name="emp_id" th:value="${writer.emp_id}">
             <label for="placeName" class="col-sm-2 col-form-label">장소명</label>
             <div class="col-sm-10">
-                <input type="text" class="form-control" id="placeName" name="placeName" required>
+                <input type="text" class="form-control" id="placeName" name="place_name" required>
             </div>
         </div>
 
@@ -46,11 +46,11 @@
             <label for="usable" class="col-sm-2 col-form-label">사용 가능 여부</label>
             <div class="col-sm-10">
                 <div class="form-check form-check-inline">
-                    <input class="form-check-input" type="radio" id="usable" name="isUsable" value="true" checked onchange="toggleUnusableFields()">
+                    <input class="form-check-input" type="radio" id="usable" name="place_status" value="Y" checked onchange="toggleUnusableFields()">
                     <label class="form-check-label" for="usable">사용 가능</label>
                 </div>
                 <div class="form-check form-check-inline">
-                    <input class="form-check-input" type="radio" id="unusable" name="isUsable" value="false" onchange="toggleUnusableFields()">
+                    <input class="form-check-input" type="radio" id="unusable" name="place_status" value="N" onchange="toggleUnusableFields()">
                     <label class="form-check-label" for="unusable">사용 불가능</label>
                 </div>
             </div>
@@ -60,11 +60,11 @@
         <div class="row mb-3">
             <label for="startTime" class="col-sm-2 col-form-label">사용 가능 시간</label>
             <div class="col-sm-5">
-                <input type="time" class="form-control" id="startTime" name="startTime" required>
+                <input type="time" class="form-control" id="startTime" name="place_start_time" required>
             </div>
             <label class="col-sm-1 col-form-label text-center">~</label>
             <div class="col-sm-4">
-                <input type="time" class="form-control" id="endTime" name="endTime" required>
+                <input type="time" class="form-control" id="endTime" name="place_end_time" required>
             </div>
         </div>
 
@@ -74,7 +74,7 @@
             <div class="row mb-3">
                 <label for="reason" class="col-sm-2 col-form-label">사유</label>
                 <div class="col-sm-10">
-                    <input type="text" class="form-control" id="reason" name="reason">
+                    <input type="text" class="form-control" id="reason" name="unuseable_reason">
                 </div>
             </div>
 
@@ -82,11 +82,11 @@
             <div class="row mb-3">
                 <label for="startDate" class="col-sm-2 col-form-label">사용 불가 기간</label>
                 <div class="col-sm-5">
-                    <input type="date" class="form-control" id="startDate" name="startDate">
+                    <input type="date" class="form-control" id="startDate" name="unuseable_start_date">
                 </div>
                 <label class="col-sm-1 col-form-label text-center">~</label>
                 <div class="col-sm-4">
-                    <input type="date" class="form-control" id="endDate" name="endDate">
+                    <input type="date" class="form-control" id="endDate" name="unuseable_end_date">
                 </div>
             </div>
         </div>
@@ -95,7 +95,7 @@
             <!-- 6. 설명 (장소에 대한 설명) -->
             <label for="content" class="col-sm-2 col-form-label">설명</label>
             <div class="col-sm-10">
-                <input type="text" class="form-control" id="content" name="content">
+                <input type="text" class="form-control" id="content" name="place_content">
             </div>
         </div>
 
@@ -104,19 +104,19 @@
             <label for="location" class="col-sm-2 col-form-label">위치</label>
             <div class="col-sm-10">
                 <div class="form-check">
-                    <input class="form-check-input" type="radio" id="floor_1" name="location" value="1층" checked>
+                    <input class="form-check-input" type="radio" id="floor_1" name="place_location" value="1층" checked>
                     <label class="form-check-label" for="floor_1">학교 1층</label>
                 </div>
                 <div class="form-check">
-                    <input class="form-check-input" type="radio" id="floor_2" name="location" value="2층">
+                    <input class="form-check-input" type="radio" id="floor_2" name="place_location" value="2층">
                     <label class="form-check-label" for="floor_2">학교 2층</label>
                 </div>
                 <div class="form-check">
-                    <input class="form-check-input" type="radio" id="floor_3" name="location" value="3층">
+                    <input class="form-check-input" type="radio" id="floor_3" name="place_location" value="3층">
                     <label class="form-check-label" for="floor_3">학교 3층</label>
                 </div>
                 <div class="form-check">
-                    <input class="form-check-input" type="radio" id="playground" name="location" value="운동장">
+                    <input class="form-check-input" type="radio" id="playground" name="place_location" value="운동장">
                     <label class="form-check-label" for="playground">운동장</label>
                 </div>
             </div>
@@ -164,78 +164,59 @@
 	form.addEventListener('submit', (e) => {
 		e.preventDefault(); // 기본폼 제출 방지코드
 		
-		  let valid = true; // 유효성 검사 플래그
-		  let alertMessage = ''; // 경고 메시지를 저장할 변수
+		// 선택된 라디오 버튼 값 확인
+	    const selectedLocation = document.querySelector('input[name="place_location"]:checked').value;
+		console.log(selectedLocation);
+		const isUsable = document.getElementById('unusable').checked; // 사용 불가능 선택 여부 확인
+	    console.log(isUsable);
+		
+		  let vali_check = false; // 유효성 검사 플래그
+		  let vali_text = ""; 
 		    
-		// 입력된 값 가져오기
-			const placeName = form.placeName.value.trim();
-			const startTime = form.startTime.value;
-			const endTime = form.endTime.value;
-			const reason = form.reason.value.trim();
-			const startDate = form.startDate.value;
-			const endDate = form.endDate.value;
-			const content = form.content.value.trim(); 
-			const location = document.querySelector('input[name="location"]:checked');
-			const fileInput = form.file;
 
-			// 장소명 유효성 검사
-			if (placeName === '') {
-				alertMessage += '장소명을 입력하세요.';
-				form.placeName.focus();
-				valid = false;
-			}
-
-			// 장소 설명 유효성 검사 추가
-			if (content === '') {
-				alertMessage += '장소 설명을 입력하세요.';
-				form.content.focus();
-				valid = false;
-			}
-
-			// 사용 가능 시간 유효성 검사
-			if (startTime === '' || endTime === '') {
-				alertMessage += '사용 가능 시간을 입력하세요.';
-				valid = false;
-			}
-
-			// '사용 불가능' 선택 시, 사유 및 기간 필드 검사
-			const isUsable = document.getElementById('unusable').checked; // '사용 불가능' 선택 여부 확인
-			if (isUsable) {
-				if (reason === '') {
-					alertMessage += '사유를 입력하세요.';
-					form.reason.focus();
-					valid = false;
+			// 유효성검사 장소명
+			if (form.place_name.value === '') {
+				vali_text += '장소명을 입력하세요.';
+				form.place_name.focus();
+				
+			} else if(form.place_content.value === ''){
+				vali_text += '장소 설명을 입력하세요.';
+				form.place_content.focus();
+			} else if(form.place_start_time.value === '' || form.place_end_time.value == ''){
+				vali_text += '사용 가능 시간을 입력하세요.';
+				form.place_start_time.focus();
+			} else if(form.place_status === '') {
+				if(form.unuseable_reason.value === ''){
+					vali_text += '사유를 입력하세요.';
+					form.unuseable_reason.focus();
+				} else if(form.unuseable_start_date.value === '' || form.unuseable_end_date.value === ''){
+					vali_text = '사용 불가 기간을 입력하세요.';
+					form.unuseable_start_date.focus();
 				}
-
-				if (startDate === '' || endDate === '') {
-					alertMessage += '사용 불가 기간을 입력하세요.';
-					valid = false;
-				}
+			} else if(!document.querySelector('input[name="place_location"]:checked')){
+				vali_text += '위치를 선택하세요.';
+				
+			} else{
+				vali_check = true;
 			}
 
-			// 위치 선택 유효성 검사
-			if (!location) {
-				alertMessage += '위치를 선택하세요.';
-				valid = false;
-			}
-
-			// 파일 업로드 유효성 검사
-			if (fileInput.files.length === 0) {
-				alertMessage += '이미지 파일을 선택하세요.';
-				valid = false;
-			}
 
 			// 유효성 검사가 실패하면 경고 메시지 표시
-			if (!valid) {
-				alert(alertMessage);
-			} else {
-				// 유효성 검사가 성공하면 서버에 데이터 전송
-				const payload = new FormData(form);
+			if (vali_check == false) {
 				
-				  // 파일을 FormData에 추가 (만약 파일이 없다면 자동으로 처리됨)
-		        if (fileInput.files.length > 0) {
-		            payload.append('file', fileInput.files[0]);
-		        }
+				Swal.fire({
+					icon:'error',
+					title: '실패',
+					text: vali_text,
+					confirmButtonText : "닫기"
+				});
+			} else {
+				let obj = {};
+				const payload = new FormData(form);
+				payload.forEach(function(value,key){
+					obj[key] = value;
+				});
+				const jsonData = JSON.stringify(obj);
 
 		        // CSRF 토큰 추가
 		        const csrfToken = document.getElementById('csrf_token').value;
@@ -243,9 +224,11 @@
 		        fetch('/place', {
 		            method: 'POST',
 		            headers: {
-		                'X-CSRF-TOKEN': csrfToken // CSRF 토큰 헤더 추가
+		            	"Content-Type" : "application/json;charset=utf-8",
+		            	"Accept" : "application/json",
+		                'X-CSRF-TOKEN': csrfToken 
 		            },
-		            body: payload
+		            body: jsonData
 		        })
 		        .then(response => response.json())
 		        .then(data => {
@@ -254,24 +237,27 @@
 		                Swal.fire({
 		                    icon: 'success',
 		                    title: '성공',
-		                    text: data.res_msg
-		                }).then(() => {
+		                    text: data.res_msg,
+		                    confirmButtonText : '닫기'
+		                }).then((result) => {
 		                    location.href = "/place";
 		                });
 		            } else {
 		                Swal.fire({
 		                    icon: 'error',
 		                    title: '실패',
-		                    text: data.res_msg
+		                    text: data.res_msg,
+		                    confirmButtonText : "닫기"
 		                });
 		            }
 		        })
-		        .catch(error => {
-		            console.error('Error:', error);
-		        });
+		       
+		        
 		    }
 		});
 </script>
+</div>
+</div>
 <!-- 부트스트랩 JS 및 의존성 추가 -->
 <!-- ============================================================== -->
     <!-- All Jquery -->

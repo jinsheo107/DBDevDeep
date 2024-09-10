@@ -27,8 +27,8 @@ public class PlaceDto {
 	private String place_location;
 	private String place_content;
 	private String place_status;
-	private int place_start_time;
-	private int place_end_time;
+	private String place_start_time;
+	private String place_end_time;
 	private String unuseable_reason;
 	private String unuseable_start_date;
 	private String unuseable_end_date;
@@ -40,10 +40,10 @@ public class PlaceDto {
 	// 포맷된 시간 범위
 	private String formattedTimeRange;
 	
-	public Place toEntity(Employee employee) {
+	public Place toEntity() {
 		return Place.builder()
 				.placeNo(0L)
-				.employee(employee)
+				
 				.placeName(place_name)
 				.placeLocation(place_location)
 				.placeContent(place_content)
@@ -61,8 +61,7 @@ public class PlaceDto {
 	}
 	
 	public PlaceDto toDto (Place place) {
-		// 시간데이터 포맷 HH:mm 형식
-		String formattedTimeRange = String.format("%02d:00 - %02d:00", place.getPlaceStarttime(), place.getPlaceEndtime());
+		
 		
 		return PlaceDto.builder()
 				.place_no(place.getPlaceNo())
@@ -74,7 +73,7 @@ public class PlaceDto {
 				.place_status(place.getPlaceStatus())
 				.place_start_time(place.getPlaceStarttime())
 				.place_end_time(place.getPlaceEndtime())
-				.formattedTimeRange(formattedTimeRange) // 포맷된 시간 범위 추가
+
 				.unuseable_reason(place.getUnuseableReason())
 				.unuseable_start_date(place.getUnuseableStartDate())
 				.unuseable_end_date(place.getUnuseableEndDate())

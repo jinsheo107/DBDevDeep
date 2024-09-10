@@ -40,53 +40,57 @@ public class PlaceService {
     }
 
  // 장소 등록
-    public Place createPlace(PlaceDto dto) {
-        try {
-        	// 로그인한 사용자의 아이디
-        	String empId = getLoggedInUserId();
-        	if(empId == null) {
-        		throw new RuntimeException("로그인된 사용자가 없어요");
-        	}
-        	
-        	// Employee 정보 가져오기
-            Employee employee = employeeRepository.findById(empId)
-                    .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
-            
-            // 가장 큰 placeNo 값을 찾아서, 없으면 0을 할당하고, 있으면 +1
-            Long maxPlaceNo = placeRepository.findMaxPlaceNo();  // 가장 큰 placeNo 값 찾기
-            Long nextPlaceNo = (maxPlaceNo == null) ? 0L : maxPlaceNo + 1;  // 없으면 0, 있으면 +1
-
-            // Dto를 엔티티로 변환할 때 Employee 정보 포함
-            Place place = Place.builder()
-                    .placeNo(nextPlaceNo) // placeNo 수동 할당
-                    .employee(employee)
-                    .placeName(dto.getPlace_name())
-                    .placeLocation(dto.getPlace_location()) // 위치
-                    .placeContent(dto.getPlace_content())  // 설명
-                    .placeStatus(dto.getPlace_status())    // 상태
-                    .placeStarttime(dto.getPlace_start_time()) // 사용 가능 시작 시간
-                    .placeEndtime(dto.getPlace_end_time())    // 사용 가능 종료 시간
-                    .unuseableReason(dto.getUnuseable_reason()) // 사용 불가 사유
-                    .unuseableStartDate(dto.getUnuseable_start_date()) // 사용 불가 시작 날짜
-                    .unuseableEndDate(dto.getUnuseable_end_date())   // 사용 불가 종료 날짜
-                    .oriPicname(dto.getOri_pic_name())   // 원본 파일명
-                    .newPicname(dto.getNew_pic_name())   // 저장 파일명
-                    .regDate(dto.getReg_date())        // 등록일
-                    .modDate(dto.getMod_date())        // 수정일
-                    .build();
-
-            return placeRepository.save(place);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
+    public int createPlace(PlaceDto dto) {
+    	int result = -1;
+    	
+        // 필수 값 검증
+        if (dto.getPlace_name() == null || dto.getPlace_name().isEmpty()) {
+            throw new IllegalArgumentException("장소명은 필수 입력 항목입니다.");
         }
+        if (dto.getPlace_status() == null || dto.getPlace_status().isEmpty()) {
+            throw new IllegalArgumentException("장소 상태는 필수 입력 항목입니다.");
+        }
+    	try {
+    		// 가장 큰 placeNo 값을 찾아서, 없으면 0을 할당하고, 있으면 +1
+          Long maxPlaceNo = placeRepository.findMaxPlaceNo();  // 가장 큰 placeNo 값 찾기
+          Long nextPlaceNo = (maxPlaceNo == null) ? 0L : maxPlaceNo + 1;  // 없으면 0, 있으면 +1
+    		Employee e = employeeRepository.findByempId(dto.getEmp_id());
+    		
+    		Place p = Place.builder()
+    				.placeNo(nextPlaceNo)
+    				.employee(e)
+    				.placeName(dto.getPlace_name())
+    				.placeLocation(dto.getPlace_location()) // 위치
+    				.placeContent(dto.getPlace_content())  // 설명이 null일 경우 처리
+                  .placeStatus(dto.getPlace_status())    // 상태
+                  .placeStarttime(dto.getPlace_start_time()) // 사용 가능 시작 시간
+                  .placeEndtime(dto.getPlace_end_time())    // 사용 가능 종료 시간
+                  .unuseableReason(dto.getUnuseable_reason()) // 사용 불가 사유
+                  .unuseableStartDate(dto.getUnuseable_start_date()) // 사용 불가 시작 날짜
+                  .unuseableEndDate(dto.getUnuseable_end_date())   // 사용 불가 종료 날짜
+                  .oriPicname(dto.getOri_pic_name() != null ? dto.getOri_pic_name() : "Default oriPicname")
+                  .newPicname(dto.getNew_pic_name() != null ? dto.getNew_pic_name() : "Default newPicname")
+                  .regDate(dto.getReg_date())        // 등록일
+                  .modDate(dto.getMod_date())        // 수정일
+                  .build();
+    		
+    		placeRepository.save(p);
+    		result = 1;
+    	}catch(Exception e){
+    		e.printStackTrace();
+    	}
+		return result;
     }
+    
 	
 	
 	// 시간을 포맷팅하는 곳
-	public String formatTime(int time) {
-		// 인트타입 한자리수를, :00 형태로 바꿔주는것
-		return String.format("%02d:00", time);
+	public String formatTime(String time) {
+		if(time != null && !time.isEmpty()) {
+			return time;
+		}
+		
+		return "00:00"; // 기본값
 	}
 	
 	// 시간 범위를 포맷팅해서 변환하는 곳
@@ -145,13 +149,13 @@ public class PlaceService {
 			dto.setFormattedTimeRange(formattedTimeRange);
 			
 			// 날짜 데이터를 포맷해서 DTO에 추가
-			if(p.getUnuseableStartDate() != null) {
+			if(p.getUnuseableStartDate() != null && !p.getUnuseableStartDate().trim().isEmpty()) {
 				LocalDate startDate = LocalDate.parse(p.getUnuseableStartDate(), inputFormatter);
 				dto.setUnuseable_start_date(startDate.format(outputFormatter));
 				
 			}
 			
-			if(p.getUnuseableEndDate() != null) {
+			if(p.getUnuseableEndDate() != null && !p.getUnuseableEndDate().trim().isEmpty()) {
 				LocalDate endDate = LocalDate.parse(p.getUnuseableEndDate(), inputFormatter);
 				dto.setUnuseable_end_date(endDate.format(outputFormatter));
 			}

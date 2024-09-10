@@ -5,13 +5,10 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.multipart.MultipartFile;
 
-import com.dbdevdeep.FileService;
 import com.dbdevdeep.place.domain.PlaceDto;
 import com.dbdevdeep.place.service.PlaceService;
 
@@ -19,39 +16,28 @@ import com.dbdevdeep.place.service.PlaceService;
 public class PlaceApiController {
 
 	private final PlaceService placeService;
-	private final FileService fileService;
+	
 	
 	@Autowired
-	public PlaceApiController(PlaceService placeService, FileService fileService) {
+	public PlaceApiController(PlaceService placeService) {
 		this.placeService = placeService;
-		this.fileService = fileService;
+		
 		
 	}
 	
 	// 등록글 
 	@ResponseBody
 	@PostMapping("/place")
-	public Map<String, String> createPlace(@ModelAttribute PlaceDto dto,
-	                                       @RequestParam("file") MultipartFile file) {
-	    Map<String, String> resultMap = new HashMap<>();
+	public Map<String, String> createPlace(@RequestBody PlaceDto dto) {
+	    Map<String, String> resultMap = new HashMap<String, String>();
 	    
-	    dto.setPlace_no(0L);  // 0번부터 시작
+	    resultMap.put("res_code", "404");
+	    resultMap.put("res_msg", "게시글 작성 중 오류가 발생하였습니다.");
 	    
-	    String savedFileName = fileService.employeePicUpload(file);
-	    
-	    if (savedFileName != null) {
-	        dto.setOri_pic_name(file.getOriginalFilename());
-	        dto.setNew_pic_name(savedFileName);
-	        if (placeService.createPlace(dto) != null) {
-	            resultMap.put("res_code", "200");
-	            resultMap.put("res_msg", "게시글이 성공적으로 등록되었습니다.");
-	        } else {
-	            resultMap.put("res_msg", "게시글 등록에 실패하였습니다.");
-	        }
-	    } else {
-	        resultMap.put("res_msg", "파일 업로드가 실패하였습니다.");
+	    if(placeService.createPlace(dto) > 0) {
+	    	resultMap.put("res_code", "200");
+	    	resultMap.put("res_msg", "게시글 작성에 성공하였습니다.");
 	    }
-	    
 	    return resultMap;
 	}
 }

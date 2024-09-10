@@ -58,11 +58,11 @@ public class Place {
 	
 	// 사용가능 시작시간
 	@Column(name = "place_start_time")
-	private int placeStarttime;
+	private String placeStarttime;
 	
 	// 사용가능 종료시간
 	@Column(name = "place_end_time")
-	private int placeEndtime;
+	private String placeEndtime;
 
 	// 사용불가 사유
 	@Column(name = "unuseable_reason")
