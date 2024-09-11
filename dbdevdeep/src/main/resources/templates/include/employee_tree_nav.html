@@ -3,10 +3,11 @@
 
 <th:block th:fragment="employeeTreeNavLayout">
 
-	<aside class="left-sidebar">
-		<div class="scroll-sidebar">
+	
+	<aside class="left-sidebar" data-sidebarbg="skin6">
+		<div class="scroll-sidebar" data-sidebarbg="skin6">
 			<nav class="sidebar-nav">
-				<ul id="sidejstree"></ul>
+				<ul id="sidebarnav"></ul>
 			</nav>
 		</div>
 	</aside>
@@ -27,7 +28,7 @@
                     const D4J4Data = D4J4(data.employees, data.teacherHistory)
                     
                     
-                    $('#sidejstree').jstree({
+                    $('#sidebarnav').jstree({
                     	'core': {
 		        					'data': Object.keys(D1Data).length !== 0 
 		        						? D1Data : Object.keys(D2Data).length !== 0
