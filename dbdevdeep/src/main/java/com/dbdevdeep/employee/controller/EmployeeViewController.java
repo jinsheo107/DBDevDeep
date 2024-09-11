@@ -5,6 +5,9 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -51,7 +54,15 @@ public class EmployeeViewController {
 	}
 	
 	@GetMapping("/mysign")
-	public String mysignPage() {
+	public String mysignPage(Model model) {
+		
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		User user = (User)authentication.getPrincipal();
+		
+		List<MySignDto> resultList = employeeService.employeeSignGet(user.getUsername());
+		
+		model.addAttribute("resultList", resultList);
+		
 		return "employee/mysign";
 	}
 	
@@ -71,14 +82,16 @@ public class EmployeeViewController {
 		return resultMap;
 	}
 	
-	@ResponseBody
-	@GetMapping("/mysign/{emp_id}")
-	public List<MySignDto> employeeSignPage(@PathVariable("emp_id") String emp_id) {
-		
-		List<MySignDto> resultList = employeeService.employeeSignGet(emp_id);
-	
-		return resultList;
-	}
+	/*
+	 * @ResponseBody
+	 * 
+	 * @GetMapping("/mysign/{emp_id}") public List<MySignDto>
+	 * employeeSignPage(@PathVariable("emp_id") String emp_id) {
+	 * 
+	 * List<MySignDto> resultList = employeeService.employeeSignGet(emp_id);
+	 * 
+	 * return resultList; }
+	 */
 	
 
 }

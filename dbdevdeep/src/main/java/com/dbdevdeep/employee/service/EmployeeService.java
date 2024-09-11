@@ -192,5 +192,37 @@ public class EmployeeService {
 		
 		return resultList;
 	}
+	
+	public int employeeSignAdd(MySignDto dto) {
+		int result = -1;
+		
+		try {
+			Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+			User user = (User)authentication.getPrincipal();
+			
+			Employee employee = employeeRepository.findByempId(user.getUsername());
+			
+			MySign ms = MySign.builder()
+					.signNo(dto.getSign_no())
+					.signTitle(dto.getSign_title())
+					.signType(dto.getSign_type())
+					.oriPicName(dto.getOri_pic_name())
+					.newPicName(dto.getNew_pic_name())
+					.regTime(null)
+					.modTime(null)
+					.repYn(dto.getRep_yn() == null ? "N" : "Y")
+					.employee(employee)
+					.build();
+			
+			mySignRepository.save(ms);
+			
+			result = 1;
+			
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+		
+		return result;
+	}
 
 }

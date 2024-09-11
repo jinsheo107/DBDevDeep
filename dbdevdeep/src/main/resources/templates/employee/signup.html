@@ -775,7 +775,6 @@
         const file = event.target.files[0];
 
         if (file) {
-            // Validate file type
             const validExtensions = ['jpg', 'jpeg', 'png'];
             const fileExtension = file.name.split('.').pop().toLowerCase();
 
@@ -797,14 +796,13 @@
 									text: '이미지 파일만 선택할 수 있습니다.',
 									confirmButtonText:"닫기"
                 });
-                fileInput.value = ''; // Clear the file input
+                fileInput.value = ''; 
                 imagePreview.src = '';
                 addPicButton.classList.add('addPic');
                 addPicButton.classList.remove('littleButton');
                 previewContainer.classList.add('hidden');
             }
         } else {
-            // If no file is selected, reset preview
             imagePreview.src = '';
             addPicButton.classList.add('addPic');
             addPicButton.classList.remove('littleButton');
