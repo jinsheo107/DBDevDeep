@@ -15,9 +15,9 @@ $('#notice_config').DataTable({
         { "width": "5%", "targets": 0 },
         { "width": "5%", "targets": 1 },
         { "width": "10%", "targets": 2 },
-        { "width": "50%", "targets": 3 },
+        { "width": "60%", "targets": 3 },
         { "width": "10%", "targets": 4 },
-        { "width": "20%", "targets": 5 }
+        { "width": "10%", "targets": 5 }
     ],
 	"order": [[1, "desc"]], 
 	// 정보 표시 해제

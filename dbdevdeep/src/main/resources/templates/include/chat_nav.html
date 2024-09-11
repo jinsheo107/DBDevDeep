@@ -32,6 +32,7 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
+            padding : 20px; /* 패딩 추가 */
         }
 
         /* 프로필 이미지 스타일링 */
@@ -40,7 +41,7 @@
             height: 120px; /* 프로필 이미지의 높이 */
             border-radius: 50%; /* 원형으로 만들기 */
             overflow: hidden; /* 원형 테두리 안에서 이미지가 잘리도록 설정 */
-            margin-bottom: 20px; /* 이미지와 이름 사이의 간격 */
+            margin: 20px; /* 이미지 간격 */
         }
 
         .profile_image img {
@@ -51,165 +52,339 @@
 
          /* 이름 스타일링 */
          .profile_name div {
-            margin: 0; /* 기본 여백 제거 */
+            margin: 5px; /* 기본 여백 제거 */
             font-size: 18px; /* 이름의 글자 크기 */
             font-weight:bolder; /* 이름을 굵게 표시 */
             color: black;
          }
 
-         /* 프로필 정보 테이블 스타일링 */
-         .profile_info {
-            display: flex;
-            justify-content: center; /* 가운데 정렬 */
-            width: 100%; /* 너비를 전체로 설정 */
-            margin-top: 10px;
-         }
-
-         .profile_info table {
-            border-collapse: collapse; /* 테두리 겹침 방지 */
-         }
-
-         .profile_info td {
-            padding: 5px 10px; /* 셀 안의 여백 */
-            text-align: left; /* 왼쪽 정렬 */
-         }
-
-         .info_label {
+         .point_label {
             font-weight: bolder; /* 라벨을 굵게 표시 */
             color: black;
          }
 
-         .info_value{
-            color: rgb(66, 66, 66);
-         }
-
-         /* 오늘 섹션 스타일링 */
-         .today_section {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 20px; /* 패딩 추가 */
-         }
-
-         .today_title {
-			font-size: 20px; /* 제목 글자 크기 */
-			font-weight: bold; /* 제목 굵게 */
-			color: black; /* 제목 색상 */
-			margin-bottom: 15px; /* 제목과 날짜 사이의 간격 */
+         /* 상태메세지 div 스타일링 */
+		.profile_status {
+			display: flex;
+		    flex-direction: column; /* test와 버튼을 위아래로 배치 */
+		    align-items: center;    /* 중앙 정렬 */
+		    width: 100%;            /* 부모 요소의 너비에 맞춤 */
+		    gap: 10px;     
 		}
 
-			.today_date {
-				font-size: 15px; /* 날짜 글자 크기 */
-				color: black; /* 날짜 색상 */
-				margin-bottom: 20px; /* 날짜와 테이블 사이의 간격 */
-			}
+		.status_btn {
+			font-size: 16px; 		/* 버튼 글자 크기 */
+			width: 100%;            /* 버튼을 부모 요소 너비에 맞춤 */
+		    background-color: #0031AE; /* 버튼 배경색 (원하는 색으로 변경 가능) */
+		    color: white;           /* 버튼 텍스트 색상 */
+		    padding: 10px;          /* 버튼 안쪽 여백 */
+		    border: none;           /* 버튼 테두리 제거 */
+		    border-radius: 5px;     /* 버튼 모서리를 둥글게 */
+		    cursor: pointer;        /* 커서가 손가락 모양으로 변하도록 설정 */
+		}
 
-			/* 오늘의 정보 테이블 스타일링 */
-			.today_info {
-				display: flex;
-				justify-content: center; /* 가운데 정렬 */
-				width: 100%; /* 너비를 전체로 설정 */
-			}
+        .status_btn:hover{
+            background-color: #00278a; /* 출근 버튼 색상 */
+            color: white;
+        }
 
-			.today_info table {
-				border-collapse: collapse; /* 테두리 겹침 방지 */
-			}
-
-			.today_info td {
-				padding: 5px 14px; /* 셀 안의 여백 */
-				text-align: center; /* 왼쪽 정렬 */
-			}
-
-			/* 출근 및 퇴근 버튼 스타일링 */
-			.attendance_buttons {
-				display: flex;
-				flex-direction: column;
-				gap: 10px; /* 버튼 간의 간격 */
-				margin-top: 20px;
-				width: 100%; /* 버튼의 너비를 전체로 설정 */
-			}
-
-			.attendance_btn {
-				padding: 8px; /* 버튼 여백 */
-				font-size: 16px; /* 버튼 글자 크기 */
-				border: none; /* 버튼 테두리 제거 */
-				border-radius: 5px; /* 버튼 모서리 둥글게 */
-				cursor: pointer; /* 마우스 커서 포인터로 변경 */
-				width: 100%; /* 버튼의 너비를 전체로 설정 */
-				box-sizing: border-box; /* 패딩과 테두리를 너비에 포함 */
-			}
-
-			.check-in {
-				background-color: #0031AE; /* 출근 버튼 색상 */
-				color: white; /* 출근 버튼 글자 색상 */
-			}
-
-            .check-out {
-                background-color: #424242; /* 퇴근 버튼 색상 */
-                color: white; /* 퇴근 버튼 글자 색상 */
-            }
-            
-            .check-in:hover{
-                background-color: #00278a; /* 출근 버튼 색상 */
-                color: white;
-            }
-
-            .check-out:hover{
-                background-color: #313131; /* 출근 버튼 색상 */
-                color: white;
-            }
-
-            .work_status{
-                color: #3A9900;
-            }
-
+		
+		/* 대화상대 목록 섹션 스타일링 */
+		.emplist_section{
+			display: flex;
+		    flex-direction: column;
+		    align-items: flex-start; /* 수평으로 왼쪽 정렬 */
+		    justify-content: flex-start; /* 수직으로 위쪽 정렬 */
+		}
+		#sidejstree.jstree {
+		    margin: 0;  /* 요소의 바깥 여백 제거 */
+		    padding: 0; /* 요소의 안쪽 여백 제거 */
+		}
+		
+		#jstree_demo_div {
+			max-height: 300px; /* 원하는 최대 높이를 설정 */
+		    width: 100%; /* 너비를 부모 요소에 맞추기 */
+		}
+        
         </style>
+        <!-- 상태메세지 변경 모달창 시작 -->
+        <div class="modal fade" id="bs-example-modal-sm" tabindex="-1" role="dialog"
+	        aria-labelledby="mySmallModalLabel" aria-hidden="true">
+	        <div class="modal-dialog modal-sm">
+	            <div class="modal-content">
+	                <div class="modal-header">
+	                    <h4 class="modal-title" id="mySmallModalLabel">프로필 변경</h4>
+	                    <button type="button" class="close" data-dismiss="modal"
+	                        aria-hidden="true">×</button>
+	                </div>
+	                <div class="modal-body">
+	                    <div class="sidebar_div profile_section">
+	                        <div class="profile_image">
+	                            <img th:src="@{'/UploadImg/employee/' + ${loginEmp.new_pic_name}}" alt="Profile Picture">
+	                        </div>
+	                        <!-- 이름 -->
+	                        <div class="profile_name">
+	                            <div><span class="text-dark" th:text="${loginEmp.emp_name}"></span></div>
+	                        </div>
+	                        <!-- 상태메세지 -->
+	                        <div class="profile_status">
+	                        	<form id="editStatusForm">
+		                        	<textarea th:text="${loginEmp.chat_status_msg}" 
+		                        	rows="3" style="resize: none;" id="chat_status_msg" name="chat_status_msg"></textarea>
+		                            <!-- CSRF정보를 담은 히든 인풋 -->
+									<input type="hidden" id="csrf_token" th:value="${_csrf.token}">
+		                            <input type="hidden" th:value="${loginEmp.emp_id}" id="emp_id" name="emp_id">
+		                            <button type="submit" class="status_btn">변경하기</button>
+	                        	</form>
+	                        </div>
+                        </div>
+	                </div>
+	            </div><!-- /.modal-content -->
+	        </div><!-- /.modal-dialog -->
+	    </div><!-- /.modal -->
+	    <!-- 상태메세지 변경 모달창 끝 -->
+	    <!-- 사이드바 시작 -->
         <aside class="left-sidebar" data-sidebarbg="skin6">
             <!-- Sidebar scroll-->
-            <div class="scroll-sidebar" data-sidebarbg="skin6">
+            <div class="" data-sidebarbg="skin6">
                 <!-- Sidebar navigation-->
                 <div class="sidebar_container">
                     <div class="sidebar_div profile_section">
                         <div class="profile_image">
-                            <img th:src="@{'/UploadImg/employee/' + ${#authentication.principal.dto.new_pic_name}}" alt="Profile Picture">
+                            <img th:src="@{'/UploadImg/employee/' + ${loginEmp.new_pic_name}}" alt="Profile Picture">
                         </div>
                         <!-- 이름 -->
                         <div class="profile_name">
-                            <div><span class="text-dark" sec:authentication="principal.dto.emp_name"></span></div>
+                            <div><span class="text-dark" th:text="${loginEmp.emp_name}"></span></div>
                         </div>
                         <!-- 상태메세지 -->
-                        <div class="profile_info">
-                            <table>
-                                <tbody>
-                                    <tr>
-                                        <td class="info_label">부서</td>
-                                        <td class="info_value" sec:authentication="principal.dto.dept_name"></td>
-                                    </tr>
-                                    <tr>
-                                        <td class="info_label">직급</td>
-                                        <td class="info_value">
-                                        	<span th:if="${#authentication.principal.dto.dept_code != 'D4'}" sec:authentication="principal.dto.job_name"></span>
-                                        	<span th:if="${#authentication.principal.dto.dept_code == 'D4'}">-</span>
-										</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="info_label">내선번호</td>
-                                        <td class="info_value" sec:authentication="principal.dto.emp_internal_phone">
-                                        	
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
+                        <div class="profile_status">
+                            <div class="text-center"><span class="text-dark" th:text="${loginEmp.chat_status_msg}" id="statusMsg"></span></div>
+                        	<button type="button" class="status_btn" data-toggle="modal" 
+                        	data-target="#bs-example-modal-sm">변경하기</button>
                         </div>
-                    </div>
-                    <div class="sidebar_div today_section">
-                        
+					</div>
+                    <div class="sidebar_div emplist_section">
+	                    <form class="p-2">
+	                        <input class="form-control" type="text" placeholder="Search Contact">
+	                    </form>
+                        <div class="point_label px-2">대화상대 목록</div>
+                        <div id="jstree_demo_div" class="scroll-sidebar">
+                        	<ul id="sidejstree"></ul>
+                        </div>
+                        <div class="profile_status"style="padding : 20px;">
+                        	<button class="status_btn" id="checkInBtn">채팅하기</button>
+                        </div>
                     </div>
                 </div>
             </div>
-            <script>
-	        </script>
         </aside>
+        <!-- 사이드바 끝 -->
+        <!-- 대화상대 목록 jstree 출력 -->
+        <script>
+        $(document).ready(function() {
+            fetch('/api/emp-tree')
+                .then(response => response.json())
+                .then(data => {
+                    const D1Data = D1(data.employees, data.teacherHistory);
+                    const D2Data = D2(data.employees, data.teacherHistory);
+                    const D3Data = D3(data.employees);
+                    const D3J4Data = D3J4(data.employees);
+                    const D4Data = D4(data.employees, data.teacherHistory);
+                    const D4J4Data = D4J4(data.employees, data.teacherHistory)
+                    
+                    
+                    $('#sidejstree').jstree({
+                    	'core': {
+		        					'data': Object.keys(D1Data).length !== 0 
+		        						? D1Data : Object.keys(D2Data).length !== 0
+		        								 ? D2Data : Object.keys(D3Data).length !== 0 
+		        										? [...D3Data, ...D4Data] : Object.keys(D3Data).length !== 0
+		        												? [...D3J4Data, ...D4Data] : Object.keys(D4Data).length !== 0
+		        														? [...D3Data, ...D4J4Data] : Object.keys(D3Data).length !== 0 && Object.keys(D4Data).length !== 0
+		        																? [...D3J4Data, ...D4J4Data] : [],
+									"themes" : {
+							            "responsive": false
+							        }	
+		        				},
+		        		
+		        				"types" : {
+		        			        "default" : {
+		        			            "icon" : "fas fa-user" // 아이콘 변경
+		        			        }
+		        			    },
+		        			    "plugins": ["types"]
+                    
+                    });
+                    
+                    
+                });
+            
+            function getTeacherHistory(empId, teacherHistory) {
+                const history = teacherHistory.find(t => t.teach_emp_id === empId);
+                return history ? { grade: history.grade, grade_class: history.grade_class } : { grade: null, grade_class: null };
+            }
+            
+            // 교장
+            function D1(items, historys) {
+            	return items
+            		.filter(item => item.dept_code == 'D1')
+            		.map(item => {
+            			return {
+            				"text": item.dept_name + " " + item.emp_name,
+            				"state" : { "opened" : true },
+            				"children" : D2(items, historys)
+            			};
+            		});
+            }
+            
+            // 교감
+            function D2(items, historys) {
+            	return items
+            		.filter(item => item.dept_code == 'D2')
+            		.map(item => {
+            			return {
+            				"text": item.dept_name + " " + item.emp_name,
+            				"state" : { "opened" : true },
+            				"children" : [...D3(items), ...D4(items, historys)]
+            				
+            			}
+            		})
+            }
+            
+            // 행정부장
+            function D3(items) {
+            	return items
+            		.filter(item => item.dept_code == 'D3' && item.job_code == 'J3')
+            		.map(item => {
+            			return {
+            				"text": item.dept_name + "장 " + item.emp_name,
+            				"state" : { "opened" : true },
+            				"children" : D3J4(items)
+            			}
+            		})
+            }
+            
+            // 행정직원
+            function D3J4(items) {
+            	return items
+            		.filter(item => item.dept_code == 'D3' && item.job_code == 'J4')
+            		.map(item => {
+            			return {
+            				"text": item.emp_name,
+            				"state" : { "opened" : false }
+            			}
+            		})
+            		.sort((a, b) => {
+            			return a.text.localeCompare(b.text); // 이름 순으로 정렬
+            		});
+            }
+            
+            // 교무부장
+            function D4(items, historys) {
+            	return items
+            		.filter(item => item.dept_code == 'D4' && item.job_code == 'J3')
+            		.map(item => {
+            			const history = getTeacherHistory(item.emp_id, historys);
+            			return {
+            				"text": item.dept_name + "장 " + item.emp_name,
+            				"state" : { "opened" : true },
+            				"children" : D4J4(items, historys)
+            			}
+            		})
+            }
+            
+            // 교무직원
+            function D4J4(items, historys) {
+            	return items
+            		.filter(item => item.dept_code == 'D4' && item.job_code == 'J4')
+            		.map(item => {
+            			return {
+            				"text": item.emp_name,
+            				"state" : { "opened" : false }
+            			}
+            		})
+            		.sort((a, b) => {
+                        const matchA = a.text.match(/\((\d+)-(\d+)\)/);
+                        const matchB = b.text.match(/\((\d+)-(\d+)\)/);
+
+                        const gradeA = matchA ? parseInt(matchA[1], 10) : null;
+                        const gradeB = matchB ? parseInt(matchB[1], 10) : null;
+                        const classA = matchA ? parseInt(matchA[2], 10) : null;
+                        const classB = matchB ? parseInt(matchB[2], 10) : null;
+
+                        if (gradeA !== null && gradeB !== null) {
+                            if (gradeA === gradeB) {
+                                return (classA !== null ? classA : 0) - (classB !== null ? classB : 0); // 학년이 같은 경우 반 순으로 정렬
+                            } else {
+                                return gradeA - gradeB; // 학년이 다른 경우 학년 순으로 정렬
+                            }
+                        } else if (gradeA !== null) {
+                            return -1; // 두 값 중 하나가 null인 경우 학년이 있는 값 순으로 정렬
+                        } else if (gradeB !== null) {
+                            return 1; // 두 값 중 하나가 null인 경우 학년이 있는 값 순으로 정렬
+                        } else {
+                            return a.text.localeCompare(b.text); // 두 값이 null이면 이름 순으로 정렬
+                        }
+                    });
+            }
+            		
+        });   	
+	</script>
+	<!-- custom script -->
+	<script>
+	// 상태메세지 수정하기
+	const form = document.getElementById("editStatusForm");
+		form.addEventListener('submit',(e)=>{
+  	 		e.preventDefault();
+  	 		
+			const empId = document.getElementById('emp_id').value;
+			const csrfToken = document.getElementById("csrf_token").value;
+			
+			const payload = new FormData(form);
+			let obj = {};
+  			payload.forEach(function(value,key){
+  				obj[key]=value;
+  			})
+			const jsonData = JSON.stringify(obj);
+  			
+  			fetch('status/${empId}',{
+  				method:'POST',
+  				headers:{
+  					"Content-Type": "application/json;charset=utf-8",
+  					"Accept": "application/json",
+  					"X-CSRF-TOKEN": csrfToken
+  				},
+  				body: jsonData
+  				})
+  				.then(response=>response.json())
+  				.then(data=>{
+  					if(data.res_code == '200'){
+  						Swal.fire({
+  							icon :'success',
+  							title:'성공',
+  							text : data.res_msg
+  						}).then((result)=>{
+  							// 상태 메시지 갱신	
+  							document.getElementById('statusMsg').innerText = document.getElementById('chat_status_msg').value;
+  							// 모달 닫기
+  							$('#bs-example-modal-sm').modal('hide');
+  							
+  						});
+  					} else{
+  						Swal.fire({
+  							icon:'error',
+  							title:'실패',
+  							text: data.res_msg
+  						});
+  					}
+  				})
+  			});
+  			
+		
+			
+		
+	</script>
+	<!-- custom script -->
 </th:block>
 </html>
