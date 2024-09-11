@@ -13,6 +13,8 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -33,10 +35,14 @@ public class ApproveApiController {
 	private final ApproveService approveService;
 	private final FileService fileService;
 	
+	// 직원 아이디 추출
 	private String pullId(String input) {
 	    return input.substring(input.indexOf('(') + 1, input.indexOf(')'));
 	}
-	
+	// 직원 직급과 이름 추출
+	private String pullName(String input) {
+	    return input.substring(0, input.indexOf('(')).trim();
+	}
 	
 	
 	@Autowired
@@ -45,10 +51,33 @@ public class ApproveApiController {
 		this.fileService = fileService;
 	}
 	
+	@ResponseBody
+	@DeleteMapping("/appro/{appro_no}")
+	public Map<String, String> deleteAppro(@PathVariable("appro_no") Long appro_no) {
+	    Map<String, String> map = new HashMap<>();
+	    map.put("res_code", "404");
+	    map.put("res_msg", "삭제 중 오류가 발생하였습니다.");
+
+	    int fileDeleteResult = fileService.approFileDelete(appro_no);
+
+	    if (fileDeleteResult >= 0) { 
+	        if (approveService.deleteApprove(appro_no) > 0) {
+	            map.put("res_code", "200");
+	            map.put("res_msg", "정상적으로 삭제되었습니다.");
+	        } else {
+	            map.put("res_msg", "승인 정보 삭제에 실패하였습니다.");
+	        }
+	    } else {
+	        map.put("res_msg", "파일 삭제 중 오류가 발생하였습니다.");
+	    }
+	    return map;
+	}
 	
+	// 결재 요청
 	@ResponseBody
 	@PostMapping("/approUp")
 	public Map<String, String> approUp(
+			@RequestParam("emp_name") String approName,
 			@RequestParam("emp_id") String empId,
 		    @RequestParam("dept_code") String deptCode,
 		    @RequestParam("job_code") String jobCode,
@@ -69,11 +98,11 @@ public class ApproveApiController {
 		
 		try {
 			
-			
 		ApproveDto approveDto = new ApproveDto();
 			approveDto.setEmp_id(empId);
 			approveDto.setDept_code(deptCode);
 			approveDto.setJob_code(jobCode);
+			approveDto.setAppro_name(approName);
 			approveDto.setAppro_title(approTitle);
 			approveDto.setAppro_content(approContent);
 			
@@ -103,12 +132,16 @@ public class ApproveApiController {
 		List<ApproveLineDto> approveLineDtos = new ArrayList<>();
 		LocalDateTime currentTime = LocalDateTime.now();
 		int order = 1;
+		boolean firstSet = false;
 		
 		if(consult !=null && !consult.isEmpty()) {
 			String[] consults = consult.split(">");
 			for(String c : consults) {
 				String consultId = pullId(c);
-				approveLineDtos.add(new ApproveLineDto(null, null, consultId, order++, 0, currentTime ,null, "Y"));
+				String consultName = pullName(c);
+				int status = firstSet ? 0 : 1;
+				firstSet = true;
+				approveLineDtos.add(new ApproveLineDto(null, null, consultId, consultName ,order++, status, currentTime ,null, "Y"));
 			}
 		}
 		
@@ -116,7 +149,10 @@ public class ApproveApiController {
 			String[] approvals = approval.split(">");
 			for(String a : approvals) {
 				String approvalId = pullId(a);
-				approveLineDtos.add(new ApproveLineDto(null, null, approvalId , order++ , 0 , currentTime ,null, "N"));
+				String approvalName = pullName(a);
+				int status = firstSet ? 0 : 1;
+				firstSet = true;
+				approveLineDtos.add(new ApproveLineDto(null, null, approvalId , approvalName ,order++ , status , currentTime ,null, "N"));
 			}
 		}
 		
@@ -125,12 +161,13 @@ public class ApproveApiController {
 				String[] references = reference.split(">");
 				for(String r : references) {
 					String refId = pullId(r);
-					referenceDto.add(new ReferenceDto(null , null , refId));
+					String refName = pullName(r);
+					referenceDto.add(new ReferenceDto(null , null , refId , refName));
 				}
 			}
 			
 		// 파일 업로드 설정
-			ApproFileDto approFileDto = null; // 파일이 없는 경우 null로 설정
+			ApproFileDto approFileDto = null; // 파일이 없는 경우 null로 설정 
 			if (file != null && !file.isEmpty()) {
 			    // 파일 저장 및 정보 설정
 			    String savedFileName = fileService.approveUpload(file);

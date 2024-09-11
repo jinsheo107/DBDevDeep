@@ -36,6 +36,9 @@ public class LineDraft {
     @ManyToOne
     @JoinColumn(name = "emp_id")
     private Employee employee;
+    
+    @Column(name = "draft_line_name")
+    private String draftLineName;
 
     @Column(name = "line_order")
     private int lineOrder;

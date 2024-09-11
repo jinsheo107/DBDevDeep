@@ -1,6 +1,7 @@
 package com.dbdevdeep.approve.controller;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -8,8 +9,10 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.dbdevdeep.approve.domain.ApproFileDto;
 import com.dbdevdeep.approve.domain.ApproveDto;
 import com.dbdevdeep.approve.service.ApproveService;
 
@@ -35,9 +38,26 @@ public class ApproveViewController {
 		return "approve/approList";
 	}
 	
+	// 결재 작성
 	@GetMapping("/approCreate")
     public String showApproCreatePage() {
         return "approve/approCreate";
+	}
+	
+	// 결재 상세
+	@GetMapping("/approDetail/{appro_no}")
+	public String selectBoardOne(Model model, @PathVariable("appro_no") Long approNo) {
+		Map<String, Object> detailMap = approveService.getApproveDetail(approNo);
+		model.addAllAttributes(detailMap);
+		return "approve/approDetail";
+	}
+
+	// 결재 상세 수정
+	@GetMapping("/approUpdate/{appro_no}")
+	public String updateBoardOne(Model model, @PathVariable("appro_no") Long approNo) {
+		Map<String, Object> detailMap = approveService.getApproveDetail(approNo);
+		model.addAllAttributes(detailMap);
+		return "approve/approUpdate";
 	}
 	
 	

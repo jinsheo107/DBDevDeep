@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+     xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+     layout:decorate="~{include/approve_layout}">
+     
+ <head>
+    <!-- This page plugin CSS -->
+    <link th:href="@{/assets/extra-libs/datatables.net-bs4/css/dataTables.bootstrap4.css}" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link th:href="@{/dist/css/style.min.css}" rel="stylesheet">
+
+
+</head>
+
+
+<th:block layout:fragment="content">
+
+		<!-- ============================================================== -->
+		<!-- End Left Sidebar - style you can find in sidebar.scss  -->
+		<!-- ============================================================== -->
+		<!-- ============================================================== -->
+		<!-- Page wrapper  -->
+		<!-- ============================================================== -->
+		<div class="page-wrapper">
+			<!-- ============================================================== -->
+			<!-- Container fluid  -->
+			<!-- ============================================================== -->
+			<div class="container-fluid">
+				<!-- ============================================================== -->
+				<!-- Start Page Content -->
+				<!-- ============================================================== -->
+				<div class="col-sm-12 col-md-12">
+					<div class="card">
+						<div class="card-body">
+							<h3 class="card-title">결재 상세</h3>
+							<hr>
+							
+							
+							<div class="container-fluid">
+				<!-- ============================================================== -->
+				<!-- Start Page Content -->
+				<!-- ============================================================== -->
+                <div class="container">
+                                <form id="approReUpFrm">
+                                    <input type="hidden" id="csrf_token" th:value="${_csrf.token}">
+                                    <h2 class="text-center">휴가 신청서</h2>
+                                    <table class="table table-bordered">
+                                        <tbody>
+                                            <tr>
+                                                <td>성명</td>
+                                                <input type="hidden" name="appro_no" th:value="${aDto.appro_no}">
+                                                <td><input type="text" name="appro_name" th:value="${aDto.appro_name}" readonly style="border: 0; outline: none;"></td>
+                                                <td>부서</td>
+                                                <td>
+                                                    <input type="text" name="dept_name_display" 
+                                                    		th:value="${aDto.dept_code == 'D1' ? '교장' :
+			                                                    		aDto.dept_code == 'D2' ? '교감'	:
+			                                                    		aDto.dept_code == 'D3' ? '행정부' : '교무부'}" 
+			                                                    		readonly style="border: 0; outline: none;">
+                                                    <!-- 숨겨진 필드로 dept_code 값을 유지 -->
+                                                    <input type="hidden" name="dept_code" th:value="${aDto.dept_code}">
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>직원번호</td>
+                                                <td><input type="text" name="emp_id" th:value="${aDto.emp_id}" readonly style="border: 0; outline: none;"></td>
+                                                <td>직급</td>
+                                                <td>
+                                                    <input type="text" name="job_name_display" 
+                                                           th:value="${aDto.job_code == 'J1' ? '교장' : 
+                                                                       aDto.job_code == 'J2' ? '교감' :
+                                                                       aDto.job_code == 'J3' ? '부장' : '직원'}"
+                                                           readonly style="border: 0; outline: none;">
+                                                    <!-- 실제 job_code를 숨겨진 필드로 추가 -->
+                                                    <input type="hidden" name="job_code" th:value="${aDto.job_code}">
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>제목</td>
+                                                <td><input type="text" id="appro_title" name="appro_title" class="form-control" th:value="${aDto.appro_title}" readonly style="border: 0; outline: none;"></td>
+                                                <td>결재 상태</td>
+                                                <td><input type="text" id="appro_status" name="appro_status" class="form-control" 
+                                                            th:value="${aDto.appro_status == 0 ? '대기중' :
+                                                                        aDto.appro_status == 1 ? '결재진행중' : 
+                                                                        aDto.appro_status == 2 ? '승인' : '반려'}" 
+                                                            readonly style="border: 0; outline: none;"></td>
+                                            </tr>
+                                            <tr>
+                                                <td>종류</td>
+                                                <td>
+                                                    <input type="text" name="vac_type_display" class="form-control" th:value="${vDto.vac_type}" readonly style="border: 0; outline: none;">
+                                                    <input type="hidden" name="vac_type" th:value="${vDto.vac_type}">
+                                                </td>
+                                                <td>일정</td>
+                                                <td>
+                                                    <input type="text" id="start_date" class="form-control" name="start_date" th:value="${vDto.start_time}" readonly style="border: 0; outline: none;">
+                                                    <input type="text" id="end_date" class="form-control" name="end_date" th:value="${vDto.end_time}" readonly style="border: 0; outline: none;">
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>신청사유</td>
+                                                <td colspan="3"><textarea class="form-control" rows="10" style="resize: none; border: 0; outline: none;" name="appro_content" th:text="${aDto.appro_content}" readonly></textarea></td>
+                                            </tr>
+                                            <tr>
+                                                <td>참고사항</td>
+                                                <td colspan="3">*공가 - 예비군 /민방위의 경우 사후에 참석증을 반드시 제출부탁드립니다.<br>
+                                                    *병가 - 연 25회 초과시 무급휴가로 전환 됩니다.<br>
+                                                    *경조사 - 사전/사후에 행사일을 증명할 수 있는 서류 제출부탁드립니다.<br>
+                                                    *명시된 결재자의 순서에 따라 결재라인이 생성됩니다. (대분류는 협의 > 결재 순)
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan="4">
+                                                    <div style="text-align: center;"><h4>상기와 같이 휴가를 신청하오니 검토 후 승인하여 주시기 바랍니다.</h4></div>
+                                                    <br><br>
+                                                    <h1 style="text-align: center;">물망초등학교</h1>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>반려사유</td>
+                                                <td colspan="3">
+                                                    
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>협의자</td>
+                                                <td colspan="3">
+                                                    <ul>
+                                                        <li th:each="ref : ${refList}"><span th:text="${ref.emp_id}"></span></li>
+                                                    </ul>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>결재자</td>
+                                                <td colspan="3">
+                                                    <ul>
+                                                        <li th:each="ref : ${refList}"><span th:text="${ref.emp_id}"></span></li>
+                                                    </ul>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>참조자</td>
+                                                <td colspan="3">
+                                                    <ul>
+                                                        <li th:each="ref : ${refList}"><span th:text="${ref.emp_id}"></span></li>
+                                                    </ul>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>첨부파일</td>
+                                                <td colspan="3">
+                                                	<input type="file" name="file_name"></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                                        <div class="text-center mt-3">
+                                            <input type="button" value="목록" th:onclick="|location.href='@{/approve}'|" class="btn btn-success">
+                                        </div>
+                                        <div class="text-center mt-3" th:if="${aDto.appro_status == 0}"> 
+											<button type="button" class="btn btn-danger delete_board_button"
+											        th:onclick="|boardDelete(${aDto.appro_no})|">
+											    삭제
+											</button>	
+                                            <button type="submit" class="btn btn-success" >수정</button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                <!-- ============================================================== -->
+                <!-- End PAge Content -->
+                <!-- ============================================================== -->
+                <!-- ============================================================== -->
+                <!-- Right sidebar -->
+                <!-- ============================================================== -->
+                <!-- .right-sidebar -->
+                <!-- ============================================================== -->
+                <!-- End Right sidebar -->
+                <!-- ============================================================== -->
+				            </div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<!-- ============================================================== -->
+			<!-- End PAge Content -->
+			<!-- ============================================================== -->
+			<!-- ============================================================== -->
+			<!-- Right sidebar -->
+			<!-- ============================================================== -->
+			<!-- .right-sidebar -->
+			<!-- ============================================================== -->
+			<!-- End Right sidebar -->
+			<!-- ============================================================== -->
+		</div>
+		<!-- ============================================================== -->
+		<!-- End Container fluid  -->
+		<!-- ============================================================== -->
+		<!-- ============================================================== -->
+		<!-- footer -->
+		<!-- ============================================================== -->
+		<footer class="footer text-center text-muted">
+			All Rights Reserved by Adminmart. Designed and Developed by <a href="https://wrappixel.com">WrapPixel</a>.
+		</footer>
+		<!-- ============================================================== -->
+		<!-- End footer -->
+		<!-- ============================================================== -->
+	</div>
+	<!-- ============================================================== -->
+	<!-- End Page wrapper  -->
+	<!-- ============================================================== -->
+	</div>
+	<!-- ============================================================== -->
+	<!-- End Wrapper -->
+	<!-- ============================================================== -->
+	<!-- End Wrapper -->
+	<!-- ============================================================== -->
+	<!-- All Jquery -->
+	<!-- ============================================================== -->
+	
+	
+	<script th:src="@{/assets/libs/jquery/dist/jquery.min.js}"></script>
+	<!-- Bootstrap tether Core JavaScript -->
+	<script th:src="@{/assets/libs/popper.js/dist/umd/popper.min.js}"></script>
+	<script th:src="@{/assets/libs/bootstrap/dist/js/bootstrap.min.js}"></script>
+	<!-- apps -->
+	<!-- apps -->
+	<script src="/dist/js/app-style-switcher.js"></script>
+	<script src="/dist/js/feather.min.js"></script>
+	<!-- slimscrollbar scrollbar JavaScript -->
+	<script src="/assets/libs/perfect-scrollbar/dist/perfect-scrollbar.jquery.min.js"></script>
+	<script src="/assets/extra-libs/sparkline/sparkline.js"></script>
+	<!--Wave Effects -->
+	<!-- themejs -->
+	<!--Menu sidebar -->
+	<script src="/dist/js/sidebarmenu.js"></script>
+	<!--Custom JavaScript -->
+	<script src="/dist/js/custom.min.js"></script>
+	<script src="/assets/extra-libs/datatables.net/js/jquery.dataTables.min.js"></script>
+    <script src="/dist/js/pages/datatable/datatable-basic.init.js"></script>
+    <script>
+	
+    const boardDelete = function(approNo) {
+        console.log("boardDelete called with approNo:", approNo); // 로그 추가
+
+        if (confirm("정말 삭제하시겠습니까?")) {
+            const csrfToken = document.getElementById("csrf_token").value; // CSRF 토큰 가져오기
+
+            fetch('/appro/' + approNo, {
+                method: 'DELETE',
+                headers: {
+                    'X-CSRF-TOKEN': csrfToken // CSRF 토큰을 헤더에 추가
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log(data);
+                if (data.res_code == '200') {
+                    Swal.fire({
+                        icon: 'success',
+                        title: '성공',
+                        text: data.res_msg
+                    }).then((result) => {
+                        location.href = "/approve";
+                    });
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: '오류',
+                        text: data.res_msg,
+                        confirmButtonText: '닫기'
+                    });
+                }
+            }).catch(error => {
+                console.error('Error during fetch:', error); // 오류 로그 추가
+            });
+        }
+    }
+
+	
+	const form = document.getElementById('approReUpFrm');
+	
+	
+	let valiCount = 0;
+	
+	form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        
+        let vali_check = false;
+        let vali_text='';
+        
+        if (form.appro_title.value == "") {
+        	Swal.fire({
+				icon:'error',
+				title:'제목을 입력해주세요',
+				confirmButtonText:"닫기"
+			});
+        } else {
+        	vali_check = true;
+        } 
+        if(vali_check) {
+        	const payload = new FormData(form);
+			const csrfToken = document.getElementById("csrf_token").value;
+			fetch('/approUpdate',{
+				method:'POST',
+				headers : {
+					'X-CSRF-TOKEN': csrfToken
+				},
+				body:payload
+			})
+			.then(response => response.json())
+			.then(data=>{
+				console.log('data:', data);
+				if(data.res_code == '200'){
+					Swal.fire({
+						icon :'success',
+						title:'성공',
+						text : data.res_msg,
+						confirmButtonText:"닫기"
+					}).then((result)=>{
+						location.href="/";
+					});
+				} else{
+					Swal.fire({
+						icon:'error',
+						title:'실패',
+						text: data.res_msg,
+						confirmButtonText:"닫기"
+					});
+				}
+			}).catch(error => {
+		        console.error('Error:', error);
+		  });
+		}
+	})
+	</script>
+    	
+</th:block>
+</html>

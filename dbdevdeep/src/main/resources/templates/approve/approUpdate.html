@@ -3,22 +3,15 @@
      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
      layout:decorate="~{include/approve_layout}">
      
-<head>
-	<meta charset="UTF-8">
-	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<!-- CSRF Token -->
-	<meta name="_csrf" th:content="${_csrf.token}" />
-	<meta name="_csrf_header" th:content="${_csrf.headerName}" />
-	<!-- Favicon icon -->
-	<link rel="icon" type="image/png" sizes="16x16" th:href="@{/assets/images/MulMang_logo.png}">
-	<title>물망초등학교</title>
-	<!-- Custom CSS -->
-	<link th:href="@{/dist/css/style.min.css}" rel="stylesheet">
-	
-    <!-- jQuery는 최상단에서 한 번만 로드 -->
+ <head>
+    <!-- This page plugin CSS -->
+    <link th:href="@{/assets/extra-libs/datatables.net-bs4/css/dataTables.bootstrap4.css}" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link th:href="@{/dist/css/style.min.css}" rel="stylesheet">
+
+<!-- jQuery는 최상단에서 한 번만 로드 -->
 	<!-- jQuery 3.5.1 버전 로드 -->
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+	<script th:src="@{/assets/libs/jquery/dist/jquery.min.js}"></script>
 
 	<!-- jsTree는 jQuery 이후에 로드 -->
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.3.12/themes/default/style.min.css" />
@@ -27,9 +20,8 @@
 	<!-- Bootstrap 및 다른 라이브러리 -->
 	<link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
 	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script> 
-
-
-<script>
+	
+	<script>
     var $j = jQuery.noConflict();
 
     $j(document).ready(function() {
@@ -269,160 +261,155 @@
     });
 </script>
 
-
-
 </head>
 
-     
+
 <th:block layout:fragment="content">
 
-			<!-- ============================================================== -->
-			<!-- End Left Sidebar - style you can find in sidebar.scss  -->
-			<!-- ============================================================== -->
-			<!-- ============================================================== -->
-			<!-- Page wrapper  -->
-			<!-- ============================================================== -->
-			<div class="page-wrapper">
+		<!-- ============================================================== -->
+		<!-- End Left Sidebar - style you can find in sidebar.scss  -->
+		<!-- ============================================================== -->
+		<!-- ============================================================== -->
+		<!-- Page wrapper  -->
+		<!-- ============================================================== -->
+		<div class="page-wrapper">
 			<!-- ============================================================== -->
 			<!-- Container fluid  -->
 			<!-- ============================================================== -->
 			<div class="container-fluid">
-			<!-- ============================================================== -->
-			<!-- Start Page Content -->
-			<!-- ============================================================== -->
-			<div class="col-sm-12 col-md-12">
-				<div class="card">
-					<div class="card-body">
-						<h3 class="card-title">휴가 신청</h3>
-							<hr>
-								<div class="container-fluid">
-            <!-- ============================================================== -->
-            <!-- Start Page Content -->
-            <!-- ============================================================== -->
-                
-                
-           <div class="container">
-     		   <form id="approCreateFrm">
-     		   <input type="hidden" id="csrf_token" th:value="${_csrf.token}">
-     			   <h2 class="text-center">휴가 신청서</h2>
-				        <table class="table table-bordered">
-				            <tbody>
-				                <tr>
-				                    <td>성명</td>
-				                    <td><input type="text" name="emp_name" th:value="${#authentication.principal.dto.emp_name}" readonly style="border: 0; outline: none;"></td>	
-				                    <td>부서</td>
-				                    <td>
-									    <input type="text" name="dept_name" th:value="${#authentication.principal.dto.dept_name}" readonly style="border: 0; outline: none;">
-									    <!-- 숨겨진 필드로 dept_code 값을 유지 -->
-									    <input type="hidden" name="dept_code" th:value="${#authentication.principal.dto.dept_code}">
-									</td>
-				                </tr>
-				                <tr>
-				                    <td>직원번호</td>
-				                    <td><input type="text" name="emp_id" th:value="${#authentication.principal.dto.emp_id}" readonly style="border: 0; outline: none;"></td>
-				                    <td>직급</td>
-									<td>
-									    <input type="text" name="job_name_display" 
-									           th:value="${#authentication.principal.dto.job_code == 'J1' ? '교장' : 
-									                       #authentication.principal.dto.job_code == 'J2' ? '교감' :
-									                       #authentication.principal.dto.job_code == 'J3' ? '부장' : '직원'}"
-									           readonly style="border: 0; outline: none;">
-									    <!-- 실제 job_code를 숨겨진 필드로 추가 -->
-									    <input type="hidden" name="job_code" th:value="${#authentication.principal.dto.job_code}">
-									</td>
-
-				                </tr>
-				                <tr>
-				                	<td>제목</td>
-				                    <td colspan="3"><input type="text" id="appro_title" name="appro_title" class="form-control"></td>
-				                </tr>
-				                <tr>
-				                    <td>종류</td>
-				                    <td colspan="3">
-				                    <div style="display: flex; gap: 15px; justify-content: space-evenly; align-items: center;">
-				                        <div><label><input type="radio" name="vac_type" value="0" onclick="toggleHalfDay(false)"> 연차</label></div>
-				                        <div><label><input type="radio" name="vac_type" value="8" onclick="toggleHalfDay(true)"> 반차</label></div>
-				                        <div><label><input type="radio" name="vac_type" value="1" onclick="toggleHalfDay(false)"> 공가</label></div>
-				                        <div><label><input type="radio" name="vac_type" value="2" onclick="toggleHalfDay(false)"> 병가</label></div>
-				                        <div><label><input type="radio" name="vac_type" value="3" onclick="toggleHalfDay(false)"> 조퇴</label></div>
-				                        <div><label><input type="radio" name="vac_type" value="4" onclick="toggleHalfDay(false)"> 경조사</label></div>
-				                        <div><label><input type="radio" name="vac_type" value="5" onclick="toggleHalfDay(false)"> 출산휴가</label></div>
-				                        </div>
-				                    </td>
-				                </tr>
-				                <tr>
-				                	<td>반차</td>
-				                	<td>
-				                	<div style="display: flex; gap: 15px; justify-content: space-evenly; align-items: center;">
-				                	<div><label><input type="radio" name="vac_type" value="6" id="half_one" disabled>오전</label></div>
-				                	<div><label><input type="radio" name="vac_type" value="7" id="half_two" disabled>오후</label></div>
-				                	</div>
-				                	</td>
-				                	<td>일정</td>
-				                	<td>
-								        <input type="date" id="start_date" class="form-control" name="start_date">
-								        <input type="date" id="end_date" class="form-control" name="end_date">
-								    </td>
-				                </tr>
-				                <tr>
-				                <td>신청사유</td>
-				                <td colspan="3"><textarea class="form-control" rows="10" style="resize: none" name="appro_content"></textarea></td>
-				                </tr>
-				                <tr>
-				                <td>참고사항</td>
-				                <td colspan="3">*공가 - 예비군 /민방위의 경우 사후에 참석증을 반드시 제출부탁드립니다.<br>
-												*병가 - 연 25회 초과시 무급휴가로 전환 됩니다.<br>
-												*경조사 - 사전/사후에 행사일을 증명할 수 있는 서류 제출부탁드립니다.<br>
-												*명시된 결재자의 순서에 따라 결재라인이 생성됩니다. (대분류는 협의 > 결재 순)
-										</td>
-					                </tr>
-					          	<tr>
-					             <td colspan="4">
-					             <div style="text-align: center;"><h4>상기와 같이 휴가를 신청하오니 검토 후 승인하여 주시기 바랍니다.</h4></div>
-					             <br><br>
-					             <h1 style="text-align: center;">물망초등학교</h1>
-					             
-					             </td>
-					           </tr>
-				                <tr>
-					                <td>협의자</td>
-					                <td colspan="3"><button id="openTreeButton1" class="btn btn-primary" type="button">+</button>
-					                <input type="text" name="consult" id="selectedNodesTable1" readonly style="border: 0; outline: none; width: calc(100% - 50px);">
-					                </td>
-				                </tr>
-				                <tr>
-					                <td>결재자</td>
-									<td colspan="3">
-									    <button id="openTreeButton2" class="btn btn-primary" type="button">+</button>
-									    <input type="text" name="approval" id="selectedNodesTable2" readonly style="border: 0; outline: none; width: calc(100% - 50px);">
-									</td>
-				                </tr>
-				                <tr>
-				                	<td>참조자</td>
-				                	<td colspan="3"><button id="openTreeButton3" class="btn btn-primary" type="button">+</button>
-				                	<input type="text" name="reference" id="selectedNodesTable3" readonly style="border: 0; outline: none; width: calc(100% - 50px);">
-				                	</td>
-				                </tr>
-				                <tr>
-					                <td>첨부파일</td>
-					                <td colspan="3"><input type="file" name="file_name"></td>
-				                </tr>
-            				</tbody>
-       					 </table>
-					        <div style= "display: flex; justify-content: space-between; align-items: center;">
-						        <div class="text-center mt-3">
-						        	<input type="button" value="목록" id="returnList" class="btn btn-success"></button>
-						        </div>
-						   
-						        <div class="text-center mt-3">
-						            <button type="button" class="btn btn-primary">임시 저장</button>
-									<button type="submit" class="btn btn-success" >결재 요청</button>
-						        </div>
-					        </div>
-					        </form>
-					    </div>
-							    <!-- 트리 모달창 -->
-							    <div class="modal fade" id="treeModal" tabindex="-1" role="dialog" aria-labelledby="treeModalLabel" aria-hidden="true">
+				<!-- ============================================================== -->
+				<!-- Start Page Content -->
+				<!-- ============================================================== -->
+				<div class="col-sm-12 col-md-12">
+					<div class="card">
+						<div class="card-body">
+							<h3 class="card-title">결재 상세</h3>
+								<hr>
+									<div class="container-fluid">
+				<!-- ============================================================== -->
+				<!-- Start Page Content -->
+				<!-- ============================================================== -->
+                <div class="container">
+                    <form id="approUpdate">
+                                    <input type="hidden" id="csrf_token" th:value="${_csrf.token}">
+                                    <h2 class="text-center">휴가 신청서</h2>
+                                    <table class="table table-bordered">
+                                        <tbody>
+                                            <tr>
+                                                <td>성명</td>
+                                                <input type="hidden" name="appro_no" th:value="${aDto.appro_no}">
+                                                <td><input type="text" name="appro_name" th:value="${aDto.appro_name}" readonly style="border: 0; outline: none;"></td>
+                                                <td>부서</td>
+                                                <td>
+                                                    <input type="text" name="dept_name_display" 
+                                                    		th:value="${aDto.dept_code == 'D1' ? '교장' :
+			                                                    		aDto.dept_code == 'D2' ? '교감'	:
+			                                                    		aDto.dept_code == 'D3' ? '행정부' : '교무부'}" 
+			                                                    		readonly style="border: 0; outline: none;">
+                                                    <!-- 숨겨진 필드로 dept_code 값을 유지 -->
+                                                    <input type="hidden" name="dept_code" th:value="${aDto.dept_code}">
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>직원번호</td>
+                                                <td><input type="text" name="emp_id" th:value="${aDto.emp_id}" readonly style="border: 0; outline: none;"></td>
+                                                <td>직급</td>
+                                                <td>
+                                                    <input type="text" name="job_name_display" 
+                                                           th:value="${aDto.job_code == 'J1' ? '교장' : 
+                                                                       aDto.job_code == 'J2' ? '교감' :
+                                                                       aDto.job_code == 'J3' ? '부장' : '직원'}"
+                                                           readonly style="border: 0; outline: none;">
+                                                    <!-- 실제 job_code를 숨겨진 필드로 추가 -->
+                                                    <input type="hidden" name="job_code" th:value="${aDto.job_code}">
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>제목</td>
+                                                <td colspan="3"><input type="text" id="appro_title" name="appro_title" class="form-control" th:value="${aDto.appro_title}"></td>
+                                                </tr>
+								                <tr>
+								                    <td>종류</td>
+								                    <td colspan="3">
+								                    <div style="display: flex; gap: 15px; justify-content: space-evenly; align-items: center;">
+								                        <div><label><input type="radio" name="vac_type" value="0" th:checked="${vac_type == 0}" onclick="toggleHalfDay(false)"> 연차</label></div>
+								                        <div><label><input type="radio" name="vac_type" value="8" th:checked="${vac_type == 8}" onclick="toggleHalfDay(true)"> 반차</label></div>
+								                        <div><label><input type="radio" name="vac_type" value="1" th:checked="${vac_type == 1}" onclick="toggleHalfDay(false)"> 공가</label></div>
+								                        <div><label><input type="radio" name="vac_type" value="2" th:checked="${vac_type == 2}" onclick="toggleHalfDay(false)"> 병가</label></div>
+								                        <div><label><input type="radio" name="vac_type" value="3" th:checked="${vac_type == 3}" onclick="toggleHalfDay(false)"> 조퇴</label></div>
+								                        <div><label><input type="radio" name="vac_type" value="4" th:checked="${vac_type == 4}" onclick="toggleHalfDay(false)"> 경조사</label></div>
+								                        <div><label><input type="radio" name="vac_type" value="5" th:checked="${vac_type == 5}" onclick="toggleHalfDay(false)"> 출산휴가</label></div>
+								                        </div>
+								                    </td>
+								                </tr>
+								                <tr>
+								                	<td>반차</td>
+								                	<td>
+								                	<div style="display: flex; gap: 15px; justify-content: space-evenly; align-items: center;">
+								                	<div><label><input type="radio" name="vac_type" value="6" th:checked="${vac_type == 6}" id="half_one" disabled>오전</label></div>
+								                	<div><label><input type="radio" name="vac_type" value="7" th:checked="${vac_type == 7}" id="half_two" disabled>오후</label></div>
+								                	</div>
+								                	</td>
+                                                <td>일정</td>
+												<td>
+												    <input id="start_date" class="form-control" name="start_date" th:value="${vDto.start_time}">
+												    <input id="end_date" class="form-control" name="end_date" th:value="${vDto.end_time}">
+												</td>
+                                            </tr>
+                                            <tr>
+                                                <td>신청사유</td>
+                                                <td colspan="3"><textarea class="form-control" rows="10" style="resize: none;" name="appro_content" th:text="${aDto.appro_content}"></textarea></td>
+                                            </tr>
+                                            <tr>
+                                                <td>참고사항</td>
+                                                <td colspan="3">*공가 - 예비군 /민방위의 경우 사후에 참석증을 반드시 제출부탁드립니다.<br>
+                                                    *병가 - 연 25회 초과시 무급휴가로 전환 됩니다.<br>
+                                                    *경조사 - 사전/사후에 행사일을 증명할 수 있는 서류 제출부탁드립니다.<br>
+                                                    *명시된 결재자의 순서에 따라 결재라인이 생성됩니다. (대분류는 협의 > 결재 순)
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan="4">
+                                                    <div style="text-align: center;"><h4>상기와 같이 휴가를 신청하오니 검토 후 승인하여 주시기 바랍니다.</h4></div>
+                                                    <br><br>
+                                                    <h1 style="text-align: center;">물망초등학교</h1>
+                                                </td>
+                                            </tr>
+                                            <tr>
+					                			<td>협의자</td>
+									             <td colspan="3"><button id="openTreeButton1" class="btn btn-primary" type="button">+</button>
+									                <input type="text" name="consult" id="selectedNodesTable1" readonly style="border: 0; outline: none; width: calc(100% - 50px);">
+								                </td>
+							                </tr>
+							                <tr>
+								                <td>결재자</td>
+												<td colspan="3">
+												    <button id="openTreeButton2" class="btn btn-primary" type="button">+</button>
+												    <input type="text" name="approval" id="selectedNodesTable2" readonly style="border: 0; outline: none; width: calc(100% - 50px);">
+												</td>
+							                </tr>
+							                <tr>
+							                	<td>참조자</td>
+							                	<td colspan="3"><button id="openTreeButton3" class="btn btn-primary" type="button">+</button>
+							                	<input type="text" name="reference" id="selectedNodesTable3" readonly style="border: 0; outline: none; width: calc(100% - 50px);">
+							                	</td>
+							                </tr>
+                                            <tr>
+                                                <td>첨부파일</td>
+                                                <td colspan="3">
+                                                	<input type="file" name="file_name"></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                    <div style="margin-left: auto; text-align: right; align-items: center;">
+                                        <div class="text-center mt-3"> 
+											<input type="button" value="목록" id="returnList" class="btn btn-success"></button>	
+                                            <button type="submit" class="btn btn-success" >수정</button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="modal fade" id="treeModal" tabindex="-1" role="dialog" aria-labelledby="treeModalLabel" aria-hidden="true">
 							        <div class="modal-dialog" role="document">
 							            <div class="modal-content">
 							                <div class="modal-header">
@@ -442,7 +429,17 @@
 							            </div>
 							        </div>
 							    </div>
-          					</div>
+                <!-- ============================================================== -->
+                <!-- End PAge Content -->
+                <!-- ============================================================== -->
+                <!-- ============================================================== -->
+                <!-- Right sidebar -->
+                <!-- ============================================================== -->
+                <!-- .right-sidebar -->
+                <!-- ============================================================== -->
+                <!-- End Right sidebar -->
+                <!-- ============================================================== -->
+				            </div>
 						</div>
 					</div>
 				</div>
@@ -482,129 +479,145 @@
 	<!-- ============================================================== -->
 	<!-- All Jquery -->
 	<!-- ============================================================== -->
-	<!-- Bootstrap tether Core JavaScript -->
 	
-	<script src="assets/libs/popper.js/dist/umd/popper.min.js"></script>
-	<script src="assets/libs/bootstrap/dist/js/bootstrap.min.js"></script>
+	
+	<!-- Bootstrap tether Core JavaScript -->
+	<script th:src="@{/assets/libs/popper.js/dist/umd/popper.min.js}"></script>
+	<script th:src="@{/assets/libs/bootstrap/dist/js/bootstrap.min.js}"></script>
 	<!-- apps -->
-	<script src="dist/js/app-style-switcher.js"></script>
-	<script src="dist/js/feather.min.js"></script>
+	<!-- apps -->
+	<script src="/dist/js/app-style-switcher.js"></script>
+	<script src="/dist/js/feather.min.js"></script>
 	<!-- slimscrollbar scrollbar JavaScript -->
-	<script src="assets/libs/perfect-scrollbar/dist/perfect-scrollbar.jquery.min.js"></script> 
-	<script src="assets/extra-libs/sparkline/sparkline.js"></script>
+	<script src="/assets/libs/perfect-scrollbar/dist/perfect-scrollbar.jquery.min.js"></script>
+	<script src="/assets/extra-libs/sparkline/sparkline.js"></script>
 	<!--Wave Effects -->
 	<!-- themejs -->
 	<!--Menu sidebar -->
-	<script src="dist/js/sidebarmenu.js"></script>
+	<script src="/dist/js/sidebarmenu.js"></script>
 	<!--Custom JavaScript -->
-	<script src="dist/js/custom.min.js"></script>
+	<script src="/dist/js/custom.min.js"></script>
+	<script src="/assets/extra-libs/datatables.net/js/jquery.dataTables.min.js"></script>
+    <script src="/dist/js/pages/datatable/datatable-basic.init.js"></script>
+    <script>
 	
-	 <script>
-	<!-- 반차 선택시 오전/오후 선택기능 활성화 -->
+    document.addEventListener('DOMContentLoaded', function () {
+        toggleDateInputType(); // 페이지 로드 시 초기화
+    });
+
     function toggleHalfDay(enable) {
         document.getElementById("half_one").disabled = !enable;
         document.getElementById("half_two").disabled = !enable;
     }
 
+    // 로컬 시간대로 현재 날짜와 시간을 포맷팅하는 함수
+    function formatDateToLocal(date) {
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0'); // 월은 0부터 시작하므로 +1
+        const day = String(date.getDate()).padStart(2, '0');
+        const hours = String(date.getHours()).padStart(2, '0');
+        const minutes = '00'; // 항상 00으로 고정
+        return `${year}-${month}-${day}T${hours}:${minutes}`;
+    }
+
+    // 로컬 시간대로 오늘 날짜를 포맷팅하는 함수
+    function formatDateOnly(date) {
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
+    }
+
+    // 날짜 및 시간 입력 필드의 형식을 설정하고 값을 변환하는 함수
+    function toggleDateInputType() {
+        const vacType = document.querySelector('input[name="vac_type"]:checked') ? document.querySelector('input[name="vac_type"]:checked').value : null;
+        const startDateField = document.getElementById('start_date');
+        const endDateField = document.getElementById('end_date');
+
+        // 현재 로컬 날짜와 시간을 가져와 포맷팅
+        const now = new Date();
+        const today = formatDateToLocal(now);
+        const todayDateOnly = formatDateOnly(now);
+
+        if (vacType === '3') { // '조퇴'인 경우
+            startDateField.type = 'datetime-local';
+            endDateField.type = 'datetime-local';
+
+            startDateField.min = today;
+            endDateField.min = today;
+
+            startDateField.value = formatToDatetimeLocal(startDateField.value);
+            endDateField.value = formatToDatetimeLocal(endDateField.value);
+
+            // 날짜 선택 시 분을 항상 00으로 설정
+            startDateField.addEventListener('input', () => {
+                const selectedDate = new Date(startDateField.value);
+                selectedDate.setMinutes(0);
+                startDateField.value = formatDateToLocal(selectedDate);
+            });
+
+            endDateField.addEventListener('input', () => {
+                const selectedDate = new Date(endDateField.value);
+                selectedDate.setMinutes(0);
+                endDateField.value = formatDateToLocal(selectedDate);
+            });
+
+        } else { // 그 외의 경우
+            startDateField.type = 'date';
+            endDateField.type = 'date';
+
+            startDateField.min = todayDateOnly;
+            endDateField.min = todayDateOnly;
+
+            startDateField.value = formatToDate(startDateField.value);
+            endDateField.value = formatToDate(endDateField.value);
+        }
+    }
+
+    // 'yyyy-MM-ddTHH:mm' 형식으로 변환하는 함수
+    function formatToDatetimeLocal(datetime) {
+        return datetime ? datetime.substring(0, 16) : ''; // 'yyyy-MM-ddTHH:mm' 형식으로 자름
+    }
+
+    // 'yyyy-MM-dd' 형식으로 변환하는 함수
+    function formatToDate(datetime) {
+        return datetime ? datetime.substring(0, 10) : ''; // 'yyyy-MM-dd' 형식으로 자름
+    }
+
+    // 모든 'vac_type' 라디오 버튼에 이벤트 리스너를 추가
+    document.querySelectorAll('input[name="vac_type"]').forEach(function (radio) {
+        radio.addEventListener('change', toggleDateInputType);
+    });
     
-	 // 로컬 시간대로 현재 날짜와 시간을 포맷팅하는 함수
-	    function formatDateToLocal(date) {
-	        const year = date.getFullYear();
-	        const month = String(date.getMonth() + 1).padStart(2, '0'); // 월은 0부터 시작하므로 +1
-	        const day = String(date.getDate()).padStart(2, '0');
-	        const hours = String(date.getHours()).padStart(2, '0');
-	        const minutes = '00'; // 항상 00으로 고정
-	        return `${year}-${month}-${day}T${hours}:${minutes}`;
-	    }
+ 	// 수정 취소시 재 확인
+    $('#returnList').on('click', function() {
+    	Swal.fire({
+            title: '수정을 취소 하시겠습니까?',
+            text: '변경된 내용은 저장되지 않습니다.',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#5f76e8',
+            cancelButtonColor: '#e8eaec',
+            confirmButtonText: '이동',
+            cancelButtonText: '취소',
+            customClass: {
+                cancelButton: 'custom-cancel-button'
+            }
+        })
+    	.then((result) => {
+    		if(result.isConfirmed){
+    			window.location.href = '/approDetail';
+    		}
+    	})
+    })
+	</script>
 	
-	    // 로컬 시간대로 오늘 날짜를 포맷팅하는 함수
-	    function formatDateOnly(date) {
-	        const year = date.getFullYear();
-	        const month = String(date.getMonth() + 1).padStart(2, '0');
-	        const day = String(date.getDate()).padStart(2, '0');
-	        return `${year}-${month}-${day}`;
-	    }
-    
-    
-	 // 조퇴 선택 시 일정에 시간까지 설정 가능하게 변환
-	    function toggleDateInputType() {
-	        const halfDay = document.querySelector('input[name="vac_type"][value="3"]').checked; // '조퇴'가 선택되었는지 확인
-	        const startDate = document.getElementById('start_date');
-	        const endDate = document.getElementById('end_date');
-
-	        // 현재 로컬 날짜와 시간을 가져와 포맷팅
-	        const now = new Date();
-	        const today = formatDateToLocal(now); // 로컬 시간대로 포맷된 현재 날짜와 시간
-	        const todayDateOnly = formatDateOnly(now); // 로컬 시간대로 포맷된 현재 날짜
-
-	        if (halfDay) {
-	            startDate.type = 'datetime-local';  // '조퇴'일 경우 datetime-local로 변경
-	            endDate.type = 'datetime-local';
-
-	            // datetime-local의 최소값을 오늘 날짜로 설정
-	            startDate.min = today;
-	            endDate.min = today;
-
-	            startDate.value = today;
-	            endDate.value = today;
-
-	            // 날짜 선택 시 분을 항상 00으로 설정
-	            startDate.addEventListener('input', () => {
-	                const selectedDate = new Date(startDate.value);
-	                selectedDate.setMinutes(0);
-	                startDate.value = formatDateToLocal(selectedDate);
-	            });
-
-	            endDate.addEventListener('input', () => {
-	                const selectedDate = new Date(endDate.value);
-	                selectedDate.setMinutes(0);
-	                endDate.value = formatDateToLocal(selectedDate);
-	            });
-	        } else {
-	            startDate.type = 'date';  // 그렇지 않으면 date로 설정
-	            endDate.type = 'date';
-
-	            // date 타입의 최소값을 오늘 날짜로 설정
-	            startDate.min = todayDateOnly;
-	            endDate.min = todayDateOnly;
-	        }
-	    }
-
-	    // 모든 'vac_type' 라디오 버튼에 이벤트 리스너를 추가
-	    document.querySelectorAll('input[name="vac_type"]').forEach(function (radio) {
-	        radio.addEventListener('change', toggleDateInputType);
-	    });
-	
-	    // 목록으로 이동시 재 확인
-	    $('#returnList').on('click', function() {
-	    	Swal.fire({
-	            title: '목록으로 이동하시겠습니까?',
-	            text: '입력된 항목들이 삭제됩니다.',
-	            icon: 'warning',
-	            showCancelButton: true,
-	            confirmButtonColor: '#5f76e8',
-	            cancelButtonColor: '#e8eaec',
-	            confirmButtonText: '이동',
-	            cancelButtonText: '취소',
-	            customClass: {
-	                cancelButton: 'custom-cancel-button'
-	            }
-	        })
-	    	.then((result) => {
-	    		if(result.isConfirmed){
-	    			window.location.href = '/approve';
-	    		}
-	    	})
-	    })
-	    
-    </script>
-	    
 	<!-- 유효성검사 -->
     <script>
     
     	let valiCount = 0;
     
-	    const form = document.getElementById('approCreateFrm');
+	    const form = document.getElementById('approUpdate');
 
 	    form.addEventListener('submit', (e) => {
 	        e.preventDefault();  
@@ -671,7 +684,7 @@
 	        if(vali_check) {
 	        	const payload = new FormData(form);
 				const csrfToken = document.getElementById("csrf_token").value;
-				fetch('/approUp',{
+				fetch('/approReUp',{
 					method:'POST',
 					headers : {
 						'X-CSRF-TOKEN': csrfToken
@@ -704,6 +717,6 @@
 			}
 		})
 	</script>
-
+    	
 </th:block>
 </html>

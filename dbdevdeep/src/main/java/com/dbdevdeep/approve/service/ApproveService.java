@@ -2,7 +2,10 @@ package com.dbdevdeep.approve.service;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -34,6 +37,7 @@ import com.dbdevdeep.employee.repository.DepartmentRepository;
 import com.dbdevdeep.employee.repository.EmployeeRepository;
 import com.dbdevdeep.employee.repository.JobRepository;
 
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 
 @Service
@@ -73,6 +77,24 @@ public class ApproveService {
         this.fileService = fileService;
 	}
 	
+		
+	//결재 삭제
+	public int deleteApprove(Long appro_no) {
+		int result = 0;
+		try {
+			referenceRepository.deleteById(appro_no);
+			vacationRequestRepository.deleteById(appro_no);
+			approveLineRepository.deleteById(appro_no);
+			approveRepository.deleteById(appro_no);
+			
+			result = 1;
+		}catch(Exception e) {
+			e.printStackTrace();
+		}
+		return result;
+	}
+	
+	// 내가 결재 요청한 목록 조회
 	public List<ApproveDto> selectApproveList(String empId){
 		List<Approve> approveList = approveRepository.findByEmployeeEmpId(empId);
 		List<ApproveDto> approveDtoList = new ArrayList<ApproveDto>();
@@ -97,6 +119,76 @@ public class ApproveService {
 		return approveDtoList;
 	}
 	
+	public Map<String, Object> getApproveDetail(Long approNo) {
+	    Map<String, Object> detailMap = new HashMap<>();
+
+	    // 1. Approve 객체 가져오기
+	    Approve approve = approveRepository.findByApproNo(approNo);
+
+	    // 2. ApproveLine 가져오기
+	    List<ApproveLine> approLineList = approveLineRepository.findByApprove(approve);
+	    List<ApproveLineDto> approveLineList = approLineList.stream()
+	        .map(a -> ApproveLineDto.builder()
+	            .emp_id(a.getEmployee().getEmpId())
+	            .appro_line_order(a.getApproLineOrder())
+	            .appro_line_status(a.getApproLineStatus())
+	            .appro_permit_time(a.getApproPermitTime())
+	            .reason_back(a.getReasonBack())
+	            .build())
+	        .collect(Collectors.toList());
+	    detailMap.put("lDto", approveLineList);
+
+	    // 3. Reference를 가져옵니다.
+	    List<Reference> reference = referenceRepository.findByApprove(approve);
+	    List<ReferenceDto> refList = reference.stream()
+	        .map(r -> ReferenceDto.builder()
+	            .emp_id(r.getEmployee().getEmpId())
+	            .build())
+	        .collect(Collectors.toList());
+	    detailMap.put("rDto", refList);
+
+	    // 4. VacationRequest를 가져옵니다.
+	    VacationRequest vRequest = vacationRequestRepository.findByApprove(approve);
+	    VacationRequestDto vDto = null;
+	    if (vRequest != null) {
+	        vDto = new VacationRequestDto().toDto(vRequest);
+	    }
+	    detailMap.put("vDto", vDto);
+
+	 // ApproFile을 Approve 객체를 기준으로 조회
+	    ApproFile aFile = approFileRepository.findByApprove(approve);
+	    ApproFileDto fileDto = null;
+	    if(aFile != null) {
+	    	fileDto = new ApproFileDto().toDto(aFile);
+	    }
+	    detailMap.put("fDto", fileDto);
+	    
+	    // 6. Approve DTO 변환
+	    ApproveDto aDto = new ApproveDto().toDto(approve);
+	    // TempEdit이 null인지 확인하고, null이 아닌 경우에만 ApproveDto 변환을 시도합니다.
+	    if (approve.getTempEdit() != null) {
+	        aDto.setTemp_no(approve.getTempEdit().getTempNo());
+	    } else {
+	        aDto.setTemp_no(null); // TempEdit이 null일 경우
+	    }
+
+	    // 나머지 Approve 정보를 설정합니다.
+	    aDto.setAppro_no(approve.getApproNo());
+	    aDto.setEmp_id(approve.getEmployee().getEmpId());
+	    aDto.setDept_code(approve.getDepartment().getDeptCode());
+	    aDto.setJob_code(approve.getJob().getJobCode());
+	    aDto.setAppro_time(approve.getApproTime());
+	    aDto.setAppro_type(approve.getApproType());
+	    aDto.setAppro_status(approve.getApproStatus());
+	    aDto.setAppro_title(approve.getApproTitle());
+	    aDto.setAppro_content(approve.getApproContent());
+	    
+	    detailMap.put("aDto", aDto);
+
+	    return detailMap;
+	}
+	
+	// 결재 요청 
 	@Transactional
 	public int approUp(ApproveDto approveDto, VacationRequestDto vacationRequestDto, List<ApproveLineDto> approveLineDtos,
 			List<ReferenceDto> referenceDto , ApproFileDto approFileDto, MultipartFile file) {
@@ -125,14 +217,12 @@ public class ApproveService {
             // 2. vacation_request 테이블에 저장
             vacationRequestDto.setAppro_no(approNo);
             VacationRequest vacationRequest = vacationRequestDto.toEntity(approve);
-            // vacationRequest.setApprove(approve); // Approve와 연관관계 설정
             vacationRequestRepository.save(vacationRequest);
             
             // 3. approve_Line 테이블에 저장
             for (ApproveLineDto lineDto : approveLineDtos) {
                 lineDto.setAppro_no(approNo); // Approve의 appro_no 설정
                 ApproveLine approveLine = lineDto.toEntity(approve, employee);
-              //  approveLine.setApprove(approve); // Approve와 연관관계 설정
                 approveLineRepository.save(approveLine);
             }
             
@@ -140,7 +230,6 @@ public class ApproveService {
             for (ReferenceDto refDto : referenceDto) {
                 refDto.setAppro_no(approNo); // Approve의 appro_no 설정
                 Reference reference = refDto.toEntity(approve, employee);
-              //  reference.setApprove(approve); // Approve와 연관관계 설정
                 referenceRepository.save(reference);
             }
             
@@ -191,5 +280,6 @@ public class ApproveService {
 	        return (int) (daysBetween * 8);
 	    }
 	}
-
+	
+	
 }

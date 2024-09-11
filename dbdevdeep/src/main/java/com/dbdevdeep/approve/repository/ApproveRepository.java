@@ -14,4 +14,6 @@ import com.dbdevdeep.approve.domain.Approve;
 public interface ApproveRepository extends JpaRepository<Approve, Long> {
 
 	List<Approve> findByEmployeeEmpId(String empId);
+	
+	Approve findByApproNo(Long approNo);
 }
