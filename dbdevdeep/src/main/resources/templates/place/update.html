@@ -85,7 +85,7 @@
 
 <body>
 
-<!-- 등록폼 -->
+<!-- 수정폼 -->
 <!-- ============================================================== -->
 		<!-- Page wrapper  -->
 		<!-- ============================================================== -->
@@ -106,7 +106,7 @@
             <input type="hidden" class="form-control" id="emp_id" name="emp_id" th:value="${writer.emp_id}">
             <label for="placeName" class="col-sm-2 col-form-label">장소명</label>
             <div class="col-sm-10">
-                <input type="text" class="form-control" id="placeName" name="place_name" required>
+                <input type="text" class="form-control" id="placeName" name="place_name" disabled>
             </div>
         </div>
 
@@ -203,13 +203,13 @@
 		<div class="row mb-3">
             <!-- 취소 버튼 -->
             <div class="col-sm-6 text-left">
-                <button type="button" class="btn btn-secondary" onclick = "location.href='/place'">취소</button>
+                <button type="button" class="btn btn-secondary" onclick = "location.href='/place/detail'">취소</button>
             </div>
         
         
-            <!-- 등록 버튼 -->
+            <!-- 수정 버튼 -->
             <div class="col-sm-6 text-right">
-                <button type="submit" class="btn btn-primary">등록</button>
+                <button type="submit" class="btn btn-primary">수정</button>
             </div>
         </div>
     </form>

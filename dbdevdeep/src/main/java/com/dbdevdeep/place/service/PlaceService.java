@@ -17,6 +17,8 @@ import com.dbdevdeep.place.domain.Place;
 import com.dbdevdeep.place.domain.PlaceDto;
 import com.dbdevdeep.place.repository.PlaceRepository;
 
+import jakarta.persistence.EntityNotFoundException;
+
 @Service
 public class PlaceService {
 	
@@ -28,6 +30,35 @@ public class PlaceService {
 		this.placeRepository = placeRepository;
 		this.employeeRepository = employeeRepository;
 	}
+	
+	//  게시글 상세조회
+	public PlaceDto selectPlaceOne(Long place_no) {
+		
+		Place p = placeRepository.findByplaceNo(place_no);
+		
+		if(p == null) {
+			throw new EntityNotFoundException("Place not found for place_no: " + place_no);
+		}
+		
+		PlaceDto dto = PlaceDto.builder()
+				.place_name(p.getPlaceName())
+				.place_no(p.getPlaceNo())
+				.place_status(p.getPlaceStatus())
+				.place_start_time(p.getPlaceStarttime())
+				.place_end_time(p.getPlaceEndtime())
+				.unuseable_reason(p.getUnuseableReason())
+				.unuseable_start_date(p.getUnuseableStartDate())
+				.unuseable_end_date(p.getUnuseableEndDate())
+				.ori_pic_name(p.getOriPicname() != null ? p.getOriPicname() : "Default oriPicname")
+                .new_pic_name(p.getNewPicname() != null ? p.getNewPicname() : "Default newPicname")			
+				.place_content(p.getPlaceContent())
+				.place_location(p.getPlaceLocation())
+				.build();
+		
+		return dto;
+	}
+	
+	
 	
 	// 로그인한 사용자 정보 가져오기
     public String getLoggedInUserId() {
@@ -97,6 +128,8 @@ public class PlaceService {
 	public String getFormattedTimeRange(Place place) {
 		String startTime = formatTime(place.getPlaceStarttime());
 		String endTime = formatTime(place.getPlaceEndtime());
+		
+		
 		return startTime + " - " + endTime;
 	}
 	
@@ -114,7 +147,7 @@ public class PlaceService {
 			formattedDates.add(parsedDate.format(outputFormatter));
 		}
 		return formattedDates;
-        // return placeRepository.findFormattedUnuseableStartDate();
+        
     }
 	
 	// 사용 불가 종료일 가공 데이터 가져오기

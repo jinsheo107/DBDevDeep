@@ -9,7 +9,7 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import com.dbdevdeep.employee.domain.EmployeeDto;
 import com.dbdevdeep.employee.service.EmployeeService;
@@ -28,33 +28,59 @@ public class PlaceViewController {
 		this.employeeService = employeeService;
 	}
 	
+	// 수정하기
+	@GetMapping("/place/update/{place_no}")
+	public String updatePlace(Model model, @PathVariable("place_no") Long place_no) {
+		
+		// 1. 로그인한 사람 정보
+	    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+	    User user = (User) authentication.getPrincipal();
+	    String emp_id = user.getUsername();
+	    EmployeeDto e_dto = employeeService.selectEmployeeOne(emp_id);
+	    
+	    model.addAttribute("e_dto", e_dto);
+	    
+	    PlaceDto dto = placeService.selectPlaceOne(place_no);
+	    model.addAttribute("dto", dto);
+	    
+	    return "place/update";
+		
+	}
+	
+	
+	// 상세 조회
+	@GetMapping("/place/{place_no}")
+	public String detailPlace(Model model, @PathVariable("place_no") Long place_no) {
+		
+		// 1. 로그인한 사람 정보
+	    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+	    User user = (User) authentication.getPrincipal();
+	    String emp_id = user.getUsername();
+	    EmployeeDto e_dto = employeeService.selectEmployeeOne(emp_id);
+	    
+	    model.addAttribute("e_dto", e_dto);
+		// 게시글 조회
+	    PlaceDto dto = placeService.selectPlaceOne(place_no);
+	    
+
+	    model.addAttribute("dto",dto);
+	    
+	    return "place/detail";
+	}
+	
 	// 등록
 	@GetMapping("/place/create")
 	public String createPlace(Model model) {
 		
-		  
-	    // 1. 로그인한 사람 정보
+		// 1. 로그인한 사람 정보
 	    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-	    String emp_id = null; // emp_id 초기화
-	    
-	    if (authentication != null && authentication.isAuthenticated()) {
-	        User user = (User) authentication.getPrincipal();
-	        emp_id = user.getUsername();  // 인증된 사용자의 emp_id를 가져옴
-	        System.out.println("Logged in user: " + emp_id);
-	    } else {
-	        System.out.println("No authenticated user.");
-	    }
-	    
-	    // 2. 사용자 정보 가져오기
-	    EmployeeDto dto = employeeService.selectEmployeeOne(emp_id);
-	    
-	    // 3. 부서따른권한
-	    boolean isAuthorized = authentication.getAuthorities().stream()
-	    		.anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("D3"));
+	    User user = (User) authentication.getPrincipal();
+	    String emp_id = user.getUsername();
+	    EmployeeDto e_dto = employeeService.selectEmployeeOne(emp_id); 
 	    
 	    
-	    model.addAttribute("isAuthorized", isAuthorized);
-	    model.addAttribute("writer", dto);
+	   
+	    model.addAttribute("writer", e_dto);
 	    
 	    
 		return "place/create";

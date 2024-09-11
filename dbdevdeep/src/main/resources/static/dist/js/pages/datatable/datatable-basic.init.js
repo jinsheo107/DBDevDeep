@@ -446,10 +446,12 @@ $('#class_by_year').DataTable({
  * 			place Table
  * ****************************************/
 $('#place_list').DataTable({ 
+	
+	
   info: false,  // 테이블의 정보 표시를 비활성화
   "sDom": '<"row view-filter"<"col-sm-12"<"pull-left"l><"pull-right"f><"clearfix">>>t<"row view-pager"<"col-sm-12"<"text-center"ip>>>',
   pagingType: 'full_numbers',  // 페이지네이션 버튼을 전체 숫자와 함께 표시
-  lengthMenu: [10, 25, 50, 100],  // 페이지당 항목 수를 선택할 수 있는 옵션
+  lengthChange: false,  // 페이지당 항목 수를 선택할 수 있는 옵션
   pageLength: 10,  // 기본 페이지당 항목 수 // test
   drawCallback: function(settings) {
       var api = this.api();  // DataTables API 객체
@@ -497,7 +499,42 @@ $('#place_list').DataTable({
               api.page(parseInt(idx) - 1).draw('page');  // 선택된 페이지로 이동
           }
       });
-  }
+  },
+  "initComplete": function () {
+	       // 검색창을 "삭제" 및 "등록" 버튼 왼쪽으로 이동
+	       var searchBox = $('div.dataTables_filter');
+	       var buttonGroup = $('div.d-flex.justify-content-end');
+
+	       // 검색창을 버튼 그룹 앞에 추가
+	       searchBox.prependTo(buttonGroup);
+		   
+		   // "Search" 텍스트 제거
+		   searchBox.find('label').contents().filter(function() {
+		       return this.nodeType === 3; // 텍스트 노드를 선택
+		   }).remove();
+		   
+		   // 검색 input을 수직 가운데 정렬
+			searchBox.css({
+				'display': 'flex',
+				'align-items': 'center',
+				'justify-content': 'flex-end',
+				'gap': '8px',
+				'margin-top':'8px',
+				'margin-right':'30px',
+			});
+			
+			// 검색 input에 높이 설정
+			searchBox.find('input[type="search"]').css({
+			    'height': '46px', // 검색 input 필드의 높이 설정
+			    'padding': '8px 12px', // input 패딩 조정
+			    'box-sizing': 'border-box', // 박스 크기 계산 방식 설정
+				'width': '300px'
+			});
+			
+			// 검색 input에 placeholder 추가
+			searchBox.find('input[type="search"]').attr('placeholder', '검색어를 입력해주세요');
+	   }
+
 });
 
 /******************************************
