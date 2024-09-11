@@ -55,10 +55,43 @@
 												<p th:text="'주소 : '+${dto.student_addr}+${dto.student_detail_addr}+'('+${dto.student_post_code}+')'"></p>
 												<p th:text="'전화번호 : '+${dto.student_phone}"></p>
 							            	</li>
+							            	<li>
+							            		<div class="academic-info">
+											        <h3>학년 이력 조회</h3>
+											        <table>
+											            <thead>
+											                <tr>
+											                    <th>학년</th>
+											                    <th>학년도</th>
+											                    <th>반</th>
+											                    <th>번호</th>
+											                    <th>담임 성명</th>
+											                </tr>
+											            </thead>
+											            <tbody>
+											            	<th:block th:if="${#lists.isEmpty(cdto)}">
+																<tr>
+																	<td colspan="5">학년 이력이 존재하지 않습니다.</td>
+																</tr>
+															</th:block>	
+											                <th:block th:if="${!#lists.isEmpty(cdto)}">
+																<tr th:each="studentClass, studentClassStat : ${cdto}">
+																	<td th:text="${studentClass.teacher_history.getGrade()}"></td>
+																	<td th:text="${studentClass.teacher_history.getTYear()}+년"></td>
+																	<td th:text="${studentClass.teacher_history.getGradeClass()}"></td>
+																	<td th:text="${studentClass.student_id}"></td>
+																	<td th:text="${studentClass.teacher_history.getEmployee().getEmpName()}"></td>
+																</tr>
+															</th:block>
+											            </tbody>
+											        </table>
+											    </div>
+							            	</li>
 							            </ul>
 							        </div>
-							        <a th:href="@{/student/class/{std_no}(std_no=${dto.student_no})}">학년 이력 수정</a>
-							        <a th:href="@{/student/update/{student_no}(student_no=${dto.student_no})}">수정</a>
+							        <a th:href="@{/student/list}">목록으로</a><br>
+							        <a th:href="@{/student/class/{std_no}(std_no=${dto.student_no})}">학년 이력 수정</a><br>
+							        <a th:href="@{/student/update/{student_no}(student_no=${dto.student_no})}">수정</a><br>
 							        <a th:onclick="studentDelete([[${dto.student_no}]])">삭제</a>
 							    </div>
 							</div>

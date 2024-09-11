@@ -56,7 +56,6 @@ public class StudentViewController {
 		List<StudentClassDto> studentClassResultList= studentService.selectStudentClassList(student_no);
 		model.addAttribute("dto",dto);
 		model.addAttribute("cdto",studentClassResultList);
-		System.out.println(studentClassResultList);
 		return "student/student_detail";
 	}
 	
