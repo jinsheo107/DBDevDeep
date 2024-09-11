@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 import com.dbdevdeep.employee.domain.TeacherHistoryDto;
 import com.dbdevdeep.employee.service.TeacherHistoryService;
+import com.dbdevdeep.student.domain.ParentDto;
 import com.dbdevdeep.student.domain.StudentClassDto;
 import com.dbdevdeep.student.domain.StudentDto;
 import com.dbdevdeep.student.service.StudentService;
@@ -85,6 +86,17 @@ public class StudentViewController {
 	    model.addAttribute("Tyear", Tyear);
 	    model.addAttribute("sdto", sdto);
 	    return "student/student_class";
+	}
+	
+	// 학부모 정보 등록 페이지
+	@GetMapping("/student/parent/{student_no}")
+	public String parentInfo(@PathVariable("student_no") Long student_no, Model model) {
+		List<ParentDto> resultList = studentService.selectStudentParentList(student_no);
+		StudentDto sdto = studentService.selectStudentOne(student_no);
+		
+		model.addAttribute("sdto",sdto);
+		model.addAttribute("resultList",resultList);
+		return "student/student_parent";
 	}
 	
 }

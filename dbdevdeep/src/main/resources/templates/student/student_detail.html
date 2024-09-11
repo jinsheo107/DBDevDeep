@@ -82,27 +82,53 @@ div.dataTables_wrapper div.dataTables_paginate ul.pagination {
 															</th:block>
 															<th:block th:if="${!#lists.isEmpty(cdto)}">
 																<tr th:each="studentClass, studentClassStat : ${cdto}">
-																	<td
-																		th:text="${studentClass.teacher_history.getGrade()}"></td>
-																	<td
-																		th:text="${studentClass.teacher_history.getTYear()}+년"></td>
-																	<td
-																		th:text="${studentClass.teacher_history.getGradeClass()}"></td>
+																	<td th:text="${studentClass.teacher_history.getGrade()}"></td>
+																	<td th:text="${studentClass.teacher_history.getTYear()}+년"></td>
+																	<td th:text="${studentClass.teacher_history.getGradeClass()}"></td>
 																	<td th:text="${studentClass.student_id}"></td>
-																	<td
-																		th:text="${studentClass.teacher_history.getEmployee().getEmpName()}"></td>
+																	<td th:text="${studentClass.teacher_history.getEmployee().getEmpName()}"></td>
 																</tr>
 															</th:block>
 														</tbody>
 													</table>
+													<a th:href="@{/student/class/{std_no}(std_no=${dto.student_no})}">학년 이력 수정</a><br> 
+												</div>
+											</li>
+											<li>
+												<div class="academic-info">
+													<h3>가족사항</h3>
+													<table>
+														<thead>
+															<tr>
+																<th>관계</th>
+																<th>성명</th>
+																<th>연락처</th>
+																<th>생년월일</th>
+																</tr>
+														</thead>
+														<tbody>
+															<th:block th:if="${#lists.isEmpty(cdto)}">
+																<tr>
+																	<td colspan="4">학부모 정보가 존재하지 않습니다.</td>
+																</tr>
+															</th:block>
+															<th:block th:if="${!#lists.isEmpty(cdto)}">
+																<tr th:each="studentClass, studentClassStat : ${cdto}">
+																	<td th:text="${studentClass.teacher_history.getGrade()}"></td>
+																	<td th:text="${studentClass.teacher_history.getTYear()}+년"></td>
+																	<td th:text="${studentClass.teacher_history.getGradeClass()}"></td>
+																	<td th:text="${studentClass.student_id}"></td>
+																</tr>
+															</th:block>
+														</tbody>
+													</table>
+													<a th:href="@{/student/parent/{std_no}(std_no=${dto.student_no})}">학부모 정보 수정</a>
 												</div>
 											</li>
 										</ul>
 									</div>
-									<a th:href="@{/student/list}">목록으로</a><br> <a
-										th:href="@{/student/class/{std_no}(std_no=${dto.student_no})}">학년
-										이력 수정</a><br> <a
-										th:href="@{/student/update/{student_no}(student_no=${dto.student_no})}">수정</a><br>
+									<a th:href="@{/student/list}">목록으로</a><br> 
+									<a th:href="@{/student/update/{student_no}(student_no=${dto.student_no})}">수정</a><br>
 									<a th:onclick="studentDelete([[${dto.student_no}]])">삭제</a>
 								</div>
 							</div>

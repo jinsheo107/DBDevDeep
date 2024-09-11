@@ -38,6 +38,6 @@ public class Parent {
 	@Column(name="parent_phone")
 	private String parentPhone;
 	
-	@Column(name="parent_realation")
+	@Column(name="parent_relation")
 	private String parentRelation;
 }

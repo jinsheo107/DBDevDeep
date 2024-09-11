@@ -19,7 +19,7 @@ public class ParentDto {
 	private String parent_name;
 	private String parent_birth;
 	private String parent_phone;
-	private String parent_realation;
+	private String parent_relation;
 	
 	public Parent toEntity() {
 		return Parent.builder()
@@ -37,7 +37,7 @@ public class ParentDto {
 				.parent_name(parent.getParentName())
 				.parent_birth(parent.getParentBirth())
 				.parent_phone(parent.getParentPhone())
-				.parent_realation(parent.getParentRelation())
+				.parent_relation(parent.getParentRelation())
 				.build();
 	}
 	

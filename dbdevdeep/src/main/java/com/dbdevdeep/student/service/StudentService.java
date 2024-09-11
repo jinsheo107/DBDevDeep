@@ -8,10 +8,13 @@ import org.springframework.stereotype.Service;
 
 import com.dbdevdeep.employee.domain.TeacherHistory;
 import com.dbdevdeep.employee.repository.TeacherHistoryRepository;
+import com.dbdevdeep.student.domain.Parent;
+import com.dbdevdeep.student.domain.ParentDto;
 import com.dbdevdeep.student.domain.Student;
 import com.dbdevdeep.student.domain.StudentClass;
 import com.dbdevdeep.student.domain.StudentClassDto;
 import com.dbdevdeep.student.domain.StudentDto;
+import com.dbdevdeep.student.repository.ParentRepository;
 import com.dbdevdeep.student.repository.StudentClassRepository;
 import com.dbdevdeep.student.repository.StudentRepository;
 
@@ -24,12 +27,14 @@ public class StudentService {
 	private final StudentRepository studentRepository;
 	private final TeacherHistoryRepository teacherHistoryRepository;
 	private final StudentClassRepository studentClassRepository;
+	private final ParentRepository parentRepository;
 	
 	@Autowired
-	public StudentService(StudentRepository studentRepository, TeacherHistoryRepository teacherHistoryRepository, StudentClassRepository studentClassRepository) {
+	public StudentService(StudentRepository studentRepository, TeacherHistoryRepository teacherHistoryRepository, StudentClassRepository studentClassRepository, ParentRepository parentRepository) {
 		this.studentRepository = studentRepository;
 		this.teacherHistoryRepository = teacherHistoryRepository;
 		this.studentClassRepository = studentClassRepository;
+		this.parentRepository = parentRepository;
 	}
 	
 	// 입력 form에서 받아온 dto data를 Student로 바꿔서 저장하는 절차
@@ -147,6 +152,16 @@ public class StudentService {
 			e.printStackTrace();
 		}
 		return result;
+	}
+	
+	public List<ParentDto> selectStudentParentList(Long student_no) {
+		List<Parent> parentList = parentRepository.findByStudent_StudentNo(student_no);
+		List<ParentDto> parentDtoList = new ArrayList<ParentDto>();
+		for(Parent p : parentList) {
+			ParentDto dto = new ParentDto().toDto(p);
+			parentDtoList.add(dto);
+		}
+		return parentDtoList;
 	}
 	
 }

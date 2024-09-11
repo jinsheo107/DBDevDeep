@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{include/student_layout}">
+<th:block layout:fragment="content">
+	<style>
+div.dataTables_wrapper div.dataTables_paginate ul.pagination {
+	margin: 2px 0;
+	white-space: nowrap;
+	justify-content: center;
+}
+</style>
+	<body>
+		<div class="page-wrapper">
+			<div class="page-breadcrumb">
+				<div class="row">
+					<div class="col-7 align-self-center">
+						<h4
+							class="page-title text-truncate text-dark font-weight-medium mb-1">Basic
+							Table</h4>
+						<div class="d-flex align-items-center">
+							<nav aria-label="breadcrumb">
+								<ol class="breadcrumb m-0 p-0">
+									<li class="breadcrumb-item"><a href="index.html"
+										class="text-muted">Home</a></li>
+									<li class="breadcrumb-item text-muted active"
+										aria-current="page">Library</li>
+								</ol>
+							</nav>
+						</div>
+					</div>
+					<div class="col-5 align-self-center">
+						<div class="customize-input float-right">
+							<select
+								class="custom-select custom-select-set form-control bg-white border-0 custom-shadow custom-radius">
+								<option selected>Aug 19</option>
+								<option value="1">July 19</option>
+								<option value="2">Jun 19</option>
+							</select>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="container-fluid">
+				<div class="row">
+					<div class="col-12">
+						<div class="card">
+							<div class="card-body">
+								<h4 class="card-title">학생 정보</h4>
+								<div class="student-info">
+									<img src="https://via.placeholder.com/150" alt="학생 사진">
+									<div class="student-details">
+										<input type="hidden" id="csrf_token" th:value="${_csrf.token}">
+										<input type="hidden" name="student_no"
+											th:value="${sdto.student_no}">
+										<ul>
+											<li>
+												<p th:text="'이름 : '+${sdto.student_name}"></p>
+												<p th:text="'생년월일 : '+${sdto.student_birth}"></p>
+												<p
+													th:text="'주소 : '+${sdto.student_addr}+${sdto.student_detail_addr}+'('+${sdto.student_post_code}+')'"></p>
+												<p th:text="'전화번호 : '+${sdto.student_phone}"></p>
+											</li>
+											<li>
+												<table>
+													<thead>
+														<tr>
+															<th>관계</th>
+															<th>성명</th>
+															<th>연락처</th>
+															<th>생년월일</th>
+															<th></th>
+															<th></th>
+														</tr>
+													</thead>
+													<tbody>
+														<th:block th:if="${#lists.isEmpty(resultList)}">
+															<tr>
+																<td colspan="7">학부모 정보가 존재하지 않습니다.</td>
+															</tr>
+														</th:block>
+														<th:block th:if="${!#lists.isEmpty(resultList)}">
+															<tr th:each="parent, parentStat : ${resultList}">
+																<td th:text="${parent.parent_relation}"></td>
+																<td th:text="${parent.parent_name"></td>
+																<td th:text="${parent.parent_phone}"></td>
+																<td th:text="${parent.parent_birth}"></td>
+																<td><button type="button" class="btn btn-primary" data-toggle="modal" data-target="#parent_create_primary-header-modal">등록</button></td>
+																<td><button type="button" class="btn btn-primary" data-toggle="modal" data-target="#parent_update_primary-header-modal">수정</button></td>
+																<td><a>삭제</a><br></td>
+															</tr>
+														</th:block>
+													</tbody>
+												</table>
+											</li>
+										</ul>
+										
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+
+				</div>
+			</div>
+		</div>
+
+		<!-- 부모 정보 수정 모달 -->
+		<div id="parent_update_primary-header-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="primary-header-modalLabel" aria-hidden="true">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header modal-colored-header bg-primary">
+						<h4 class="modal-title" id="primary-header-modalLabel">부모 정보 수정</h4>
+					</div>
+				</div>
+			</div>
+		</div>
+		
+		<!-- 부모 정보 등록 모달 -->
+		<div id="parent_create_primary-header-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="primary-header-modalLabel" aria-hidden="true">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header modal-colored-header bg-primary">
+						<h4 class="modal-title" id="primary-header-modalLabel">부모 정보 등록</h4>
+					</div>
+				</div>
+			</div>
+		</div>
+
+
+		<script src="/assets/libs/jquery/dist/jquery.min.js"></script>
+		<script src="/assets/libs/popper.js/dist/umd/popper.min.js"></script>
+		<script src="/assets/libs/bootstrap/dist/js/bootstrap.min.js"></script>
+		<script src="/dist/js/app-style-switcher.js"></script>
+		<script src="/dist/js/feather.min.js"></script>
+		<script src="/assets/libs/perfect-scrollbar/dist/perfect-scrollbar.jquery.min.js"></script>
+		<script src="/assets/extra-libs/sparkline/sparkline.js"></script>
+		<script src="/dist/js/sidebarmenu.js"></script>
+		<script src="/dist/js/custom.min.js"></script>
+		<script src="/assets/extra-libs/datatables.net/js/jquery.dataTables.min.js"></script>
+		<script src="/dist/js/pages/datatable/datatable-basic.init.js"></script>
+	</body>
+</html>
