@@ -128,4 +128,14 @@ public class StudentService {
 			return studentClassRepository.save(sc);
 	}
 	
+	public List<StudentClassDto> selectStudentClassList(Long student_no){
+		List<StudentClass> studentClassList = studentClassRepository.findByStudent_StudentNo(student_no);
+		List<StudentClassDto> studentClassDtoList = new ArrayList<StudentClassDto>();
+		for(StudentClass sc : studentClassList) {
+			StudentClassDto dto = new StudentClassDto().toDto(sc);
+			studentClassDtoList.add(dto);
+		}
+		return studentClassDtoList;
+	}
+	
 }

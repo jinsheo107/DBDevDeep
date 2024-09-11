@@ -1,5 +1,7 @@
 package com.dbdevdeep.student.domain;
 
+import com.dbdevdeep.employee.domain.TeacherHistory;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -17,7 +19,8 @@ public class StudentClassDto {
 	private Long class_no;
 	
 	private Long student_no;
-	
+	private Student student;
+	private TeacherHistory teacher_history;
 	private Long teacher_no;
 	
 	private String student_id;
@@ -32,7 +35,11 @@ public class StudentClassDto {
 	public StudentClassDto toDto(StudentClass studentClass) {
 		return StudentClassDto.builder()
 				.class_no(studentClass.getClassNo())
-				.student_id(studentClass.getStudentId())
-				.build();
+		        .student_no(studentClass.getStudent().getStudentNo())
+		        .student(studentClass.getStudent())
+		        .teacher_no(studentClass.getTeacherHistory().getTeacherNo())
+		        .teacher_history(studentClass.getTeacherHistory())
+		        .student_id(studentClass.getStudentId())
+		        .build();
 	}
 }
