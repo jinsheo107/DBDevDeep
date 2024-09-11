@@ -2,6 +2,8 @@ package com.dbdevdeep.notice.dto;
 
 import java.time.LocalDateTime;
 
+import org.springframework.format.annotation.DateTimeFormat;
+
 import com.dbdevdeep.notice.domain.Notice;
 
 import groovy.transform.ToString;
@@ -26,12 +28,13 @@ public class NoticeDto {
 	private String category_name;
 	private String notice_title;
 	private String notice_content;
-	private boolean is_important;
-	private boolean is_cmt;
-	private LocalDateTime reg_time;
+	private int is_important;
+	private int is_cmt;
+	@DateTimeFormat(pattern = "yyyy.MM.dd HH:mm")
+    private LocalDateTime reg_time;
 	private LocalDateTime mod_time;
-	private boolean is_att;
-	private boolean read_check = false;
+	private int is_att;
+	private int read_check;
 
 	public Notice toEntity() {
 		return Notice.builder()
@@ -51,11 +54,11 @@ public class NoticeDto {
 				.notice_no(n.getNoticeNo())
 				.notice_title(n.getNoticeTitle())
 				.notice_content(n.getNoticeContent())
-				.is_important(n.isImportant())
-				.is_cmt(n.isCmt())
+				.is_important(n.getIsImportant())
+				.is_cmt(n.getIsCmt())
 				.reg_time(n.getRegTime())
 				.mod_time(n.getModTime())
-				.is_att(n.isAtt())
+				.is_att(n.getIsAtt())
 				.build();
 				
 	}

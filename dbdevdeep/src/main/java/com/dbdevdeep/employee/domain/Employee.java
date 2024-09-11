@@ -10,6 +10,7 @@ import com.dbdevdeep.approve.domain.LineDraft;
 import com.dbdevdeep.approve.domain.Reference;
 import com.dbdevdeep.approve.domain.ReferenceDraft;
 import com.dbdevdeep.attendance.domain.Attendance;
+import com.dbdevdeep.schedule.domain.Category;
 import com.dbdevdeep.schedule.domain.Schedule;
 
 import jakarta.persistence.Column;
@@ -102,9 +103,14 @@ public class Employee {
 	// 직원 반 배정 관련
 	@OneToMany(mappedBy = "employee")
 	private List<TeacherHistory> teacherHistorys;
-
+	
+	// 일정 관련
 	@OneToMany(mappedBy = "employee")
-	private List<Schedule> shcedules;
+	private List<Schedule> schedules;
+	
+	// 범주 관련
+	@OneToMany(mappedBy = "employee")
+	private List<Category> categories;
 
 	@OneToMany(mappedBy = "employee")
     private List<Approve> approves;
@@ -127,5 +133,4 @@ public class Employee {
 	// 근태관리 관련
 	@OneToMany(mappedBy = "employee")
 	private List<Attendance> attendances;
-
 }

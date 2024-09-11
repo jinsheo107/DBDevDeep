@@ -13,6 +13,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.dbdevdeep.FileService;
 import com.dbdevdeep.employee.domain.EmployeeDto;
+import com.dbdevdeep.employee.domain.MySignDto;
 import com.dbdevdeep.employee.service.EmployeeService;
 
 @Controller
@@ -68,6 +69,30 @@ public class EmployeeApiController {
 		}else {
 			resultMap.put("res_msg", "파일 업로드가 실패하였습니다.");
 		}
+		return resultMap;
+	}
+	
+	@ResponseBody
+	@PostMapping("/addsign")
+	public Map<String, String> addSign(MySignDto dto, @RequestParam("file") MultipartFile file) {
+		Map<String,String> resultMap = new HashMap<String,String>();
+		resultMap.put("res_code", "404");
+		resultMap.put("res_msg", "계정 등록 중 오류가 발생하였습니다.");
+		
+		String savedFileName = fileService.employeeSignPicUpload(file);
+		
+		if(savedFileName != null) {
+			dto.setOri_pic_name(file.getOriginalFilename());
+			dto.setNew_pic_name(savedFileName);
+			
+			if(employeeService.employeeSignAdd(dto) > 0) {
+				resultMap.put("res_code", "200");
+				resultMap.put("res_msg", "계정 등록에 성공하였습니다.");
+			}
+		}else {
+			resultMap.put("res_msg", "파일 업로드가 실패하였습니다.");
+		}
+		
 		return resultMap;
 	}
 	

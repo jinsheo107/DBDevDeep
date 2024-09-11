@@ -5,7 +5,6 @@ import java.time.LocalDateTime;
 
 import com.dbdevdeep.employee.domain.Employee;
 
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -13,6 +12,8 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -50,18 +51,17 @@ public class Notice {
 	private String noticeContent;
 	
 	@Column(name="is_important")
-	private boolean isImportant;
+	private int isImportant;
 	
 	@Column(name="is_cmt")
-	private boolean isCmt;
+	private int isCmt;
 	
-	@Column(name="reg_time")
+	@Column(name="reg_time", updatable = false)
 	private LocalDateTime regTime;
 	
 	@Column(name="mod_time")
 	private LocalDateTime modTime;
 	
 	@Column(name="is_att")
-	private boolean isAtt;
-	
+	private int isAtt;
 }

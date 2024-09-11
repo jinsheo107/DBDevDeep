@@ -4,6 +4,9 @@
      layout:decorate="~{include/approve_layout}">
      
  <head>
+    <!-- CSRF Token -->
+	<meta name="_csrf" th:content="${_csrf.token}" />
+	<meta name="_csrf_header" th:content="${_csrf.headerName}" />
     <!-- This page plugin CSS -->
     <link th:href="@{/assets/extra-libs/datatables.net-bs4/css/dataTables.bootstrap4.css}" rel="stylesheet">
     <!-- Custom CSS -->
@@ -283,7 +286,7 @@
 				<div class="col-sm-12 col-md-12">
 					<div class="card">
 						<div class="card-body">
-							<h3 class="card-title">결재 상세</h3>
+							<h3 class="card-title">결재 수정</h3>
 								<hr>
 									<div class="container-fluid">
 				<!-- ============================================================== -->
@@ -297,7 +300,7 @@
                                         <tbody>
                                             <tr>
                                                 <td>성명</td>
-                                                <input type="hidden" name="appro_no" th:value="${aDto.appro_no}">
+                                                <input type="hidden" id="approNo" name="appro_no" th:value="${aDto.appro_no}">
                                                 <td><input type="text" name="appro_name" th:value="${aDto.appro_name}" readonly style="border: 0; outline: none;"></td>
                                                 <td>부서</td>
                                                 <td>
@@ -332,13 +335,13 @@
 								                    <td>종류</td>
 								                    <td colspan="3">
 								                    <div style="display: flex; gap: 15px; justify-content: space-evenly; align-items: center;">
-								                        <div><label><input type="radio" name="vac_type" value="0" th:checked="${vac_type == 0}" onclick="toggleHalfDay(false)"> 연차</label></div>
-								                        <div><label><input type="radio" name="vac_type" value="8" th:checked="${vac_type == 8}" onclick="toggleHalfDay(true)"> 반차</label></div>
-								                        <div><label><input type="radio" name="vac_type" value="1" th:checked="${vac_type == 1}" onclick="toggleHalfDay(false)"> 공가</label></div>
-								                        <div><label><input type="radio" name="vac_type" value="2" th:checked="${vac_type == 2}" onclick="toggleHalfDay(false)"> 병가</label></div>
-								                        <div><label><input type="radio" name="vac_type" value="3" th:checked="${vac_type == 3}" onclick="toggleHalfDay(false)"> 조퇴</label></div>
-								                        <div><label><input type="radio" name="vac_type" value="4" th:checked="${vac_type == 4}" onclick="toggleHalfDay(false)"> 경조사</label></div>
-								                        <div><label><input type="radio" name="vac_type" value="5" th:checked="${vac_type == 5}" onclick="toggleHalfDay(false)"> 출산휴가</label></div>
+								                        <div><label><input type="radio" name="vac_type" value="0" th:checked="${vDto.vac_type == 0}" onclick="toggleHalfDay(false)"> 연차</label></div>
+								                        <div><label><input type="radio" name="vac_type" value="8" th:checked="${vDto.vac_type == 8}" onclick="toggleHalfDay(true)"> 반차</label></div>
+								                        <div><label><input type="radio" name="vac_type" value="1" th:checked="${vDto.vac_type == 1}" onclick="toggleHalfDay(false)"> 공가</label></div>
+								                        <div><label><input type="radio" name="vac_type" value="2" th:checked="${vDto.vac_type == 2}" onclick="toggleHalfDay(false)"> 병가</label></div>
+								                        <div><label><input type="radio" name="vac_type" value="3" th:checked="${vDto.vac_type == 3}" onclick="toggleHalfDay(false)"> 조퇴</label></div>
+								                        <div><label><input type="radio" name="vac_type" value="4" th:checked="${vDto.vac_type == 4}" onclick="toggleHalfDay(false)"> 경조사</label></div>
+								                        <div><label><input type="radio" name="vac_type" value="5" th:checked="${vDto.vac_type == 5}" onclick="toggleHalfDay(false)"> 출산휴가</label></div>
 								                        </div>
 								                    </td>
 								                </tr>
@@ -346,8 +349,8 @@
 								                	<td>반차</td>
 								                	<td>
 								                	<div style="display: flex; gap: 15px; justify-content: space-evenly; align-items: center;">
-								                	<div><label><input type="radio" name="vac_type" value="6" th:checked="${vac_type == 6}" id="half_one" disabled>오전</label></div>
-								                	<div><label><input type="radio" name="vac_type" value="7" th:checked="${vac_type == 7}" id="half_two" disabled>오후</label></div>
+								                	<div><label><input type="radio" name="vac_type" value="6" th:checked="${vDto.vac_type == 6}" id="half_one" disabled>오전</label></div>
+								                	<div><label><input type="radio" name="vac_type" value="7" th:checked="${vDto.vac_type == 7}" id="half_two" disabled>오후</label></div>
 								                	</div>
 								                	</td>
                                                 <td>일정</td>
@@ -403,7 +406,7 @@
                                     </table>
                                     <div style="margin-left: auto; text-align: right; align-items: center;">
                                         <div class="text-center mt-3"> 
-											<input type="button" value="목록" id="returnList" class="btn btn-success"></button>	
+											<input type="button" value="취소" id="returnList" class="btn btn-primary"></button>	
                                             <button type="submit" class="btn btn-success" >수정</button>
                                         </div>
                                     </div>
@@ -502,18 +505,78 @@
     <script>
 	
     document.addEventListener('DOMContentLoaded', function () {
-        toggleDateInputType(); // 페이지 로드 시 초기화
+        // 페이지 로드 시 초기화
+        toggleDateInputType(); 
+    });
+    const approNo = document.getElementById('approNo').value;
+    // 모든 'vac_type' 라디오 버튼에 이벤트 리스너를 추가하여 변경 시마다 형식 조정
+    document.querySelectorAll('input[name="vac_type"]').forEach(function (radio) {
+        radio.addEventListener('change', toggleDateInputType);
     });
 
-    function toggleHalfDay(enable) {
-        document.getElementById("half_one").disabled = !enable;
-        document.getElementById("half_two").disabled = !enable;
+    function toggleDateInputType() {
+        const vacType = document.querySelector('input[name="vac_type"]:checked') ? document.querySelector('input[name="vac_type"]:checked').value : null;
+        const startDateField = document.getElementById('start_date');
+        const endDateField = document.getElementById('end_date');
+
+        // 현재 로컬 날짜와 시간을 가져와 포맷팅
+        const now = new Date();
+        const today = formatDateToLocal(now);
+        const todayDateOnly = formatDateOnly(now);
+
+        if (vacType === '3') { // '조퇴'인 경우
+            // 값을 변환한 다음 형식을 설정
+            startDateField.value = startDateField.value.includes('T') ? startDateField.value : formatToDatetimeLocal(startDateField.value);
+            endDateField.value = endDateField.value.includes('T') ? endDateField.value : formatToDatetimeLocal(endDateField.value);
+
+            startDateField.type = 'datetime-local';
+            endDateField.type = 'datetime-local';
+
+            startDateField.min = today;
+            endDateField.min = today;
+
+        } else { // 그 외의 경우
+            // 값을 변환한 다음 형식을 설정
+            startDateField.value = startDateField.value.includes('T') ? formatToDate(startDateField.value) : startDateField.value;
+            endDateField.value = endDateField.value.includes('T') ? formatToDate(endDateField.value) : endDateField.value;
+
+            startDateField.type = 'date';
+            endDateField.type = 'date';
+
+            startDateField.min = todayDateOnly;
+            endDateField.min = todayDateOnly;
+        }
+    }
+
+    // 'yyyy-MM-ddTHH:mm' 형식으로 변환하는 함수
+    function formatToDatetimeLocal(datetime) {
+        if (!datetime) return '';
+        const date = new Date(datetime);
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        const hours = String(date.getHours()).padStart(2, '0');
+        const minutes = String(date.getMinutes()).padStart(2, '0');
+        return `${year}-${month}-${day}T${hours}:${minutes}`;
+    }
+
+    // 'yyyy-MM-dd' 형식으로 변환하는 함수
+    function formatToDate(datetime) {
+        if (!datetime) return '';
+        if (datetime.includes('T')) { // 'datetime-local' 형식이면 분리하여 'date' 형식으로 변환
+            return datetime.split('T')[0];
+        }
+        const date = new Date(datetime);
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
     }
 
     // 로컬 시간대로 현재 날짜와 시간을 포맷팅하는 함수
     function formatDateToLocal(date) {
         const year = date.getFullYear();
-        const month = String(date.getMonth() + 1).padStart(2, '0'); // 월은 0부터 시작하므로 +1
+        const month = String(date.getMonth() + 1).padStart(2, '0');
         const day = String(date.getDate()).padStart(2, '0');
         const hours = String(date.getHours()).padStart(2, '0');
         const minutes = '00'; // 항상 00으로 고정
@@ -528,66 +591,7 @@
         return `${year}-${month}-${day}`;
     }
 
-    // 날짜 및 시간 입력 필드의 형식을 설정하고 값을 변환하는 함수
-    function toggleDateInputType() {
-        const vacType = document.querySelector('input[name="vac_type"]:checked') ? document.querySelector('input[name="vac_type"]:checked').value : null;
-        const startDateField = document.getElementById('start_date');
-        const endDateField = document.getElementById('end_date');
 
-        // 현재 로컬 날짜와 시간을 가져와 포맷팅
-        const now = new Date();
-        const today = formatDateToLocal(now);
-        const todayDateOnly = formatDateOnly(now);
-
-        if (vacType === '3') { // '조퇴'인 경우
-            startDateField.type = 'datetime-local';
-            endDateField.type = 'datetime-local';
-
-            startDateField.min = today;
-            endDateField.min = today;
-
-            startDateField.value = formatToDatetimeLocal(startDateField.value);
-            endDateField.value = formatToDatetimeLocal(endDateField.value);
-
-            // 날짜 선택 시 분을 항상 00으로 설정
-            startDateField.addEventListener('input', () => {
-                const selectedDate = new Date(startDateField.value);
-                selectedDate.setMinutes(0);
-                startDateField.value = formatDateToLocal(selectedDate);
-            });
-
-            endDateField.addEventListener('input', () => {
-                const selectedDate = new Date(endDateField.value);
-                selectedDate.setMinutes(0);
-                endDateField.value = formatDateToLocal(selectedDate);
-            });
-
-        } else { // 그 외의 경우
-            startDateField.type = 'date';
-            endDateField.type = 'date';
-
-            startDateField.min = todayDateOnly;
-            endDateField.min = todayDateOnly;
-
-            startDateField.value = formatToDate(startDateField.value);
-            endDateField.value = formatToDate(endDateField.value);
-        }
-    }
-
-    // 'yyyy-MM-ddTHH:mm' 형식으로 변환하는 함수
-    function formatToDatetimeLocal(datetime) {
-        return datetime ? datetime.substring(0, 16) : ''; // 'yyyy-MM-ddTHH:mm' 형식으로 자름
-    }
-
-    // 'yyyy-MM-dd' 형식으로 변환하는 함수
-    function formatToDate(datetime) {
-        return datetime ? datetime.substring(0, 10) : ''; // 'yyyy-MM-dd' 형식으로 자름
-    }
-
-    // 모든 'vac_type' 라디오 버튼에 이벤트 리스너를 추가
-    document.querySelectorAll('input[name="vac_type"]').forEach(function (radio) {
-        radio.addEventListener('change', toggleDateInputType);
-    });
     
  	// 수정 취소시 재 확인
     $('#returnList').on('click', function() {
@@ -606,7 +610,7 @@
         })
     	.then((result) => {
     		if(result.isConfirmed){
-    			window.location.href = '/approDetail';
+    			window.location.href = '/approDetail/' + approNo;
     		}
     	})
     })

@@ -119,6 +119,7 @@ public class ApproveService {
 		return approveDtoList;
 	}
 	
+	// 결재 상세
 	public Map<String, Object> getApproveDetail(Long approNo) {
 	    Map<String, Object> detailMap = new HashMap<>();
 

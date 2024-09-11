@@ -52,13 +52,11 @@ public class ApproveViewController {
 		return "approve/approDetail";
 	}
 
-	// 결재 상세 수정
 	@GetMapping("/approUpdate/{appro_no}")
-	public String updateBoardOne(Model model, @PathVariable("appro_no") Long approNo) {
+	public String updateApproOne(Model model, @PathVariable("appro_no") Long approNo) {
 		Map<String, Object> detailMap = approveService.getApproveDetail(approNo);
 		model.addAllAttributes(detailMap);
 		return "approve/approUpdate";
 	}
-	
 	
 }
