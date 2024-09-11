@@ -11,16 +11,7 @@
 		  justify-content: center;
 		}	
 	</style>
-		<!-- ============================================================== -->
-		<!-- End Left Sidebar - style you can find in sidebar.scss  -->
-		<!-- ============================================================== -->
-		<!-- ============================================================== -->
-		<!-- Page wrapper  -->
-		<!-- ============================================================== -->
 		<div class="page-wrapper">
-			<!-- ============================================================== -->
-			<!-- Bread crumb and right sidebar toggle -->
-			<!-- ============================================================== -->
 			<div class="page-breadcrumb">
 				<div class="row">
 					<div class="col-7 align-self-center">
@@ -45,16 +36,7 @@
 					</div>
 				</div>
 			</div>
-			<!-- ============================================================== -->
-			<!-- End Bread crumb and right sidebar toggle -->
-			<!-- ============================================================== -->
-			<!-- ============================================================== -->
-			<!-- Container fluid  -->
-			<!-- ============================================================== -->
 			<div class="container-fluid">
-				<!-- ============================================================== -->
-				<!-- Start Page Content -->
-				<!-- ============================================================== -->
 				<div class="row">
 					<div class="col-12">
 						<div class="card">
@@ -64,6 +46,7 @@
 							        <img src="https://via.placeholder.com/150" alt="학생 사진">
 							        <div class="student-details">
 							        <input type="hidden" id="csrf_token" th:value="${_csrf.token}">
+							        <input type="hidden" name="student_no" th:value="${sdto.student_no}">
 							            <ul>
 							            	<li>
 												<p th:text="'이름 : '+${sdto.student_name}"></p>
@@ -195,6 +178,7 @@
 				}else{
 					const payload = new FormData(form);
 					const csrfToken = document.getElementById('csrf_token').value;
+					const studentNo = document.querySelector('input[name="student_no"]').value;
 					fetch('/student/class/assign',{
 						method:'post',
 						headers : {
@@ -210,7 +194,7 @@
 								title : '성공',
 								text : data.res_msg
 							}).then((result)=>{
-								location.href = "/student/detail/${studentNo}";
+								location.href = `/student/${studentNo}`;
 							});
 						}else{
 							Swal.fire({
