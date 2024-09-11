@@ -6,8 +6,13 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.dbdevdeep.employee.domain.TeacherHistory;
+import com.dbdevdeep.employee.repository.TeacherHistoryRepository;
 import com.dbdevdeep.student.domain.Student;
+import com.dbdevdeep.student.domain.StudentClass;
+import com.dbdevdeep.student.domain.StudentClassDto;
 import com.dbdevdeep.student.domain.StudentDto;
+import com.dbdevdeep.student.repository.StudentClassRepository;
 import com.dbdevdeep.student.repository.StudentRepository;
 
 import jakarta.transaction.Transactional;
@@ -17,10 +22,14 @@ public class StudentService {
 	
 	// 의존성 주입
 	private final StudentRepository studentRepository;
+	private final TeacherHistoryRepository teacherHistoryRepository;
+	private final StudentClassRepository studentClassRepository;
 	
 	@Autowired
-	public StudentService(StudentRepository studentRepository) {
+	public StudentService(StudentRepository studentRepository, TeacherHistoryRepository teacherHistoryRepository, StudentClassRepository studentClassRepository) {
 		this.studentRepository = studentRepository;
+		this.teacherHistoryRepository = teacherHistoryRepository;
+		this.studentClassRepository = studentClassRepository;
 	}
 	
 	// 입력 form에서 받아온 dto data를 Student로 바꿔서 저장하는 절차
@@ -107,5 +116,16 @@ public class StudentService {
 		return result;
 	}
 	
+	public StudentClass assignClass(StudentClassDto dto) {
+			Student sdt = studentRepository.findBystudentNo(dto.getStudent_no());
+			TeacherHistory th = teacherHistoryRepository.findByteacherNo(dto.getTeacher_no());
+			StudentClass sc= StudentClass.builder()
+					.student(sdt)
+					.teacherHistory(th)
+					.studentId(dto.getStudent_id())
+					.build();
+			
+			return studentClassRepository.save(sc);
+	}
 	
 }

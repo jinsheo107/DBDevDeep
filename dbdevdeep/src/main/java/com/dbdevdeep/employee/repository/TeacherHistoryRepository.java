@@ -23,4 +23,5 @@ public interface TeacherHistoryRepository extends JpaRepository<TeacherHistory, 
 	@Query("SELECT t FROM TeacherHistory t WHERE t.tYear = :tYear AND (:grade IS NULL OR t.grade = :grade)")
 	List<TeacherHistory> findByYearAndGrade(@Param("tYear") String tYear, @Param("grade") String grade);
 	
+	TeacherHistory findByteacherNo(Long teacher_no);
 }

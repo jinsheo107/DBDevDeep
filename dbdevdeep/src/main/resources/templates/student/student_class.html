@@ -81,19 +81,21 @@
 												    <select id="grade" name="grade" onchange="fetchDataByGrade()">
 												    </select>
 												    <label for="grade">학년</label>
-							            		<select id="assign_class" name="assign_class" onchange="fectchDataByClass()">
+							            		<select id="assign_class" name="assign_class" onchange="fetchDataByClass()">
 							            			<option>선택하세요</option>
 							            		</select>
 							            		<div>
-							            			<input type="hidden" name="student_no" th:value="${sdto.student_no}">
-							            			<input type="hidden" name="teacher_no">
-							            			<input type="text" id="student_id" name="student_id">
-							                    	<label for="student_id">번</label>
+							            			<form id="student_class_assign_form" method="post">
+							            				<input type="hidden" name="student_no" th:value="${sdto.student_no}">
+							            				<input type="hidden" name="teacher_no" id="teacher_no">
+							            				<input type="text" id="student_id" name="student_id">
+							                    		<label for="student_id">번</label>
+												       	<input type="button" value="취소" th:onclick="history.back();">
+												        <input type="submit" value="등록">
+							                    	</form>
 							            		</div>
 							                </div>
 							        </div>
-							       	<input type="button" value="취소" th:onclick="history.back();">
-							        <input type="submit" value="등록">
 							    </div>
 							</div>
 						</div>
@@ -119,7 +121,6 @@
 		    };
 		    function fetchDataByYear() {
 		    	const selectedYear = document.getElementById('t_year').value;
-		    	console.log(selectedYear);
 		    	fetch(`/student/student_class/selectByYear/${selectedYear}`)
 		    	.then(response=>response.json())
 		    	.then(data=>{
@@ -130,7 +131,6 @@
 					defaultOption.text = '선택하세요';  // 표시할 텍스트
 					gradeSelect.appendChild(defaultOption);
 		    		const uniqueGrades = Array.from(new Set(data.map(item => item.grade))).sort((a, b) => a - b);
-		    		console.log(uniqueGrades);
 	                uniqueGrades.forEach(grade => {
 	                    const option1 = document.createElement('option');
 	                    option1.value = grade;
@@ -143,9 +143,7 @@
 		    }
 		    function fetchDataByGrade(){
 		    	const selectedYear = document.getElementById('t_year').value;
-		    	console.log("두번째 콘솔 : "+selectedYear);
 		    	const selectedGrade = document.getElementById('grade').value;
-		    	console.log("두번째 콘솔 : "+selectedGrade);
 		    	
 		    	
 		    	fetch(`/student/student_class/selectByYearAndGrade/${selectedYear}/${selectedGrade}`)
@@ -176,9 +174,56 @@
 			    }
 	                
 		    	});
-		    	
+		    }
+		    function fetchDataByClass() {
+		        const classSelect = document.getElementById('assign_class');
+		        const selectedClassValue = classSelect.value;
+		        const teacherNoInput = document.getElementById('teacher_no');
+		        teacherNoInput.value = selectedClassValue;
+		        
 		    }
 		</script>
-		
+		<script>
+			const form=document.getElementById("student_class_assign_form");
+			form.addEventListener('submit',(e)=>{
+				e.preventDefault();
+		// 유효성 검사 성공 가정
+				let vali_check = true;
+
+				if(vali_check == false){
+					alert('유효성 검사 중 문제가 발생하였습니다.');
+				}else{
+					const payload = new FormData(form);
+					const csrfToken = document.getElementById('csrf_token').value;
+					fetch('/student/class/assign',{
+						method:'post',
+						headers : {
+							'X-CSRF-TOKEN':csrfToken
+						},
+						body:payload
+					})
+					.then(response => response.json())
+					.then(data=>{
+						if(data.res_code == '200'){
+							Swal.fire({
+								icon : 'success',
+								title : '성공',
+								text : data.res_msg
+							}).then((result)=>{
+								location.href = "/student/detail/${studentNo}";
+							});
+						}else{
+							Swal.fire({
+								icon : 'error',
+								title : '실패',
+								text : data.res_msg
+							});
+						}
+						
+					})
+				}
+				
+			});
+	</script>
 	</body>
 </html>

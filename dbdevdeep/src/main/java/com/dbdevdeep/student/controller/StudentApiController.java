@@ -18,6 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.dbdevdeep.employee.domain.TeacherHistoryDto;
 import com.dbdevdeep.employee.service.TeacherHistoryService;
+import com.dbdevdeep.student.domain.StudentClassDto;
 import com.dbdevdeep.student.domain.StudentDto;
 import com.dbdevdeep.student.service.StudentFileService;
 import com.dbdevdeep.student.service.StudentService;
@@ -64,7 +65,6 @@ public class StudentApiController {
 	                return resultMap;
 	            }
 	        }
-	        System.out.println(dto);
 	        // 학생 정보 생성
 	        if(studentService.createStudent(dto) != null) {
 	            resultMap.put("res_code", "200");
@@ -134,7 +134,6 @@ public class StudentApiController {
 	public List<TeacherHistoryDto> getDataByYear(@PathVariable("t_year") String t_year) {
 		// 학년도에 해당하는 데이터를 가져옵니다.
 	    List<TeacherHistoryDto> data = teacherHistoryService.selectClassByYearList(t_year);
-	    System.out.println("여기까지오냐?"+data);
 	    // 데이터를 JSON 형식으로 반환합니다.
 	    return data;
 	}
@@ -144,13 +143,24 @@ public class StudentApiController {
 	public List<TeacherHistoryDto> getDataByYearAndGrade(@PathVariable("t_year") String t_year, @PathVariable("grade") String grade) {
 	    // t_year와 grade에 해당하는 데이터를 조회
 	    List<TeacherHistoryDto> data = teacherHistoryService.getDataByYearAndGradeList(t_year, grade);
-	    System.out.println("이건 왜안가져가노?"+data);
 	    List<TeacherHistoryDto> filteredData = data.stream()
                 .filter(Objects::nonNull) // null이 아닌 객체만 필터링
                 .collect(Collectors.toList());
 
-		System.out.println("필터링된 데이터: " + filteredData);
 	    return filteredData;
 	}
+	
+	@ResponseBody
+	@PostMapping("/student/class/assign")
+	public Map<String,String> assignClassForStudent(StudentClassDto dto){
+		Map<String,String> resultMap = new HashMap<String,String>();
+		resultMap.put("res_code", "404");
+		resultMap.put("res_msg", "반 배정 중 오류가 발생했습니다.");
 		
+		if(studentService.assignClass(dto) != null) {
+			resultMap.put("res_code", "200");
+			resultMap.put("res_msg", "반 배정이 성공적으로 수행되었습니다.");
+		}
+		return resultMap;
+	}
 }
