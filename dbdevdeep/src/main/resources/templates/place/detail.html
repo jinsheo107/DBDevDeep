@@ -179,8 +179,8 @@ textarea {
                                             <button type="button" class="btn btn-secondary" onclick="location.href='/place'">목록</button>
                                         </div>
                                         <div class="col-6 text-right">
-                                        	<button type="button" class="btn btn-secondary" onclick="deletePlace()" sec:authorize="hasAnyAuthority('D3')" >삭제</button>
-                                            <button type="button" class="btn btn-primary" onclick="updatePlace()" sec:authorize="hasAnyAuthority('D3')" >수정</button>
+                                        	<button type="button" class="btn btn-secondary" onclick="deletePlace()" sec:authorize="hasAnyAuthority('D3')">삭제</button>
+                                            <button type="button" class="btn btn-primary" onclick="updatePlace()" sec:authorize="hasAnyAuthority('D3')">수정</button>
                                         </div>
                                     </div>
                                     
@@ -188,8 +188,6 @@ textarea {
 				</div>
 			</div>
 		</div>
-</div>
-</div>
 </div>
 <script>
 	// 사용 불가능 상태일때만 보여지는 script
@@ -219,9 +217,73 @@ textarea {
     }
     
     // 삭제는 fetch
+    const deletePlace = function(){
+    	const placeNo = document.getElementById('placeNo').value;
+    	const csrfToken = document.getElementById('csrf_token').value;
+    	console.log(placeNo);
+    	
+    	if(confirm("정말 삭제 하시겠습니까?")){
+    		fetch('/place/'+ placeNo,{
+    			method : 'delete',
+    			headers : {
+    				'X-CSRF-TOKEN' : csrfToken
+    			}
+    		})
+    		.then(response => response.json())
+			.then(data => {
+					if(data.res_code == '200'){
+						Swal.fire({
+							icon : 'success',
+							title : '성공',
+							text : data.res_msg,
+							confirmButtonText : '닫기'
+						}).then((result) =>{
+							location.href='/place';
+						});
+					}else{
+						Swal.fire({
+							icon : 'error',
+							title : '오류',
+							text : data.res_msg,
+							confirmButtonText : '닫기'
+						});
+					}
+	
+				})
+    	}
+    	
+    }
+    
     
 </script>
-
+				<!-- ============================================================== -->
+				<!-- End PAge Content -->
+				<!-- ============================================================== -->
+				<!-- ============================================================== -->
+				<!-- Right sidebar -->
+				<!-- ============================================================== -->
+				<!-- .right-sidebar -->
+				<!-- ============================================================== -->
+				<!-- End Right sidebar -->
+				<!-- ============================================================== -->
+			</div>
+			<!-- ============================================================== -->
+			<!-- End Container fluid  -->
+			<!-- ============================================================== -->
+			<!-- ============================================================== -->
+			<!-- footer -->
+			<!-- ============================================================== -->
+			<footer class="footer text-center text-muted">
+				All Rights Reserved by Adminmart. Designed and Developed by <a
+					href="https://wrappixel.com">WrapPixel</a>.
+			</footer>
+			<!-- ============================================================== -->
+			<!-- End footer -->
+			<!-- ============================================================== -->
+		</div>
+		<!-- ============================================================== -->
+		<!-- End Page wrapper  -->
+		<!-- ============================================================== -->
 
 
 

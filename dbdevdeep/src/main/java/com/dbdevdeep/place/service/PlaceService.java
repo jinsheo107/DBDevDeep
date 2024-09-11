@@ -1,6 +1,7 @@
 package com.dbdevdeep.place.service;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
@@ -30,6 +31,65 @@ public class PlaceService {
 		this.placeRepository = placeRepository;
 		this.employeeRepository = employeeRepository;
 	}
+	
+	
+	// 삭제하기
+	public int deletePlace(Long place_no) {
+		int result = -1;
+		try {
+			placeRepository.deleteById(place_no);
+			result = 1;
+		}catch(Exception e) {
+			e.printStackTrace();
+		}
+		return result;
+	}
+	
+	// 수정하기
+	public int updatePlace(PlaceDto dto) {
+		int result = -1;
+		
+		// 필수 값 검증
+        if (dto.getPlace_name() == null || dto.getPlace_name().isEmpty()) {
+            throw new IllegalArgumentException("장소명은 필수 입력 항목입니다.");
+        }
+        if (dto.getPlace_status() == null || dto.getPlace_status().isEmpty()) {
+            throw new IllegalArgumentException("장소 상태는 필수 입력 항목입니다.");
+        }
+		
+		try {
+
+	         Employee e = employeeRepository.findByempId(dto.getEmp_id());
+	    		
+	    		Place p = Place.builder()
+	    				.placeNo(dto.getPlace_no())
+	    				.employee(e)
+	    				.placeName(dto.getPlace_name())
+	    				.placeLocation(dto.getPlace_location()) // 위치
+	    				.placeContent(dto.getPlace_content())  // 설명이 null일 경우 처리
+	                  .placeStatus(dto.getPlace_status())    // 상태
+	                  .placeStarttime(dto.getPlace_start_time()) // 사용 가능 시작 시간
+	                  .placeEndtime(dto.getPlace_end_time())    // 사용 가능 종료 시간
+	                  .unuseableReason(dto.getUnuseable_reason()) // 사용 불가 사유
+	                  .unuseableStartDate(dto.getUnuseable_start_date()) // 사용 불가 시작 날짜
+	                  .unuseableEndDate(dto.getUnuseable_end_date())   // 사용 불가 종료 날짜
+	                  .oriPicname(dto.getOri_pic_name() != null ? dto.getOri_pic_name() : "Default oriPicname")
+	                  .newPicname(dto.getNew_pic_name() != null ? dto.getNew_pic_name() : "Default newPicname")
+	                  .regDate(dto.getReg_date())        // 등록일
+	                  .modDate(LocalDateTime.now())        // 수정일
+	                  .build();
+	    		
+	    		placeRepository.save(p);
+	    		result = 1;
+			
+			
+		}catch(Exception e) {
+			e.printStackTrace();
+		}
+		return result;
+	}
+	
+	
 	
 	//  게시글 상세조회
 	public PlaceDto selectPlaceOne(Long place_no) {
@@ -87,7 +147,8 @@ public class PlaceService {
           Long nextPlaceNo = (maxPlaceNo == null) ? 0L : maxPlaceNo + 1;  // 없으면 0, 있으면 +1
     		Employee e = employeeRepository.findByempId(dto.getEmp_id());
     		
-    		Place p = Place.builder()
+    		dto.getMod_date();
+			Place p = Place.builder()
     				.placeNo(nextPlaceNo)
     				.employee(e)
     				.placeName(dto.getPlace_name())

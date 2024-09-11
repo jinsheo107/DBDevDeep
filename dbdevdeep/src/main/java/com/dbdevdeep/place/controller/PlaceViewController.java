@@ -89,7 +89,7 @@ public class PlaceViewController {
 	
 	
 	
-	// 조회
+	// 목록조회
 	@GetMapping("/place")
 	public String selectPlaceList(Model model, PlaceDto dto) {
 	// 리스트출력	
