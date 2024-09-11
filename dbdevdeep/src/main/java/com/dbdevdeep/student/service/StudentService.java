@@ -138,4 +138,15 @@ public class StudentService {
 		return studentClassDtoList;
 	}
 	
+	public int deleteStudentClass(Long class_no) {
+		int result = 0;
+		try {
+			studentClassRepository.deleteById(class_no);
+			result = 1;
+		}catch(Exception e) {
+			e.printStackTrace();
+		}
+		return result;
+	}
+	
 }

@@ -1,96 +1,97 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
-     xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-     layout:decorate="~{include/student_layout}">
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{include/student_layout}">
 <th:block layout:fragment="content">
-<body>
+	<body>
 		<div class="page-wrapper">
 			<div class="page-breadcrumb">
 				<div class="row">
 					<div id="content">
-			            <h3>1 학생 정보 등록</h3>
-			            <div class="form-section">
-			            <form id="student_update_form" th:object="${dto}">
-			            <input type="hidden" id="csrf_token" th:value="${_csrf.token}">
-			                <div class="form-group">
-			                	<input type="hidden" name="student_no" th:field="*{student_no}">
-			                    <label for="name">이름</label>
-			                    <input type="text" id="name" name="student_name" th:field="*{student_name}">
-			                </div>
-			                <div class="form-group">
-			                    <label for="student_status">재학 여부</label>
-									<select id="student_status" name="student_status"  th:field="*{student_status}">
-					                        <option value="재학">재학</option>
-					                        <option value="휴학">휴학</option>
-					                        <option value="전학">전학</option>
-					                        <option value="퇴학">퇴학</option>
-					                </select>
-			                </div>
-			                <div class="form-group">
-			                    <label for="student_birth">생년월일</label>
-			                    <input type="date" name="student_birth" id="student_birth"  th:field="*{student_birth}">
-			                </div>
-			                <div class="form-group">
-			                    <label for="zipcode">우편번호</label>
-			                    <input type="text" id="zipcode" name="student_post_code" th:field="*{student_post_code}">
-			                    <input type="button" id="student_location" value="우편찾기">
-			                </div>
-			                <div class="form-group">
-			                    <label for="address">주소</label>
-			                    <input type="text" id="student_address" name="student_addr" th:field="*{student_addr}">
-			                </div>
-			                <div class="form-group">
-			                    <label for="address-detail">상세주소</label>
-			                    <input type="text" id="address-detail" name="student_detail_addr" th:field="*{student_detail_addr}">
-			                </div>
-			                <div class="form-group">
-			                    <label for="phone">전화번호</label>
-			                    <input type="text" id="sp1" maxlength="3"> - 
-								<input type="text" id="sp2" maxlength="4"> - 
-								<input type="text" id="sp3" maxlength="4">
-			                </div>
-			                <div class="form-group">
-			                    <label for="photo">사진</label>
-			                    <input type="file" id="photo" name="file">
-			                    <span> ※ 이미지 파일을 수정하시려면 새로운 파일을 등록하세요. </span><br>
-			                </div>
-			                <div class="form-group">
-			                    <label>성별</label>
-			                    <input type="radio" id="male" name="student_gender" value="M" th:field="*{student_gender}"> 남자
-			                    <input type="radio" id="female" name="student_gender" value="W" th:field="*{student_gender}"> 여자
-			                </div>
-			                <div class="form-group" style="text-align: right;">
-				                <input type="button" value="취소" th:onclick="|location.href='@{/student}'|">
-				                <input type="submit" value="수정">
-				            </div>
-	            		</form>
-			                
-			            </div>	
+						<h3>1 학생 정보 등록</h3>
+						<div class="form-section">
+							<form id="student_update_form" th:object="${dto}">
+								<input type="hidden" id="csrf_token" th:value="${_csrf.token}">
+								<div class="form-group">
+									<input type="hidden" name="student_no" th:field="*{student_no}">
+									<label for="name">이름</label> <input type="text" id="name"
+										name="student_name" th:field="*{student_name}">
+								</div>
+								<div class="form-group">
+									<label for="student_status">재학 여부</label> <select
+										id="student_status" name="student_status"
+										th:field="*{student_status}">
+										<option value="재학">재학</option>
+										<option value="휴학">휴학</option>
+										<option value="전학">전학</option>
+										<option value="퇴학">퇴학</option>
+									</select>
+								</div>
+								<div class="form-group">
+									<label for="student_birth">생년월일</label> <input type="date"
+										name="student_birth" id="student_birth"
+										th:field="*{student_birth}">
+								</div>
+								<div class="form-group">
+									<label for="zipcode">우편번호</label> <input type="text"
+										id="zipcode" name="student_post_code"
+										th:field="*{student_post_code}"> <input type="button"
+										id="student_location" value="우편찾기">
+								</div>
+								<div class="form-group">
+									<label for="address">주소</label> <input type="text"
+										id="student_address" name="student_addr"
+										th:field="*{student_addr}">
+								</div>
+								<div class="form-group">
+									<label for="address-detail">상세주소</label> <input type="text"
+										id="address-detail" name="student_detail_addr"
+										th:field="*{student_detail_addr}">
+								</div>
+								<div class="form-group">
+									<label for="phone">전화번호</label> <input type="text" id="sp1"
+										maxlength="3"> - <input type="text" id="sp2"
+										maxlength="4"> - <input type="text" id="sp3"
+										maxlength="4">
+								</div>
+								<div class="form-group">
+									<label for="photo">사진</label> <input type="file" id="photo"
+										name="file"> <span> ※ 이미지 파일을 수정하시려면 새로운 파일을
+										등록하세요. </span><br>
+								</div>
+								<div class="form-group">
+									<label>성별</label> <input type="radio" id="male"
+										name="student_gender" value="M" th:field="*{student_gender}">
+									남자 <input type="radio" id="female" name="student_gender"
+										value="W" th:field="*{student_gender}"> 여자
+								</div>
+								<div class="form-group" style="text-align: right;">
+									<input type="button" value="취소"
+										th:onclick="|location.href='@{/student}'|"> <input
+										type="submit" value="수정">
+								</div>
+							</form>
+
+						</div>
 					</div>
-            
+
 				</div>
-			<div class="container-fluid">
+				<div class="container-fluid"></div>
 			</div>
 		</div>
-	<script src="/assets/libs/jquery/dist/jquery.min.js"></script>
-	<!-- Bootstrap tether Core JavaScript -->
-	<script src="/assets/libs/popper.js/dist/umd/popper.min.js"></script>
-	<script src="/assets/libs/bootstrap/dist/js/bootstrap.min.js"></script>
-	<!-- apps -->
-	<!-- apps -->
-	<script src="/dist/js/app-style-switcher.js"></script>
-	<script src="/dist/js/feather.min.js"></script>
-	<!-- slimscrollbar scrollbar JavaScript -->
-	<script src="/assets/libs/perfect-scrollbar/dist/perfect-scrollbar.jquery.min.js"></script>
-	<script src="/assets/extra-libs/sparkline/sparkline.js"></script>
-	<!--Wave Effects -->
-	<!-- themejs -->
-	<!--Menu sidebar -->
-	<script src="/dist/js/sidebarmenu.js"></script>
-	<!--Custom JavaScript -->
-	<script src="/dist/js/custom.min.js"></script>
-	<script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
-	<script>
+		<script src="/assets/libs/jquery/dist/jquery.min.js"></script>
+		<script src="/assets/libs/popper.js/dist/umd/popper.min.js"></script>
+		<script src="/assets/libs/bootstrap/dist/js/bootstrap.min.js"></script>
+		<script src="/dist/js/app-style-switcher.js"></script>
+		<script src="/dist/js/feather.min.js"></script>
+		<script
+			src="/assets/libs/perfect-scrollbar/dist/perfect-scrollbar.jquery.min.js"></script>
+		<script src="/assets/extra-libs/sparkline/sparkline.js"></script>
+		<script src="/dist/js/sidebarmenu.js"></script>
+		<script src="/dist/js/custom.min.js"></script>
+		<script
+			src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+		<script>
 	  window.onload = function() {
 	    // student_phone의 값을 가져와 각 부분을 나눠서 각 input에 설정
 	    const fullPhone = document.getElementById('student_phone').value;
@@ -105,7 +106,7 @@
 	    }
 	  };
 	</script>
-	<script>
+		<script>
 	window.onload = function(){
 	    document.getElementById("student_location").addEventListener("click", function(){ //주소입력칸을 클릭하면
 	        //카카오 지도 발생
@@ -119,8 +120,8 @@
 	}
 	</script>
 
-	
-	<script>
+
+		<script>
 	const form=document.getElementById("student_update_form");
 	form.addEventListener('submit',(e)=>{
 		e.preventDefault();
@@ -175,6 +176,5 @@
 		
 	});
 	</script>
-</body>
-
+	</body>
 </html>

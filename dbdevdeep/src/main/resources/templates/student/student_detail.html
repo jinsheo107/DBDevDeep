@@ -1,33 +1,38 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" 
-		xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" 
-		layout:decorate="~{include/student_layout}">
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{include/student_layout}">
 <th:block layout:fragment="content">
+<style>
+div.dataTables_wrapper div.dataTables_paginate ul.pagination {
+	margin: 2px 0;
+	white-space: nowrap;
+	justify-content: center;
+}
+</style>
 	<body>
-	<style>
-		div.dataTables_wrapper div.dataTables_paginate ul.pagination {
-		  margin: 2px 0;
-		  white-space: nowrap;
-		  justify-content: center;
-		}	
-	</style>
 		<div class="page-wrapper">
 			<div class="page-breadcrumb">
 				<div class="row">
 					<div class="col-7 align-self-center">
-						<h4 class="page-title text-truncate text-dark font-weight-medium mb-1">Basic Table</h4>
+						<h4
+							class="page-title text-truncate text-dark font-weight-medium mb-1">Basic
+							Table</h4>
 						<div class="d-flex align-items-center">
 							<nav aria-label="breadcrumb">
 								<ol class="breadcrumb m-0 p-0">
-									<li class="breadcrumb-item"><a href="index.html" class="text-muted">Home</a></li>
-									<li class="breadcrumb-item text-muted active" aria-current="page">Library</li>
+									<li class="breadcrumb-item"><a href="index.html"
+										class="text-muted">Home</a></li>
+									<li class="breadcrumb-item text-muted active"
+										aria-current="page">Library</li>
 								</ol>
 							</nav>
 						</div>
 					</div>
 					<div class="col-5 align-self-center">
 						<div class="customize-input float-right">
-							<select class="custom-select custom-select-set form-control bg-white border-0 custom-shadow custom-radius">
+							<select
+								class="custom-select custom-select-set form-control bg-white border-0 custom-shadow custom-radius">
 								<option selected>Aug 19</option>
 								<option value="1">July 19</option>
 								<option value="2">Jun 19</option>
@@ -43,74 +48,81 @@
 							<div class="card-body">
 								<h4 class="card-title">주소록</h4>
 								<div class="student-info">
-							        <img src="https://via.placeholder.com/150" alt="학생 사진">
-							        <div class="student-details">
-							        <input type="hidden" id="csrf_token" th:value="${_csrf.token}">
-							            <ul>
-							            	<img src=""/>
-							            	<li>
+									<img src="https://via.placeholder.com/150" alt="학생 사진">
+									<div class="student-details">
+										<input type="hidden" id="csrf_token" th:value="${_csrf.token}">
+										<ul>
+											<img src="" />
+											<li>
 												<p th:text="'이름 : '+${dto.student_name}"></p>
-							            		<p>몇학년 몇반 몇번</p>
+												<p>몇학년 몇반 몇번</p>
 												<p th:text="'생년월일 : '+${dto.student_birth}"></p>
-												<p th:text="'주소 : '+${dto.student_addr}+${dto.student_detail_addr}+'('+${dto.student_post_code}+')'"></p>
+												<p
+													th:text="'주소 : '+${dto.student_addr}+${dto.student_detail_addr}+'('+${dto.student_post_code}+')'"></p>
 												<p th:text="'전화번호 : '+${dto.student_phone}"></p>
-							            	</li>
-							            	<li>
-							            		<div class="academic-info">
-											        <h3>학년 이력 조회</h3>
-											        <table>
-											            <thead>
-											                <tr>
-											                    <th>학년</th>
-											                    <th>학년도</th>
-											                    <th>반</th>
-											                    <th>번호</th>
-											                    <th>담임 성명</th>
-											                </tr>
-											            </thead>
-											            <tbody>
-											            	<th:block th:if="${#lists.isEmpty(cdto)}">
+											</li>
+											<li>
+												<div class="academic-info">
+													<h3>학년 이력 조회</h3>
+													<table>
+														<thead>
+															<tr>
+																<th>학년</th>
+																<th>학년도</th>
+																<th>반</th>
+																<th>번호</th>
+																<th>담임 성명</th>
+															</tr>
+														</thead>
+														<tbody>
+															<th:block th:if="${#lists.isEmpty(cdto)}">
 																<tr>
 																	<td colspan="5">학년 이력이 존재하지 않습니다.</td>
 																</tr>
-															</th:block>	
-											                <th:block th:if="${!#lists.isEmpty(cdto)}">
+															</th:block>
+															<th:block th:if="${!#lists.isEmpty(cdto)}">
 																<tr th:each="studentClass, studentClassStat : ${cdto}">
-																	<td th:text="${studentClass.teacher_history.getGrade()}"></td>
-																	<td th:text="${studentClass.teacher_history.getTYear()}+년"></td>
-																	<td th:text="${studentClass.teacher_history.getGradeClass()}"></td>
+																	<td
+																		th:text="${studentClass.teacher_history.getGrade()}"></td>
+																	<td
+																		th:text="${studentClass.teacher_history.getTYear()}+년"></td>
+																	<td
+																		th:text="${studentClass.teacher_history.getGradeClass()}"></td>
 																	<td th:text="${studentClass.student_id}"></td>
-																	<td th:text="${studentClass.teacher_history.getEmployee().getEmpName()}"></td>
+																	<td
+																		th:text="${studentClass.teacher_history.getEmployee().getEmpName()}"></td>
 																</tr>
 															</th:block>
-											            </tbody>
-											        </table>
-											    </div>
-							            	</li>
-							            </ul>
-							        </div>
-							        <a th:href="@{/student/list}">목록으로</a><br>
-							        <a th:href="@{/student/class/{std_no}(std_no=${dto.student_no})}">학년 이력 수정</a><br>
-							        <a th:href="@{/student/update/{student_no}(student_no=${dto.student_no})}">수정</a><br>
-							        <a th:onclick="studentDelete([[${dto.student_no}]])">삭제</a>
-							    </div>
+														</tbody>
+													</table>
+												</div>
+											</li>
+										</ul>
+									</div>
+									<a th:href="@{/student/list}">목록으로</a><br> <a
+										th:href="@{/student/class/{std_no}(std_no=${dto.student_no})}">학년
+										이력 수정</a><br> <a
+										th:href="@{/student/update/{student_no}(student_no=${dto.student_no})}">수정</a><br>
+									<a th:onclick="studentDelete([[${dto.student_no}]])">삭제</a>
+								</div>
 							</div>
 						</div>
 					</div>
 				</div>
 			</div>
 		</div>
-		</div>
 		<script src="/assets/libs/jquery/dist/jquery.min.js"></script>
 		<script src="/assets/libs/popper.js/dist/umd/popper.min.js"></script>
 		<script src="/assets/libs/bootstrap/dist/js/bootstrap.min.js"></script>
 		<script src="/dist/js/app-style-switcher.js"></script>
 		<script src="/dist/js/feather.min.js"></script>
-		<script src="/assets/libs/perfect-scrollbar/dist/perfect-scrollbar.jquery.min.js"></script>
+		<script
+			src="/assets/libs/perfect-scrollbar/dist/perfect-scrollbar.jquery.min.js"></script>
 		<script src="/assets/extra-libs/sparkline/sparkline.js"></script>
 		<script src="/dist/js/sidebarmenu.js"></script>
 		<script src="/dist/js/custom.min.js"></script>
-		<script src="/assets/extra-libs/datatables.net/js/jquery.dataTables.min.js"></script>
+		<script
+			src="/assets/extra-libs/datatables.net/js/jquery.dataTables.min.js"></script>
 		<script src="/dist/js/pages/datatable/datatable-basic.init.js"></script>
 		<script>
 		const studentDelete = function(studentNo){
@@ -142,6 +154,6 @@
 						}
 					})
 			}}
-	</script>	
+	</script>
 	</body>
 </html>

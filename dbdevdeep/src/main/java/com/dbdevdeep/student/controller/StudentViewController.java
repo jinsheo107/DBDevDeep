@@ -72,14 +72,16 @@ public class StudentViewController {
 	public String classAssign(@PathVariable("student_no") Long student_no, Model model) {
 	    List<TeacherHistoryDto> resultList = teacherHistoryService.selectClassList();
 	    StudentDto sdto = studentService.selectStudentOne(student_no);
-
+	    List<StudentClassDto> studentClassResultList= studentService.selectStudentClassList(student_no);
+	    
 	    // 학년도 목록 중복 제거 후 역순 정렬
 	    List<String> Tyear = resultList.stream()
 	            .map(TeacherHistoryDto::getT_year)
 	            .distinct()
 	            .sorted(Comparator.reverseOrder())
 	            .collect(Collectors.toList());
-
+	    
+	    model.addAttribute("cdto",studentClassResultList);
 	    model.addAttribute("Tyear", Tyear);
 	    model.addAttribute("sdto", sdto);
 	    return "student/student_class";

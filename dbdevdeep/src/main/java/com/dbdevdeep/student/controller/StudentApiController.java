@@ -110,7 +110,7 @@ public class StudentApiController {
 		return resultMap;
 	}
 	
-	// 삭제 처리
+	// 학생 삭제 처리
 	@ResponseBody
 	@DeleteMapping("/student/{student_no}")
 	public Map<String,String> deleteStudent(@PathVariable("student_no") Long student_no){
@@ -163,4 +163,20 @@ public class StudentApiController {
 		}
 		return resultMap;
 	}
+	
+	// 반 이력 삭제 처리
+		@ResponseBody
+		@DeleteMapping("/student/class/{class_no}")
+		public Map<String,String> deleteStudentClass(@PathVariable("class_no") Long class_no){
+			Map<String,String> map = new HashMap<String,String>();
+			map.put("res_code", "404");
+			map.put("res_msg", "게시글 삭제 중 오류가 발생했습니다");
+			
+			if(studentService.deleteStudentClass(class_no)>0) {				
+				map.put("res_code", "200");
+				map.put("res_msg","정상적으로 게시글이 삭제되었습니다.");
+			}
+			
+			return map;
+		}
 }
