@@ -4,6 +4,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -12,6 +17,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.dbdevdeep.FileService;
+import com.dbdevdeep.attendance.service.AttendanceService;
 import com.dbdevdeep.employee.domain.Employee;
 import com.dbdevdeep.employee.domain.EmployeeDto;
 import com.dbdevdeep.employee.domain.MySignDto;
@@ -20,7 +26,9 @@ import com.dbdevdeep.security.service.SecurityService;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
+import lombok.RequiredArgsConstructor;
 
+@RequiredArgsConstructor
 @Controller
 public class EmployeeApiController {
 
@@ -28,13 +36,6 @@ public class EmployeeApiController {
 	private final FileService fileService;
 	private final SecurityService securityService;
 
-	@Autowired
-	public EmployeeApiController(EmployeeService employeeService, FileService fileService,
-			SecurityService securityService) {
-		this.employeeService = employeeService;
-		this.fileService = fileService;
-		this.securityService = securityService;
-	}
 	
 	@ResponseBody
 	@PostMapping("/govid")
@@ -132,6 +133,29 @@ public class EmployeeApiController {
 		if(e != null) {
 			resultMap.put("res_code", "200");
 			resultMap.put("res_msg", "내 정보가 성공적으로 수정되었습니다.");
+			
+			 Authentication currentAuth = SecurityContextHolder.getContext().getAuthentication();
+		        if (currentAuth != null && currentAuth.getPrincipal() instanceof UserDetails) {
+
+		            // 현재 세션 무효화
+		            HttpSession session = request.getSession(false);
+		            if (session != null) {
+		                session.invalidate();
+		            }
+		            // 새로운 세션 생성
+		            HttpSession newSession = request.getSession(true);
+
+		            // 기존 인증 정보로 다시 로그인 처리
+		            UserDetails newUserDetails = securityService.loadUserByUsername(dto.getEmp_id());
+		            Authentication newAuth = new UsernamePasswordAuthenticationToken(
+		                newUserDetails,
+		                dto.getEmp_pw(),
+		                newUserDetails.getAuthorities()
+		            );
+		            SecurityContextHolder.getContext().setAuthentication(newAuth);
+		            // 새로 생성된 세션에 인증 정보 설정
+		            newSession.setAttribute("SPRING_SECURITY_CONTEXT", SecurityContextHolder.getContext());
+		        }
 			
 		}
 		
