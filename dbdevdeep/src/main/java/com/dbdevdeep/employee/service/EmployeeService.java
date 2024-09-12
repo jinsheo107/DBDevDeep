@@ -9,6 +9,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.dbdevdeep.employee.domain.Department;
 import com.dbdevdeep.employee.domain.Employee;
@@ -254,7 +255,14 @@ public class EmployeeService {
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
-		
+		return result;
+	}
+	
+	// 상태메세지 수정
+	@Transactional
+	public int editChatStatus(String emp_id, String chat_status_msg){
+		int result = -1;
+		result = employeeRepository.updateByEmpIdToStatus(emp_id,chat_status_msg);
 		return result;
 	}
 	

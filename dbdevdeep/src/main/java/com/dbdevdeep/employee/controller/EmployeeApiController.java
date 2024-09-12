@@ -8,6 +8,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -76,7 +79,7 @@ public class EmployeeApiController {
 		}
 		return resultMap;
 	}
-
+	
 	@ResponseBody
 	@PostMapping("/addsign")
 	public Map<String, String> addSign(MySignDto dto, @RequestParam("file") MultipartFile file) {
@@ -97,7 +100,6 @@ public class EmployeeApiController {
 		} else {
 			resultMap.put("res_msg", "파일 업로드가 실패하였습니다.");
 		}
-
 		return resultMap;
 	}
 
@@ -202,5 +204,31 @@ public class EmployeeApiController {
 
 		return resultMap;
 	}
-
+	
+	// 상태 메시지 수정
+	@ResponseBody
+    @PostMapping("/status/{empId}")
+    public Map<String,String> updateStatus(@RequestBody EmployeeDto dto){
+		Map<String,String> map = new HashMap<String, String>();
+		map.put("res_code", "404");
+		map.put("res_msg", "게시글 삭제 중 오류가 발생했습니다.");
+		
+		int result = employeeService.editChatStatus(dto.getEmp_id(), dto.getChat_status_msg());
+		
+		if(result>0) {
+			map.put("res_code", "200");
+			map.put("res_msg", "상태메세지가 수정되었습니다.");
+		}
+		
+		return map;
+	}
+	
+	// 채팅 상대 프로필 조회
+	@ResponseBody
+    @GetMapping("/profile/{empId}")
+	public EmployeeDto selectProfile(Model model, @PathVariable("empId") String emp_id){
+		EmployeeDto dto = employeeService.selectEmployeeOne(emp_id);
+		
+		return dto;
+	}
 }
