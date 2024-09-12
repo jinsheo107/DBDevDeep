@@ -5,7 +5,9 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -101,6 +103,65 @@ public class TeacherHistoryApiController {
 		return resultMap;
 	}
 	
-	
+	@ResponseBody
+	@PutMapping("/class-year/{t_year}")
+	public Map<String, String> editTeacher(@RequestBody GradeClassRequest gcr, @PathVariable("t_year") String t_year) {
+		
+		Map<String, String> resultMap = new HashMap<String, String>();
+
+		resultMap.put("res_code", "404");
+		resultMap.put("res_msg", "반 생성 중 오류가 발생하였습니다.");
+		
+		int total = 0;
+		int real = 0;
+				
+		try {
+			if (teacherHistoryService.tYearCheck(gcr.getT_year()) == 1) {
+				
+				
+				int[] gradeArray = new int[6];
+				
+				gradeArray[0] = gcr.getGrade_1();
+				gradeArray[1] = gcr.getGrade_2();
+				gradeArray[2] = gcr.getGrade_3();
+				gradeArray[3] = gcr.getGrade_4();
+				gradeArray[4] = gcr.getGrade_5();
+				gradeArray[5] = gcr.getGrade_6();
+				
+				for(int i = 0; i < gradeArray.length; i++) {
+					int count = teacherHistoryService.tYearGradeCount(gcr.getT_year(), i + 1);
+					
+					System.out.println(real + ", " + total);
+					
+					if(count < gradeArray[i]) {
+						for(int j = 0; j < gradeArray[i] - count; j++) {
+							if(teacherHistoryService.saveTeacherHistory(i + 1, count + j + 1, gcr.getT_year()) > 0) {
+								real++;
+							}
+							total++;
+						}
+					} else if (count > gradeArray[i]){
+						for(int j = 0; j < count - gradeArray[i]; j++) {
+							if(teacherHistoryService.deleteByGradeClassTyear(i + 1, count - j, gcr.getT_year()) > 0) {
+								real++;
+							}
+							total++;
+						}
+					} 
+				}
+			} 
+			
+			if(total == real) {
+				resultMap.put("res_code", "200");
+				resultMap.put("res_msg", gcr.getT_year() + "년도의 반 수정에 성공하였습니다.");
+			}
+			
+		} catch (Exception e) {
+			resultMap.put("res_code", "500");
+			resultMap.put("res_msg", "서버 오류가 발생하였습니다.");
+		}
+
+		return resultMap;
+	}
 	
 }

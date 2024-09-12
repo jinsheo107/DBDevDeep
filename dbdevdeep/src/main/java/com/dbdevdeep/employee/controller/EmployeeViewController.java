@@ -113,5 +113,18 @@ public class EmployeeViewController {
 				
 		return "employee/edit_my_pw";
 	}
+	
+	@GetMapping("/allemployee")
+	public String allEmployee(Model model) {
+		
+		List<EmployeeDto> resultList = employeeService.selectEmployeeList();
+		
+		List<TeacherHistoryDto> historyList = teacherHistoryService.selectClassByOrderLastesList();
+		
+		model.addAttribute("resultList", resultList);
+		model.addAttribute("historyList", historyList);
+		
+		return "employee/all_employee";
+	}
 
 }

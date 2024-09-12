@@ -102,8 +102,8 @@
 												th:data-sign-no="${sign.sign_no}" 
 												th:data-sign-title="${sign.sign_title}" 
 												th:data-sign-type="${sign.sign_type}" 
-												th:data-reg-time="${#temporals.format(sign.reg_time, 'yyyy.MM.dd HH:mm')}" 
-												th:data-mod-time="${sign.mod_time == null ? '-' : #temporals.format(sign.mod_time, 'yyyy.MM.dd HH:mm')}" 
+												th:data-reg-time="${sign.reg_time}" 
+												th:data-mod-time="${sign.mod_time}" 
 												th:data-rep-yn="${sign.rep_yn}">
 												<div style="margin-bottom: 10px;">
 													<img th:src="@{'/UploadImg/empSign/' + ${sign.new_pic_name}}" width="80px" height="80px" style="border-radius: 50%">
@@ -189,8 +189,11 @@
 									<div class="form-body">
 										<div class="col-6">
 											<input type="hidden" name="sign_no" id="edit_sign_no">
+											<input type="hidden" name="reg_time" id="edit_reg_time">
+											<input type="hidden" name="mod_time" id="edit_mod_time">
 											<div class="form-group">
-												<label for="sign_title">서명 제목</label> <input type="text" class="form-control" name="sign_title" id="edit_sign_title">
+												<label for="sign_title">서명 제목</label> 
+												<input type="text" class="form-control" name="sign_title" id="edit_sign_title">
 											</div>
 											<div class="form-group">
 												<label for="sign_type">서명 종류</label> <select class="form-control" name="sign_type" id="edit_sign_type">
@@ -375,11 +378,21 @@
 		    const modTime = divElement.getAttribute('data-mod-time');
 		    const repYn = divElement.getAttribute('data-rep-yn') === 'Y' ? 'O' : '-';
 		    
+		    let regTimeFormat = regTime.replace('T', ' ');
+		    regTimeFormat = regTimeFormat.replaceAll(/[-]/g, '.');
+		    
+		    let modTimeFormat = '';
+		   	
+		    if(modTime != null) {
+		    	modTimeFormat = modTime.replace('T', ' ');
+			    modTimeFormat = modTimeFormat.replaceAll(/[-]/g, '.');
+		    }
+		    
 		    // Populate the table with the extracted data
 		    document.getElementById('signTitle').innerText = signTitle;
 		    document.getElementById('signType').innerText = signType;
-		    document.getElementById('regTime').innerText = regTime;
-		    document.getElementById('modTime').innerText = modTime;
+		    document.getElementById('regTime').innerText = regTimeFormat;
+		    document.getElementById('modTime').innerText = modTimeFormat != null ? modTimeFormat : '-';
 		    document.getElementById('repYn').innerText = repYn;
 		    
 		    document.getElementById('edit_sign_no').value = signNo;
@@ -406,9 +419,22 @@
 		    const signTitle = document.getElementById('signTitle').innerText;
 		    const signType = document.getElementById('signType').innerText == '서명' ? 'SI' : 'ST';
 		    const repYn = document.getElementById('repYn').innerText;
+
+		    let regTime = document.getElementById('regTime').innerText;
+		    let modTime = document.getElementById('modTime').innerText;
+		    
+		    regTime = regTime.replace(' ', 'T');
+		    regTime = regTime.replaceAll(/\./gi, '-');
+		    
+		    if(modTime != null) {
+		    	modTime = modTime.replace(' ', 'T');
+			    modTime = modTime.replaceAll(/\./g, '-');
+		    }
 		    
 		    document.getElementById('edit_sign_title').value = signTitle;
 		    document.getElementById('edit_sign_type').value = signType;
+		    document.getElementById('edit_reg_time').value = regTime;
+		    document.getElementById('edit_mod_time').value = (modTime != '-' ? modTime : null);
 		    
 		    
 		    if(repYn == 'O') {

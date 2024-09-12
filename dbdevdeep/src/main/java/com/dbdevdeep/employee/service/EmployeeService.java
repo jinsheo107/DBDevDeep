@@ -137,6 +137,22 @@ public class EmployeeService {
 		return employeeDtoList;
 	}
 	
+	// 전체 직원 목록
+	public List<EmployeeDto> selectEmployeeList() {
+		List<Employee> employeeList = employeeRepository.findAll();
+
+		List<EmployeeDto> employeeDtoList = new ArrayList<EmployeeDto>();
+		for(Employee e : employeeList) {
+			EmployeeDto dto = new EmployeeDto().toDto(e);
+			dto.setDept_code(e.getDepartment().getDeptCode());
+			dto.setDept_name(e.getDepartment().getDeptName());
+			dto.setJob_code(e.getJob().getJobCode());
+			dto.setJob_name(e.getJob().getJobName());
+			employeeDtoList.add(dto);
+		}
+		return employeeDtoList;
+	}
+	
 	public EmployeeDto selectEmployeeOne(String writer_id) {
 		Employee employee = employeeRepository.findByempId(writer_id);
 		EmployeeDto dto = null;
@@ -209,10 +225,13 @@ public class EmployeeService {
 			Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 			User user = (User)authentication.getPrincipal();
 			
+			// login 계정 내용
 			Employee employee = employeeRepository.findByempId(user.getUsername());
 			
+			// 현재 시간
 			LocalDateTime ldt = LocalDateTime.now();
 			
+			// 서명 등록 시 대표 여부 Y이며 DB에 대표 여부 Y 존재 시 DB의 Y는 N으로 변경
 			if(dto.getRep_yn() != null) {
 				List<MySign> signList = mySignRepository.findByEmpIdAndRepYn(user.getUsername());
 				
@@ -237,7 +256,8 @@ public class EmployeeService {
 				}
 			}
 			
-			if(dto.getReg_time() != null) {
+			// update 시
+			if(dto.getSign_no() != null) {
 				dto.setMod_time(ldt);
 			}
 			

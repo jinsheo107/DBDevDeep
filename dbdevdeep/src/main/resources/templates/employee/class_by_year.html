@@ -16,39 +16,6 @@ div.dataTables_wrapper div.dataTables_paginate ul.pagination {
 	<!-- Page wrapper  -->
 	<!-- ============================================================== -->
 	<div class="page-wrapper">
-		<!-- ============================================================== -->
-		<!-- Bread crumb and right sidebar toggle -->
-		<!-- ============================================================== -->
-		<div class="page-breadcrumb">
-			<div class="row">
-				<div class="col-7 align-self-center">
-					<h4 class="page-title text-truncate text-dark font-weight-medium mb-1">Basic Table</h4>
-					<div class="d-flex align-items-center">
-						<nav aria-label="breadcrumb">
-							<ol class="breadcrumb m-0 p-0">
-								<li class="breadcrumb-item"><a href="index.html" class="text-muted">Home</a></li>
-								<li class="breadcrumb-item text-muted active" aria-current="page">Library</li>
-							</ol>
-						</nav>
-					</div>
-				</div>
-				<div class="col-5 align-self-center">
-					<div class="customize-input float-right">
-						<select class="custom-select custom-select-set form-control bg-white border-0 custom-shadow custom-radius">
-							<option selected>Aug 19</option>
-							<option value="1">July 19</option>
-							<option value="2">Jun 19</option>
-						</select>
-					</div>
-				</div>
-			</div>
-		</div>
-		<!-- ============================================================== -->
-		<!-- End Bread crumb and right sidebar toggle -->
-		<!-- ============================================================== -->
-		<!-- ============================================================== -->
-		<!-- Container fluid  -->
-		<!-- ============================================================== -->
 		<div class="container-fluid">
 			<!-- ============================================================== -->
 			<!-- Start Page Content -->
@@ -107,17 +74,19 @@ div.dataTables_wrapper div.dataTables_paginate ul.pagination {
 				<div class="modal-dialog">
 					<div class="modal-content">
 						<div class="modal-header modal-colored-header bg-info">
-							<h4 class="modal-title" id="info-header-modalLabel">반 수정</h4>
+							<h4 class="modal-title" id="info-header-modalLabel">반 생성</h4>
 							<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
 						</div>
 						<div class="modal-body">
+							<div class="text-center">생성하실 반 개수를 선택해주세요</div>
+							<hr>
 							<form class="pl-3 pr-3" id="gradeForm">
 								<input type="hidden" id="csrf_token" th:value="${_csrf.token}">
 								<div class="form-group">
-									<label for="t_year">학년도</label> 
+									<label for="t_year">학년도 <span style="color: red;">*</span></label> 
 									<select id="t_year" name="t_year" class="form-control">
 									
-								    </select>
+								  </select>
 								</div>
 								<div id="gradeDiv">
 								
@@ -213,6 +182,12 @@ div.dataTables_wrapper div.dataTables_paginate ul.pagination {
             const label = document.createElement('label');
             label.setAttribute('for', `grade_${i}`);
             label.textContent = `${i}학년`;
+            
+            const span = document.createElement('span');
+            span.textContent = ` *`;
+            span.style.color = 'red';
+            
+            label.appendChild(span);
 
             const input = document.createElement('input');
             input.className = 'form-control';

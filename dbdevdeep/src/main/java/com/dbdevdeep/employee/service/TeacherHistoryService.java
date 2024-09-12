@@ -75,16 +75,26 @@ public class TeacherHistoryService {
 		return result;
 	}
 	
-	public void saveTeacherHistory(int grade, int gradeClass, String t_year) {
-		TeacherHistoryDto dto = new TeacherHistoryDto();
+	public int saveTeacherHistory(int grade, int gradeClass, String t_year) {
+		int result = -1;
 		
-		dto.setGrade(grade);
-		dto.setGrade_class(gradeClass);
-		dto.setT_year(t_year);
+		try {
+			TeacherHistoryDto dto = new TeacherHistoryDto();
+			
+			dto.setGrade(grade);
+			dto.setGrade_class(gradeClass);
+			dto.setT_year(t_year);
+			
+			TeacherHistory th = dto.toEntity();
+			
+			teacherHistoryRepository.save(th);
+			
+			result = 1;
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
 		
-		TeacherHistory th = dto.toEntity();
-		
-		teacherHistoryRepository.save(th);
+		return result;
 	}
 	
 	public int addTeacher(TeacherHistoryDto dto) {
@@ -101,6 +111,7 @@ public class TeacherHistoryService {
 					.build();
 			
 			teacherHistoryRepository.save(th);
+			
 			result = 1;
 		} catch(Exception e) {
 			e.printStackTrace();
@@ -143,6 +154,37 @@ public class TeacherHistoryService {
 		}
 		
 		return resultDto;
+	}
+	
+	public int deleteByTYear(String t_year) {
+		int result = -1;
+		
+		try {
+			teacherHistoryRepository.deleteByTYear(t_year);
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+		
+		return result;
+	}
+	
+	public int deleteByGradeClassTyear(int grade, int grade_class, String t_year) {
+		int result = -1;
+		
+		try {
+			Long teacherNo = teacherHistoryRepository.selectByGradeClassTyear(grade, grade_class, t_year);
+			teacherHistoryRepository.deleteById(teacherNo);
+			
+			result = 1;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return result;
+	}
+	
+	public int tYearGradeCount(String t_year, int grade) {
+		return teacherHistoryRepository.countByTyearGrade(t_year, grade);
 	}
 	
 	

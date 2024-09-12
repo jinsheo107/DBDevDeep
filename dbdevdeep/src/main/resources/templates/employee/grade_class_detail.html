@@ -26,39 +26,6 @@ td span {
 	<!-- Page wrapper  -->
 	<!-- ============================================================== -->
 	<div class="page-wrapper">
-		<!-- ============================================================== -->
-		<!-- Bread crumb and right sidebar toggle -->
-		<!-- ============================================================== -->
-		<div class="page-breadcrumb">
-			<div class="row">
-				<div class="col-7 align-self-center">
-					<h4 class="page-title text-truncate text-dark font-weight-medium mb-1">Basic Table</h4>
-					<div class="d-flex align-items-center">
-						<nav aria-label="breadcrumb">
-							<ol class="breadcrumb m-0 p-0">
-								<li class="breadcrumb-item"><a href="index.html" class="text-muted">Home</a></li>
-								<li class="breadcrumb-item text-muted active" aria-current="page">Library</li>
-							</ol>
-						</nav>
-					</div>
-				</div>
-				<div class="col-5 align-self-center">
-					<div class="customize-input float-right">
-						<select class="custom-select custom-select-set form-control bg-white border-0 custom-shadow custom-radius">
-							<option selected>Aug 19</option>
-							<option value="1">July 19</option>
-							<option value="2">Jun 19</option>
-						</select>
-					</div>
-				</div>
-			</div>
-		</div>
-		<!-- ============================================================== -->
-		<!-- End Bread crumb and right sidebar toggle -->
-		<!-- ============================================================== -->
-		<!-- ============================================================== -->
-		<!-- Container fluid  -->
-		<!-- ============================================================== -->
 		<div class="container-fluid">
 			<!-- ============================================================== -->
 			<!-- Start Page Content -->
@@ -74,7 +41,7 @@ td span {
 									<button type="button" class="btn waves-effect waves-light btn-outline-secondary" style="margin: 4px;" onclick="location.href='/class-year';">목록</button>
 								</div>
 								<div class="col-6 d-flex justify-content-end">
-									<button type="button" class="btn waves-effect waves-light btn-primary m-1" data-toggle="modal" data-target="#class_create_modal">반 수정</button>
+									<button type="button" class="btn waves-effect waves-light btn-primary m-1" data-toggle="modal" data-target="#class_edit_modal">반 수정</button>
 
 								</div>
 							</div>
@@ -235,6 +202,55 @@ td span {
 				<!-- /.modal-dialog -->
 			</div>
 			<!-- /.modal -->
+			
+			<!-- 반 수정 모달 -->
+			<div id="class_edit_modal" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+				<div class="modal-dialog">
+					<div class="modal-content">
+						<div class="modal-header modal-colored-header bg-info">
+							<h4 class="modal-title" id="info-header-modalLabel">반 생성</h4>
+							<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+						</div>
+						<div class="modal-body">
+							<div class="text-center">재생성하실 반 개수를 선택해주세요</div>
+							<hr>
+							<form class="pl-3 pr-3" id="editClassForm">
+								<input type="hidden" id="csrf_token" th:value="${_csrf.token}">
+								<div class="form-group">
+									<label for="t_year">학년도 <span style="color: red;">*</span></label> 
+									<select id="t_year" name="t_year" class="form-control">
+										<option th:text="${resultList[0].t_year + ' 년도'}" th:value="${resultList[0].t_year}"></option>
+								  </select>
+								</div>
+								<div id="gradeDiv">
+									<label for="grade_1">1학년 <span style="color: red;">*</span></label>
+									<input type="number" class="form-control" name="grade_1" id="grade_1" min="0" max="9" th:value="${GCR.grade_1}">
+									<label for="grade_2">2학년 <span style="color: red;">*</span></label>
+									<input type="number" class="form-control" name="grade_2" id="grade_2" min="0" max="9" th:value="${GCR.grade_2}">
+									<label for="grade_3">3학년 <span style="color: red;">*</span></label>
+									<input type="number" class="form-control" name="grade_3" id="grade_3" min="0" max="9" th:value="${GCR.grade_3}">
+									<label for="grade_4">4학년 <span style="color: red;">*</span></label>
+									<input type="number" class="form-control" name="grade_4" id="grade_4" min="0" max="9" th:value="${GCR.grade_4}">
+									<label for="grade_5">5학년 <span style="color: red;">*</span></label>
+									<input type="number" class="form-control" name="grade_5" id="grade_5" min="0" max="9" th:value="${GCR.grade_5}">
+									<label for="grade_6">6학년 <span style="color: red;">*</span></label>
+									<input type="number" class="form-control" name="grade_6" id="grade_6" min="0" max="9" th:value="${GCR.grade_6}">
+								</div>
+								<br>
+								<div class="d-flex justify-content-end">
+									<button type="button" class="btn waves-effect waves-light btn-light m-1" data-dismiss="modal" aria-hidden="true">취소</button>
+									<button type="submit" class="btn waves-effect waves-light btn-primary m-1" id="editClass">반 수정</button>
+								</div>
+							</form>
+							
+
+						</div>
+					</div>
+					<!-- /.modal-content -->
+				</div>
+				<!-- /.modal-dialog -->
+			</div>			
+			
 			<script>
 				$('.teacher-span').on('click', function() {
 			        var grade = $(this).data('grade');
@@ -349,6 +365,52 @@ td span {
 					}
 				});
 				
+				const editClassForm = document.getElementById('editClassForm');
+				editClassForm.addEventListener('submit', (e) => {
+					e.preventDefault();
+					
+					const payload = new FormData(editClassForm);
+					const csrfToken = document.getElementById('csrf_token').value;
+					
+					const obj = {};
+          payload.forEach((value, key) => {
+          	obj[key] = value;
+          });
+          const jsonData = JSON.stringify(obj);
+
+					fetch('/class-year/' + obj.t_year, {
+						method: 'PUT',
+						headers: {
+							'Accept': 'application/json',
+							'Content-Type': 'application/json',
+							'X-CSRF-TOKEN': csrfToken
+						},
+						body: jsonData
+					})
+					.then(response => response.json())
+					.then(data => {
+						console.log(data);
+						if(data.res_code == '200'){
+								Swal.fire({
+									icon :'success',
+									title:'성공',
+									text : data.res_msg,
+									confirmButtonText:"닫기"
+								}).then((result)=>{
+									location.href="/class-year/" + editClassForm.t_year.value;
+								});
+							} else {
+								Swal.fire({
+									icon:'error',
+									title:'실패',
+									text: data.res_msg,
+									confirmButtonText:"닫기"
+								});
+							}
+					}).catch(error => {
+				        console.error('Error:', error);
+				    });
+				});
 				
 			</script>
 			<!-- ============================================================== -->
