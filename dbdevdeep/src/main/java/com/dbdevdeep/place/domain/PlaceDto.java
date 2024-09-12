@@ -18,16 +18,17 @@ import lombok.ToString;
 @ToString
 @Builder
 public class PlaceDto {
-	//엔티티로 연결했으니, 얘는 가공해서 사용하는애야
+	
 
 	private Long place_no;
-	private String emp_id; // 엔티티에선 Employee employee가 맞지만 여기선 가공해서 사용하기에 String타입으로
+	private String emp_id; 
+	
 	private String place_name;
 	private String place_location;
 	private String place_content;
 	private String place_status;
-	private int place_start_time;
-	private int place_end_time;
+	private String place_start_time;
+	private String place_end_time;
 	private String unuseable_reason;
 	private String unuseable_start_date;
 	private String unuseable_end_date;
@@ -36,10 +37,13 @@ public class PlaceDto {
 	private LocalDateTime reg_date;
 	private LocalDateTime mod_date;
 
+	// 포맷된 시간 범위
+	private String formattedTimeRange;
 	
 	public Place toEntity() {
 		return Place.builder()
-				.placeNo(place_no)
+				.placeNo(0L)
+				
 				.placeName(place_name)
 				.placeLocation(place_location)
 				.placeContent(place_content)
@@ -57,15 +61,19 @@ public class PlaceDto {
 	}
 	
 	public PlaceDto toDto (Place place) {
+		
+		
 		return PlaceDto.builder()
 				.place_no(place.getPlaceNo())
 				.emp_id(place.getEmployee().getEmpId())
+				
 				.place_name(place.getPlaceName())
 				.place_location(place.getPlaceLocation())
 				.place_content(place.getPlaceContent())
 				.place_status(place.getPlaceStatus())
 				.place_start_time(place.getPlaceStarttime())
 				.place_end_time(place.getPlaceEndtime())
+
 				.unuseable_reason(place.getUnuseableReason())
 				.unuseable_start_date(place.getUnuseableStartDate())
 				.unuseable_end_date(place.getUnuseableEndDate())
