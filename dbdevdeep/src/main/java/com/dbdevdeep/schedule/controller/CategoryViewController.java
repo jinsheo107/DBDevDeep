@@ -37,7 +37,7 @@ public class CategoryViewController {
 		model.addAttribute("publicCategoryList", publicCategoryList);
 		model.addAttribute("privateCategoryList", privateCategoryList);
 		
-		return "schedule/category_list";
+		return "schedule/category";
 	}
 	
 	@ResponseBody
