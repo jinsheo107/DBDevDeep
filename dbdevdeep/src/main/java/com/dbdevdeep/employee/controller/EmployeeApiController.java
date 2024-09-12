@@ -92,7 +92,7 @@ public class EmployeeApiController {
 
 			if (employeeService.employeeSignAdd(dto) > 0) {
 				resultMap.put("res_code", "200");
-				resultMap.put("res_msg", "계정 등록에 성공하였습니다.");
+				resultMap.put("res_msg", "서명 등록에 성공하였습니다.");
 			}
 		} else {
 			resultMap.put("res_msg", "파일 업로드가 실패하였습니다.");

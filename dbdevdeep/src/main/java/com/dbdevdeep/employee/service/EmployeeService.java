@@ -209,6 +209,32 @@ public class EmployeeService {
 			
 			Employee employee = employeeRepository.findByempId(user.getUsername());
 			
+			if(dto.getRep_yn() != null) {
+				List<MySign> signList = mySignRepository.findByEmpIdAndRepYn(user.getUsername());
+				
+				if(signList != null) {
+					for(int i = 0; i < signList.size(); i++) {
+						MySignDto msDto = new MySignDto().toDto(signList.get(i));
+						
+						msDto.setSign_type("N");
+						
+						MySign ms = MySign.builder()
+								.signNo(msDto.getSign_no())
+								.signTitle(msDto.getSign_title())
+								.signType(msDto.getSign_type())
+								.oriPicName(msDto.getOri_pic_name())
+								.newPicName(msDto.getNew_pic_name())
+								.regTime(msDto.getReg_time())
+								.modTime(msDto.getMod_time())
+								.repYn("N")
+								.employee(employee)
+								.build();
+						
+						mySignRepository.save(ms);
+					}
+				}
+			}
+			
 			MySign ms = MySign.builder()
 					.signNo(dto.getSign_no())
 					.signTitle(dto.getSign_title())
