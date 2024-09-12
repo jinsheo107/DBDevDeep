@@ -1,18 +1,61 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
-     xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-     layout:decorate="~{include/place_layout}">
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{include/place_layout}">
 <th:block layout:fragment="content">
+
+	<!-- 데이터테이블 쓰려면 이 CSS필수야 -->
+	<!-- This page plugin CSS -->
+	<link
+		href="/assets/extra-libs/datatables.net-bs4/css/dataTables.bootstrap4.css"
+		rel="stylesheet">
+	<link href="/dist/css/style.min.css" rel="stylesheet">
+	<body>
 <style>
+
+	/* a 태그 속성 제거 */
+	a {
+	    text-decoration: none; /* 밑줄 제거 */
+	    color: inherit;        /* 기본 색상 제거, 부모 요소의 색상 사용 */
+	    cursor: pointer;       /* 커서 스타일 변경 */
+	}	
+	/* a 태그 호버 시 스타일 */
+	a:hover {
+	    text-decoration: none; /* 호버 시 밑줄 추가 */
+	    color: inherit;           /* 호버 시 색상 변경 */
+	}
+
+
 	div.dataTables_wrapper div.dataTables_paginate ul.pagination {
-	  margin: 2px 0;
 	  white-space: nowrap;
 	  justify-content: center;
-	}	
+	  margin-top:25px;
+	}
+
+	/* DataTables 검색 영역을 Flexbox로 설정하여 수평 및 수직 정렬 */
+	div.dataTables_wrapper div.dataTables_filter {
+	  display: flex; /* Flexbox 사용 */
+	  align-items: center; /* 수직 가운데 정렬 */
+	  justify-content: flex-end; /* 오른쪽 정렬 */
+	  margin-bottom: 0; /* 하단 여백 제거 */
+	}
+	
+	/* 검색 input 필드 스타일 */
+	div.dataTables_wrapper div.dataTables_filter input {
+	  margin-left: 0.5em; /* 왼쪽 여백 추가 */
+	  display: inline-block; /* 인라인 블록 설정 */
+	  width: auto; /* 너비 자동 설정 */
+	  height: 30px; /* input 높이 설정 */
+	  vertical-align: middle; /* 수직 정렬 */
+	  box-sizing: border-box; /* 박스 크기 설정 */
+	}
+	
+div.dataTables_wrapper div.dataTables_paginate ul.pagination {
+	margin: 2px 0;
+	white-space: nowrap;
+	justify-content: center;
+}
 </style>
-
-
-<body>
 		<!-- ============================================================== -->
 		<!-- Page wrapper  -->
 		<!-- ============================================================== -->
@@ -23,23 +66,10 @@
 			<div class="page-breadcrumb">
 				<div class="row">
 					<div class="col-7 align-self-center">
-						<h4 class="page-title text-truncate text-dark font-weight-medium mb-1">장소 목록</h4>
+						<h4
+							class="page-title text-truncate text-dark font-weight-medium mb-1">장소 목록</h4>
 						<div class="d-flex align-items-center">
-							<nav aria-label="breadcrumb">
-								<ol class="breadcrumb m-0 p-0">
-									<li class="breadcrumb-item"><a href="index.html" class="text-muted">Home</a></li>
-									<li class="breadcrumb-item text-muted active" aria-current="page">Library</li>
-								</ol>
-							</nav>
-						</div>
-					</div>
-					<div class="col-5 align-self-center">
-						<div class="customize-input float-right">
-							<select class="custom-select custom-select-set form-control bg-white border-0 custom-shadow custom-radius">
-								<option selected>Aug 19</option>
-								<option value="1">July 19</option>
-								<option value="2">Jun 19</option>
-							</select>
+			
 						</div>
 					</div>
 				</div>
@@ -54,92 +84,123 @@
 				<!-- ============================================================== -->
 				<!-- Start Page Content -->
 				<!-- ============================================================== -->
-                <div class="row">
-                    <div class="col-12">
-                        <div class="card">
-                            <div class="card-body">
-		                        <div class="row mb-2">
-		                        	<div class="col-6 d-flex justify-content-start">
-			                            
-		                        	</div>
-		                        	<div class="col-6 d-flex justify-content-end">
-			                            
-			                            <button type="button" class="btn waves-effect waves-light btn-primary m-1">등록</button>
-		                        	</div>
-	                            </div>
-                                <div class="table-responsive">
-                                    <table id="notice_config" class="table table-hover table-bordered no-wrap" style="width:100%">
-                                        <thead>
-                                            <tr>
-                                                <th>장소번호</th>
-                                                <th>장소명</th>
-                                                <th>위치</th>
-                                                <th>사용 가능 시간</th>
-                                                <th>사용 가능 여부</th>
-                                                <th>사용 불가 일</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                        	
-                                        	
-                                           
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <!-- ============================================================== -->
-                <!-- End PAge Content -->
-                <!-- ============================================================== -->
-                <!-- ============================================================== -->
-                <!-- Right sidebar -->
-                <!-- ============================================================== -->
-                <!-- .right-sidebar -->
-                <!-- ============================================================== -->
-                <!-- End Right sidebar -->
-                <!-- ============================================================== -->
-            </div>
-            <!-- ============================================================== -->
-            <!-- End Container fluid  -->
-            <!-- ============================================================== -->
-            <!-- ============================================================== -->
-            <!-- footer -->
-            <!-- ============================================================== -->
-            <footer class="footer text-center text-muted">
-                All Rights Reserved by Adminmart. Designed and Developed by <a
-                    href="https://wrappixel.com">WrapPixel</a>.
-            </footer>
-            <!-- ============================================================== -->
-            <!-- End footer -->
-            <!-- ============================================================== -->
-        </div>
-        <!-- ============================================================== -->
-        <!-- End Page wrapper  -->
-        <!-- ============================================================== -->
-    <!-- All Jquery -->
-    <!-- ============================================================== -->
-    <script src="assets/libs/jquery/dist/jquery.min.js"></script>
-    <!-- Bootstrap tether Core JavaScript -->
-    <script src="assets/libs/popper.js/dist/umd/popper.min.js"></script>
-    <script src="assets/libs/bootstrap/dist/js/bootstrap.min.js"></script>
-    <!-- apps -->
-    <!-- apps -->
-    <script src="dist/js/app-style-switcher.js"></script>
-    <script src="dist/js/feather.min.js"></script>
-    <!-- slimscrollbar scrollbar JavaScript -->
-    <script src="assets/libs/perfect-scrollbar/dist/perfect-scrollbar.jquery.min.js"></script>
-    <script src="assets/extra-libs/sparkline/sparkline.js"></script>
-    <!--Wave Effects -->
-    <!-- themejs -->
-    <!--Menu sidebar -->
-    <script src="dist/js/sidebarmenu.js"></script>
-    <!--Custom JavaScript -->
-    <script src="dist/js/custom.min.js"></script>
-    <!--This page plugins -->
-    <script src="assets/extra-libs/datatables.net/js/jquery.dataTables.min.js"></script>
-    <script src="dist/js/pages/datatable/datatable-basic.init.js"></script>
-</body>
+				<div class="row">
+					<div class="col-12">
+						<div class="card">
+							<div class="card-body">
+								<div class="row mb-2">
+									<div class="col-6 d-flex justify-content-start"></div>
+									<div class="col-6 d-flex justify-content-end">
 
+										<button type="button" onclick="location.href='/place/create'"
+											class="btn waves-effect waves-light btn-primary m-1" sec:authorize="hasAnyAuthority('D3')">등록</button>
+
+
+									</div>
+								</div>
+
+								<div class="table-responsive">
+
+									<table id="place_list"
+										class="table table-hover table-bordered no-wrap">
+										<thead>
+
+											<tr>
+												<th>장소번호</th>
+												<th>장소명</th>
+												<th>위치</th>
+												<th>사용 가능 시간</th>
+												<th>사용 가능 여부</th>
+												<th>사용 불가 일</th>
+											</tr>
+										</thead>
+										<tbody>
+											<th:block th:if="${#lists.isEmpty(resultList)}">
+												<tr>
+													<td colspan="6">해당하는 글이 없습니다.</td>
+												</tr>
+											</th:block>
+											<th:block th:if="${!#lists.isEmpty(resultList)}">
+												<tr th:each="place, placeStat : ${resultList}">
+													<td th:text="${place.place_no}"></td>
+													<td>
+														<a th:href="@{/place/{placeNo}(placeNo=${place.place_no})}">
+													 		<span th:text="${place.place_name}"></span>
+														 </a>
+													 </td>
+													<td th:text="${place.place_location}"></td>
+													<td th:text="${place.formattedTimeRange}"></td>
+													<td
+														th:text="${place.place_status == 'Y' ? '사용가능' : '사용 불가능'}"></td>
+													<td
+														th:text="${place.unuseable_start_date != null ? place.unuseable_start_date : ''} + ' - ' + ${place.unuseable_end_date != null ? place.unuseable_end_date : ''}"></td>
+
+												</tr>
+
+											</th:block>
+
+										</tbody>
+									</table>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+
+
+
+				<!-- ============================================================== -->
+				<!-- End Page Content -->
+				<!-- ============================================================== -->
+				<!-- ============================================================== -->
+				<!-- Right sidebar -->
+				<!-- ============================================================== -->
+				<!-- .right-sidebar -->
+				<!-- ============================================================== -->
+				<!-- End Right sidebar -->
+				<!-- ============================================================== -->
+			</div>
+			<!-- ============================================================== -->
+			<!-- End Container fluid  -->
+			<!-- ============================================================== -->
+			<!-- ============================================================== -->
+			<!-- footer -->
+			<!-- ============================================================== -->
+			<footer class="footer text-center text-muted">
+				All Rights Reserved by Adminmart. Designed and Developed by <a
+					href="https://wrappixel.com">WrapPixel</a>.
+			</footer>
+			<!-- ============================================================== -->
+			<!-- End footer -->
+			<!-- ============================================================== -->
+		</div>
+		<!-- ============================================================== -->
+		<!-- End Page wrapper  -->
+		<!-- ============================================================== -->
+		<!-- All Jquery -->
+		<!-- ============================================================== -->
+		<script src="assets/libs/jquery/dist/jquery.min.js"></script>
+		<!-- Bootstrap tether Core JavaScript -->
+		<script src="assets/libs/popper.js/dist/umd/popper.min.js"></script>
+		<script src="assets/libs/bootstrap/dist/js/bootstrap.min.js"></script>
+		<!-- apps -->
+		<!-- apps -->
+		<script src="dist/js/app-style-switcher.js"></script>
+		<script src="dist/js/feather.min.js"></script>
+		<!-- slimscrollbar scrollbar JavaScript -->
+		<script
+			src="assets/libs/perfect-scrollbar/dist/perfect-scrollbar.jquery.min.js"></script>
+		<script src="assets/extra-libs/sparkline/sparkline.js"></script>
+		<!--Wave Effects -->
+		<!-- themejs -->
+		<!--Menu sidebar -->
+		<script src="dist/js/sidebarmenu.js"></script>
+		<!--Custom JavaScript -->
+		<script src="dist/js/custom.min.js"></script>
+		<!--This page plugins -->
+		<script
+			src="assets/extra-libs/datatables.net/js/jquery.dataTables.min.js"></script>
+		<script src="dist/js/pages/datatable/datatable-basic.init.js"></script>
+	</body>
 </html>
