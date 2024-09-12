@@ -21,13 +21,18 @@ import lombok.ToString;
 public class ScheduleDto {
 	private Long schedule_no;
 	private int calendar_type;
+	
+	private Long category_no;
+	private String category_color;
+	private String emp_id;
+	
 	private String schedule_title;
 	private String schedule_content;
 	private LocalDateTime start_time;
 	private LocalDateTime end_time;
 	private String is_all_day;
 	private String schedule_place;
-	private String recurrence;
+	private String repeat_type;
 	private Date repeat_start_date;
 	private Date repeat_end_date;
 	private LocalDateTime reg_time;
@@ -43,7 +48,7 @@ public class ScheduleDto {
 				.endTime(end_time)
 				.isAllDay(is_all_day)
 				.schedulePlace(schedule_place)
-				.recurrence(recurrence)
+				.repeatType(repeat_type)
 				.repeatStartDate(repeat_start_date)
 				.repeatEndDate(repeat_end_date)
 				.regTime(reg_time)
@@ -55,13 +60,16 @@ public class ScheduleDto {
 		return ScheduleDto.builder()
 				.schedule_no(schedule.getScheduleNo())
 				.calendar_type(schedule.getCalendarType())
+				.category_no(schedule.getCategory().getCategoryNo())
+				.category_color(schedule.getCategory().getCategoryColor())
+				.emp_id(schedule.getEmployee().getEmpId())
 				.schedule_title(schedule.getScheduleTitle())
 				.schedule_content(schedule.getScheduleContent())
 				.start_time(schedule.getStartTIme())
 				.end_time(schedule.getEndTime())
 				.is_all_day(schedule.getIsAllDay())
 				.schedule_place(schedule.getSchedulePlace())
-				.recurrence(schedule.getRecurrence())
+				.repeat_type(schedule.getRepeatType())
 				.repeat_start_date(schedule.getRepeatStartDate())
 				.repeat_end_date(schedule.getRepeatEndDate())
 				.reg_time(schedule.getRegTime())
