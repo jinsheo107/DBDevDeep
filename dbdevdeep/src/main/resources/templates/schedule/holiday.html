@@ -10,6 +10,14 @@
 </head>
 <th:block layout:fragment="content">
 	<style>
+		.form-control{
+			margin-left:0px !important;
+		}
+		
+		.justify-content-end{
+			padding:0px !important;
+		}
+		
     	body{
     		color:#212529 !important;
     	}
@@ -270,6 +278,11 @@
 	            .then(data => handleResponse(data, "수정"))
 	            .catch(error => console.error('수정 오류:', error));
 	        });
+	        
+	     	// 전체 선택 체크박스 클릭 시 모든 체크박스 선택/해제
+		    $('#selectAllCheckbox').on('click', function() {
+		        $('.holidayCheckbox').prop('checked', this.checked);
+		    });
 	
 	        // 삭제 버튼 클릭 시
 	        $('#deleteButton').on('click', function () {
@@ -289,7 +302,7 @@
 	                showCancelButton: true,
 	                confirmButtonColor: '#5f76e8',
 	                cancelButtonColor: '#e8eaec',
-	                confirmButtonText: '삭제',
+	                confirmButtonText: '확인',
 	                cancelButtonText: '취소',
 	                customClass: {
 	                    cancelButton: 'custom-cancel-button'
@@ -492,14 +505,48 @@
                     <div class="col-12">
                         <div class="card">
                             <div class="card-body" style="padding:50px 80px">
-		                        <div class="row mb-2">
-		                        	<div class="col-6 d-flex justify-content-start" style="padding-top:10px; padding-left:0px;">
-			                            <div style="font-size:36px; font-weight:bolder">휴일관리</div>
-		                        	</div>
-		                        	<div class="col-6 d-flex justify-content-end" style="padding:0;">
-			                            <button type="button" class="btn waves-effect waves-light btn-light m-2" id="deleteButton">삭제</button>
-			                            <button type="button" class="btn waves-effect waves-light btn-primary m-2" data-toggle="modal" data-target="#holidayCreateModal">등록</button>
-			                            
+		                        <div class="row" style="margin-left:0px !important; margin-right:0px !important;">
+				                    <div class="col d-flex justify-content-start align-items-center" style="padding-left:0px; max-width:140px;">
+				                        <div style="font-size:30px;">휴일 관리</div>
+				                    </div>		                        
+	                            	<div class="col d-flex justify-content-end">
+				                        <button type="button" style="width:80px; height:50px;" class="btn waves-effect waves-light btn-light m-1" id="deleteButton">삭제</button>
+				                        <button type="button" style="width:80px; height:50px;" class="btn waves-effect waves-light btn-primary m-1" data-toggle="modal" data-target="#holidayCreateModal">등록</button>
+	                            	</div>								
+								</div>
+                                <div class="table-responsive" style="margin-top:10px;">
+                                    <table id="holiday_config" class="table table-hover table-bordered no-wrap" style="width:100%">
+                                        <thead>
+                                            <tr>
+                                                <th scope="col" class="checkbox-cell"><input type="checkbox" id="selectAllCheckbox"></th>
+                                                <th scope="col">번호</th>
+												<th scope="col">휴일명</th>
+												<th scope="col">날짜</th>
+												<th scope="col">매년반복여부</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+											<tr th:each="holiday, holidayStat : ${resultList}">
+												<td><input type="checkbox" class="holidayCheckbox" style="padding-top:5px;" th:value="${holiday.holiday_no}"></td>
+												<td scope="row" th:text="${holidayStat.count}"></td>
+												<td th:text="${holiday.holiday_name}" th:value="${holiday.holiday_no}"></td>
+												<td th:text="${holiday.start_date.equals(holiday.end_date) ? #dates.format(holiday.start_date, 'yyyy-MM-dd') : #dates.format(holiday.start_date, 'yyyy-MM-dd') + ' ~ ' + #dates.format(holiday.end_date, 'yyyy-MM-dd')}"></td>
+												<td th:text="${holiday.repeat_type == 'NONE' ? 'N' : 'Y'}"></td>
+											</tr>
+										</tbody>
+                                        
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
 			                            <!-- 상세보기 모달 HTML -->
 										<div class="modal fade" id="holidayDetailModal" tabindex="-1" role="dialog" aria-labelledby="holidayDetailModalLabel">
 										    <div class="modal-dialog modal-dialog-centered" style="max-width:50%; width: 50%;">
@@ -594,7 +641,7 @@
 										
 										<!-- 수정 모달 HTML -->
 										<div class="modal fade" id="holidayEditModal" tabindex="-1" role="dialog" aria-labelledby="holidayEditModalLabel">
-										    <div class="modal-dialog modal-dialog-centered" style="max-width:50%; width: 50%;">
+										    <div class="modal-dialog modal-dialog-centered" style="max-width:55%; width: 55%;">
 										        <div class="modal-content">
 										            <div class="modal-header modal-colored-header bg-primary" style="display: flex; align-items: center; justify-content: space-between; font-size: 25px;">
 										                <div class="modal-title" id="holidayEditModalLabel">휴일 수정</div>
@@ -662,60 +709,6 @@
 										        </div>
 										    </div>
 										</div>
-										
-	                            	</div>
-                                <div class="table-responsive" style="margin-top:20px;">
-                                    <table id="holiday_config" class="table table-hover table-bordered no-wrap" style="width:100%">
-                                        <thead>
-                                            <tr>
-                                                <th scope="col" class="checkbox-cell"><input type="checkbox" id="selectAllCheckbox"></th>
-                                                <th scope="col">번호</th>
-												<th scope="col">휴일명</th>
-												<th scope="col">날짜</th>
-												<th scope="col">매년반복여부</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-											    <tr th:each="holiday, holidayStat : ${resultList}">
-											        <td><input type="checkbox" class="holidayCheckbox" style="padding-top:5px;" th:value="${holiday.holiday_no}"></td>
-											        <td scope="row" th:text="${holidayStat.count}"></td>
-											        <td th:text="${holiday.holiday_name}" th:value="${holiday.holiday_no}"></td>
-											        <td th:text="${holiday.start_date.equals(holiday.end_date) ? #dates.format(holiday.start_date, 'yyyy-MM-dd') : #dates.format(holiday.start_date, 'yyyy-MM-dd') + ' ~ ' + #dates.format(holiday.end_date, 'yyyy-MM-dd')}"></td>
-											        <td th:text="${holiday.repeat_type == 'NONE' ? 'N' : 'Y'}"></td>
-											    </tr>
-										</tbody>
-                                        
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <!-- ============================================================== -->
-                <!-- End PAge Content -->
-                <!-- ============================================================== -->
-                <!-- ============================================================== -->
-                <!-- Right sidebar -->
-                <!-- ============================================================== -->
-                <!-- .right-sidebar -->
-                <!-- ============================================================== -->
-                <!-- End Right sidebar -->
-                <!-- ============================================================== -->
-            </div>
-            <!-- ============================================================== -->
-            <!-- End Container fluid  -->
-            <!-- ============================================================== -->
-            <!-- ============================================================== -->
-            <!-- footer -->
-            <!-- ============================================================== -->
-            <!-- ============================================================== -->
-            <!-- End footer -->
-            <!-- ============================================================== -->
-        </div>
-        <!-- ============================================================== -->
-        <!-- End Page wrapper  -->
-        <!-- ============================================================== -->
-    </div>
     <!-- All Jquery -->
     <!-- ============================================================== -->
     <script src="/assets/libs/jquery/dist/jquery.min.js"></script>

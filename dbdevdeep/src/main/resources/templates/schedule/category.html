@@ -8,6 +8,10 @@
     <!-- Custom CSS -->
     <link href="/dist/css/style.min.css" rel="stylesheet">
     <style>
+    	.form-control{
+			margin-left:0px !important;
+		}
+		
     	body{
     		color:#212529 !important;
     	}
@@ -26,7 +30,7 @@
 		.list-group-item{
 			border: none;
 			text-align: center;
-			font-size:20px;
+			font-size:18px;
 			margin-bottom:0px !important;
 			cursor: pointer;
 		}
@@ -137,9 +141,9 @@
 				        <div class="card">
 				            <div class="card-body" style="padding:50px 80px">
 				                <!-- "범주관리" 타이틀과 하단 선 -->
-				                <div class="row mb-2" style="border-bottom: 1px solid gray; padding-bottom: 20px; display:flex; align-items: center;">
-				                    <div class="col d-flex justify-content-start align-items-center" style="padding-left:0px; max-width:170px;">
-				                        <div style="font-size:36px; font-weight:bolder;">범주관리</div>
+				                <div class="row" style="margin-left:0px !important; margin-right:0px !important; border-bottom: 1px solid gray; padding-bottom: 20px; display:flex; align-items: center;">
+				                    <div class="col d-flex justify-content-start align-items-center" style="padding-left:0px; max-width:140px;">
+				                        <div style="font-size:30px;">범주관리</div>
 				                    </div>
 				                    <!-- 공용/개인 선택 버튼 -->
 						            <div class="btn-group btn-group-custom" role="group" aria-label="범주 유형 선택" style="margin-right: 10px;">
@@ -152,10 +156,10 @@
 				                <!-- 좌측 네모난 div와 오른쪽 콘텐츠를 같은 행에 배치 -->
 				                <div class="row mt-4" style="">
 				                    <!-- 좌측 네모난 div -->
-				                    <div class="col" style="padding-right: 30px; padding-left:0px; max-width: 320px;">
-				                        <div style="border: 1px solid gray; height: calc(100vh - 360px); min-height: 200px; border-radius:10px; position: relative;">
+				                    <div class="col" style="max-width: 300px;">
+				                        <div style="border: 1px solid gray; height: calc(100vh - 330px); min-height: 200px; border-radius:10px; position: relative;">
 				                        	<!-- 범주목록 타이틀 -->
-				                            <div style="font-size: 25px; border-bottom: 1px solid gray; text-align: center;
+				                            <div style="font-size: 22px; border-bottom: 1px solid gray; text-align: center;
 				                            display: flex; align-items: center; justify-content: center; height: 80px; background-color:#E8EAEC;
 				                            border-top-left-radius: 10px; border-top-right-radius: 10px; color:black;">
 				                                범주목록
@@ -186,7 +190,7 @@
 				                        </div>
 				                    </div>
 				                    <!-- 우측 테이블 컨텐츠 -->
-									<div class="col" style="padding-right: 0;"> <!-- 오른쪽 패딩 조정 -->
+									<div class="col"> <!-- 오른쪽 패딩 조정 -->
 										<form id="categoryCreateFrm">
 										<input type="hidden" id="csrf_token" th:value="${_csrf.token}">
 									    <!-- 나머지 오른쪽 테이블 영역 -->

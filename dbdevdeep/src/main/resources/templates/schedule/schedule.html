@@ -12,6 +12,10 @@
     <!-- Custom CSS -->
     <link href="/dist/css/style.min.css" rel="stylesheet">
     <style>
+    	.form-control{
+			margin-left:0px !important;
+		}
+		
 		/* 반투명한 동그라미 스타일 */
 		.fc-day-today .fc-daygrid-day-number {
 			position: relative; /* 상대적 위치 설정 */
@@ -26,7 +30,7 @@
 			position: absolute;
 			top: 50%;
 			left: 50%;
-			transform: translate(-48%, -55%);
+			transform: translate(-48%, -50%);
 			width: 23px; /* 원하는 동그라미 크기 */
 			height: 23px; /* 원하는 동그라미 크기 */
 			border-radius: 50%; /* 동그라미 모양 */
@@ -34,28 +38,29 @@
 		}
 		/* 종일 일정 높이 설정 */
 		.fc-daygrid-event {
-		    height: 24px !important; /* 원하는 높이로 조정 */
-		    line-height: 24px !important; /* 텍스트가 중앙에 오도록 설정 */
+		    height: 20px !important; /* 원하는 높이로 조정 */
+		    line-height: 20px !important; /* 텍스트가 중앙에 오도록 설정 */
 		    display:flex;
 		    align-items: center; /* 수직 가운데 정렬 */
 		    justify-content: center; /* 가로 중앙 정렬 (필요 시) */
 		}
 		
 		.fc-event-title-container{
-			height: 24px !important; /* 원하는 높이로 조정 */
-		    line-height: 24px !important; /* 텍스트가 중앙에 오도록 설정 */
+			height: 20px !important; /* 원하는 높이로 조정 */
+		    line-height: 20px !important; /* 텍스트가 중앙에 오도록 설정 */
 		}
 		
 		/* 시간 일정 높이 설정 */
 		.fc-timegrid-event {
-		    height: 24px !important; /* 원하는 높이로 조정 */
-		    line-height: 24px !important; /* 텍스트가 중앙에 오도록 설정 */
+		    height: 20px !important; /* 원하는 높이로 조정 */
+		    line-height: 20px !important; /* 텍스트가 중앙에 오도록 설정 */
 		}
     	.more-link-content:before {
 			content: "\25BC"; /* 아래쪽 화살표 */
 			margin-right: 5px; /* 아이콘과 숫자 간의 여백 */
 			font-size: 12px; /* 아이콘 크기 */
 			margin-left: 2px !important;
+			margin-bottom: 1px !important;
 			color: #212529;
 		}
 		  
@@ -68,7 +73,7 @@
 		}
 		
     	.fc-daygrid-event-dot {
-		    border-width:10px;
+		    border-width:7px;
 		}
 		
 		.fc-daygrid-event{
@@ -79,8 +84,6 @@
 		
 		.fc-daygrid-day-bottom{
 			padding-right:5px !important;
-			padding-top:5px !important;
-			padding-bottom:5px !important;
 			padding-left:10px !important;
 		}
     
@@ -212,7 +215,7 @@
 		.list-group-item{
 			border: none;
 			text-align: center;
-			font-size:20px;
+			font-size:18px;
 			margin-bottom:0px !important;
 		}
 		
@@ -266,9 +269,9 @@
 				        <div class="card">
 				            <div class="card-body" style="padding:50px 80px">
 				                <!-- "범주관리" 타이틀과 하단 선 -->
-				                <div class="row mb-2" style="border-bottom: 1px solid gray; padding-bottom: 20px; display:flex; align-items: center;">
-				                    <div class="col d-flex justify-content-start align-items-center" style="padding-left:0px; max-width:170px;">
-				                        <div style="font-size:36px; font-weight:bolder;">일정관리</div>
+				                <div class="row" style="margin-left:0px !important; margin-right:0px !important; border-bottom: 1px solid gray; padding-bottom: 20px; display:flex; align-items: center;">
+				                    <div class="col d-flex justify-content-start align-items-center" style="padding-left:0px; max-width:140px;">
+				                        <div style="font-size:30px;">일정관리</div>
 				                    </div>
 				                    <!-- 공용/개인 선택 버튼 -->
 						            <div class="btn-group btn-group-custom" role="group" aria-label="범주 유형 선택" style="margin-right: 10px;">
@@ -280,12 +283,12 @@
 				                </div>
 				                
 				                <!-- 좌측 네모난 div와 오른쪽 콘텐츠를 같은 행에 배치 -->
-				                <div class="row mt-4" style="">
+				                <div class="row mt-4">
 				                    <!-- 좌측 네모난 div -->
-				                    <div class="col" style="padding-right: 30px; padding-left:0px; max-width: 320px;">
-				                        <div style="border: 1px solid gray; height: calc(100vh - 360px); min-height: 200px; border-radius:10px; position: relative;">
+				                    <div class="col" style="max-width: 300px;">
+				                        <div style="border: 1px solid gray; height: calc(100vh - 330px); min-height: 200px; border-radius:10px; position: relative;">
 				                        	<!-- 범주목록 타이틀 -->
-				                            <div style="font-size: 25px; border-bottom: 1px solid gray; text-align: center;
+				                            <div style="font-size: 22px; border-bottom: 1px solid gray; text-align: center;
 				                            display: flex; align-items: center; justify-content: center; height: 80px; background-color:#E8EAEC;
 				                            border-top-left-radius: 10px; border-top-right-radius: 10px; color:black;">
 				                                범주목록
@@ -532,7 +535,7 @@
             },
             droppable: true,
             selectable: true, // 일정 선택 가능
-            height: 'calc(100vh - 360px)',  // 높이를 자동으로 조정
+            height: 'calc(100vh - 330px)',  // 높이를 자동으로 조정
             dayMaxEvents: true,  // 각 셀의 최대 이벤트 수를 제한
             dayMaxEventRows: 2,  // 각 셀의 최대 이벤트 행 수 설정
             moreLinkContent: function(args) { // "more" 링크의 내용 커스터마이징
