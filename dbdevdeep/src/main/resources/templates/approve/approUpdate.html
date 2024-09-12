@@ -358,6 +358,9 @@
 												<td>
 												    <input id="start_date" class="form-control" name="start_date" th:value="${vDto.start_time}">
 												    <input id="end_date" class="form-control" name="end_date" th:value="${vDto.end_time}">
+												    
+												    <input type="hidden" id="start_date" class="form-control" name="start_date_ori" th:value="${vDto.start_time}">
+												    <input type="hidden" id="end_date" class="form-control" name="end_date_ori" th:value="${vDto.end_time}">
 												</td>
                                             </tr>
                                             <tr>
@@ -408,9 +411,8 @@
                                             <tr>
                                                 <td>첨부파일</td>
                                                 <td colspan="3">
-        <input type="hidden" name="file_name" th:value="${vDto.vac_type}">
-        <input type="text" name="file_name_display" th:value="${fDto != null ? fDto.ori_file : ''}"> <!-- null 체크 추가 -->
-    </td>
+											        <input type="text" name="file_name" th:value="${fDto != null ? fDto.ori_file : ''}"> 
+											    </td>
                                             </tr>
                                         </tbody>
                                     </table>
@@ -543,13 +545,8 @@ document.addEventListener("DOMContentLoaded", function() {
 });
 /*]]>*/
 </script>
-
-    
     
     <script>
-	
-    
-    
     
     document.addEventListener('DOMContentLoaded', function () {
         // 페이지 로드 시 초기화
@@ -640,7 +637,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
 
     
- 	// 수정 취소시 재 확인
+ 	// 취소시 재 확인
     $('#returnList').on('click', function() {
     	Swal.fire({
             title: '수정을 취소 하시겠습니까?',
@@ -735,7 +732,7 @@ document.addEventListener("DOMContentLoaded", function() {
 	        if(vali_check) {
 	        	const payload = new FormData(form);
 				const csrfToken = document.getElementById("csrf_token").value;
-				fetch('/approReUp',{
+				fetch('/approReUp/' + approNo,{
 					method:'POST',
 					headers : {
 						'X-CSRF-TOKEN': csrfToken
