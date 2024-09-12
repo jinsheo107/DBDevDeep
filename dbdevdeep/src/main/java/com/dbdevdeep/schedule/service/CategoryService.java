@@ -47,7 +47,7 @@ public class CategoryService {
         combinedList.addAll(userPersonalCategories);
         
         // DTO로 변환
-        List<CategoryDto> categoryDtoList = new ArrayList<>();
+        List<CategoryDto> categoryDtoList = new ArrayList<CategoryDto>();
         for(Category c : combinedList) {
             CategoryDto dto = new CategoryDto().toDto(c);
             categoryDtoList.add(dto);

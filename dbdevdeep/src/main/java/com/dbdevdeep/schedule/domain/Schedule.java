@@ -56,8 +56,8 @@ public class Schedule {
     @Column(name = "schedule_place")
     private String schedulePlace;
     
-    @Column(name = "recurrence")
-    private String recurrence;
+    @Column(name = "repeat_type")
+    private String repeatType;
     
     @Column(name = "repeat_start_date")
     private Date repeatStartDate;
