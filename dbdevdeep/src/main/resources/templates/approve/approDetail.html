@@ -122,24 +122,39 @@
                                                     
                                                 </td>
                                             </tr>
-                                            <tr>
-                                                <td>협의자</td>
-                                                <td colspan="3"><button id="openTreeButton1" class="btn btn-primary" type="button">+</button>
-								                <input type="text" name="consult" id="selectedNodesTable1" readonly style="border: 0; outline: none; width: calc(100% - 50px);">
-								                </td>
-                                            </tr>
-                                            <tr>
-                                                <td>결재자</td>
-                                                <td colspan="3">
-												    <button id="openTreeButton2" class="btn btn-primary" type="button">+</button>
-												    <input type="text" name="approval" id="selectedNodesTable2" readonly style="border: 0; outline: none; width: calc(100% - 50px);">
-												</td>
-                                            <tr>
-								                	<td>참조자</td>
-								                	<td colspan="3"><button id="openTreeButton3" class="btn btn-primary" type="button">+</button>
-								                	<input type="text" name="reference" id="selectedNodesTable3" readonly style="border: 0; outline: none; width: calc(100% - 50px);">
-								                	</td>
-								                </tr>
+								                <tr>
+											    <td>협의자</td>
+											    <td colspan="3">
+											        <span th:if="${cDto != null}">
+											            <th:block th:each="item, iterStat : ${cDto}">
+											                <span th:text="${item.appro_line_name + ' (' + item.emp_id + ')'}"></span>
+											                <span th:if="${!iterStat.last}"> > </span>
+											            </th:block>
+											        </span>
+											    </td>
+												</tr>
+												<tr>
+												    <td>결재자</td>
+												    <td colspan="3">
+												        <span th:if="${lDto != null}">
+												            <th:block th:each="item, iterStat : ${lDto}">
+												                <span th:text="${item.appro_line_name + ' (' + item.emp_id + ')'}"></span>
+												                <span th:if="${!iterStat.last}"> > </span>
+												            </th:block>
+												        </span>
+												    </td>
+												</tr>
+												<tr>
+												    <td>참조자</td>
+												    <td colspan="3">
+												        <span th:if="${rDto != null}">
+												            <th:block th:each="item, iterStat : ${rDto}">
+												                <span th:text="${item.ref_name + ' (' + item.emp_id + ')'}"></span>
+												                <span th:if="${!iterStat.last}"> > </span>
+												            </th:block>
+												        </span>
+												    </td>
+												</tr>
                                             <tr>
                                                 <td>첨부파일</td>
                                                 <td colspan="3">

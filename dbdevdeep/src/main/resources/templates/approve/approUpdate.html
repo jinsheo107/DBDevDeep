@@ -335,13 +335,14 @@
 								                    <td>종류</td>
 								                    <td colspan="3">
 								                    <div style="display: flex; gap: 15px; justify-content: space-evenly; align-items: center;">
-								                        <div><label><input type="radio" name="vac_type" value="0" th:checked="${vDto.vac_type == 0}" onclick="toggleHalfDay(false)"> 연차</label></div>
-								                        <div><label><input type="radio" name="vac_type" value="8" th:checked="${vDto.vac_type == 8}" onclick="toggleHalfDay(true)"> 반차</label></div>
-								                        <div><label><input type="radio" name="vac_type" value="1" th:checked="${vDto.vac_type == 1}" onclick="toggleHalfDay(false)"> 공가</label></div>
-								                        <div><label><input type="radio" name="vac_type" value="2" th:checked="${vDto.vac_type == 2}" onclick="toggleHalfDay(false)"> 병가</label></div>
-								                        <div><label><input type="radio" name="vac_type" value="3" th:checked="${vDto.vac_type == 3}" onclick="toggleHalfDay(false)"> 조퇴</label></div>
-								                        <div><label><input type="radio" name="vac_type" value="4" th:checked="${vDto.vac_type == 4}" onclick="toggleHalfDay(false)"> 경조사</label></div>
-								                        <div><label><input type="radio" name="vac_type" value="5" th:checked="${vDto.vac_type == 5}" onclick="toggleHalfDay(false)"> 출산휴가</label></div>
+								                        <input type="hidden" name="vac_type" th:value="${vDto.vac_type}">
+								                        <div><label><input type="radio" name="vac_type_display" value="0" th:checked="${vDto.vac_type == 0}" onclick="toggleHalfDay(false)"> 연차</label></div>
+								                        <div><label><input type="radio" name="vac_type_display" value="8" th:checked="${vDto.vac_type == 8}" onclick="toggleHalfDay(true)"> 반차</label></div>
+								                        <div><label><input type="radio" name="vac_type_display" value="1" th:checked="${vDto.vac_type == 1}" onclick="toggleHalfDay(false)"> 공가</label></div>
+								                        <div><label><input type="radio" name="vac_type_display" value="2" th:checked="${vDto.vac_type == 2}" onclick="toggleHalfDay(false)"> 병가</label></div>
+								                        <div><label><input type="radio" name="vac_type_display" value="3" th:checked="${vDto.vac_type == 3}" onclick="toggleHalfDay(false)"> 조퇴</label></div>
+								                        <div><label><input type="radio" name="vac_type_display" value="4" th:checked="${vDto.vac_type == 4}" onclick="toggleHalfDay(false)"> 경조사</label></div>
+								                        <div><label><input type="radio" name="vac_type_display" value="5" th:checked="${vDto.vac_type == 5}" onclick="toggleHalfDay(false)"> 출산휴가</label></div>
 								                        </div>
 								                    </td>
 								                </tr>
@@ -349,8 +350,8 @@
 								                	<td>반차</td>
 								                	<td>
 								                	<div style="display: flex; gap: 15px; justify-content: space-evenly; align-items: center;">
-								                	<div><label><input type="radio" name="vac_type" value="6" th:checked="${vDto.vac_type == 6}" id="half_one" disabled>오전</label></div>
-								                	<div><label><input type="radio" name="vac_type" value="7" th:checked="${vDto.vac_type == 7}" id="half_two" disabled>오후</label></div>
+								                	<div><label><input type="radio" name="vac_type_display" value="6" th:checked="${vDto.vac_type == 6}" id="half_one" disabled>오전</label></div>
+								                	<div><label><input type="radio" name="vac_type_display" value="7" th:checked="${vDto.vac_type == 7}" id="half_two" disabled>오후</label></div>
 								                	</div>
 								                	</td>
                                                 <td>일정</td>
@@ -379,28 +380,37 @@
                                                 </td>
                                             </tr>
                                             <tr>
-					                			<td>협의자</td>
-									             <td colspan="3"><button id="openTreeButton1" class="btn btn-primary" type="button">+</button>
-									                <input type="text" name="consult" id="selectedNodesTable1" readonly style="border: 0; outline: none; width: calc(100% - 50px);">
-								                </td>
-							                </tr>
-							                <tr>
-								                <td>결재자</td>
-												<td colspan="3">
-												    <button id="openTreeButton2" class="btn btn-primary" type="button">+</button>
-												    <input type="text" name="approval" id="selectedNodesTable2" readonly style="border: 0; outline: none; width: calc(100% - 50px);">
-												</td>
-							                </tr>
-							                <tr>
-							                	<td>참조자</td>
-							                	<td colspan="3"><button id="openTreeButton3" class="btn btn-primary" type="button">+</button>
-							                	<input type="text" name="reference" id="selectedNodesTable3" readonly style="border: 0; outline: none; width: calc(100% - 50px);">
-							                	</td>
-							                </tr>
+											    <td>협의자</td>
+											<td colspan="3">
+											    <button id="openTreeButton1" class="btn btn-primary" type="button">+</button>
+											    <input type="text" name="consult" id="selectedNodesTable1" readonly 
+											           style="border: 0; outline: none; width: calc(100% - 50px);" 
+											           th:value="''"> 
+											</td>
+											<tr>
+											    <td>결재자</td>
+											    <td colspan="3">
+											        <button id="openTreeButton2" class="btn btn-primary" type="button">+</button>
+											        <input type="text" name="approval" id="selectedNodesTable2" readonly 
+											               style="border: 0; outline: none; width: calc(100% - 50px);" 
+											               th:value="''"> 
+											    </td>
+											</tr>
+											    <tr>
+											    <td>참조자</td>
+											    <td colspan="3">
+											        <button id="openTreeButton3" class="btn btn-primary" type="button">+</button>
+											        <input type="text" name="reference" id="selectedNodesTable3" readonly 
+											               style="border: 0; outline: none; width: calc(100% - 50px);" 
+											               th:value="''"> 
+											    </td>
+											</tr>
                                             <tr>
                                                 <td>첨부파일</td>
                                                 <td colspan="3">
-                                                	<input type="file" name="file_name"></td>
+        <input type="hidden" name="file_name" th:value="${vDto.vac_type}">
+        <input type="text" name="file_name_display" th:value="${fDto != null ? fDto.ori_file : ''}"> <!-- null 체크 추가 -->
+    </td>
                                             </tr>
                                         </tbody>
                                     </table>
@@ -502,20 +512,57 @@
 	<script src="/dist/js/custom.min.js"></script>
 	<script src="/assets/extra-libs/datatables.net/js/jquery.dataTables.min.js"></script>
     <script src="/dist/js/pages/datatable/datatable-basic.init.js"></script>
+    
+           <script th:inline="javascript">
+/*<![CDATA[*/
+var consultData = /*[[${cDto != null ? cDto : '[]'}]]*/ [];
+var approvalData = /*[[${lDto != null ? lDto : '[]'}]]*/ [];
+var referenceData = /*[[${rDto}]]*/ []; // rDto 데이터
+
+document.addEventListener("DOMContentLoaded", function() {
+    var consultNames = consultData.filter(function(item) {
+        return item.consult_yn === 'Y';
+    }).map(function(item) {
+        return item.appro_line_name + ' (' + item.emp_id + ')';
+    }).join(' > ');
+
+    var approvalNames = approvalData.filter(function(item) {
+        return item.consult_yn === 'N';
+    }).map(function(item) {
+        return item.appro_line_name + ' (' + item.emp_id + ')';
+    }).join(' > ');
+
+    var referenceNames = referenceData.map(function(item) {
+        return item.ref_name + ' (' + item.emp_id + ')';
+    }).join(' > ');
+
+    // Set the value to the input fields
+    document.getElementById('selectedNodesTable1').value = consultNames;
+    document.getElementById('selectedNodesTable2').value = approvalNames;
+    document.getElementById('selectedNodesTable3').value = referenceNames;
+});
+/*]]>*/
+</script>
+
+    
+    
     <script>
 	
+    
+    
+    
     document.addEventListener('DOMContentLoaded', function () {
         // 페이지 로드 시 초기화
         toggleDateInputType(); 
     });
     const approNo = document.getElementById('approNo').value;
     // 모든 'vac_type' 라디오 버튼에 이벤트 리스너를 추가하여 변경 시마다 형식 조정
-    document.querySelectorAll('input[name="vac_type"]').forEach(function (radio) {
+    document.querySelectorAll('input[name="vac_type_display"]').forEach(function (radio) {
         radio.addEventListener('change', toggleDateInputType);
     });
 
     function toggleDateInputType() {
-        const vacType = document.querySelector('input[name="vac_type"]:checked') ? document.querySelector('input[name="vac_type"]:checked').value : null;
+        const vacType = document.querySelector('input[name="vac_type_display"]:checked') ? document.querySelector('input[name="vac_type_display"]:checked').value : null;
         const startDateField = document.getElementById('start_date');
         const endDateField = document.getElementById('end_date');
 
@@ -635,14 +682,14 @@
 					title:'제목을 입력해주세요',
 					confirmButtonText:"닫기"
 				});
-	        } else if (!document.querySelector('input[name="vac_type"]:checked')){
+	        } else if (!document.querySelector('input[name="vac_type_display"]:checked')){
 	        	Swal.fire({
 					icon:'error',
 					title:'종류를 선택해주세요',
 					confirmButtonText:"닫기"
 				});
-	        	form.vac_type.focus()
-	        } else if (document.querySelector('input[name="vac_type"]:checked').value === "1" && 
+	        	form.vac_type_display.focus()
+	        } else if (document.querySelector('input[name="vac_type_display"]:checked').value === "1" && 
 	                 !document.getElementById("half_one").checked && 
 	                 !document.getElementById("half_two").checked) {
 	        	Swal.fire({

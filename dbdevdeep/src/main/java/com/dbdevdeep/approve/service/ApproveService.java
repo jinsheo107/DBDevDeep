@@ -1,6 +1,7 @@
 package com.dbdevdeep.approve.service;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -96,11 +97,10 @@ public class ApproveService {
 	
 	// 내가 결재 요청한 목록 조회
 	public List<ApproveDto> selectApproveList(String empId){
-		List<Approve> approveList = approveRepository.findByEmployeeEmpId(empId);
+		List<Approve> approveList = approveRepository.findByTypeAndEmpId(empId);
 		List<ApproveDto> approveDtoList = new ArrayList<ApproveDto>();
 		
 		for(Approve a : approveList) {
-			
 		
 			ApproveDto dto = ApproveDto.builder()
 					.appro_no(a.getApproNo())
@@ -114,36 +114,61 @@ public class ApproveService {
 					.appro_content(a.getApproContent())
 					.build();
 			
+			
 			approveDtoList.add(dto);
 		}
+		
 		return approveDtoList;
 	}
 	
-	// 결재 상세
 	public Map<String, Object> getApproveDetail(Long approNo) {
 	    Map<String, Object> detailMap = new HashMap<>();
 
-	    // 1. Approve 객체 가져오기
+	    // Approve 객체 가져오기
 	    Approve approve = approveRepository.findByApproNo(approNo);
 
-	    // 2. ApproveLine 가져오기
+	    // ApproveLine 가져오기
 	    List<ApproveLine> approLineList = approveLineRepository.findByApprove(approve);
+
+	    // 결재자와 협의자를 구분하여 리스트로 할당
 	    List<ApproveLineDto> approveLineList = approLineList.stream()
+	        .filter(a -> "N".equals(a.getConsultYn())) // 결재자만 필터링
 	        .map(a -> ApproveLineDto.builder()
 	            .emp_id(a.getEmployee().getEmpId())
+	            .appro_line_name(a.getApproLineName())
 	            .appro_line_order(a.getApproLineOrder())
 	            .appro_line_status(a.getApproLineStatus())
 	            .appro_permit_time(a.getApproPermitTime())
 	            .reason_back(a.getReasonBack())
+	            .consult_yn(a.getConsultYn()) 
 	            .build())
 	        .collect(Collectors.toList());
-	    detailMap.put("lDto", approveLineList);
+
+	    List<ApproveLineDto> consultLineList = approLineList.stream()
+	        .filter(a -> "Y".equals(a.getConsultYn())) // 협의자만 필터링
+	        .map(a -> ApproveLineDto.builder()
+	            .emp_id(a.getEmployee().getEmpId())
+	            .appro_line_name(a.getApproLineName())
+	            .appro_line_order(a.getApproLineOrder())
+	            .appro_line_status(a.getApproLineStatus())
+	            .appro_permit_time(a.getApproPermitTime())
+	            .reason_back(a.getReasonBack())
+	            .consult_yn(a.getConsultYn())
+	            .build())
+	        .collect(Collectors.toList());
+
+	    detailMap.put("lDto", approveLineList); // 결재자 리스트
+	    detailMap.put("cDto", consultLineList); // 협의자 리스트
+	    
+	    System.out.println("결재자 리스트: " + approveLineList);
+	    System.out.println("협의자 리스트: " + consultLineList);
 
 	    // 3. Reference를 가져옵니다.
 	    List<Reference> reference = referenceRepository.findByApprove(approve);
 	    List<ReferenceDto> refList = reference.stream()
 	        .map(r -> ReferenceDto.builder()
 	            .emp_id(r.getEmployee().getEmpId())
+	            .ref_name(r.getRefName())
 	            .build())
 	        .collect(Collectors.toList());
 	    detailMap.put("rDto", refList);
@@ -166,7 +191,7 @@ public class ApproveService {
 	    
 	    // 6. Approve DTO 변환
 	    ApproveDto aDto = new ApproveDto().toDto(approve);
-	    // TempEdit이 null인지 확인하고, null이 아닌 경우에만 ApproveDto 변환을 시도합니다.
+	    // TempEdit이 null인지 확인하고, null이 아닌 경우에만 ApproveDto 변환을 시도
 	    if (approve.getTempEdit() != null) {
 	        aDto.setTemp_no(approve.getTempEdit().getTempNo());
 	    } else {
@@ -178,6 +203,7 @@ public class ApproveService {
 	    aDto.setEmp_id(approve.getEmployee().getEmpId());
 	    aDto.setDept_code(approve.getDepartment().getDeptCode());
 	    aDto.setJob_code(approve.getJob().getJobCode());
+	    aDto.setAppro_name(approve.getApproName());
 	    aDto.setAppro_time(approve.getApproTime());
 	    aDto.setAppro_type(approve.getApproType());
 	    aDto.setAppro_status(approve.getApproStatus());

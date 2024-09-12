@@ -52,6 +52,7 @@ public class ApproveViewController {
 		return "approve/approDetail";
 	}
 
+	// 결재 수정
 	@GetMapping("/approUpdate/{appro_no}")
 	public String updateApproOne(Model model, @PathVariable("appro_no") Long approNo) {
 		Map<String, Object> detailMap = approveService.getApproveDetail(approNo);
