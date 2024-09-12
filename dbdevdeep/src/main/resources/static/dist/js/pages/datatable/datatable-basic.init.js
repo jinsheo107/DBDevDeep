@@ -25,7 +25,7 @@ $('#notice_config').DataTable({
 	// DataTables의 DOM 구조를 재정의
 	// 표시건수, 검색, 테이블, 페이징의 위치 재설정
 	// (정보 표시 부분을 제외)
-	"sDom": '<"row view-filter"<"col-sm-12"<"pull-left"l><"pull-right"f><"clearfix">>>t<"row view-pager"<"col-sm-12"<ip>>>',
+	"sDom": '<"row view-filter"<"col-sm-12"<"pull-left"l><"clearfix">>>t<"row view-pager"<"col-sm-12"<ipf>>>',
 	// 페이지네이션 버튼을 전체 숫자와 함께 표시
 	pagingType: 'full_numbers',
 	// 페이지당 항목 수를 선택할 수 있는 옵션
@@ -82,39 +82,23 @@ $('#notice_config').DataTable({
 	  	});
 	},
 	"initComplete": function () {
-	       // 검색창을 "삭제" 및 "등록" 버튼 왼쪽으로 이동
-	       var searchBox = $('div.dataTables_filter');
-	       var buttonGroup = $('div.d-flex.justify-content-end');
+			var searchBoxContainer = $('<div class="custom-dataTables_filter" style="display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 30px;"></div>');
+			var searchInput = $('<input type="text" class="form-control" placeholder="검색어를 입력해주세요" style="height: 46px; padding: 8px 12px; width: 300px; box-sizing: border-box;">');
+			var searchButton = $('<button class="btn btn-primary ml-2" style="height:46px;">검색</button>');
 
-	       // 검색창을 버튼 그룹 앞에 추가
-	       searchBox.prependTo(buttonGroup);
-		   
-		   // "Search" 텍스트 제거
-		   searchBox.find('label').contents().filter(function() {
-		       return this.nodeType === 3; // 텍스트 노드를 선택
-		   }).remove();
-		   
-		   // 검색 input을 수직 가운데 정렬
-			searchBox.css({
-				'display': 'flex',
-				'align-items': 'center',
-				'justify-content': 'flex-end',
-				'gap': '8px',
-				'margin-top':'8px',
-				'margin-right':'30px',
+			searchButton.on('click', function () {
+				var searchTerm = searchInput.val();  // 검색어 가져오기
+				$('#holiday_config').DataTable().search(searchTerm).draw();  // 검색어로 필터링
 			});
+
+			searchBoxContainer.append(searchInput).append(searchButton);
+
+			// 페이징 밑에 검색 박스 추가
+			$('.dataTables_paginate').after(searchBoxContainer);
 			
-			// 검색 input에 높이 설정
-			searchBox.find('input[type="search"]').css({
-			    'height': '46px', // 검색 input 필드의 높이 설정
-			    'padding': '8px 12px', // input 패딩 조정
-			    'box-sizing': 'border-box', // 박스 크기 계산 방식 설정
-				'width': '300px'
-			});
-			
-			// 검색 input에 placeholder 추가
-			searchBox.find('input[type="search"]').attr('placeholder', '검색어를 입력해주세요');
-	   }
+			// DataTables 기본 검색창 숨기기
+			$('div.dataTables_filter').hide();
+	}
 });
 
 /****************************************
