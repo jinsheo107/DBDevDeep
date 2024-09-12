@@ -23,12 +23,12 @@ public class HolidayViewController {
 	}
 	
 	@GetMapping("/holiday")
-	public String selectHolidayList(Model model, HolidayDto dto) {
-		List<HolidayDto> resultList = holidayService.selectHolidayList(dto);
+	public String selectHolidayList(Model model) {
+		List<HolidayDto> resultList = holidayService.selectHolidayList();
 		
 		model.addAttribute("resultList", resultList);
 		
-		return "schedule/holiday_list";
+		return "schedule/holiday";
 	}
 	
 	@ResponseBody

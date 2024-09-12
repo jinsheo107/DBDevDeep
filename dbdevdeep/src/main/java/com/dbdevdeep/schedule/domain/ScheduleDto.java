@@ -21,6 +21,11 @@ import lombok.ToString;
 public class ScheduleDto {
 	private Long schedule_no;
 	private int calendar_type;
+	
+	private Long category_no;
+	private String category_color;
+	private String emp_id;
+	
 	private String schedule_title;
 	private String schedule_content;
 	private LocalDateTime start_time;
@@ -55,6 +60,9 @@ public class ScheduleDto {
 		return ScheduleDto.builder()
 				.schedule_no(schedule.getScheduleNo())
 				.calendar_type(schedule.getCalendarType())
+				.category_no(schedule.getCategory().getCategoryNo())
+				.category_color(schedule.getCategory().getCategoryColor())
+				.emp_id(schedule.getEmployee().getEmpId())
 				.schedule_title(schedule.getScheduleTitle())
 				.schedule_content(schedule.getScheduleContent())
 				.start_time(schedule.getStartTIme())
