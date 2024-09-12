@@ -99,6 +99,7 @@ public class PlaceService {
 		if(p == null) {
 			throw new EntityNotFoundException("Place not found for place_no: " + place_no);
 		}
+		DateTimeFormatter outputFormatter = DateTimeFormatter.ofPattern("yyyy.MM.dd");
 		
 		PlaceDto dto = PlaceDto.builder()
 				.place_name(p.getPlaceName())
@@ -107,8 +108,17 @@ public class PlaceService {
 				.place_start_time(p.getPlaceStarttime())
 				.place_end_time(p.getPlaceEndtime())
 				.unuseable_reason(p.getUnuseableReason())
-				.unuseable_start_date(p.getUnuseableStartDate())
-				.unuseable_end_date(p.getUnuseableEndDate())
+				   // 날짜 포맷 적용: null이 아닌 경우에만 포맷을 적용 ==> yyyy-MM-dd , yyyy.MM.dd
+                .unuseable_start_date(
+                    p.getUnuseableStartDate() != null 
+                    ? LocalDate.parse(p.getUnuseableStartDate()).format(outputFormatter) 
+                    : null
+                )
+                .unuseable_end_date(
+                    p.getUnuseableEndDate() != null 
+                    ? LocalDate.parse(p.getUnuseableEndDate()).format(outputFormatter) 
+                    : null
+                )
 				.ori_pic_name(p.getOriPicname() != null ? p.getOriPicname() : "Default oriPicname")
                 .new_pic_name(p.getNewPicname() != null ? p.getNewPicname() : "Default newPicname")			
 				.place_content(p.getPlaceContent())

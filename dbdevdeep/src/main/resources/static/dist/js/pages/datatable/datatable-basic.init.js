@@ -432,8 +432,8 @@ $('#class_by_year').DataTable({
  * ****************************************/
 $('#place_list').DataTable({ 
 	
-/*	// 화면 크기에 따라 컬럼 width 자동 조절
-	 "responsive": false,
+	// 화면 크기에 따라 컬럼 width 자동 조절
+	 "responsive": true,
 	 // 컬럼 width 비율 조절
 	 "columnDefs": [
         { "width": "5%",  "targets": 0 },
@@ -442,10 +442,10 @@ $('#place_list').DataTable({
         { "width": "25%", "targets": 3 },
         { "width": "10%", "targets": 4 },
         { "width": "25%", "targets": 5 }
-    ],*/
+    ],
 	
   info: false,  // 테이블의 정보 표시를 비활성화
-  "sDom": '<"row view-filter"<"col-sm-12"<"pull-left"l><"pull-right"f><"clearfix">>>t<"row view-pager"<"col-sm-12"<"text-center"ip>>>',
+  "sDom": '<"row view-filter"<"col-sm-12"<"pull-left"l><"clearfix">>>t<"row view-pager"<"col-sm-12"<ipf>>>',
   pagingType: 'full_numbers',  // 페이지네이션 버튼을 전체 숫자와 함께 표시
   lengthChange: false,  // 페이지당 항목 수를 선택할 수 있는 옵션
   pageLength: 10,  // 기본 페이지당 항목 수 // test

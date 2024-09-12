@@ -148,7 +148,7 @@ input[type="file"] {
 
                                     <div class="form-group">
                                     	<label for="placeTime">사용 가능 시간</label>
-                                    	<input type="time" class="form-control" id="placeTime" th:value="${dto.place_start_time} + ' - ' + ${dto.place_end_time}" readonly>
+                                    	<input type="text" class="form-control" id="placeTime" th:value="${dto.place_start_time} + ' - ' + ${dto.place_end_time}" readonly>
                                     </div>
 								<div id= "unusableFields" style ="display: none;">
                                     <div class="form-group">
