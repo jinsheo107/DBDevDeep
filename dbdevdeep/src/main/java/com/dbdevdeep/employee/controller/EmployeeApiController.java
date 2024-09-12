@@ -5,6 +5,9 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -114,4 +117,12 @@ public class EmployeeApiController {
 		return map;
 	}
 	
+	// 채팅 상대 프로필 조회
+	@ResponseBody
+    @GetMapping("/profile/{empId}")
+	public EmployeeDto selectProfile(Model model, @PathVariable("empId") String emp_id){
+		EmployeeDto dto = employeeService.selectEmployeeOne(emp_id);
+		
+		return dto;
+	}
 }
