@@ -447,6 +447,17 @@ $('#class_by_year').DataTable({
  * ****************************************/
 $('#place_list').DataTable({ 
 	
+/*	// 화면 크기에 따라 컬럼 width 자동 조절
+	 "responsive": false,
+	 // 컬럼 width 비율 조절
+	 "columnDefs": [
+        { "width": "5%",  "targets": 0 },
+        { "width": "20%", "targets": 1 },
+        { "width": "15%", "targets": 2 },
+        { "width": "25%", "targets": 3 },
+        { "width": "10%", "targets": 4 },
+        { "width": "25%", "targets": 5 }
+    ],*/
 	
   info: false,  // 테이블의 정보 표시를 비활성화
   "sDom": '<"row view-filter"<"col-sm-12"<"pull-left"l><"pull-right"f><"clearfix">>>t<"row view-pager"<"col-sm-12"<"text-center"ip>>>',

@@ -111,8 +111,29 @@
             </div>
         </div>
 
+        <!-- 2. 사용 가능 시간 -->
         <div class="row mb-3">
-            <!-- 2. 사용 가능 여부 -->
+            <label for="startTime" class="col-sm-2 col-form-label">사용 가능 시간</label>
+            <div class="col-sm-5">
+                <input type="time" class="form-control" id="startTime" name="place_start_time" required>
+            </div>
+            <label class="col-sm-1 col-form-label text-center">~</label>
+            <div class="col-sm-4">
+                <input type="time" class="form-control" id="endTime" name="place_end_time" required>
+            </div>
+        </div>
+        
+        
+        <div class="row mb-3">
+            <!-- 3. 내용 (장소에 대한 내용) -->
+            <label for="content" class="col-sm-2 col-form-label">내용</label>
+            <div class="col-sm-10">
+                <input type="text" class="form-control" id="content" name="place_content">
+            </div>
+        </div>
+        
+		 <div class="row mb-3">
+            <!-- 4. 사용 가능 여부 -->
             <label for="usable" class="col-sm-2 col-form-label">사용 가능 여부</label>
             <div class="col-sm-10">
                 <div class="form-check form-check-inline">
@@ -125,22 +146,9 @@
                 </div>
             </div>
         </div>
-
-        <!-- 3. 사용 가능 시간 -->
-        <div class="row mb-3">
-            <label for="startTime" class="col-sm-2 col-form-label">사용 가능 시간</label>
-            <div class="col-sm-5">
-                <input type="time" class="form-control" id="startTime" name="place_start_time" required>
-            </div>
-            <label class="col-sm-1 col-form-label text-center">~</label>
-            <div class="col-sm-4">
-                <input type="time" class="form-control" id="endTime" name="place_end_time" required>
-            </div>
-        </div>
-
         <!-- 숨겨진 필드: 사용 불가능한 사유 및 기간 -->
         <div class="unusable-fields" id="unusableFields">
-            <!-- 4. 사유 (사용 불가능한 사유) -->
+            <!-- 5. 사유 (사용 불가능한 사유) -->
             <div class="row mb-3">
                 <label for="reason" class="col-sm-2 col-form-label">사유</label>
                 <div class="col-sm-10">
@@ -148,7 +156,7 @@
                 </div>
             </div>
 
-            <!-- 5. 사용 불가 기간 -->
+            <!-- 6. 사용 불가 기간 -->
             <div class="row mb-3">
                 <label for="startDate" class="col-sm-2 col-form-label">사용 불가 기간</label>
                 <div class="col-sm-5">
@@ -161,13 +169,7 @@
             </div>
         </div>
 
-        <div class="row mb-3">
-            <!-- 6. 내용 (장소에 대한 내용) -->
-            <label for="content" class="col-sm-2 col-form-label">내용</label>
-            <div class="col-sm-10">
-                <input type="text" class="form-control" id="content" name="place_content">
-            </div>
-        </div>
+        
 
         <div class="row mb-3">
             <!-- 7. 위치 선택 -->
