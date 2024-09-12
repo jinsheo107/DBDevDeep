@@ -16,16 +16,21 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.dbdevdeep.employee.domain.EmployeeDto;
 import com.dbdevdeep.employee.domain.MySignDto;
+import com.dbdevdeep.employee.domain.TeacherHistoryDto;
 import com.dbdevdeep.employee.service.EmployeeService;
+import com.dbdevdeep.employee.service.TeacherHistoryService;
 
 @Controller
 public class EmployeeViewController {
 	
 	private final EmployeeService employeeService;
+	private final TeacherHistoryService teacherHistoryService;
 	
 	@Autowired
-	public EmployeeViewController(EmployeeService employeeService) {
+	public EmployeeViewController(EmployeeService employeeService,
+			TeacherHistoryService teacherHistoryService) {
 		this.employeeService = employeeService;
+		this.teacherHistoryService = teacherHistoryService;
 	}
 
 	@GetMapping("/login")
@@ -49,7 +54,16 @@ public class EmployeeViewController {
 	}
 	
 	@GetMapping("/mypage")
-	public String mypagePage() {
+	public String mypagePage(Model model) {
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		User user = (User)authentication.getPrincipal();
+		
+		EmployeeDto dto = employeeService.selectEmployeeOne(user.getUsername());
+		TeacherHistoryDto thDto = teacherHistoryService.selectHistoryOne(dto);
+		
+		model.addAttribute("empDto", dto);
+		model.addAttribute("thDto", thDto);
+		
 		return "employee/mypage";
 	}
 	
@@ -81,17 +95,17 @@ public class EmployeeViewController {
 		
 		return resultMap;
 	}
-	
-	/*
-	 * @ResponseBody
-	 * 
-	 * @GetMapping("/mysign/{emp_id}") public List<MySignDto>
-	 * employeeSignPage(@PathVariable("emp_id") String emp_id) {
-	 * 
-	 * List<MySignDto> resultList = employeeService.employeeSignGet(emp_id);
-	 * 
-	 * return resultList; }
-	 */
-	
+
+	@GetMapping("/editmypage")
+	public String editMyPage(Model model) {
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		User user = (User)authentication.getPrincipal();
+		
+		EmployeeDto dto = employeeService.selectEmployeeOne(user.getUsername());
+		
+		model.addAttribute("empDto", dto);
+		
+		return "employee/edit_my_info";
+	}
 
 }

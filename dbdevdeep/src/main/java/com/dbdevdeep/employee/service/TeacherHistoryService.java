@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.dbdevdeep.employee.domain.Employee;
+import com.dbdevdeep.employee.domain.EmployeeDto;
 import com.dbdevdeep.employee.domain.TeacherHistory;
 import com.dbdevdeep.employee.domain.TeacherHistoryDto;
 import com.dbdevdeep.employee.mybatis.mapper.TeacherHistoryVoMapper;
@@ -128,6 +129,20 @@ public class TeacherHistoryService {
 		}
 		
 		return teacherHistoryDtoList;
+	}
+	
+	public TeacherHistoryDto selectHistoryOne(EmployeeDto dto) {
+		TeacherHistoryDto resultDto = null;
+		
+		String t_year = teacherHistoryRepository.findMostRecentYear();
+		
+		TeacherHistory th = teacherHistoryRepository.selectHistoryOne(dto.getEmp_id(), t_year);
+		
+		if(th != null) {
+			resultDto.toDto(th);			
+		}
+		
+		return resultDto;
 	}
 	
 	

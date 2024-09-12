@@ -20,4 +20,6 @@ public interface TeacherHistoryRepository extends JpaRepository<TeacherHistory, 
 	@Query("SELECT t.tYear FROM TeacherHistory t GROUP BY t.tYear ORDER BY t.tYear DESC LIMIT 1")
 	String findMostRecentYear();
 	
+	@Query("SELECT t FROM TeacherHistory t WHERE t.tYear = :tYear AND t.employee.empId = :empId")
+	TeacherHistory selectHistoryOne(@Param("tYear") String tYear, @Param("empId") String empId);
 }

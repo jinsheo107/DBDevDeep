@@ -87,10 +87,12 @@
 											</div>
 										</div>
 									</th:block>
-									<th:block th:each="i : ${#numbers.sequence(1, 3 - (#lists.isEmpty(resultList) ? 0 : #lists.size(resultList)))}">
-										<div class="col-md-2">
-											<div class="form-group add_sign form-hover" onclick="signAddFunc();">+</div>
-										</div>
+									<th:block th:if="${#lists.size(resultList) != 3}">
+										<th:block th:each="i : ${#numbers.sequence(1, 3 - (#lists.isEmpty(resultList) ? 0 : #lists.size(resultList)))}">
+											<div class="col-md-2">
+												<div class="form-group add_sign form-hover" onclick="signAddFunc();">+</div>
+											</div>
+										</th:block>
 									</th:block>
 								</div>
 							</div>
@@ -153,12 +155,6 @@
 										</div>
 									</div>
 								</form>
-							</div>
-							<div class="form-actions">
-								<div class="text-right">
-									<button type="submit" class="btn btn-info">Submit</button>
-									<button type="reset" class="btn btn-dark">Reset</button>
-								</div>
 							</div>
 						</div>
 					</div>

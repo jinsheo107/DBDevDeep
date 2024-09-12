@@ -6,11 +6,20 @@
 <style>
 .addPic {
 	background-color: gainsboro;
-	width: 120px;
-	height: 120px;
+	width: 100%;
+	aspect-ratio: 1 / 1;
 	border-radius: 50%;
 	border: none;
 	font-size: 25px;
+}
+
+.addPic, .littleButton {
+	transition: background-color 0.3s ease;
+}
+
+.addPic:hover, .littleButton:hover {
+	background-color: rgb(189, 189, 189);
+	cursor: pointer;
 }
 
 .littleButton {
@@ -29,8 +38,8 @@
 .preview-container {
 	border-radius: 50%;
 	overflow: hidden;
-	width: 120px;
-	height: 120px;
+	width: 100%;
+	aspect-ratio: 1 / 1;
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -39,7 +48,7 @@
 
 #imagePreview {
 	width: 100%;
-	height: 100%;
+	aspect-ratio: 1 / 1;
 	object-fit: cover;
 }
 
@@ -70,7 +79,7 @@
 				<div class="col-sm-12 col-md-12">
 					<div class="card">
 						<div class="card-body">
-							<h3 class="card-title">직원 계정 등록</h3>
+							<h4 class="card-title">직원 계정 등록</h4>
 							<hr>
 							<form id="employeeAddFrm">
 								<input type="hidden" id="csrf_token" th:value="${_csrf.token}">
@@ -82,7 +91,7 @@
 										<!-- 사진등록 -->
 										<div class="col-md-1 ">
 											<div class="form-group" style="margin-top: 20px;">
-												<label>사진</label>
+												<label>사진 <span style="color: red;">*</span></label>
 												<div class="row">
 													<div class="preview-container hidden" id="preview-container">
 														<img id="imagePreview" src="">
@@ -94,10 +103,10 @@
 
 										<div class="col-md-9 m-auto">
 											<div class="form-group">
-												<label for="gov_id">교육청관리번호</label>
+												<label for="gov_id">교육청관리번호 <span style="color: red;">*</span></label>
 												<div class="row">
 													<div class="col-md-8">
-														<input type="text" class="form-control is-invalid" id="gov_id" name="gov_id" placeholder="00000000000" maxlength="11">
+														<input type="text" class="form-control" id="gov_id" name="gov_id" placeholder="00000000000" maxlength="11">
 														<div id="gov_id_feedback" class="mt-2"></div>
 													</div>
 													<div class="col-md-1">
@@ -107,19 +116,19 @@
 											</div>
 
 											<div class="form-group">
-												<label for="gov_id">이름</label>
+												<label for="gov_id">이름 <span style="color: red;">*</span></label>
 												<div class="row">
 													<div class="col-md-8">
-														<input type="text" class="form-control is-invalid" id="emp_name" name="emp_name" placeholder="홍길동">
+														<input type="text" class="form-control" id="emp_name" name="emp_name" placeholder="홍길동">
 														<div id="emp_name_feedback" class="mt-2"></div>
 													</div>
 												</div>
 											</div>
 											<div class="form-group">
-												<label for="gov_id">부서</label>
+												<label for="gov_id">부서 <span style="color: red;">*</span></label>
 												<div class="row">
 													<div class="col-md-8">
-														<select class="form-control is-invalid" id="department" name="dept_code" style="background-image: none;">
+														<select class="form-control" id="department" name="dept_code" style="background-image: none;">
 															<option value="0">부서를 선택하세요.</option>
 															<option value="D4">행정부</option>
 															<option value="D3">교무부</option>
@@ -131,10 +140,10 @@
 												</div>
 											</div>
 											<div class="form-group">
-												<label for="gov_id">직급</label>
+												<label for="gov_id">직급 <span style="color: red;">*</span></label>
 												<div class="row">
 													<div class="col-md-8">
-														<select class="form-control is-invalid" id="job" name="job_code" style="background-image: none;">
+														<select class="form-control" id="job" name="job_code" style="background-image: none;">
 															<option value="0">직급을 선택하세요.</option>
 															<option value="J4">직원</option>
 															<option value="J3">부장</option>
@@ -146,26 +155,27 @@
 												</div>
 											</div>
 											<div class="form-group">
-												<label for="gov_id">주민등록번호</label>
+												<label for="gov_id">주민등록번호 <span style="color: red;">*</span></label>
 												<div class="row">
 													<div class="col-md-4">
-														<input type="text" class="form-control is-invalid" id="firstempRrn" placeholder="000101" maxlength="6">
+														<input type="text" class="form-control" id="firstempRrn" placeholder="000101" maxlength="6">
 
 													</div>
 													<div class="col-md-4">
-														<input type="text" class="form-control is-invalid" id="secondempRrn" placeholder="4111111" maxlength="7">
+														<input type="text" class="form-control" id="secondempRrn" placeholder="4111111" maxlength="7">
 													</div>
-													<input type="text" id="emp_rrn" name="emp_rrn" hidden>
+													<input type="text" id="emp_rrn" name="emp_rrn" hidden="hidden">
 													<div id="emp_rrn_feedback" class="mt-2 col-md-8"></div>
 												</div>
 											</div>
 											<div class="form-group">
-												<label for="gov_id">우편번호</label>
+												<label for="gov_id">우편번호 <span style="color: red;">*</span></label>
 												<div class="row">
 													<div class="col-md-8">
-														<input type="text" name="emp_post_code" class="form-control is-invalid" id="sample6_postcode" placeholder="우편번호" onclick="sample6_execDaumPostcode()" readonly><br> 
-														<input type="text" name="emp_addr" class="form-control is-invalid" id="sample6_address" placeholder="주소" readonly><br> 
-														<input type="text" name="emp_detail_addr" class="form-control is-invalid" id="sample6_detailAddress" placeholder="상세주소"> <input type="text" id="sample6_extraAddress" placeholder="참고항목" hidden>
+														<input type="text" name="emp_post_code" class="form-control" id="sample6_postcode" placeholder="우편번호" onclick="sample6_execDaumPostcode()" readonly><br> 
+														<input type="text" name="emp_addr" class="form-control" id="sample6_address" placeholder="주소" readonly><br> 
+														<input type="text" name="emp_detail_addr" class="form-control" id="sample6_detailAddress" placeholder="상세주소"> 
+														<input type="text" id="sample6_extraAddress" placeholder="참고항목" hidden="hidden">
 														<div id="emp_post_code_feedback" class="mt-2"></div>
 													</div>
 													<div class="col-md-1">
@@ -174,33 +184,33 @@
 												</div>
 											</div>
 											<div class="form-group">
-												<label for="gov_id">전화번호</label>
+												<label for="gov_id">전화번호 <span style="color: red;">*</span></label>
 												<div class="row">
 													<div class="col-md-2">
-														<input type="text" class="form-control is-invalid" id="firstPhone" placeholder="010" maxlength="3">
+														<input type="text" class="form-control" id="firstPhone" placeholder="010" maxlength="3">
 													</div>
 													<div class="col-md-3">
-														<input type="text" class="form-control is-invalid" id="secondPhone" placeholder="1111" maxlength="4">
+														<input type="text" class="form-control" id="secondPhone" placeholder="1111" maxlength="4">
 													</div>
 													<div class="col-md-3">
-														<input type="text" class="form-control is-invalid" id="thirdPhone" placeholder="2222" maxlength="4">
+														<input type="text" class="form-control" id="thirdPhone" placeholder="2222" maxlength="4">
 													</div>
 													<div id="emp_phone_feedback" class="mt-2 col-md-8"></div>
-													<input type="text" id="empPhone" name="emp_phone" hidden>
+													<input type="text" id="empPhone" name="emp_phone" hidden="hidden">
 
 												</div>
 											</div>
 											<div class="form-group">
-												<label for="gov_id">내선전화번호</label>
+												<label for="gov_id">내선전화번호 <span style="color: red;">*</span></label>
 												<div class="row">
 													<div class="col-md-8">
-														<input type="text" class="form-control is-invalid" id="emp_internal_phone" name="emp_internal_phone" placeholder="0000" maxlength="4">
+														<input type="text" class="form-control" id="emp_internal_phone" name="emp_internal_phone" placeholder="0000" maxlength="4">
 														<div id="emp_internal_phone_feedback" class="mt-2"></div>
 													</div>
 												</div>
 											</div>
 											<div class="form-group">
-												<label for="gov_id">비밀번호</label>
+												<label for="gov_id">비밀번호 <span style="color: red;">*</span></label>
 												<div class="row">
 													<div class="col-md-8">
 														<input type="text" class="form-control" id="emp_pw" name="emp_pw" placeholder="주민등록번호를 입력하세요" readonly>
@@ -218,7 +228,7 @@
 												</div>
 											</div>
 											<div class="form-group">
-												<label for="gov_id">입사일</label>
+												<label for="gov_id">입사일 <span style="color: red;">*</span></label>
 												<div class="row">
 													<div class="col-md-8">
 														<input type="date" class="form-control " id="hire_date" name="hire_date">
@@ -236,7 +246,7 @@
 													</div>
 												</div>
 											</div>
-											<input type="file" class="custom-file-input" id="inputGroupFile04" name="file" hidden>
+											<input type="file" class="custom-file-input" id="inputGroupFile04" name="file">
 										</div>
 									</div>
 								</div>
@@ -792,9 +802,9 @@
             } else {
                 Swal.fire({
                 	icon:'error',
-									title:'실패',
-									text: '이미지 파일만 선택할 수 있습니다.',
-									confirmButtonText:"닫기"
+					title:'실패',
+					text: '이미지 파일만 선택할 수 있습니다.',
+					confirmButtonText:"닫기"
                 });
                 fileInput.value = ''; 
                 imagePreview.src = '';

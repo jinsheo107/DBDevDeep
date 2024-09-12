@@ -46,6 +46,7 @@ public class EmployeeService {
 		this.mySignRepository = mySignRepository;
 	}
 
+	// 교육청관리번호 중복 확인
 	public int govIdCheck(String govId) {
 		int result = -1;
 
@@ -63,6 +64,7 @@ public class EmployeeService {
 		return result;
 	}
 
+	// 직원 등록
 	public int addEmployee(EmployeeDto dto) {
 		int result = -1;
 		
@@ -117,6 +119,7 @@ public class EmployeeService {
 		return result;
 	}
 	
+	// 재직 상태가 Y인 직원 목록
 	public List<EmployeeDto> selectYEmployeeList() {
 		List<Employee> employeeList = employeeRepository.selectYEmployeeList();
 
@@ -141,6 +144,7 @@ public class EmployeeService {
 		return dto;
 	}
 	
+	// 반을 담당하지 않은 교무부 직원 노출
 	public List<EmployeeDto> selectEmployeeByNotTeacher(String t_year) {
 		List<EmployeeVo> EmployeeByNotTeach = employeeVoMapper.selectEmployeeByNotTeacher(t_year);
 		
@@ -161,6 +165,7 @@ public class EmployeeService {
 		return resultList;
 	}
 	
+	// 비밀번호 찾기
 	public int checkPw(String pwd) {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		User user = (User)authentication.getPrincipal();
@@ -176,6 +181,7 @@ public class EmployeeService {
 		return result;
 	}
 	
+	// 서명 찾기
 	public List<MySignDto> employeeSignGet(String emp_id) {
 		List<MySignDto> resultList = new ArrayList<MySignDto>();
 		
@@ -193,6 +199,7 @@ public class EmployeeService {
 		return resultList;
 	}
 	
+	// 서명 등록
 	public int employeeSignAdd(MySignDto dto) {
 		int result = -1;
 		
@@ -221,6 +228,40 @@ public class EmployeeService {
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
+		
+		return result;
+	}
+	
+	// 내 정보 수정
+	public Employee editMyInfo(EmployeeDto dto) {
+		EmployeeDto temp = selectEmployeeOne(dto.getEmp_id());
+		
+		temp.setEmp_phone(dto.getEmp_phone());
+		temp.setEmp_detail_addr(dto.getEmp_detail_addr());
+		temp.setEmp_addr(dto.getEmp_addr());
+		temp.setEmp_post_code(dto.getEmp_post_code());
+		
+		if(dto.getOri_pic_name() != null) {
+			temp.setOri_pic_name(dto.getOri_pic_name());
+			temp.setNew_pic_name(dto.getNew_pic_name());
+		}
+		
+		Department dept = departmentRepository.findByDeptCode(temp.getDept_code());
+		Job job = jobRepository.findByJobCode(temp.getJob_code());
+		
+		
+		Employee emp = Employee.builder()
+				.empId(temp.getEmp_id()).empPw(temp.getEmp_pw()).govId(temp.getGov_id())
+				.empName(temp.getEmp_name()).empRrn(temp.getEmp_rrn()).empPhone(temp.getEmp_phone())
+				.oriPicName(temp.getOri_pic_name()).newPicName(temp.getNew_pic_name()).empPostCode(temp.getEmp_post_code())
+				.empAddr(temp.getEmp_addr()).empDetailAddr(temp.getEmp_detail_addr())
+				.empInternalPhone(temp.getEmp_internal_phone()).vacationHour(temp.getVacation_hour())
+				.hireDate(temp.getHire_date()).endDate(temp.getEnd_date()).entStatus(temp.getEnt_status())
+				.loginYn(temp.getLogin_yn()).accountStatus(temp.getAccount_status())
+				.chatStatusMsg(temp.getChat_status_msg())
+				.job(job).department(dept).build();
+		
+		Employee result = employeeRepository.save(emp);
 		
 		return result;
 	}
