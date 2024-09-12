@@ -28,10 +28,10 @@ import lombok.NoArgsConstructor;
 @Getter
 @Builder
 public class Place {
-	//약간 데이터베이스 연결해주는애 전체적으로.
+	
 	// 장소 번호(관리번호로 사용될 애)
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
+//	@GeneratedValue(strategy = GenerationType.IDENTITY) ==> 관리번호0번이 포함되기때문에
 	@Column(name = "place_no")
 	private Long placeNo;
 	
@@ -58,11 +58,11 @@ public class Place {
 	
 	// 사용가능 시작시간
 	@Column(name = "place_start_time")
-	private int placeStarttime;
+	private String placeStarttime;
 	
 	// 사용가능 종료시간
 	@Column(name = "place_end_time")
-	private int placeEndtime;
+	private String placeEndtime;
 
 	// 사용불가 사유
 	@Column(name = "unuseable_reason")

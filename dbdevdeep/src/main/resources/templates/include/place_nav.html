@@ -1,23 +1,27 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
+
 <th:block th:fragment="placeNavLayout">
 	 <aside class="left-sidebar" data-sidebarbg="skin6">
       <!-- Sidebar scroll-->
       <div class="scroll-sidebar" data-sidebarbg="skin6">
         <!-- Sidebar navigation-->
-        <style>
-        </style>
+
         <nav class="sidebar-nav">
           <ul id="sidebarnav">
 
-            <li class="sidebar-item"> <a class="sidebar-link has-arrow" href="javascript:void(0)"
-                aria-expanded="false"><span class="hide-menu">자원 관리</span></a>
+            <li class="sidebar-item">
+             <a class="sidebar-link has-arrow active" href="javascript:void(0)"
+                aria-expanded="false">
+                <span class="hide-menu">자원 관리</span></a>
               <ul aria-expanded="false" class="collapse  first-level base-level-line">
-                <li class="sidebar-item"><a href="#" class="sidebar-link"><span class="hide-menu"> 장소 관리
-                    </span></a>
+                <li class="sidebar-item">
+                	<a href="#" class="sidebar-link">
+                	<span class="hide-menu"> 장소 관리 </span></a>
                 </li>
-                <li class="sidebar-item"><a href="#" class="sidebar-link"><span class="hide-menu"> 기자재 관리
-                    </span></a>
+                <li class="sidebar-item">
+                <a href="#" class="sidebar-link">
+                	<span class="hide-menu"> 기자재 관리 </span></a>
                 </li>
               </ul>
             </li>
@@ -35,7 +39,7 @@
               </ul>
             </li>
 
-           
+           </ul>
         </nav>
       </div>
     </aside>
