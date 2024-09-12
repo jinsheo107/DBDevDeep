@@ -107,5 +107,11 @@ public class EmployeeViewController {
 		
 		return "employee/edit_my_info";
 	}
+	
+	@GetMapping("/editmypw")
+	public String editMyPwPage() {
+				
+		return "employee/edit_my_pw";
+	}
 
 }

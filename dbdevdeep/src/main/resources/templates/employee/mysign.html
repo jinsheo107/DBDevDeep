@@ -2,37 +2,54 @@
 <html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{include/mypage_layout}">
 <th:block layout:fragment="content">
 	<style>
-#eye_icon_login {
-	display: flex; position: absolute; z-index : 999; left : 320px; bottom : 27px; cursor: pointer; z-index: 999; left: 320px; bottom: 27px;
-}
-
-.hidden {
-	display: none;
-}
-
-.show {
-	display: block;
-}
-</style>
+		.hidden {
+			display: none;
+		}
+		
+		.show {
+			display: block;
+		}
+	</style>
 
 	<style>
-.clicked_sign {
-	background-color: rgba(150, 150, 150, 0.1); padding: 20px; width: 150px; height: 150px; border-radius: 10px;
-}
-
-.form-hover:hover {
-	background-color: rgba(0, 0, 0, 0.1); cursor: pointer;
-}
-
-.none_clicked_sign {
-	padding: 20px; width: 150px; height: 150px; border-radius: 10px;
-}
-
-.add_sign {
-	background-color: rgba(150, 150, 150, 0.1); padding: 20px; width: 150px; height: 150px; border-radius: 10px; text-align: center; line-height: 110px; font-weight: bolder;
-}
-
-</style>
+		.clicked_sign {
+			background-color: rgba(150, 150, 150, 0.1);
+			padding: 20px;
+			width: 150px;
+			height: 150px;
+			border-radius: 10px;
+		}
+		
+		.form-hover:hover {
+			background-color: rgba(0, 0, 0, 0.1);
+			cursor: pointer;
+		}
+		
+		.none_clicked_sign {
+			padding: 20px;
+			width: 150px;
+			height: 150px;
+			border-radius: 10px;
+		}
+		
+		.add_sign {
+			background-color: rgba(150, 150, 150, 0.1);
+			padding: 20px;
+			width: 150px;
+			height: 150px;
+			border-radius: 10px;
+			text-align: center;
+			line-height: 110px;
+			font-weight: bolder;
+		}
+		
+		.eye-position {
+			cursor: pointer;
+			position: relative;
+			bottom: 27px;
+			right: 10px;
+		}
+	</style>
 	<!-- ============================================================== -->
 	<!-- End Left Sidebar - style you can find in sidebar.scss  -->
 	<!-- ============================================================== -->
@@ -51,35 +68,35 @@
 					<div class="card" style="padding: 40px;">
 						<div class="card-body show" id="pwcheck">
 							<h4 class="card-title">비밀번호 확인</h4>
+							<hr>
 							<input type="hidden" id="csrf_token" th:value="${_csrf.token}">
 							<form id="pwcheckFrm">
 								<div class="form-body">
 									<div class="row">
 										<div class="col-md-4">
 											<div class="form-group">
-												<input type="password" class="form-control" name="emp_pw" id="pwd" placeholder="비밀번호를 입력하세요."> 
-												<i class="fa fa-eye-slash text-left" id="eye_icon_login" style="position: relative; left: 300px;"></i>
+												<div>
+													<input type="password" class="form-control" name="emp_pw" id="pwd" placeholder="비밀번호를 입력하세요."> 
+													<i class="fa fa-eye-slash float-right eye-position" id="eye_icon_login"></i>
+												</div>
 											</div>
 										</div>
+										<div class="col-md-1">
+											<button class="btn btn-info">확인</button>
+										</div>
 									</div>
-									<button class="btn btn-info">확인</button>
 								</div>
 							</form>
 						</div>
 
 						<div class="card-body hidden" id="signDiv">
 							<h4 class="card-title">내 서명</h4>
+							<hr>
 							<div class="form-body" style="margin-bottom: 40px;">
 								<div class="row">
 									<th:block th:each="sign : ${resultList}">
 										<div class="col-md-2">
-											<div class="form-group clicked_sign form-hover" 
-									             onclick="signInfoFunc(this);" 
-									             th:data-sign-title="${sign.sign_title}"
-									             th:data-sign-type="${sign.sign_type}"
-									             th:data-reg-time="${#temporals.format(sign.reg_time, 'yyyy.MM.dd HH:mm')}"
-									             th:data-mod-time="${sign.mod_time == null ? '-' : #temporals.format(sign.mod_time, 'yyyy.MM.dd HH:mm')}"
-									             th:data-rep-yn="${sign.rep_yn}">
+											<div class="form-group clicked_sign form-hover" onclick="signInfoFunc(this);" th:data-sign-title="${sign.sign_title}" th:data-sign-type="${sign.sign_type}" th:data-reg-time="${#temporals.format(sign.reg_time, 'yyyy.MM.dd HH:mm')}" th:data-mod-time="${sign.mod_time == null ? '-' : #temporals.format(sign.mod_time, 'yyyy.MM.dd HH:mm')}" th:data-rep-yn="${sign.rep_yn}">
 												<div style="margin-bottom: 10px;">
 													<img th:src="@{'/UploadImg/empSign/' + ${sign.new_pic_name}}" width="80px" height="80px" style="border-radius: 50%">
 												</div>
@@ -98,30 +115,30 @@
 							</div>
 							<div class="hidden" id="sign_info">
 								<table class="table" id="signatureTable">
-								    <colgroup>
-								        <col style="width: 20%;">
-								        <col style="width: 80%;">
-								    </colgroup>
-								    <tr>
-								        <td>서명 제목</td>
-								        <td id="signTitle"></td>
-								    </tr>
-								    <tr>
-								        <td>서명 종류</td>
-								        <td id="signType"></td>
-								    </tr>
-								    <tr>
-								        <td>서명 등록일</td>
-								        <td id="regTime"></td>
-								    </tr>
-								    <tr>
-								        <td>서명 수정일</td>
-								        <td id="modTime"></td>
-								    </tr>
-								    <tr>
-								        <td>대표 서명</td>
-								        <td id="repYn"></td>
-								    </tr>
+									<colgroup>
+										<col style="width: 20%;">
+										<col style="width: 80%;">
+									</colgroup>
+									<tr>
+										<td>서명 제목</td>
+										<td id="signTitle"></td>
+									</tr>
+									<tr>
+										<td>서명 종류</td>
+										<td id="signType"></td>
+									</tr>
+									<tr>
+										<td>서명 등록일</td>
+										<td id="regTime"></td>
+									</tr>
+									<tr>
+										<td>서명 수정일</td>
+										<td id="modTime"></td>
+									</tr>
+									<tr>
+										<td>대표 서명 여부</td>
+										<td id="repYn"></td>
+									</tr>
 								</table>
 							</div>
 							<div id="addSign" class="hidden">
@@ -139,11 +156,10 @@
 													</select>
 												</div>
 												<div class="form-group">
-												<label for="sign_type">서명 파일</label>
+													<label for="sign_type">서명 파일</label>
 													<div class="custom-file">
-							                            <input type="file" class="custom-file-input" name="file" id="file" accept=".jpeg, .jpg, .png">
-							                            <label class="custom-file-label" for="file">서명 사진을 선택하세요</label>
-						                        	</div>
+														<input type="file" class="custom-file-input" name="file" id="file" accept=".jpeg, .jpg, .png"> <label class="custom-file-label" for="file">서명 사진을 선택하세요</label>
+													</div>
 												</div>
 												<div class="form-group">
 													<label for="rep_yn" style="display: flex;">대표 서명 &nbsp;<input value="Y" type="checkbox" name="rep_yn" id="rep_yn"></label>
@@ -327,8 +343,8 @@
 		    }
 		}
     </script>
-    
-    <script>
+
+	<script>
     	const addSignFrm = document.getElementById('addSignFrm');
     	addSignFrm.addEventListener('submit', (e) => {
     		

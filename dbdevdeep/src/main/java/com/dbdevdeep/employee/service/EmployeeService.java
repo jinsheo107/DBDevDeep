@@ -265,5 +265,35 @@ public class EmployeeService {
 		
 		return result;
 	}
+	
+	// 내 비밀번호 수정
+	public Employee editMyPw(String newPw) {
+		Employee e = null;
+		
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		User user = (User)authentication.getPrincipal();
+		
+		Employee employee = employeeRepository.findByempId(user.getUsername());
+		
+		EmployeeDto temp = new EmployeeDto().toDto(employee);
+		
+		Department dept = departmentRepository.findByDeptCode(temp.getDept_code());
+		Job job = jobRepository.findByJobCode(temp.getJob_code());
+		
+		Employee emp = Employee.builder()
+				.empId(temp.getEmp_id()).empPw(passwordEncoder.encode(newPw)).govId(temp.getGov_id())
+				.empName(temp.getEmp_name()).empRrn(temp.getEmp_rrn()).empPhone(temp.getEmp_phone())
+				.oriPicName(temp.getOri_pic_name()).newPicName(temp.getNew_pic_name()).empPostCode(temp.getEmp_post_code())
+				.empAddr(temp.getEmp_addr()).empDetailAddr(temp.getEmp_detail_addr())
+				.empInternalPhone(temp.getEmp_internal_phone()).vacationHour(temp.getVacation_hour())
+				.hireDate(temp.getHire_date()).endDate(temp.getEnd_date()).entStatus(temp.getEnt_status())
+				.loginYn(temp.getLogin_yn()).accountStatus(temp.getAccount_status())
+				.chatStatusMsg(temp.getChat_status_msg())
+				.job(job).department(dept).build();
+		
+		e = employeeRepository.save(emp);
+		
+		return e;
+	}
 
 }
