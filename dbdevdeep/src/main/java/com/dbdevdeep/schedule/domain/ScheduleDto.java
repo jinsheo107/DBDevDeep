@@ -32,7 +32,7 @@ public class ScheduleDto {
 	private LocalDateTime end_time;
 	private String is_all_day;
 	private String schedule_place;
-	private String recurrence;
+	private String repeat_type;
 	private Date repeat_start_date;
 	private Date repeat_end_date;
 	private LocalDateTime reg_time;
@@ -48,7 +48,7 @@ public class ScheduleDto {
 				.endTime(end_time)
 				.isAllDay(is_all_day)
 				.schedulePlace(schedule_place)
-				.recurrence(recurrence)
+				.repeatType(repeat_type)
 				.repeatStartDate(repeat_start_date)
 				.repeatEndDate(repeat_end_date)
 				.regTime(reg_time)
@@ -69,7 +69,7 @@ public class ScheduleDto {
 				.end_time(schedule.getEndTime())
 				.is_all_day(schedule.getIsAllDay())
 				.schedule_place(schedule.getSchedulePlace())
-				.recurrence(schedule.getRecurrence())
+				.repeat_type(schedule.getRepeatType())
 				.repeat_start_date(schedule.getRepeatStartDate())
 				.repeat_end_date(schedule.getRepeatEndDate())
 				.reg_time(schedule.getRegTime())
