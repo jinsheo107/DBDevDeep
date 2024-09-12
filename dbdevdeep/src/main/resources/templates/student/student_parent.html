@@ -85,7 +85,6 @@ div.dataTables_wrapper div.dataTables_paginate ul.pagination {
 																<td th:text="${parent.parent_name"></td>
 																<td th:text="${parent.parent_phone}"></td>
 																<td th:text="${parent.parent_birth}"></td>
-																<td><button type="button" class="btn btn-primary" data-toggle="modal" data-target="#parent_create_primary-header-modal">등록</button></td>
 																<td><button type="button" class="btn btn-primary" data-toggle="modal" data-target="#parent_update_primary-header-modal">수정</button></td>
 																<td><a>삭제</a><br></td>
 															</tr>
@@ -93,6 +92,9 @@ div.dataTables_wrapper div.dataTables_paginate ul.pagination {
 													</tbody>
 												</table>
 											</li>
+											<li>
+												<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#parent_create_primary-header-modal">등록</button>
+											</li>		
 										</ul>
 										
 									</div>
@@ -116,12 +118,41 @@ div.dataTables_wrapper div.dataTables_paginate ul.pagination {
 			</div>
 		</div>
 		
+		
 		<!-- 부모 정보 등록 모달 -->
 		<div id="parent_create_primary-header-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="primary-header-modalLabel" aria-hidden="true">
 			<div class="modal-dialog">
 				<div class="modal-content">
 					<div class="modal-header modal-colored-header bg-primary">
 						<h4 class="modal-title" id="primary-header-modalLabel">부모 정보 등록</h4>
+					</div>
+					<div class="modal-body">
+						<div class="form-group">
+							<div>
+								<form id="student_parent_create_form" method="post">
+								<input type="hidden" id="csrf_token" th:value="${_csrf.token}">
+								<input type="hidden" name="student_no" th:value="${sdto.student_no}"> 
+									<select>
+										<option>관계</option>
+										<option value="부">부</option>
+										<option value="모">모</option>
+									</select> 
+									<label for="parent_name">학부모 성명 : </label>
+									<input type="text" id="parent_name" name="parent_name"> 
+									<label for="parent_phone">연락처</label>
+					                    <input type="text" id="pp1" maxlength="3"> - 
+										<input type="text" id="pp2" maxlength="4"> - 
+										<input type="text" id="pp3" maxlength="4">
+										<input type="hidden" name="parent_phone" id="parent_phone">
+									<label for="parent_birth">생년월일</label>
+									<input type="date" id="parent_birth" name="parent_birth">
+									<div class="modal-footer">
+										<a th:href="@{/student/parent/@{sdto.student_no}}">취소</a>
+										<input type="submit" value="등록">
+									</div>
+								</form>
+							</div>
+						</div>
 					</div>
 				</div>
 			</div>
@@ -139,5 +170,55 @@ div.dataTables_wrapper div.dataTables_paginate ul.pagination {
 		<script src="/dist/js/custom.min.js"></script>
 		<script src="/assets/extra-libs/datatables.net/js/jquery.dataTables.min.js"></script>
 		<script src="/dist/js/pages/datatable/datatable-basic.init.js"></script>
+		<script>
+			const form=document.getElementById("student_parent_create_form");
+			form.addEventListener('submit',(e)=>{
+				e.preventDefault();
+				// 유효성 검사 성공 가정
+				let vali_check = true;
+		
+				
+			    const pp1 = document.getElementById('pp1').value;
+			    const pp2 = document.getElementById('pp2').value;
+			    const pp3 = document.getElementById('pp3').value;
+			    const fullpp = `${pp1}-${pp2}-${pp3}`;
+			    document.getElementById('parent_phone').value = fullpp;
+			    
+				if(vali_check == false){
+					alert('유효성 검사 중 문제가 발생하였습니다.');
+				}else{
+					const payload = new FormData(form);
+					const csrfToken = document.getElementById('csrf_token').value;
+					fetch('/student/parent',{
+						method:'post',
+						headers : {
+							'X-CSRF-TOKEN':csrfToken
+						},
+						body:payload
+					})
+					.then(response => response.json())
+					.then(data=>{
+						if(data.res_code == '200'){
+							Swal.fire({
+								icon : 'success',
+								title : '성공',
+								text : data.res_msg
+							}).then((result)=>{
+								location.href = "@{/student/parent/@{sdto.student_no}}";
+							});
+						}else{
+							Swal.fire({
+								icon : 'error',
+								title : '실패',
+								text : data.res_msg
+							});
+						}
+						
+					})
+				}
+				
+			});
+		</script>
+		
 	</body>
 </html>

@@ -18,6 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.dbdevdeep.employee.domain.TeacherHistoryDto;
 import com.dbdevdeep.employee.service.TeacherHistoryService;
+import com.dbdevdeep.student.domain.ParentDto;
 import com.dbdevdeep.student.domain.StudentClassDto;
 import com.dbdevdeep.student.domain.StudentDto;
 import com.dbdevdeep.student.service.StudentFileService;
@@ -38,7 +39,7 @@ public class StudentApiController {
 		this.teacherHistoryService = teacherHistoryService;
 	}
 	
-	// 게시글 등록
+	// 학생 등록
 	@ResponseBody
 	@PostMapping("/student")
 	public Map<String,String> createStudent(StudentDto dto,
@@ -79,6 +80,7 @@ public class StudentApiController {
 	    
 	    return resultMap;
 	}
+	
 	@ResponseBody
 	@PostMapping("/student/{student_no}")
 	public Map<String,String> updateStudent(StudentDto dto,
@@ -150,6 +152,7 @@ public class StudentApiController {
 	    return filteredData;
 	}
 	
+	// 반배정
 	@ResponseBody
 	@PostMapping("/student/class/assign")
 	public Map<String,String> assignClassForStudent(StudentClassDto dto){
@@ -165,18 +168,33 @@ public class StudentApiController {
 	}
 	
 	// 반 이력 삭제 처리
-		@ResponseBody
-		@DeleteMapping("/student/class/{class_no}")
-		public Map<String,String> deleteStudentClass(@PathVariable("class_no") Long class_no){
-			Map<String,String> map = new HashMap<String,String>();
-			map.put("res_code", "404");
-			map.put("res_msg", "게시글 삭제 중 오류가 발생했습니다");
-			
-			if(studentService.deleteStudentClass(class_no)>0) {				
-				map.put("res_code", "200");
-				map.put("res_msg","정상적으로 게시글이 삭제되었습니다.");
-			}
-			
-			return map;
-		}
+	@ResponseBody
+	@DeleteMapping("/student/class/{class_no}")
+	public Map<String,String> deleteStudentClass(@PathVariable("class_no") Long class_no){
+		Map<String,String> map = new HashMap<String,String>();
+		map.put("res_code", "404");
+		map.put("res_msg", "게시글 삭제 중 오류가 발생했습니다");			
+		if(studentService.deleteStudentClass(class_no)>0) {				
+			map.put("res_code", "200");
+			map.put("res_msg","정상적으로 게시글이 삭제되었습니다.");
+		}			
+		return map;
+	}
+		
+	/*
+	 * // 부모 정보 등록
+	 * 
+	 * @ResponseBody
+	 * 
+	 * @PostMapping("/student/parent") public Map<String,String>
+	 * createParent(ParentDto dto){ Map<String,String> resultMap = new
+	 * HashMap<String,String>(); resultMap.put("res_code", "404");
+	 * resultMap.put("res_msg", "반 배정 중 오류가 발생했습니다.");
+	 * 
+	 * if(studentService.createParent(dto) != null) { resultMap.put("res_code",
+	 * "200"); resultMap.put("res_msg", "반 배정이 성공적으로 수행되었습니다."); } return resultMap;
+	 * }
+	 */
+		
+		
 }

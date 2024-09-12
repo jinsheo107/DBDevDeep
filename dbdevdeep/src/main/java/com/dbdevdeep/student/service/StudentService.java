@@ -110,6 +110,7 @@ public class StudentService {
 		return result;
 	}
 	
+	// 학생정보 삭제
 	public int deleteStudent(Long student_no) {
 		int result = 0;
 		try {
@@ -121,6 +122,7 @@ public class StudentService {
 		return result;
 	}
 	
+	// 반배정
 	public StudentClass assignClass(StudentClassDto dto) {
 			Student sdt = studentRepository.findBystudentNo(dto.getStudent_no());
 			TeacherHistory th = teacherHistoryRepository.findByteacherNo(dto.getTeacher_no());
@@ -133,6 +135,7 @@ public class StudentService {
 			return studentClassRepository.save(sc);
 	}
 	
+	// 반배정 이력 조회
 	public List<StudentClassDto> selectStudentClassList(Long student_no){
 		List<StudentClass> studentClassList = studentClassRepository.findByStudent_StudentNo(student_no);
 		List<StudentClassDto> studentClassDtoList = new ArrayList<StudentClassDto>();
@@ -143,6 +146,7 @@ public class StudentService {
 		return studentClassDtoList;
 	}
 	
+	// 반배정 이력 삭제
 	public int deleteStudentClass(Long class_no) {
 		int result = 0;
 		try {
@@ -154,6 +158,7 @@ public class StudentService {
 		return result;
 	}
 	
+	// 학생의 부모 리스트 조회
 	public List<ParentDto> selectStudentParentList(Long student_no) {
 		List<Parent> parentList = parentRepository.findByStudent_StudentNo(student_no);
 		List<ParentDto> parentDtoList = new ArrayList<ParentDto>();
@@ -163,5 +168,15 @@ public class StudentService {
 		}
 		return parentDtoList;
 	}
+	
+	/*
+	 * // 학부모 등록 public Parent createParent(ParentDto dto) { Parent parent =
+	 * Parent.builder() .parentNo(dto.getParent_no())
+	 * .studentNo(dto.getStudent_no()) .parentName(dto.getParent_name())
+	 * .parentPhone(dto.getParent_phone()) .parentBirth(dto.getParent_birth())
+	 * .build();
+	 * 
+	 * return parentRepository.save(parent); }
+	 */
 	
 }
