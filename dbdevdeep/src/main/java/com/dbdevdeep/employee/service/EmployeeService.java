@@ -1,5 +1,6 @@
 package com.dbdevdeep.employee.service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -210,15 +211,15 @@ public class EmployeeService {
 			
 			Employee employee = employeeRepository.findByempId(user.getUsername());
 			
+			LocalDateTime ldt = LocalDateTime.now();
+			
 			if(dto.getRep_yn() != null) {
 				List<MySign> signList = mySignRepository.findByEmpIdAndRepYn(user.getUsername());
 				
 				if(signList != null) {
 					for(int i = 0; i < signList.size(); i++) {
 						MySignDto msDto = new MySignDto().toDto(signList.get(i));
-						
-						msDto.setSign_type("N");
-						
+												
 						MySign ms = MySign.builder()
 								.signNo(msDto.getSign_no())
 								.signTitle(msDto.getSign_title())
@@ -236,14 +237,18 @@ public class EmployeeService {
 				}
 			}
 			
+			if(dto.getReg_time() != null) {
+				dto.setMod_time(ldt);
+			}
+			
 			MySign ms = MySign.builder()
 					.signNo(dto.getSign_no())
 					.signTitle(dto.getSign_title())
 					.signType(dto.getSign_type())
 					.oriPicName(dto.getOri_pic_name())
 					.newPicName(dto.getNew_pic_name())
-					.regTime(null)
-					.modTime(null)
+					.regTime(dto.getReg_time())
+					.modTime(dto.getMod_time())
 					.repYn(dto.getRep_yn() == null ? "N" : "Y")
 					.employee(employee)
 					.build();
@@ -255,6 +260,18 @@ public class EmployeeService {
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
+		return result;
+	}
+	
+	public int deleteSign(Long sign_no) {
+		int result = 0;
+		try {
+			mySignRepository.deleteById(sign_no);	
+			result = 1;
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+		
 		return result;
 	}
 	

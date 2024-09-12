@@ -9,6 +9,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -85,7 +86,7 @@ public class EmployeeApiController {
 	public Map<String, String> addSign(MySignDto dto, @RequestParam("file") MultipartFile file) {
 		Map<String, String> resultMap = new HashMap<String, String>();
 		resultMap.put("res_code", "404");
-		resultMap.put("res_msg", "계정 등록 중 오류가 발생하였습니다.");
+		resultMap.put("res_msg", "서명 등록 중 오류가 발생하였습니다.");
 
 		String savedFileName = fileService.employeeSignPicUpload(file);
 
@@ -100,6 +101,47 @@ public class EmployeeApiController {
 		} else {
 			resultMap.put("res_msg", "파일 업로드가 실패하였습니다.");
 		}
+		return resultMap;
+	}
+	
+	@ResponseBody
+	@PostMapping("/editsign")
+	public Map<String, String> editSign(MySignDto dto, @RequestParam("file") MultipartFile file) {
+		Map<String, String> resultMap = new HashMap<String, String>();
+		resultMap.put("res_code", "404");
+		resultMap.put("res_msg", "서명 등록 중 오류가 발생하였습니다.");
+
+		String savedFileName = fileService.employeeSignPicUpload(file);
+
+		if (savedFileName != null) {
+			dto.setOri_pic_name(file.getOriginalFilename());
+			dto.setNew_pic_name(savedFileName);
+
+			if (employeeService.employeeSignAdd(dto) > 0) {
+				resultMap.put("res_code", "200");
+				resultMap.put("res_msg", "서명 수정에 성공하였습니다.");
+			}
+		} else {
+			resultMap.put("res_msg", "파일 업로드가 실패하였습니다.");
+		}
+		return resultMap;
+	}
+	
+	@ResponseBody
+	@DeleteMapping("/mysign/{sign_no}")
+	public Map<String, String> deleteBoard(@PathVariable("sign_no") Long sign_no) {
+				
+		Map<String, String> resultMap = new HashMap<String, String>();
+
+		resultMap.put("res_code", "404");
+		resultMap.put("res_msg", "게시글 삭제 중 오류가 발생했습니다.");
+		
+			
+		if(employeeService.deleteSign(sign_no) > 0) {
+			resultMap.put("res_code", "200");
+			resultMap.put("res_msg", "게시글이 성공적으로 삭제되었습니다.");
+		}
+		
 		return resultMap;
 	}
 
