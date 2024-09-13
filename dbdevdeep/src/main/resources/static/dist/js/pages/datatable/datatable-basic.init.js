@@ -197,7 +197,7 @@ $('#holiday_config').DataTable({
 	"initComplete": function () {
 			var searchBoxContainer = $('<div class="custom-dataTables_filter" style="display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 30px;"></div>');
 			var searchInput = $('<input type="text" class="form-control" placeholder="검색어를 입력해주세요" style="height: 46px; padding: 8px 12px; width: 300px; box-sizing: border-box;">');
-			var searchButton = $('<button class="btn btn-primary ml-2" style="height:46px;">검색</button>');
+			var searchButton = $('<button class="btn btn-primary ml-2" style="height:46px; width:72px;">검색</button>');
 
 			searchButton.on('click', function () {
 				var searchTerm = searchInput.val();  // 검색어 가져오기

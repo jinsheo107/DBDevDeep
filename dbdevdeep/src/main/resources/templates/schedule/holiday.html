@@ -96,8 +96,20 @@
 		}
 		
 		button.btn {
-			width:80px;
-			font-size:18px;
+			width:72px;
+			font-size:16px;
+			height:45px;
+		}
+		
+		.bordered {
+		    table-layout: fixed; /* 테이블 레이아웃을 고정으로 설정 */
+		    width: 100%; /* 테이블 너비를 100%로 설정 */
+		}
+		
+		.bordered td {
+		    height: 71px; /* 모든 셀의 높이를 동일하게 설정 */
+		    vertical-align: middle; /* 수직 중앙 정렬 */
+		    overflow: hidden; /* 내용이 넘칠 경우 숨기기 */
 		}
 		
 		/* 첫 번째 tr의 td와 th에서 상단 테두리 제거 */
@@ -122,6 +134,7 @@
 		    text-align: center; /* 수평 가운데 정렬 */
 		    vertical-align: middle;
 		    padding-bottom:8px;
+		    height:50px;
 		}
 	</style>
 	<script>
@@ -510,8 +523,8 @@
 				                        <div style="font-size:30px;">휴일 관리</div>
 				                    </div>		                        
 	                            	<div class="col d-flex justify-content-end">
-				                        <button type="button" style="width:80px; height:50px;" class="btn waves-effect waves-light btn-light m-1" id="deleteButton">삭제</button>
-				                        <button type="button" style="width:80px; height:50px;" class="btn waves-effect waves-light btn-primary m-1" data-toggle="modal" data-target="#holidayCreateModal">등록</button>
+				                        <button type="button" style="width:72px; height:45px;" class="btn waves-effect waves-light btn-light m-1" id="deleteButton">삭제</button>
+				                        <button type="button" style="width:72px; height:45px;" class="btn waves-effect waves-light btn-primary m-1" data-toggle="modal" data-target="#holidayCreateModal">등록</button>
 	                            	</div>								
 								</div>
                                 <div class="table-responsive mt-2">
@@ -543,172 +556,168 @@
                 </div>
 
             </div>
-
-        </div>
+	    <!-- 상세보기 모달 HTML -->
+		<div class="modal fade" id="holidayDetailModal" tabindex="-1" role="dialog" aria-labelledby="holidayDetailModalLabel">
+		    <div class="modal-dialog modal-dialog-centered" style="max-width:50%; width: 50%;">
+		        <div class="modal-content" id="holidayDetailContent">
+		            <div class="modal-header modal-colored-header bg-primary" style="display: flex; align-items: center; justify-content: space-between; font-size: 25px;">
+		                <div class="modal-title" id="holidayDetailModalLabel">휴일 정보</div>
+		                <div style="font-size:16px;">등록일 : </div>
+		            </div>
+		            <div class="modal-body" style="padding:0px;">
+		                <!-- 상세정보 내용을 동적으로 채울 부분 -->
+		                <table style="border-bottom:none; border-top:none;" class="table bordered">
+		                    <tbody>
+		                        <!-- 서버에서 가져온 데이터로 채울 부분 -->
+		                    </tbody>
+		                </table>
+		            </div>
+		            <div class="modal-footer" style="margin-top:-15px;">
+		                <button type="button" class="btn btn-primary" id="updateButton">수정</button>
+		                <button type="button" class="btn waves-effect waves-light btn-outline-secondary" data-dismiss="modal">닫기</button>
+		            </div>
+		        </div>
+		    </div>
+		</div>
+	                      
+	    <!-- 등록 모달 HTML -->
+		<div class="modal fade" id="holidayCreateModal" tabindex="-1" role="dialog" aria-labelledby="holidayCreateModalLabel">
+		    <div class="modal-dialog modal-dialog-centered" style="max-width:50%; width: 50%;">
+		        <div class="modal-content">
+		            <div class="modal-header modal-colored-header bg-primary" style="display: flex; align-items: center; justify-content: space-between; font-size: 25px;">
+		                <div class="modal-title" id="holidayCreateModalLabel">휴일 등록</div>
+		                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+		            </div>
+		    			<form id="holidayCreateFrm">
+				            <div class="modal-body" style="padding:0px;">
+				    			<input type="hidden" id="csrf_token" th:value="${_csrf.token}">
+				                <table style="border-bottom:none; border-top:none;" class="table bordered">
+				                    <tbody id="holidayCreateContent">
+				                        <!-- 날짜 선택 -->
+									            <tr>
+									                <td class="align-center" style="width: 20%;">
+									                    <label>날짜</label>
+									                </td>
+									                <td style="width: 80%;">
+									                    <div class="form-inline">
+									                        <input type="radio" name="is_period" value="N" id="createDateOption1" checked>
+                                                            <label for="createDateOption1" class="ml-2">하루</label>
+                                                            <input type="date" class="form-control" id="create_single_date" name="start_date" placeholder="날짜" style="margin-left: 15px !important;">
+                                                            <input type="radio" name="is_period" value="Y" id="createDateOption2" class="ml-4">
+                                                            <label for="createDateOption2" class="ml-2">기간</label>
+                                                            <input type="date" class="form-control" id="create_period_start_date" name="start_date" placeholder="시작일" style="margin-left: 15px !important;">
+                                                            <span class="ml-3 mr-2"> ~ </span>
+                                                            <input type="date" class="form-control" id="create_period_end_date" name="end_date" placeholder="종료일" style="margin-left: 10px !important">
+									                    </div>
+									                </td>
+									            </tr>
+									
+									            <!-- 휴일명 입력 -->
+									            <tr>
+									                <td class="align-center" style="width: 20%;">
+									                    <label>휴일명</label>
+									                </td>
+									                <td style="width: 80%;">
+									                    <input type="text" class="form-control" name="holiday_name" id="create_holiday_name" placeholder="휴일명">
+									                </td>
+									            </tr>
+									
+									            <!-- 매년반복여부 -->
+									            <tr>
+									                <td class="align-center" style="width: 20%;">
+									                    <label>매년반복여부</label>
+									                </td>
+									                <td style="width: 80%;">
+									                    <div class="form-inline">
+															<input type="radio" name="repeat_type" value="NONE" id="create_repeatOption1" checked>
+										                    <label for="repeatOption1" class="ml-2">반복 없음</label>
+										                    <input type="radio" name="repeat_type" value="YEARLY" id="create_repeatOption2" class="ml-4">
+										                    <label for="repeatOption2" class="ml-2">매년 반복</label>
+									                    </div>
+									                </td>
+									            </tr>
+				                    </tbody>
+				                </table>
+				            </div>
+				            <div class="modal-footer" style="margin-top:-15px;">
+				                <button type="button" class="btn waves-effect waves-light btn-outline-secondary" data-dismiss="modal">취소</button>
+	             									<button type="submit" class="btn waves-effect waves-light btn-primary">등록</button>
+				            </div>
+		        	</form>
+		        </div>
+		    </div>
+		</div>
+		
+		<!-- 수정 모달 HTML -->
+		<div class="modal fade" id="holidayEditModal" tabindex="-1" role="dialog" aria-labelledby="holidayEditModalLabel">
+		    <div class="modal-dialog modal-dialog-centered" style="max-width:50%; width: 50%;">
+		        <div class="modal-content">
+		            <div class="modal-header modal-colored-header bg-primary" style="display: flex; align-items: center; justify-content: space-between; font-size: 25px;">
+		                <div class="modal-title" id="holidayEditModalLabel">휴일 수정</div>
+		                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+		            </div>
+		    			<form id="holidayEditFrm">
+				            <div class="modal-body" style="padding:0px;">
+				    			<input type="hidden" id="csrf_token" th:value="${_csrf.token}">
+				                <table style="border-bottom:none; border-top:none;" class="table bordered">
+				                    <tbody id="holidayCreateContent">
+				                        <!-- 날짜 선택 -->
+									            <tr>
+									                <td class="align-center" style="width: 20%;">
+									                    <label>날짜</label>
+									                </td>
+													<td style="width: 80%;">
+													    <div class="form-inline">
+													        <input type="radio" name="is_period" value="N" id="editDateOption1" checked>
+                                                            <label for="editDateOption1" class="ml-2">하루</label>
+                                                            <input type="date" class="form-control ml-2" id="edit_single_date" name="start_date" placeholder="날짜" style="margin-left: 15px !important;">
+                                                            <input type="radio" name="is_period" value="Y" id="editDateOption2" class="ml-4">
+                                                            <label for="editDateOption2" class="ml-2">기간</label>
+                                                            <input type="date" class="form-control ml-2" id="edit_period_start_date" name="start_date" placeholder="시작일" style="margin-left: 15px !important;">
+                                                            <span class="ml-3 mr-2"> ~ </span> 
+                                                            <input type="date" class="form-control ml-2" id="edit_period_end_date" name="end_date" placeholder="종료일" style="margin-left: 10px !important;">
+													    </div>
+													</td>
+									            </tr>
+									
+									            <!-- 휴일명 입력 -->
+									            <tr>
+									                <td class="align-center" style="width: 20%;">
+									                    <label>휴일명</label>
+									                </td>
+									                <td style="width: 80%;">
+									                    <input type="text" class="form-control" name="holiday_name" id="edit_holiday_name" placeholder="휴일명">
+									                </td>
+									            </tr>
+									
+									            <!-- 매년반복여부 -->
+									            <tr>
+									                <td class="align-center" style="width: 20%;">
+									                    <label>매년반복여부</label>
+									                </td>
+									                <td style="width: 80%;">
+									                    <div class="form-inline">
+															<input type="radio" name="repeat_type" value="NONE" id="edit_repeatOption1" checked>
+										                    <label for="repeatOption1" class="ml-2">반복 없음</label>
+										                    <input type="radio" name="repeat_type" value="YEARLY" id="edit_repeatOption2" class="ml-4">
+										                    <label for="repeatOption2" class="ml-2">매년 반복</label>
+									                    </div>
+									                </td>
+									            </tr>
+				                    </tbody>
+				                </table>
+				            </div>
+				            <div class="modal-footer" style="margin-top:-15px;">
+				                <button type="button" class="btn waves-effect waves-light btn-outline-secondary" data-dismiss="modal">취소</button>
+	             									<button type="submit" class="btn waves-effect waves-light btn-primary" id="saveButton">등록</button>
+				            </div>
+		        	</form>
+		        </div>
+		    </div>
+		</div>
 
     </div>
-			                            <!-- 상세보기 모달 HTML -->
-										<div class="modal fade" id="holidayDetailModal" tabindex="-1" role="dialog" aria-labelledby="holidayDetailModalLabel">
-										    <div class="modal-dialog modal-dialog-centered" style="max-width:50%; width: 50%;">
-										        <div class="modal-content" id="holidayDetailContent">
-										            <div class="modal-header modal-colored-header bg-primary" style="display: flex; align-items: center; justify-content: space-between; font-size: 25px;">
-										                <div class="modal-title" id="holidayDetailModalLabel">휴일 정보</div>
-										                <div style="font-size:16px;">등록일 : </div>
-										            </div>
-										            <div class="modal-body" style="padding:0px;">
-										                <!-- 상세정보 내용을 동적으로 채울 부분 -->
-										                <table style="border-bottom:none; border-top:none;" class="table bordered">
-										                    <tbody>
-										                        <!-- 서버에서 가져온 데이터로 채울 부분 -->
-										                    </tbody>
-										                </table>
-										            </div>
-										            <div class="modal-footer" style="margin-top:-15px;">
-										                <button type="button" class="btn btn-primary" id="updateButton">수정</button>
-										                <button type="button" class="btn waves-effect waves-light btn-outline-secondary" data-dismiss="modal">닫기</button>
-										            </div>
-										        </div>
-										    </div>
-										</div>
-			                            
-			                            <!-- 등록 모달 HTML -->
-										<div class="modal fade" id="holidayCreateModal" tabindex="-1" role="dialog" aria-labelledby="holidayCreateModalLabel">
-										    <div class="modal-dialog modal-dialog-centered" style="max-width:48%; width: 48%;">
-										        <div class="modal-content">
-										            <div class="modal-header modal-colored-header bg-primary" style="display: flex; align-items: center; justify-content: space-between; font-size: 25px;">
-										                <div class="modal-title" id="holidayCreateModalLabel">휴일 등록</div>
-										                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-										            </div>
-										    			<form id="holidayCreateFrm">
-												            <div class="modal-body" style="padding:0px;">
-												    			<input type="hidden" id="csrf_token" th:value="${_csrf.token}">
-												                <table style="border-bottom:none; border-top:none;" class="table bordered">
-												                    <tbody id="holidayCreateContent">
-												                        <!-- 날짜 선택 -->
-																	            <tr>
-																	                <td class="align-center" style="width: 20%;">
-																	                    <label>날짜</label>
-																	                </td>
-																	                <td style="width: 80%;">
-																	                    <div class="form-inline">
-																	                        <input type="radio" name="is_period" value="N" id="createDateOption1" checked>
-			                                                                                <label for="createDateOption1" class="ml-2">하루</label>
-			                                                                                <input type="date" class="form-control ml-3" id="create_single_date" name="start_date" placeholder="날짜">
-			                                                                                <input type="radio" name="is_period" value="Y" id="createDateOption2" class="ml-4">
-			                                                                                <label for="createDateOption2" class="ml-2">기간</label>
-			                                                                                <input type="date" class="form-control ml-2" id="create_period_start_date" name="start_date" placeholder="시작일">
-			                                                                                <span class="ml-3 mr-2"> ~ </span>
-			                                                                                <input type="date" class="form-control ml-2" id="create_period_end_date" name="end_date" placeholder="종료일">
-																	                    </div>
-																	                </td>
-																	            </tr>
-																	
-																	            <!-- 휴일명 입력 -->
-																	            <tr>
-																	                <td class="align-center" style="width: 20%;">
-																	                    <label>휴일명</label>
-																	                </td>
-																	                <td style="width: 80%;">
-																	                    <input type="text" class="form-control" name="holiday_name" id="create_holiday_name" placeholder="휴일명">
-																	                </td>
-																	            </tr>
-																	
-																	            <!-- 매년반복여부 -->
-																	            <tr>
-																	                <td class="align-center" style="width: 20%;">
-																	                    <label>매년반복여부</label>
-																	                </td>
-																	                <td style="width: 80%;">
-																	                    <div class="form-inline">
-																							<input type="radio" name="repeat_type" value="NONE" id="create_repeatOption1" checked>
-																		                    <label for="repeatOption1" class="ml-2">반복 없음</label>
-																		                    <input type="radio" name="repeat_type" value="YEARLY" id="create_repeatOption2" class="ml-4">
-																		                    <label for="repeatOption2" class="ml-2">매년 반복</label>
-																	                    </div>
-																	                </td>
-																	            </tr>
-												                    </tbody>
-												                </table>
-												            </div>
-												            <div class="modal-footer" style="margin-top:-15px;">
-												                <button type="button" class="btn waves-effect waves-light btn-outline-secondary" data-dismiss="modal">취소</button>
-		                    									<button type="submit" class="btn waves-effect waves-light btn-primary">등록</button>
-												            </div>
-										        	</form>
-										        </div>
-										    </div>
-										</div>
-										
-										<!-- 수정 모달 HTML -->
-										<div class="modal fade" id="holidayEditModal" tabindex="-1" role="dialog" aria-labelledby="holidayEditModalLabel">
-										    <div class="modal-dialog modal-dialog-centered" style="max-width:55%; width: 55%;">
-										        <div class="modal-content">
-										            <div class="modal-header modal-colored-header bg-primary" style="display: flex; align-items: center; justify-content: space-between; font-size: 25px;">
-										                <div class="modal-title" id="holidayEditModalLabel">휴일 수정</div>
-										                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-										            </div>
-										    			<form id="holidayEditFrm">
-												            <div class="modal-body" style="padding:0px;">
-												    			<input type="hidden" id="csrf_token" th:value="${_csrf.token}">
-												                <table style="border-bottom:none; border-top:none;" class="table bordered">
-												                    <tbody id="holidayCreateContent">
-												                        <!-- 날짜 선택 -->
-																	            <tr>
-																	                <td class="align-center" style="width: 20%;">
-																	                    <label>날짜</label>
-																	                </td>
-																					<td style="width: 80%;">
-																					    <div class="form-inline">
-																					        <input type="radio" name="is_period" value="N" id="editDateOption1" checked>
-			                                                                                <label for="editDateOption1" class="ml-2">하루</label>
-			                                                                                <!-- 하루 날짜 필드 -->
-			                                                                                <input type="date" class="form-control ml-3" id="edit_single_date" name="start_date" placeholder="날짜">
-			                                                                                
-			                                                                                <input type="radio" name="is_period" value="Y" id="editDateOption2" class="ml-4">
-			                                                                                <label for="editDateOption2" class="ml-2">기간</label>
-			                                                                                <!-- 기간 날짜 필드 -->
-			                                                                                <input type="date" class="form-control ml-2" id="edit_period_start_date" name="start_date" placeholder="시작일">
-			                                                                                <span class="ml-3 mr-2"> ~ </span>
-			                                                                                <input type="date" class="form-control ml-2" id="edit_period_end_date" name="end_date" placeholder="종료일">
-																					    </div>
-																					</td>
-																	            </tr>
-																	
-																	            <!-- 휴일명 입력 -->
-																	            <tr>
-																	                <td class="align-center" style="width: 20%;">
-																	                    <label>휴일명</label>
-																	                </td>
-																	                <td style="width: 80%;">
-																	                    <input type="text" class="form-control" name="holiday_name" id="edit_holiday_name" placeholder="휴일명">
-																	                </td>
-																	            </tr>
-																	
-																	            <!-- 매년반복여부 -->
-																	            <tr>
-																	                <td class="align-center" style="width: 20%;">
-																	                    <label>매년반복여부</label>
-																	                </td>
-																	                <td style="width: 80%;">
-																	                    <div class="form-inline">
-																							<input type="radio" name="repeat_type" value="NONE" id="edit_repeatOption1" checked>
-																		                    <label for="repeatOption1" class="ml-2">반복 없음</label>
-																		                    <input type="radio" name="repeat_type" value="YEARLY" id="edit_repeatOption2" class="ml-4">
-																		                    <label for="repeatOption2" class="ml-2">매년 반복</label>
-																	                    </div>
-																	                </td>
-																	            </tr>
-												                    </tbody>
-												                </table>
-												            </div>
-												            <div class="modal-footer" style="margin-top:-15px;">
-												                <button type="button" class="btn waves-effect waves-light btn-outline-secondary" data-dismiss="modal">취소</button>
-		                    									<button type="submit" class="btn waves-effect waves-light btn-primary" id="saveButton">등록</button>
-												            </div>
-										        	</form>
-										        </div>
-										    </div>
-										</div>
+
     <!-- All Jquery -->
     <!-- ============================================================== -->
     <script src="/assets/libs/jquery/dist/jquery.min.js"></script>
