@@ -18,10 +18,12 @@ public class ReferenceDraftDto {
 	private Long ref_draft_no;
 	private Long draft_no;
 	private String emp_id;
+	private String ref_draft_name;
 	
 	public ReferenceDraft toEntity() {
 		return ReferenceDraft.builder()
 				.refDraftNo(ref_draft_no)
+				.refDraftName(ref_draft_name)
 				.build();
 	}
 	
@@ -30,6 +32,7 @@ public class ReferenceDraftDto {
 				.ref_draft_no(referenceDraft.getRefDraftNo())
 				.draft_no(referenceDraft.getApproDraft().getDraftNo())
 				.emp_id(referenceDraft.getEmployee().getEmpId())
+				.ref_draft_name(referenceDraft.getRefDraftName())
 				.build();
 	}
 

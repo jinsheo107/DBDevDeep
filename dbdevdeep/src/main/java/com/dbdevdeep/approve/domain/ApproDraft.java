@@ -41,6 +41,9 @@ public class ApproDraft {
     @ManyToOne
     @JoinColumn(name = "temp_no")
     private TempEdit tempEdit;
+    
+    @Column(name = "draft_name")
+    private String draftName;
 
     @Column(name = "appro_time")
     private LocalDateTime approTime;
