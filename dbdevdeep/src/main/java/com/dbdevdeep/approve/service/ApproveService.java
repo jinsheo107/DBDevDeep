@@ -157,6 +157,32 @@ public class ApproveService {
 		return approveDtoList;
 	}
 	
+	// 요청 받은 목록 조회
+		public List<ApproveDto> selectComeApproveList(String empId){
+			List<Approve> approveList = approveRepository.findByListAndEmpId(empId);
+			List<ApproveDto> approveDtoList = new ArrayList<ApproveDto>();
+			
+			for(Approve a : approveList) {
+			
+				ApproveDto dto = ApproveDto.builder()
+						.appro_no(a.getApproNo())
+						.emp_id(a.getEmployee().getEmpId())
+						.dept_code(a.getDepartment().getDeptCode())
+						.job_code(a.getJob().getJobCode())
+						.appro_time(a.getApproTime())
+						.appro_type(a.getApproType())
+						.appro_status(a.getApproStatus())
+						.appro_title(a.getApproTitle())
+						.appro_content(a.getApproContent())
+						.build();
+				
+				
+				approveDtoList.add(dto);
+			}
+			
+			return approveDtoList;
+		}
+	
 	public Map<String, Object> getApproveDetail(Long approNo) {
 	    Map<String, Object> detailMap = new HashMap<>();
 
@@ -287,19 +313,33 @@ public class ApproveService {
             vacationRequestRepository.save(vacationRequest);
 		    
 		
-		    // 3. approve_Line 테이블에 저장
+         // 3. approve_Line 테이블에 저장
             approveLineRepository.deleteByApprove(approve);
             for (ApproveLineDto lineDto : approveLineDtos) {
-                lineDto.setAppro_no(approveDto.getAppro_no()); 
-                ApproveLine approveLine = lineDto.toEntity(approve, employee);
+                lineDto.setAppro_no(approve.getApproNo());
+
+                // 각 ApproveLine에 맞는 Employee 객체를 가져옵니다.
+                Employee lineEmployee = employeeRepository.findByempId(lineDto.getEmp_id());
+                if (lineEmployee == null) {
+                    continue; // 또는 오류를 처리합니다.
+                }
+
+                ApproveLine approveLine = lineDto.toEntity(approve, lineEmployee);
                 approveLineRepository.save(approveLine);
             }
-            
+
             // 4. reference 테이블에 저장
             referenceRepository.deleteByApprove(approve);
             for (ReferenceDto refDto : referenceDto) {
-                refDto.setAppro_no(approveDto.getAppro_no()); 
-                Reference reference = refDto.toEntity(approve, employee);
+                refDto.setAppro_no(approve.getApproNo());
+
+                // 각 Reference에 맞는 Employee 객체를 가져옵니다.
+                Employee refEmployee = employeeRepository.findByempId(refDto.getEmp_id());
+                if (refEmployee == null) {
+                    continue; // 또는 오류를 처리합니다.
+                }
+
+                Reference reference = refDto.toEntity(approve, refEmployee);
                 referenceRepository.save(reference);
             }
             
@@ -350,75 +390,94 @@ public class ApproveService {
 	// 결재 요청 
 	@Transactional
 	public int approUp(ApproveDto approveDto, VacationRequestDto vacationRequestDto, List<ApproveLineDto> approveLineDtos,
-			List<ReferenceDto> referenceDto , ApproFileDto approFileDto, MultipartFile file) {
+	                   List<ReferenceDto> referenceDto, ApproFileDto approFileDto, MultipartFile file) {
 
-		Employee employee = employeeRepository.findByempId(approveDto.getEmp_id());
+	    // Employee, Department, Job 정보 가져오기
+	    Employee employee = employeeRepository.findByempId(approveDto.getEmp_id());
+	    if (employee == null) {
+	    }
+	    
 	    Department department = departmentRepository.findByDeptCode(approveDto.getDept_code());
 	    Job job = jobRepository.findByJobCode(approveDto.getJob_code());
-		
+
+	    // TempEdit 처리
 	    TempEdit tempEdit = null;
-	    if (approveDto.getTemp_no() != null) {  // temp_no가 null이 아닐 때만 findById를 호출합니다.
+	    if (approveDto.getTemp_no() != null) {
 	        tempEdit = tempEditRepository.findById(approveDto.getTemp_no()).orElse(null);
 	    }
-	    
+
 	    if (employee == null || department == null || job == null) {
-	        // 필요한 엔티티가 없는 경우 예외를 던지거나 오류를 처리합니다.
+	        // 필요한 엔티티가 없는 경우 오류 반환
 	        return 0;
 	    }
+
+	    // 1. approve 테이블에 저장
+	    Approve approve = approveDto.toEntity(employee, department, job, tempEdit);
+	    approve = approveRepository.save(approve);
+	    Long approNo = approve.getApproNo(); // 저장 후 생성된 appro_no 가져오기
+
+	    // 2. vacation_request 테이블에 저장
+	    vacationRequestDto.setAppro_no(approNo);
+	    VacationRequest vacationRequest = vacationRequestDto.toEntity(approve);
+	    vacationRequestRepository.save(vacationRequest);
 	    
-			// 1. approve 테이블에 저장
-		    Approve approve = approveDto.toEntity(employee, department, job, tempEdit);
-		    approve = approveRepository.save(approve);
-            
-            // 저장 후 생성된 appro_no 가져오기
-            Long approNo = approve.getApproNo();
-            
-            // 2. vacation_request 테이블에 저장
-            vacationRequestDto.setAppro_no(approNo);
-            VacationRequest vacationRequest = vacationRequestDto.toEntity(approve);
-            vacationRequestRepository.save(vacationRequest);
-            
-            // 3. approve_Line 테이블에 저장
-            for (ApproveLineDto lineDto : approveLineDtos) {
-                lineDto.setAppro_no(approNo); // Approve의 appro_no 설정
-                ApproveLine approveLine = lineDto.toEntity(approve, employee);
-                approveLineRepository.save(approveLine);
-            }
-            
-            // 4. reference 테이블에 저장
-            for (ReferenceDto refDto : referenceDto) {
-                refDto.setAppro_no(approNo); // Approve의 appro_no 설정
-                Reference reference = refDto.toEntity(approve, employee);
-                referenceRepository.save(reference);
-            }
-            
-         // 5. appro_file 테이블에 저장
-            if (approFileDto != null) { // approFileDto가 null이 아닐 때만 저장
-                approFileDto.setAppro_no(approNo); // Approve의 appro_no 설정
-                ApproFile approFile = approFileDto.toEntity(approve);
-                approFileRepository.save(approFile);
-            }
-            
-            // 6. 휴가 시간 차감 로직 추가
-            int vacationType = vacationRequestDto.getVac_type();
-            if (vacationType == 0 || vacationType == 3 || vacationType == 6 || vacationType == 7 || vacationType == 8) {
-                // 사용자가 선택한 휴가 유형에 따른 차감 시간 계산
-                int hoursToDeduct = minusVac(vacationRequestDto);
+	    
+	 // 3. approve_Line 테이블에 저장
+	    for (ApproveLineDto lineDto : approveLineDtos) {
+	        lineDto.setAppro_no(approNo); // Approve의 appro_no 설정
 
-                // 기존 vacation_hour에서 차감
-                EmployeeDto employeeDto = new EmployeeDto().toDto(employee); // Employee 객체를 DTO로 변환
-                int updatedVacationHour = employeeDto.getVacation_hour() - hoursToDeduct;
-                employeeDto.setVacation_hour(Math.max(updatedVacationHour, 0)); // 0 미만으로 가지 않도록 설정
-                
-                employeeDto.setDepartment(department); // Department 엔티티 설정
-                employeeDto.setJob(job); // Job 엔티티 설정
+	        // 각 ApproveLine에 맞는 Employee 객체를 가져옵니다.
+	        Employee lineEmployee = employeeRepository.findByempId(lineDto.getEmp_id());
+	        if (lineEmployee == null) {
+	            continue; // 또는 오류를 처리합니다.
+	        }
 
-                // 업데이트된 DTO를 엔티티로 변환하여 저장
-                employeeRepository.save(employeeDto.toEntity());
-            }
-			return 1;
-            
+	        ApproveLine approveLine = lineDto.toEntity(approve, lineEmployee);
+	        approveLineRepository.save(approveLine);
+	    }
+
+	    // 4. reference 테이블에 저장
+	    for (ReferenceDto refDto : referenceDto) {
+	        refDto.setAppro_no(approNo); // Approve의 appro_no 설정
+
+	        // 각 Reference에 맞는 Employee 객체를 가져옵니다.
+	        Employee refEmployee = employeeRepository.findByempId(refDto.getEmp_id());
+	        if (refEmployee == null) {
+	            continue; // 또는 오류를 처리합니다.
+	        }
+
+	        Reference reference = refDto.toEntity(approve, refEmployee);
+	        referenceRepository.save(reference);
+	    }
+
+	    // 5. appro_file 테이블에 저장
+	    if (approFileDto != null) { // approFileDto가 null이 아닐 때만 저장
+	        approFileDto.setAppro_no(approNo); // Approve의 appro_no 설정
+	        ApproFile approFile = approFileDto.toEntity(approve);
+	        approFileRepository.save(approFile);
+	    }
+
+	    // 6. 휴가 시간 차감 로직 추가
+	    int vacationType = vacationRequestDto.getVac_type();
+	    if (vacationType == 0 || vacationType == 3 || vacationType == 6 || vacationType == 7 || vacationType == 8) {
+	        // 사용자가 선택한 휴가 유형에 따른 차감 시간 계산
+	        int hoursToDeduct = minusVac(vacationRequestDto);
+
+	        // 기존 vacation_hour에서 차감
+	        EmployeeDto employeeDto = new EmployeeDto().toDto(employee); // Employee 객체를 DTO로 변환
+	        int updatedVacationHour = employeeDto.getVacation_hour() - hoursToDeduct;
+	        employeeDto.setVacation_hour(Math.max(updatedVacationHour, 0)); // 0 미만으로 가지 않도록 설정
+
+	        employeeDto.setDepartment(department); // Department 엔티티 설정
+	        employeeDto.setJob(job); // Job 엔티티 설정
+
+	        // 업데이트된 DTO를 엔티티로 변환하여 저장
+	        employeeRepository.save(employeeDto.toEntity());
+	    }
+
+	    return 1;
 	}
+
 	
 	// 휴가 시간계산 메서드
 	private int minusVac(VacationRequestDto vacationRequestDto) {

@@ -38,6 +38,19 @@ public class ApproveViewController {
 		return "approve/approList";
 	}
 	
+	// 결재 받은 목록 조회
+		@GetMapping("/approve/comeApprove")
+		public String selectComeApproveList(Model model) {
+			
+			Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+	        String username = authentication.getName();
+			
+			List<ApproveDto> resultList = approveService.selectComeApproveList(username);
+			model.addAttribute("resultList",resultList);
+			return "approve/comeApprove";
+		}
+	
+	
 	// 결재 작성
 	@GetMapping("/approCreate")
     public String showApproCreatePage() {

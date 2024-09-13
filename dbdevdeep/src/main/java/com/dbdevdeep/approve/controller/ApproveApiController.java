@@ -27,13 +27,16 @@ import com.dbdevdeep.approve.domain.ApproveLineDto;
 import com.dbdevdeep.approve.domain.ReferenceDto;
 import com.dbdevdeep.approve.domain.VacationRequestDto;
 import com.dbdevdeep.approve.service.ApproveService;
+import com.dbdevdeep.employee.domain.Employee;
 import com.dbdevdeep.employee.domain.EmployeeDto;
+import com.dbdevdeep.employee.repository.EmployeeRepository;
 
 @Controller
 public class ApproveApiController {
 
 	private final ApproveService approveService;
 	private final FileService fileService;
+	private final EmployeeRepository employeeRepository;
 	
 	// 직원 아이디 추출
 	private String pullId(String input) {
@@ -60,9 +63,10 @@ public class ApproveApiController {
 	
 	
 	@Autowired
-	public ApproveApiController(ApproveService approveService, FileService fileService) {
+	public ApproveApiController(ApproveService approveService, FileService fileService, EmployeeRepository employeeRepository) {
 		this.approveService = approveService;
 		this.fileService = fileService;
+		this.employeeRepository =employeeRepository;
 	}
 	
 	// 결재 삭제
@@ -278,42 +282,70 @@ public class ApproveApiController {
 			vacationRequestDto.setStart_time(startDateTime);
 			vacationRequestDto.setEnd_time(endDateTime);
 			
-		List<ApproveLineDto> approveLineDtos = new ArrayList<>();
-		LocalDateTime currentTime = LocalDateTime.now();
-		int order = 1;
-		boolean firstSet = false;
-		
-		if(consult !=null && !consult.isEmpty()) {
-			String[] consults = consult.split(">");
-			for(String c : consults) {
-				String consultId = pullId(c);
-				String consultName = pullName(c);
-				int status = firstSet ? 0 : 1;
-				firstSet = true;
-				approveLineDtos.add(new ApproveLineDto(null, null, consultId, consultName ,order++, status, currentTime ,null, "Y"));
-			}
-		}
-		
-		if(approval != null && !approval.isEmpty()) {
-			String[] approvals = approval.split(">");
-			for(String a : approvals) {
-				String approvalId = pullId(a);
-				String approvalName = pullName(a);
-				int status = firstSet ? 0 : 1;
-				firstSet = true;
-				approveLineDtos.add(new ApproveLineDto(null, null, approvalId , approvalName ,order++ , status , currentTime ,null, "N"));
-			}
-		}
-		
-		List<ReferenceDto> referenceDto = new ArrayList<>();
-			if(reference != null && !reference.isEmpty()) {
-				String[] references = reference.split(">");
-				for(String r : references) {
-					String refId = pullId(r);
-					String refName = pullName(r);
-					referenceDto.add(new ReferenceDto(null , null , refId , refName));
-				}
-			}
+			// approve_line 설정 
+	        List<ApproveLineDto> approveLineDtos = new ArrayList<>();
+	        LocalDateTime currentTime = LocalDateTime.now();
+	        int order = 1;
+	        boolean firstSet = false;
+
+	        // 협의자 처리
+	        if (consult != null && !consult.isEmpty()) {
+	            String[] consults = consult.split(">");
+	            for (String c : consults) {
+	                String consultId = pullId(c); // 협의자 ID 추출
+	                String consultName = pullName(c); // 협의자 이름 추출
+	                int status = firstSet ? 0 : 1;
+	                firstSet = true;
+
+	                ApproveLineDto approveLineDto = new ApproveLineDto();
+	                approveLineDto.setEmp_id(consultId); // 올바르게 협의자 ID 설정
+	                approveLineDto.setAppro_line_name(consultName); // 협의자 이름 설정
+	                approveLineDto.setAppro_line_order(order++);
+	                approveLineDto.setAppro_line_status(status);
+	                approveLineDto.setAppro_permit_time(currentTime);
+	                approveLineDto.setConsult_yn("Y"); // 협의 여부 설정
+
+	                approveLineDtos.add(approveLineDto);
+	            }
+	        }
+
+	        // 결재자 처리
+	        if (approval != null && !approval.isEmpty()) {
+	            String[] approvals = approval.split(">");
+	            for (String a : approvals) {
+	                String approvalId = pullId(a); // 결재자 ID 추출
+	                String approvalName = pullName(a); // 결재자 이름 추출
+	                int status = firstSet ? 0 : 1;
+	                firstSet = true;
+
+	                ApproveLineDto approveLineDto = new ApproveLineDto();
+	                approveLineDto.setEmp_id(approvalId); // 올바르게 결재자 ID 설정
+	                approveLineDto.setAppro_line_name(approvalName); // 결재자 이름 설정
+	                approveLineDto.setAppro_line_order(order++);
+	                approveLineDto.setAppro_line_status(status);
+	                approveLineDto.setAppro_permit_time(currentTime);
+	                approveLineDto.setConsult_yn("N"); // 결재 여부 설정
+
+	                approveLineDtos.add(approveLineDto);
+	            }
+	        }
+
+	        // 참조자 처리
+	        List<ReferenceDto> referenceDto = new ArrayList<>();
+
+	        if (reference != null && !reference.isEmpty()) {
+	            String[] references = reference.split(">");
+	            for (String r : references) {
+	                String refId = pullId(r); // 참조자 ID 추출
+	                String refName = pullName(r); // 참조자 이름 추출
+
+	                ReferenceDto refDto = new ReferenceDto();
+	                refDto.setEmp_id(refId); // 참조자 ID 설정
+	                refDto.setRef_name(refName); // 참조자 이름 설정
+
+	                referenceDto.add(refDto);
+	            }
+	        }
 			
 		// 파일 업로드 설정
 			ApproFileDto approFileDto = null; // 파일이 없는 경우 null로 설정 
