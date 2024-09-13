@@ -236,15 +236,23 @@ public class ApproveService {
 		    approve = approveRepository.save(approve);
 
 		    // 2. vacation_request 테이블에 저장
+		    VacationRequest oriVacRequest = vacationRequestRepository.findByApprove(approve);
+		    if(oriVacRequest != null) {
+		    	vacationRequestRepository.delete(oriVacRequest);
+		    }
+		    
+		    
 		    VacationRequestDto oriVacDto = vacationRequestDtos.get(0);
 		    VacationRequestDto newVacDto = vacationRequestDtos.get(1);
 		    
 		    newVacDto.setAppro_no(approveDto.getAppro_no());
+		    newVacDto.setVac_yn("Y");
             VacationRequest vacationRequest = newVacDto.toEntity(approve);
             vacationRequestRepository.save(vacationRequest);
 		    
 		
 		    // 3. approve_Line 테이블에 저장
+            approveLineRepository.deleteByApprove(approve);
             for (ApproveLineDto lineDto : approveLineDtos) {
                 lineDto.setAppro_no(approveDto.getAppro_no()); 
                 ApproveLine approveLine = lineDto.toEntity(approve, employee);
@@ -252,6 +260,7 @@ public class ApproveService {
             }
             
             // 4. reference 테이블에 저장
+            referenceRepository.deleteByApprove(approve);
             for (ReferenceDto refDto : referenceDto) {
                 refDto.setAppro_no(approveDto.getAppro_no()); 
                 Reference reference = refDto.toEntity(approve, employee);
@@ -259,7 +268,7 @@ public class ApproveService {
             }
             
          // 5. appro_file 테이블에 저장
-            if (approFileDto != null) { 
+            if (approFileDto != null && approFileDto.getOri_file() != null && !approFileDto.getOri_file().isEmpty()) { 
                 approFileDto.setAppro_no(approveDto.getAppro_no());
                 ApproFile approFile = approFileDto.toEntity(approve);
                 approFileRepository.save(approFile);
@@ -267,27 +276,36 @@ public class ApproveService {
 		
          // 6. 휴가 시간 차감 로직 추가
             int vacHours = 0;
-            if (oriVacDto.getVac_type() != newVacDto.getVac_type() ||
-                !oriVacDto.getStart_time().equals(newVacDto.getStart_time()) ||
-                !oriVacDto.getEnd_time().equals(newVacDto.getEnd_time())) {
+
+            // 특정 휴가 유형에 대해 차감 로직을 수행
+            if ((oriVacDto.getVac_type() == 0 || oriVacDto.getVac_type() == 3 || oriVacDto.getVac_type() == 6 ||
+                 oriVacDto.getVac_type() == 7 || oriVacDto.getVac_type() == 8) &&
+                (oriVacDto.getVac_type() != newVacDto.getVac_type() ||
+                 !oriVacDto.getStart_time().equals(newVacDto.getStart_time()) ||
+                 !oriVacDto.getEnd_time().equals(newVacDto.getEnd_time()))) {
 
                 // 변경 전 시간 복구
-            	vacHours += minusVac(oriVacDto);
-
-                // 변경 후 시간 차감
-            	vacHours -= minusVac(newVacDto);
+                vacHours += minusVac(oriVacDto);
             }
 
-                // 기존 vacation_hour에서 차감
-                EmployeeDto employeeDto = new EmployeeDto().toDto(employee); // Employee 객체를 DTO로 변환
-                int updatedVacationHour = employeeDto.getVacation_hour() + vacHours;
-                employeeDto.setVacation_hour(Math.max(updatedVacationHour, 0)); // 0 미만으로 가지 않도록 설정
-                
-                employeeDto.setDepartment(department); // Department 엔티티 설정
-                employeeDto.setJob(job); // Job 엔티티 설정
+            // 새로운 휴가 유형에 대해 차감 로직을 수행
+            if (newVacDto.getVac_type() == 0 || newVacDto.getVac_type() == 3 || newVacDto.getVac_type() == 6 ||
+                newVacDto.getVac_type() == 7 || newVacDto.getVac_type() == 8) {
 
-                // 업데이트된 DTO를 엔티티로 변환하여 저장
-                employeeRepository.save(employeeDto.toEntity());
+                // 변경 후 시간 차감
+                vacHours -= minusVac(newVacDto);
+            }
+
+            // 기존 vacation_hour에서 차감
+            EmployeeDto employeeDto = new EmployeeDto().toDto(employee); // Employee 객체를 DTO로 변환
+            int updatedVacationHour = employeeDto.getVacation_hour() + vacHours;
+            employeeDto.setVacation_hour(Math.max(updatedVacationHour, 0)); // 0 미만으로 가지 않도록 설정
+
+            employeeDto.setDepartment(department); // Department 엔티티 설정
+            employeeDto.setJob(job); // Job 엔티티 설정
+
+            // 업데이트된 DTO를 엔티티로 변환하여 저장
+            employeeRepository.save(employeeDto.toEntity());
             
 			return 1;
             
@@ -347,7 +365,7 @@ public class ApproveService {
             
             // 6. 휴가 시간 차감 로직 추가
             int vacationType = vacationRequestDto.getVac_type();
-            if (vacationType == 0 || vacationType == 1 || vacationType == 7 || vacationType == 8 || vacationType == 4) {
+            if (vacationType == 0 || vacationType == 3 || vacationType == 6 || vacationType == 7 || vacationType == 8) {
                 // 사용자가 선택한 휴가 유형에 따른 차감 시간 계산
                 int hoursToDeduct = minusVac(vacationRequestDto);
 

@@ -359,8 +359,8 @@
 												    <input id="start_date" class="form-control" name="start_date" th:value="${vDto.start_time}">
 												    <input id="end_date" class="form-control" name="end_date" th:value="${vDto.end_time}">
 												    
-												    <input type="hidden" id="start_date" class="form-control" name="start_date_ori" th:value="${vDto.start_time}">
-												    <input type="hidden" id="end_date" class="form-control" name="end_date_ori" th:value="${vDto.end_time}">
+												    <input type="hidden" class="form-control" name="start_date_ori" th:value="${vDto.start_time}">
+												    <input type="hidden" class="form-control" name="end_date_ori" th:value="${vDto.end_time}">
 												</td>
                                             </tr>
                                             <tr>
@@ -686,7 +686,7 @@ document.addEventListener("DOMContentLoaded", function() {
 					confirmButtonText:"닫기"
 				});
 	        	form.vac_type_display.focus()
-	        } else if (document.querySelector('input[name="vac_type_display"]:checked').value === "1" && 
+	        } else if (document.querySelector('input[name="vac_type_display"]:checked').value === "8" && 
 	                 !document.getElementById("half_one").checked && 
 	                 !document.getElementById("half_two").checked) {
 	        	Swal.fire({
@@ -716,7 +716,7 @@ document.addEventListener("DOMContentLoaded", function() {
 					title:'신청사유를 입력해주세요',
 					confirmButtonText:"닫기"
 				});
-	        	form.appro_context.focus()
+	        	form.appro_content.focus()
 	        } else if (form.approval.value == ""){
 	        	Swal.fire({
 					icon:'error',

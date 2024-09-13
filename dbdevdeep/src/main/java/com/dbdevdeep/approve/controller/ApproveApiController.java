@@ -117,20 +117,34 @@ public class ApproveApiController {
 		resultMap.put("res_code", "404");
 		resultMap.put("res_msg", "게시글 수정중 오류가 발생했습니다.");
 		
-		ApproFileDto approFileDto = new ApproFileDto();
-		if(file != null && "".equals(approFileDto.getOri_file()) == false) {
-			String savedFileName = fileService.approveUpload(file);
-			if(savedFileName != null) {
-				approFileDto.setOri_file(approFileDto.getOri_file());
-				approFileDto.setNew_file(savedFileName);
-				if(fileService.approFileDelete(approNo) > 0) {
-					resultMap.put("res_msg", "기존 파일이 정상적으로 삭제되었습니다.");
-				}
-			} else {
-				resultMap.put("res_msg", "파일 업로드가 실패하였습니다.");
-			}
-		}
+		// ApproFileDto approFileDto = new ApproFileDto();
+		// if(file != null && "".equals(approFileDto.getOri_file()) == false) {
+		//	String savedFileName = fileService.approveUpload(file);
+		//	if(savedFileName != null) {
+		//		approFileDto.setOri_file(approFileDto.getOri_file());
+		//		approFileDto.setNew_file(savedFileName);
+		//		if(fileService.approFileDelete(approNo) > 0) {
+		//			resultMap.put("res_msg", "기존 파일이 정상적으로 삭제되었습니다.");
+		//		}
+		//	} else {
+		//		resultMap.put("res_msg", "파일 업로드가 실패하였습니다.");
+		//	}
+		// }
 		
+		ApproFileDto approFileDto = null;
+		if (file != null && !file.isEmpty()) { 
+		    approFileDto = new ApproFileDto();
+		    String savedFileName = fileService.approveUpload(file);
+		    if (savedFileName != null) {
+		        approFileDto.setOri_file(file.getOriginalFilename());
+		        approFileDto.setNew_file(savedFileName);
+		        if (fileService.approFileDelete(approNo) > 0) {
+		            resultMap.put("res_msg", "기존 파일이 정상적으로 삭제되었습니다.");
+		        }
+		    } else {
+		        resultMap.put("res_msg", "파일 업로드가 실패하였습니다.");
+		    }
+		}
 		
 		try {
 			ApproveDto approveDto = new ApproveDto();

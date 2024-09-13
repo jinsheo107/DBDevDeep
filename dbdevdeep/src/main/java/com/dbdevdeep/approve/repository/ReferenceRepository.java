@@ -12,4 +12,5 @@ import com.dbdevdeep.approve.domain.Reference;
 public interface ReferenceRepository extends JpaRepository<Reference, Long>{
 
 	List<Reference> findByApprove(Approve approve);
+	int deleteByApprove(Approve approve);
 }
