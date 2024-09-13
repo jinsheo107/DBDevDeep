@@ -20,6 +20,7 @@ public class ApproDraftDto {
 	private Long draft_no;
 	private String emp_id;
 	private Long temp_no;
+	private String draft_name;
 	private LocalDateTime appro_time;
 	private int appro_type;
 	private String appro_title;
@@ -35,6 +36,7 @@ public class ApproDraftDto {
 	public ApproDraft toEntity() {
 		return ApproDraft.builder()
 				.draftNo(draft_no)
+				.draftName(draft_name)
 				.approTime(appro_time)
 				.approType(appro_type)
 				.approTitle(appro_title)
@@ -54,6 +56,7 @@ public class ApproDraftDto {
 				.draft_no(approDraft.getDraftNo())
 				.emp_id(approDraft.getEmployee().getEmpId())
 				.temp_no(approDraft.getTempEdit().getTempNo())
+				.draft_name(approDraft.getDraftName())
 				.appro_time(approDraft.getApproTime())
 				.appro_type(approDraft.getApproType())
 				.appro_title(approDraft.getApproTitle())

@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{include/mypage_layout}">
+<th:block layout:fragment="content">
+
+	<style>
+.addPic {
+	background-color: gainsboro;
+	width: 100%;
+	aspect-ratio: 1/1;
+	border-radius: 50%;
+	border: none;
+	font-size: 25px;
+}
+
+.addPic, .littleButton {
+	transition: background-color 0.3s ease;
+}
+
+.addPic:hover, .littleButton:hover {
+	background-color: rgb(189, 189, 189);
+	cursor: pointer;
+}
+
+.littleButton {
+	background-color: gainsboro;
+	width: 35px;
+	height: 35px;
+	border-radius: 50%;
+	border: none;
+	font-size: 15px;
+	text-align: center;
+	position: relative;
+	bottom: 35px;
+	left: 85px;
+}
+
+.preview-container {
+	border-radius: 50%;
+	overflow: hidden;
+	width: 100%;
+	aspect-ratio: 1/1;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	border: 2px solid lightgray;
+}
+
+#imagePreview {
+	width: 100%;
+	aspect-ratio: 1/1;
+	object-fit: cover;
+}
+
+.hidden {
+	display: none;
+}
+
+.centered-container {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+</style>
+
+	<div class="page-wrapper">
+		<div class="container-fluid">
+			<!-- ============================================================== -->
+			<!-- Start Page Content -->
+			<!-- ============================================================== -->
+			<div class="row">
+				<div class="col-12">
+					<div class="card" style="padding: 40px;">
+						<div class="card-body">
+							<h4 class="card-title">내 정보</h4>
+							<hr>
+							<input type="hidden" id="csrf_token" th:value="${_csrf.token}">
+							<form id="employeeEditFrm">
+								<div class="row">
+									<div class="col-md-1 "></div>
+									<input type="text" th:value="${empDto.emp_id}" name="emp_id" hidden="hidden">
+									<div class="col-md-1 ">
+										<div class="form-group" style="margin-top: 20px;">
+											<label>사진</label>
+											<div class="row">
+												<div class="preview-container" id="preview-container">
+													<img id="imagePreview" th:src="@{'/UploadImg/employee/' + ${empDto.new_pic_name}}">
+												</div>
+												<input type="button" class="littleButton" id="addPic" value="+">
+											</div>
+										</div>
+										<input type="file" class="custom-file-input" id="inputGroupFile04" name="file">
+									</div>
+
+									<div class="col-md-1 "></div>
+
+									<div class="col-md-8">
+										<div class="form-group">
+											<label for="gov_id">우편번호</label>
+											<div class="row">
+												<div class="col-md-8">
+													<input type="text" name="emp_post_code" class="form-control" id="sample6_postcode" placeholder="우편번호" onclick="sample6_execDaumPostcode()" readonly th:value="${empDto.emp_post_code}"><br> 
+													<input type="text" name="emp_addr" class="form-control" id="sample6_address" placeholder="주소" readonly th:value="${empDto.emp_addr}"><br> 
+													<input type="text" name="emp_detail_addr" class="form-control" id="sample6_detailAddress" placeholder="상세주소" th:value="${empDto.emp_detail_addr}"> 
+													<input type="text" id="sample6_extraAddress" placeholder="참고항목" hidden="hidden">
+													<div id="emp_post_code_feedback" class="mt-2"></div>
+												</div>
+												<div class="col-md-1">
+													<input type="button" id="postBtn" onclick="sample6_execDaumPostcode()" value="우편번호 찾기" class="btn waves-effect waves-light btn-primary">
+												</div>
+											</div>
+										</div>
+										<div class="form-group">
+											<label for="gov_id">전화번호</label>
+											<div class="row">
+												<div class="col-md-2">
+													<input type="text" class="form-control" id="firstPhone" placeholder="010" maxlength="3" th:value="${#strings.setSplit(empDto.emp_phone, '-')[0]}">
+												</div>
+												<div class="col-md-3">
+													<input type="text" class="form-control" id="secondPhone" placeholder="1111" maxlength="4" th:value="${#strings.setSplit(empDto.emp_phone, '-')[1]}">
+												</div>
+												<div class="col-md-3">
+													<input type="text" class="form-control" id="thirdPhone" placeholder="2222" maxlength="4" th:value="${#strings.setSplit(empDto.emp_phone, '-')[2]}">
+												</div>
+												<div id="emp_phone_feedback" class="mt-2 col-md-8"></div>
+												<input type="text" id="empPhone" name="emp_phone" hidden="hidden" th:value="${empDto.emp_phone}">
+
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="text-right">
+									<button type="reset" class="btn btn-dark">초기화</button>
+									<button class="btn btn-info">수정</button>
+								</div>
+							</form>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- ============================================================== -->
+		<!-- End Container fluid  -->
+		<!-- ============================================================== -->
+		<!-- ============================================================== -->
+		<!-- footer -->
+		<!-- ============================================================== -->
+		<footer class="footer text-center text-muted">
+			All Rights Reserved by Adminmart. Designed and Developed by <a href="https://wrappixel.com">WrapPixel</a>.
+		</footer>
+		<!-- ============================================================== -->
+		<!-- End footer -->
+		<!-- ============================================================== -->
+	</div>
+	<script src="/assets/libs/jquery/dist/jquery.min.js"></script>
+	<!-- Bootstrap tether Core JavaScript -->
+	<script src="/assets/libs/popper.js/dist/umd/popper.min.js"></script>
+	<script src="/assets/libs/bootstrap/dist/js/bootstrap.min.js"></script>
+	<!-- apps -->
+	<!-- apps -->
+	<script src="/dist/js/app-style-switcher.js"></script>
+	<script src="/dist/js/feather.min.js"></script>
+	<!-- slimscrollbar scrollbar JavaScript -->
+	<script src="/assets/libs/perfect-scrollbar/dist/perfect-scrollbar.jquery.min.js"></script>
+	<script src="/assets/extra-libs/sparkline/sparkline.js"></script>
+	<!--Wave Effects -->
+	<!-- themejs -->
+	<!--Menu sidebar -->
+	<script src="/dist/js/sidebarmenu.js"></script>
+	<!--Custom JavaScript -->
+	<script src="/dist/js/custom.min.js"></script>
+	<!--This page plugins -->
+	<script src="/assets/extra-libs/datatables.net/js/jquery.dataTables.min.js"></script>
+	<script src="/dist/js/pages/datatable/datatable-basic.init.js"></script>
+
+	<!-- 사진 등록 -->
+	<script>
+	    const fileInput = document.getElementById('inputGroupFile04');
+	    const imagePreview = document.getElementById('imagePreview');
+	    const addPicButton = document.getElementById('addPic');
+	    const previewContainer = document.getElementById('preview-container');
+	    const defaultImageSrc = imagePreview.src;
+	    
+	    addPicButton.addEventListener('click', () => {
+	        fileInput.click();
+	    });
+	
+	    fileInput.addEventListener('change', (event) => {
+	        const file = event.target.files[0];
+	
+	        if (file) {
+	            const validExtensions = ['jpg', 'jpeg', 'png'];
+	            const fileExtension = file.name.split('.').pop().toLowerCase();
+	
+	            if (validExtensions.includes(fileExtension)) {
+	                const reader = new FileReader();
+	
+	                reader.onload = (e) => {
+	                    imagePreview.src = e.target.result;
+	                    addPicButton.classList.remove('addPic');
+	                    addPicButton.classList.add('littleButton');
+	                    previewContainer.classList.remove('hidden');
+	                };
+	
+	                reader.readAsDataURL(file);
+	            } else {
+	                Swal.fire({
+	                	icon:'error',
+						title:'실패',
+						text: '이미지 파일만 선택할 수 있습니다.',
+						confirmButtonText:"닫기"
+	                });
+	                fileInput.value = ''; 
+		            imagePreview.src = defaultImageSrc;
+	            }
+	        } else {
+	            imagePreview.src = defaultImageSrc;
+	        }
+	    });
+	</script>
+
+	<!-- 전화번호 정규식 -->
+	<script>
+		const firstPhone = document.getElementById('firstPhone');
+	    const secondPhone = document.getElementById('secondPhone');
+	    const thirdPhone = document.getElementById('thirdPhone');
+	    const empPhone = document.getElementById('empPhone');
+	    
+	    const onlyNumber = function(event) {
+	        let value = event.target.value;
+	        value = value.replace(/[^0-9]/g, '');
+	        event.target.value = value;
+	        updateEmpPhone();
+	    };
+	    
+	    firstPhone.addEventListener('input', onlyNumber);
+	    secondPhone.addEventListener('input', onlyNumber);
+	    thirdPhone.addEventListener('input', onlyNumber);
+	    
+	    const updateEmpPhone = () => {
+	        const firstValue = firstPhone.value.trim();
+	        const secondValue = secondPhone.value.trim();
+	        const thirdValue = thirdPhone.value.trim();
+	        
+	        empPhone.value = `${firstValue}-${secondValue}-${thirdValue}`;
+	    };
+	    /* 전화번호 첫번째 칸 입력 */
+	    firstPhone.addEventListener('keyup', (event) => {
+	    	const trimmedValue = firstPhone.value.trim();
+	      const isValid = /^01[0-9]$/.test(trimmedValue);
+	    	
+	    	if(isValid) {
+	    		firstPhone.classList.remove('is-invalid');
+	    		firstPhone.classList.add('is-valid');
+	    		document.getElementById('emp_phone_feedback').textContent = '';
+	    		secondPhone.focus();
+	    	} else {
+	    		firstPhone.classList.remove('is-valid');
+	    		firstPhone.classList.add('is-invalid');
+	    		document.getElementById('emp_phone_feedback').textContent = '휴대전화 앞 3자리를 입력하세요';
+	    		document.getElementById('emp_phone_feedback').style.color = 'red';
+	    	}
+	    	
+	    	if(event.key == 'Enter') {
+	    		secondPhone.focus();
+	    	}
+	    	
+	    	updateEmpPhone();
+	    });
+	    /* 전화번호 중간 입력 */
+	    secondPhone.addEventListener('keyup', (event) => {
+	    	
+	    	if(secondPhone.value.length == 4) {
+	    		secondPhone.classList.remove('is-invalid');
+	    		secondPhone.classList.add('is-valid');
+	    		document.getElementById('emp_phone_feedback').textContent = '';
+	    		thirdPhone.focus();
+	    	} else {
+	    		secondPhone.classList.remove('is-valid');
+	    		secondPhone.classList.add('is-invalid');
+	    		document.getElementById('emp_phone_feedback').textContent = '휴대전화 중간 3 ~ 4자리를 입력하세요';
+	    		document.getElementById('emp_phone_feedback').style.color = 'red';
+	    	}
+	    	
+	    	if(event.key == 'Enter') {
+	    		if(secondPhone.value.length == 3) {
+	    		secondPhone.classList.remove('is-invalid');
+	    		secondPhone.classList.add('is-valid');
+	    		document.getElementById('emp_phone_feedback').textContent = '';    			
+	    		}
+	    		thirdPhone.focus();
+	    	}
+	    	
+	    	updateEmpPhone();
+	    });
+	    
+	    /* 세번째 전화번호 입력 */
+	    thirdPhone.addEventListener('keyup', (event) => {
+	    	if(thirdPhone.value.length == 4) {
+	    		thirdPhone.classList.remove('is-invalid');
+	    		thirdPhone.classList.add('is-valid');
+	    		document.getElementById('emp_phone_feedback').textContent = '';
+	    	} else {
+	    		thirdPhone.classList.remove('is-valid');
+	    		thirdPhone.classList.add('is-invalid');
+	    		document.getElementById('emp_phone_feedback').textContent = '휴대전화 끝 4자리를 입력하세요';
+	    		document.getElementById('emp_phone_feedback').style.color = 'red';
+	    	}
+	    	
+	    	if(event.key == 'Enter') {
+	    	}
+	    	
+	    	updateEmpPhone();
+	    });
+	</script>
+
+	<!-- DAUM 지도 API -->
+	<script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+	<script>
+    function sample6_execDaumPostcode() {
+      new daum.Postcode({
+        oncomplete: function (data) {
+          var addr = '';
+          var extraAddr = '';
+
+          if (data.userSelectedType === 'R') {
+            addr = data.roadAddress;
+          } else {
+            addr = data.jibunAddress;
+          }
+
+          if (data.userSelectedType === 'R') {
+            if (data.bname !== '' && /[동|로|가]$/g.test(data.bname)) {
+              extraAddr += data.bname;
+            }
+            if (data.buildingName !== '' && data.apartment === 'Y') {
+              extraAddr += (extraAddr !== '' ? ', ' + data.buildingName : data.buildingName);
+            }
+            if (extraAddr !== '') {
+              extraAddr = ' (' + extraAddr + ')';
+            }
+            document.getElementById("sample6_extraAddress").value = extraAddr;
+
+          } else {
+            document.getElementById("sample6_extraAddress").value = '';
+          }
+
+          document.getElementById('sample6_postcode').value = data.zonecode;
+          document.getElementById("sample6_address").value = addr;
+          document.getElementById("sample6_detailAddress").focus();
+          
+          const postCode = document.getElementById('sample6_postcode');
+          const addrCode = document.getElementById("sample6_address");
+          const detailAddr = document.getElementById("sample6_detailAddress");
+          
+          if(postCode.value != '') {
+        	  postCode.classList.remove('is-invalid');
+        	  postCode.classList.add('is-valid');
+        	  addrCode.classList.remove('is-invalid');
+        	  addrCode.classList.add('is-valid');
+	        } else {
+	        	postCode.classList.remove('is-valid');
+	        	postCode.classList.add('is-invalid');
+	        	addrCode.classList.remove('is-valid');
+	        	addrCode.classList.add('is-invalid');
+	        	emp_post_code_feedback.textContent = '우편번호를 선택하세요';
+	        	emp_post_code_feedback.style.color = 'red';
+	        }
+          
+          detailAddr.addEventListener('keyup', (event) => {
+        	  
+        	  if(detailAddr.value.length > 0) {
+        		  detailAddr.classList.remove('is-invalid');
+        		  detailAddr.classList.add('is-valid');
+           		emp_post_code_feedback.textContent = '';
+           		if(event.key == 'Enter') {
+           			document.getElementById('firstPhone').focus();
+           		}
+        	  } else {
+        		  detailAddr.classList.remove('is-valid');
+        		  detailAddr.classList.add('is-invalid');
+  	        	emp_post_code_feedback.textContent = '상세주소를 입력하세요';
+	        	emp_post_code_feedback.style.color = 'red';
+        	  }
+          })
+          
+        }
+      }).open();
+    }
+  </script>
+
+	<script>
+		const form = document.getElementById('employeeEditFrm');
+		form.addEventListener('submit', (e) => {
+			e.preventDefault();
+			
+			const payload = new FormData(form);
+			
+			console.log(form);
+			
+			const csrfToken = document.getElementById("csrf_token").value;
+			
+			fetch('/edit-myinfo', {
+				method:'POST',
+				headers: {
+					'X-CSRF-TOKEN': csrfToken
+				},
+				body: payload
+			})
+			.then(response => response.json())
+			.then(data => {
+				if(data.res_code == "200") {
+					Swal.fire({
+						icon: 'success',
+						title: '성공',
+						text: data.res_msg,
+						confirmButtonText: "닫기"
+					})
+					.then((result) => {
+						location.href="/editmypage";
+					})
+				} else {
+					Swal.fire({
+						icon: 'error',
+						title: '실패',
+						text: data.res_msg,
+						confirmButtonText: '닫기'
+					});
+				};
+			});
+			
+		});
+		
+	</script>
+
+</th:block>
+</html>

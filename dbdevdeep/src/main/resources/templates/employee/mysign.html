@@ -2,37 +2,56 @@
 <html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{include/mypage_layout}">
 <th:block layout:fragment="content">
 	<style>
-#eye_icon_login {
-	display: flex; position: absolute; z-index : 999; left : 320px; bottom : 27px; cursor: pointer; z-index: 999; left: 320px; bottom: 27px;
-}
-
 .hidden {
 	display: none;
 }
 
 .show {
 	display: block;
+	padding: 0px;
 }
 </style>
 
 	<style>
 .clicked_sign {
-	background-color: rgba(150, 150, 150, 0.1); padding: 20px; width: 150px; height: 150px; border-radius: 10px;
+	background-color: rgba(150, 150, 150, 0.1);
+	padding: 20px;
+	width: 150px;
+	height: 150px;
+	border-radius: 10px;
 }
 
 .form-hover:hover {
-	background-color: rgba(0, 0, 0, 0.1); cursor: pointer;
+	background-color: rgba(0, 0, 0, 0.1);
+	cursor: pointer;
 }
 
 .none_clicked_sign {
-	padding: 20px; width: 150px; height: 150px; border-radius: 10px;
+	padding: 20px;
+	width: 150px;
+	height: 150px;
+	border-radius: 10px;
 }
 
 .add_sign {
-	background-color: rgba(150, 150, 150, 0.1); padding: 20px; width: 150px; height: 150px; border-radius: 10px; text-align: center; line-height: 110px; font-weight: bolder;
+	background-color: rgba(150, 150, 150, 0.1);
+	padding: 20px;
+	width: 150px;
+	height: 150px;
+	border-radius: 10px;
+	text-align: center;
+	line-height: 110px;
+	font-weight: bolder;
 }
 
+.eye-position {
+	cursor: pointer;
+	position: relative;
+	bottom: 27px;
+	right: 10px;
+}
 </style>
+
 	<!-- ============================================================== -->
 	<!-- End Left Sidebar - style you can find in sidebar.scss  -->
 	<!-- ============================================================== -->
@@ -51,82 +70,94 @@
 					<div class="card" style="padding: 40px;">
 						<div class="card-body show" id="pwcheck">
 							<h4 class="card-title">비밀번호 확인</h4>
+							<hr>
 							<input type="hidden" id="csrf_token" th:value="${_csrf.token}">
 							<form id="pwcheckFrm">
 								<div class="form-body">
 									<div class="row">
 										<div class="col-md-4">
 											<div class="form-group">
-												<input type="password" class="form-control" name="emp_pw" id="pwd" placeholder="비밀번호를 입력하세요."> 
-												<i class="fa fa-eye-slash text-left" id="eye_icon_login" style="position: relative; left: 300px;"></i>
+												<div>
+													<input type="password" class="form-control" name="emp_pw" id="pwd" placeholder="비밀번호를 입력하세요."> <i class="fa fa-eye-slash float-right eye-position" id="eye_icon_login"></i>
+												</div>
 											</div>
 										</div>
+										<div class="col-md-1">
+											<button class="btn btn-info">확인</button>
+										</div>
 									</div>
-									<button class="btn btn-info">확인</button>
 								</div>
 							</form>
 						</div>
 
 						<div class="card-body hidden" id="signDiv">
 							<h4 class="card-title">내 서명</h4>
+							<hr>
 							<div class="form-body" style="margin-bottom: 40px;">
 								<div class="row">
 									<th:block th:each="sign : ${resultList}">
-										<div class="col-md-2">
+										<div class="col-md-2 d-flex justify-content-center">
 											<div class="form-group clicked_sign form-hover" 
-									             onclick="signInfoFunc(this);" 
-									             th:data-sign-title="${sign.sign_title}"
-									             th:data-sign-type="${sign.sign_type}"
-									             th:data-reg-time="${#temporals.format(sign.reg_time, 'yyyy.MM.dd HH:mm')}"
-									             th:data-mod-time="${sign.mod_time == null ? '-' : #temporals.format(sign.mod_time, 'yyyy.MM.dd HH:mm')}"
-									             th:data-rep-yn="${sign.rep_yn}">
+												onclick="signInfoFunc(this);" 
+												th:data-sign-no="${sign.sign_no}" 
+												th:data-sign-title="${sign.sign_title}" 
+												th:data-sign-type="${sign.sign_type}" 
+												th:data-reg-time="${sign.reg_time}" 
+												th:data-mod-time="${sign.mod_time}" 
+												th:data-rep-yn="${sign.rep_yn}">
 												<div style="margin-bottom: 10px;">
 													<img th:src="@{'/UploadImg/empSign/' + ${sign.new_pic_name}}" width="80px" height="80px" style="border-radius: 50%">
 												</div>
-												<label th:text="${sign.sign_title}"></label>
+												<label><span th:if="${sign.rep_yn == 'Y'}"><i class="fas fa-chess-queen" style="color: #5f76e8;"></i> </span><span th:text="${sign.sign_title}"></span></label>
 											</div>
 										</div>
 									</th:block>
-									<th:block th:each="i : ${#numbers.sequence(1, 3 - (#lists.isEmpty(resultList) ? 0 : #lists.size(resultList)))}">
-										<div class="col-md-2">
-											<div class="form-group add_sign form-hover" onclick="signAddFunc();">+</div>
-										</div>
+									<th:block th:if="${#lists.size(resultList) != 3}">
+										<th:block th:each="i : ${#numbers.sequence(1, 3 - (#lists.isEmpty(resultList) ? 0 : #lists.size(resultList)))}">
+											<div class="col-md-2 d-flex justify-content-center">
+												<div class="form-group add_sign form-hover" onclick="signAddFunc();">+</div>
+											</div>
+										</th:block>
 									</th:block>
 								</div>
 							</div>
-							<div class="hidden" id="sign_info">
+							<div class="hidden col-6" id="sign_info">
 								<table class="table" id="signatureTable">
-								    <colgroup>
-								        <col style="width: 20%;">
-								        <col style="width: 80%;">
-								    </colgroup>
-								    <tr>
-								        <td>서명 제목</td>
-								        <td id="signTitle"></td>
-								    </tr>
-								    <tr>
-								        <td>서명 종류</td>
-								        <td id="signType"></td>
-								    </tr>
-								    <tr>
-								        <td>서명 등록일</td>
-								        <td id="regTime"></td>
-								    </tr>
-								    <tr>
-								        <td>서명 수정일</td>
-								        <td id="modTime"></td>
-								    </tr>
-								    <tr>
-								        <td>대표 서명</td>
-								        <td id="repYn"></td>
-								    </tr>
+									<colgroup>
+										<col style="width: 20%;">
+										<col style="width: 80%;">
+									</colgroup>
+									<tr>
+										<td>서명 제목</td>
+										<td id="signTitle"></td>
+									</tr>
+									<tr>
+										<td>서명 종류</td>
+										<td id="signType"></td>
+									</tr>
+									<tr>
+										<td>서명 등록일</td>
+										<td id="regTime"></td>
+									</tr>
+									<tr>
+										<td>서명 수정일</td>
+										<td id="modTime"></td>
+									</tr>
+									<tr>
+										<td>대표 여부</td>
+										<td id="repYn"></td>
+									</tr>
 								</table>
+								<div class="float-right">
+									<button type="button" class="btn waves-effect waves-light btn-light m-1" onclick="deleteSign()">삭제</button>
+									<button type="button" class="btn waves-effect waves-light btn-primary m-1" onclick="signInfoEditFunc()">수정</button>
+								</div>
 							</div>
 							<div id="addSign" class="hidden">
 								<form id="addSignFrm">
 									<div class="form-body">
 										<div class="row">
-											<div class="col-md-5">
+											<div class="col-6">
 												<div class="form-group">
 													<label for="sign_title">서명 제목</label> <input type="text" class="form-control" name="sign_title" id="sign_title">
 												</div>
@@ -137,11 +168,10 @@
 													</select>
 												</div>
 												<div class="form-group">
-												<label for="sign_type">서명 파일</label>
+													<label for="sign_type">서명 파일</label>
 													<div class="custom-file">
-							                            <input type="file" class="custom-file-input" name="file" id="file" accept=".jpeg, .jpg, .png">
-							                            <label class="custom-file-label" for="file">서명 사진을 선택하세요</label>
-						                        	</div>
+														<input type="file" class="custom-file-input" name="file" id="file" accept=".jpeg, .jpg, .png"> <label class="custom-file-label" for="file">서명 사진을 선택하세요</label>
+													</div>
 												</div>
 												<div class="form-group">
 													<label for="rep_yn" style="display: flex;">대표 서명 &nbsp;<input value="Y" type="checkbox" name="rep_yn" id="rep_yn"></label>
@@ -154,11 +184,39 @@
 									</div>
 								</form>
 							</div>
-							<div class="form-actions">
-								<div class="text-right">
-									<button type="submit" class="btn btn-info">Submit</button>
-									<button type="reset" class="btn btn-dark">Reset</button>
-								</div>
+							<div id="editSign" class="hidden">
+								<form id="editSignFrm">
+									<div class="form-body">
+										<div class="col-6">
+											<input type="hidden" name="sign_no" id="edit_sign_no">
+											<input type="hidden" name="reg_time" id="edit_reg_time">
+											<input type="hidden" name="mod_time" id="edit_mod_time">
+											<div class="form-group">
+												<label for="sign_title">서명 제목</label> 
+												<input type="text" class="form-control" name="sign_title" id="edit_sign_title">
+											</div>
+											<div class="form-group">
+												<label for="sign_type">서명 종류</label> <select class="form-control" name="sign_type" id="edit_sign_type">
+													<option value="SI">서명</option>
+													<option value="ST">도장</option>
+												</select>
+											</div>
+											<div class="form-group">
+												<label for="sign_type">서명 파일</label>
+												<div class="custom-file">
+													<input type="file" class="custom-file-input" name="file" id="edit_file" accept=".jpeg, .jpg, .png"> <label class="custom-file-label" for="file">서명 사진을 선택하세요</label>
+												</div>
+											</div>
+											<div class="form-group">
+												<label for="rep_yn" style="display: flex;">대표 서명 &nbsp;<input value="Y" type="checkbox" name="rep_yn" id="edit_rep_yn"></label>
+											</div>
+											<div class="float-right">
+												<button type="reset" class="btn waves-effect waves-light btn-light m-1" onclick="signCloseFunc();">취소</button>
+												<button class="btn waves-effect waves-light btn-primary m-1">수정</button>
+											</div>
+										</div>
+									</div>
+								</form>
 							</div>
 						</div>
 					</div>
@@ -291,48 +349,129 @@
         function signAddFunc() {
             var addSignElement = document.getElementById('addSign');
             var signInfoElement = document.getElementById('sign_info');
+            var editSignElement = document.getElementById('editSign');
             
             if (addSignElement.classList.contains('hidden')) {
                 addSignElement.classList.remove('hidden');
                 addSignElement.classList.add('show');
             	signInfoElement.classList.remove('show');
             	signInfoElement.classList.add('hidden');
+            	editSignElement.classList.remove('show');
+		    	editSignElement.classList.add('hidden');
             } else {
                 addSignElement.classList.remove('show');
                 addSignElement.classList.add('hidden');
+                editSignElement.classList.remove('show');
+		    	editSignElement.classList.add('hidden');
+                addSignFrm.reset();
+                editSignFrm.reset();
             }
         }
         
 		// 클릭 시 서명 정보 노출
         function signInfoFunc(divElement) {
 		    // Extract data from the clicked div
+		    const signNo = divElement.getAttribute('data-sign-no');
 		    const signTitle = divElement.getAttribute('data-sign-title');
 		    const signType = divElement.getAttribute('data-sign-type') === 'SI' ? '서명' : '도장';
 		    const regTime = divElement.getAttribute('data-reg-time');
 		    const modTime = divElement.getAttribute('data-mod-time');
 		    const repYn = divElement.getAttribute('data-rep-yn') === 'Y' ? 'O' : '-';
 		    
+		    let regTimeFormat = regTime.replace('T', ' ');
+		    regTimeFormat = regTimeFormat.replaceAll(/[-]/g, '.');
+		    
+		    let modTimeFormat = '';
+		   	
+		    if(modTime != null) {
+		    	modTimeFormat = modTime.replace('T', ' ');
+			    modTimeFormat = modTimeFormat.replaceAll(/[-]/g, '.');
+		    }
+		    
 		    // Populate the table with the extracted data
 		    document.getElementById('signTitle').innerText = signTitle;
 		    document.getElementById('signType').innerText = signType;
-		    document.getElementById('regTime').innerText = regTime;
-		    document.getElementById('modTime').innerText = modTime;
+		    document.getElementById('regTime').innerText = regTimeFormat;
+		    document.getElementById('modTime').innerText = modTimeFormat != null ? modTimeFormat : '-';
 		    document.getElementById('repYn').innerText = repYn;
+		    
+		    document.getElementById('edit_sign_no').value = signNo;
 		    
 		    // Optionally, you can also handle the show/hide logic for other elements
 		    var addSignElement = document.getElementById('addSign');
 		    var signInfoElement = document.getElementById('sign_info');
+		    var editSignElement = document.getElementById('editSign');
 		    
 		    if (signInfoElement.classList.contains('hidden')) {
 		    	signInfoElement.classList.remove('hidden');
 		    	signInfoElement.classList.add('show');
 		    	addSignElement.classList.remove('show');
 		    	addSignElement.classList.add('hidden');
+		    	editSignElement.classList.remove('show');
+		    	editSignElement.classList.add('hidden');
+		    	addSignFrm.reset();
+		    	editSignFrm.reset();
 		    }
 		}
+		
+        function signInfoEditFunc() {
+        	
+		    const signTitle = document.getElementById('signTitle').innerText;
+		    const signType = document.getElementById('signType').innerText == '서명' ? 'SI' : 'ST';
+		    const repYn = document.getElementById('repYn').innerText;
+
+		    let regTime = document.getElementById('regTime').innerText;
+		    let modTime = document.getElementById('modTime').innerText;
+		    
+		    regTime = regTime.replace(' ', 'T');
+		    regTime = regTime.replaceAll(/\./gi, '-');
+		    
+		    if(modTime != null) {
+		    	modTime = modTime.replace(' ', 'T');
+			    modTime = modTime.replaceAll(/\./g, '-');
+		    }
+		    
+		    document.getElementById('edit_sign_title').value = signTitle;
+		    document.getElementById('edit_sign_type').value = signType;
+		    document.getElementById('edit_reg_time').value = regTime;
+		    document.getElementById('edit_mod_time').value = (modTime != '-' ? modTime : null);
+		    
+		    
+		    if(repYn == 'O') {
+		    	document.getElementById('edit_rep_yn').checked = true;	
+		    } else {
+		    	document.getElementById('edit_rep_yn').checked = false;
+		    }
+		    
+		    var addSignElement = document.getElementById('addSign');
+		    var signInfoElement = document.getElementById('sign_info');
+		    var editSignElement = document.getElementById('editSign');
+		    
+		    if (editSignElement.classList.contains('hidden')) {
+		    	editSignElement.classList.remove('hidden');
+		    	editSignElement.classList.add('show');
+		    	addSignElement.classList.remove('show');
+		    	addSignElement.classList.add('hidden');
+		    	signInfoElement.classList.remove('show');
+		    	signInfoElement.classList.add('hidden');
+		    }
+		}
+        
+        function signCloseFunc() {
+        	var addSignElement = document.getElementById('addSign');
+            var signInfoElement = document.getElementById('sign_info');
+            var editSignElement = document.getElementById('editSign');
+            
+            addSignElement.classList.remove('show');
+            addSignElement.classList.add('hidden');
+            signInfoElement.classList.remove('show');
+            signInfoElement.classList.add('hidden');
+		    editSignElement.classList.remove('show');
+		    editSignElement.classList.add('hidden');
+        }
     </script>
-    
-    <script>
+
+	<script>
     	const addSignFrm = document.getElementById('addSignFrm');
     	addSignFrm.addEventListener('submit', (e) => {
     		
@@ -403,6 +542,123 @@
     		}
     	})
     	
+    </script>
+
+	<script>
+	    const editSignFrm = document.getElementById('editSignFrm');
+	    editSignFrm.addEventListener('submit', (e) => {
+			
+			e.preventDefault();
+			
+			let vali_test = false;
+			let vali_text = "";
+			
+			const file = document.getElementById('edit_file');
+			const validExtensions = ['jpg', 'jpeg', 'png'];
+	    	const fileExtension = file.name.split('.').pop().toLowerCase();
+	
+			if(editSignFrm.sign_title.value == "" || editSignFrm.sign_title.value.length < 2) {
+				vali_text = "2글자 이상 작성해주세요";
+				addSignFrm.sign_title.focus();
+			} else if (file.value == '') {
+				vali_text = "서명 파일을 선택해주세요";
+				file.focus();
+			} else if (validExtensions.includes(fileExtension)) {
+				vali_text = "사진 파일만 선택해주세요";
+				file.value = "";
+				file.focus();
+			} else {
+				vali_test = true;
+			}
+			
+			
+			
+			if(vali_test) {
+				const csrfToken = document.getElementById("csrf_token").value;
+				
+				const payload = new FormData(editSignFrm);
+				
+				fetch('/editsign', {
+					method: 'POST',
+					headers: {
+						'X-CSRF-TOKEN': csrfToken
+					},
+					body: payload
+				})
+				.then(res => res.json())
+				.then(data => {
+					if(data.res_code == "200") {
+						Swal.fire({
+							icon :'success',
+							title:'성공',
+							text : data.res_msg,
+							confirmButtonText:"닫기"
+						})
+						.then(() => {
+							location.href="/mysign";
+						});
+					} else {
+						Swal.fire({
+							icon :'error',
+							title:'실패',
+							text : data.res_msg,
+							confirmButtonText:"닫기"
+						})
+					}
+				})
+			} else {
+				Swal.fire({
+					icon: "error",
+					title: vali_text,
+					confirmButtonText: "닫기"
+				})
+			}
+		})
+    </script>
+
+	<script>
+	    const deleteSign = function() {
+	    	
+	    	const signNo = document.getElementById('edit_sign_no').value;
+	    	const csrfToken = document.getElementById("csrf_token").value;
+	    	
+			Swal.fire({
+			      title: '경고',
+			      text: "서명을 삭제하시겠습니까?",
+			      icon: 'warning',
+			      showCancelButton: true,
+			      confirmButtonText: '삭제',
+			      cancelButtonText: '취소',
+			}).then((result) => {
+			      if (result.isConfirmed) {
+			    	  fetch('/mysign/' + signNo, {
+			    		  method: 'DELETE',
+			    		  headers: {
+			    			  'X-CSRF-TOKEN': csrfToken
+			    		  }
+			    	  })
+			    	  .then(response => response.json())
+			    	  .then(data => {
+			    		  if(data.res_code == '200') {
+				    		  Swal.fire({
+				    			  icon: 'success',
+				    			  title: '성공',
+				    			  text: data.res_msg
+				    		  })
+				    		  .then(() => {
+				    			  location.href="/mysign";
+				    		  })
+			    		  } else {
+			    			  Swal.fire({
+			    				  icon: 'error',
+			    				  title: '실패',
+			    				  text: data.res_msg
+			    			  })
+			    		  }
+			    	  })
+			      }
+			})
+		}
     </script>
 </th:block>
 </html>

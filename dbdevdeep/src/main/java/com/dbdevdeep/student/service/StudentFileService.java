@@ -1,16 +1,29 @@
 package com.dbdevdeep.student.service;
 
 import java.io.File;
+import java.net.URLDecoder;
 import java.util.UUID;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+
+import com.dbdevdeep.student.domain.Student;
+import com.dbdevdeep.student.repository.StudentRepository;
 
 @Service
 public class StudentFileService {
 
 	// 6. 파일 저장 경로 설정(위에 전역 변수로)
 	private String fileDir = "C:\\student\\upload\\";
+	
+	private final StudentRepository studentRepository;
+	
+	@Autowired
+	public StudentFileService(StudentRepository studentRepository) {
+		this.studentRepository = studentRepository;
+	}
+	
 	
 	public String upload(MultipartFile file) {
 		
@@ -40,4 +53,36 @@ public class StudentFileService {
 		}
 		return newFileName; 
 	}
+	
+	
+	public int delete(Long student_no) {
+		int result = -1;
+		try {
+			Student student = studentRepository.findBystudentNo(student_no);
+			
+			String newFileName = student.getStudentNewPic();	// UUID
+			String oriFileName = student.getStudentOriPic();	// 사용자가 아는 파일명
+			
+			if (newFileName == null || newFileName.isEmpty()) {
+	            // 파일명이 null 또는 빈 문자열일 경우 바로 성공 처리
+	            return 1;
+	        }
+			
+			String resultDir = fileDir + URLDecoder.decode(newFileName,"UTF-8");
+			
+			if(resultDir != null && resultDir.isEmpty() == false) {
+				File file = new File(resultDir);
+				
+				if(file.exists()) {
+					file.delete();
+					result = 1;
+				}
+			}
+			
+		}catch(Exception e) {
+			e.printStackTrace();
+		}
+		return result;
+	}
+	
 }

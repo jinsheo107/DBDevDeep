@@ -36,4 +36,7 @@ public class Reference {
     @ManyToOne
     @JoinColumn(name = "emp_id")
     private Employee employee;
+    
+    @Column(name = "ref_name")
+    private String refName;
 }
