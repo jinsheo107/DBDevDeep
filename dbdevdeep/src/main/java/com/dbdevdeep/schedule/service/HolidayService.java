@@ -21,7 +21,7 @@ public class HolidayService {
 		this.holidayRepository = holidayRepository;
 	}
 
-	public List<HolidayDto> selectHolidayList(HolidayDto holidaydto) {
+	public List<HolidayDto> selectHolidayList() {
 		List<Holiday> holidayList = holidayRepository.findAll();
 		
 		List<HolidayDto> holidayDtoList = new ArrayList<HolidayDto>();

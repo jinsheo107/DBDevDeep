@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+     xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+     layout:decorate="~{include/schedule_layout}">
+<head>
+	<!-- FullCalendar CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.0/main.min.css" rel="stylesheet">
+    <!-- FullCalendar JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.0/main.min.js"></script>
+    <!-- Google API Client Library -->
+    <script src="https://apis.google.com/js/api.js"></script>
+    <!-- Custom CSS -->
+    <link href="/dist/css/style.min.css" rel="stylesheet">
+    <style>
+    	.form-control{
+			margin-left:0px !important;
+		}
+		
+		/* 반투명한 동그라미 스타일 */
+		.fc-day-today .fc-daygrid-day-number {
+			position: relative; /* 상대적 위치 설정 */
+		}
+		
+		.fc-day-today{
+			background-color:transparent !important;
+		}
+		  
+		.fc-day-today .fc-daygrid-day-number::after {
+			content: '';
+			position: absolute;
+			top: 50%;
+			left: 50%;
+			transform: translate(-48%, -50%);
+			width: 23px; /* 원하는 동그라미 크기 */
+			height: 23px; /* 원하는 동그라미 크기 */
+			border-radius: 50%; /* 동그라미 모양 */
+			background-color: #5f76e85d;
+		}
+		/* 종일 일정 높이 설정 */
+		.fc-daygrid-event {
+		    height: 20px !important; /* 원하는 높이로 조정 */
+		    line-height: 20px !important; /* 텍스트가 중앙에 오도록 설정 */
+		    display:flex;
+		    align-items: center; /* 수직 가운데 정렬 */
+		    justify-content: center; /* 가로 중앙 정렬 (필요 시) */
+		}
+		
+		.fc-event-title-container{
+			height: 20px !important; /* 원하는 높이로 조정 */
+		    line-height: 20px !important; /* 텍스트가 중앙에 오도록 설정 */
+		}
+		
+		/* 시간 일정 높이 설정 */
+		.fc-timegrid-event {
+		    height: 20px !important; /* 원하는 높이로 조정 */
+		    line-height: 20px !important; /* 텍스트가 중앙에 오도록 설정 */
+		}
+    	.more-link-content:before {
+			content: "\25BC"; /* 아래쪽 화살표 */
+			margin-right: 5px; /* 아이콘과 숫자 간의 여백 */
+			font-size: 12px; /* 아이콘 크기 */
+			margin-left: 2px !important;
+			margin-bottom: 1px !important;
+			color: #212529;
+		}
+		  
+		.more-link-content{
+		  	color:#212529;
+		 }
+    	
+    	.fc-event-title {
+		    font-weight: normal !important; /* 제목 글씨를 일반 두께로 설정 */
+		}
+		
+    	.fc-daygrid-event-dot {
+		    border-width:7px;
+		}
+		
+		.fc-daygrid-event{
+			margin-left:0px !important;
+			margin-right:0px !important;
+			margin-bottom:0px !important;
+		}
+		
+		.fc-daygrid-day-bottom{
+			padding-right:5px !important;
+			padding-left:10px !important;
+		}
+    
+    	.fc-header-toolbar{
+    		margin-top:0px !important;
+    		margin-bottom:0px !important;
+    	}
+    	
+    	.fc-view{
+    		margin-top:23px !important;
+    	}
+    
+    	.holiday-number {
+		    color: #FF0000 !important; /* 숫자 색상을 빨간색으로 설정 */
+		}
+		
+    	.fc-holiday {
+		    cursor: default !important;
+		}
+    
+		/* 기본 버튼 스타일 */
+		.fc-prev-button,
+		.fc-next-button,
+		.fc-today-button{
+		    color: white !important;
+		    background-color: #5f76e8 !important;
+		    border: 1px solid white !important;
+		    padding: 10px 20px !important;
+		    font-size: 16px !important;
+		    line-height: 1.5 !important;
+		    border-radius: 2px !important;
+		    transition: color .15s ease-in-out, background-color .15s ease-in-out, border-color .15s ease-in-out, box-shadow .15s ease-in-out !important;
+		}
+		
+		.fc-prev-button:hover,
+		.fc-next-button:hover,
+		.fc-today-button:hover,
+		.fc-button-active:hover {
+			background-color: #3e59e3 !important;
+		}
+		
+		.fc-prev-button:focus,
+		.fc-next-button:focus,
+		.fc-today-button:focus,
+		.fc-button-active:focus {
+    		box-shadow: 0 0 0 0.2rem rgba(119, 139, 235, 0.5) !important;
+    	}
+    	
+    	.fc-button-active{
+    		color: white !important;
+		    background-color: #5f76e8 !important;
+		    border: 1px solid #5f76e8 !important;
+		    padding: 10px 20px !important;
+		    font-size: 16px !important;
+		    line-height: 1.5 !important;
+		    border-radius: 2px !important;
+		    transition: color .15s ease-in-out, background-color .15s ease-in-out, border-color .15s ease-in-out, box-shadow .15s ease-in-out !important;
+    	}
+    	
+    	/* 기본 버튼 스타일 */
+		#calendar .fc-dayGridMonth-button,
+		#calendar .fc-timeGridWeek-button,
+		#calendar .fc-timeGridDay-button{
+		    color: #5f76e8;
+		    background-color: transparent;
+		    border: 1px solid #5f76e8;
+		    padding: 10px 20px !important;
+		    font-size: 16px !important;
+		    line-height: 1.5 !important;
+		    border-radius: 2px !important;
+		    transition: color .15s ease-in-out, background-color .15s ease-in-out, border-color .15s ease-in-out, box-shadow .15s ease-in-out !important;
+		}
+		
+		#calendar .fc-dayGridMonth-button:hover,
+		#calendar .fc-timeGridWeek-button:hover,
+		#calendar .fc-timeGridDay-button:hover {
+			color: #fff !important;
+		    background-color: #5f76e8;
+		    border-color: #5f76e8;
+		}
+		
+		#calendar .fc-dayGridMonth-button:focus,
+		#calendar .fc-timeGridWeek-button:focus,
+		#calendar .fc-timeGridDay-button:focus {
+    		box-shadow: 0 0 0 0.2rem rgba(95, 118, 232, 0.5);
+    	}
+		
+    	body{
+    		color:#212529 !important;
+    	}
+		
+		/* 일요일 헤더 및 셀 글씨 색상 */
+		.fc-sunday-header, .fc-sunday {
+		    color: #FF0000 !important; /* 일요일 글씨 색상 */
+		}
+		
+		/* 토요일 헤더 및 셀 글씨 색상 */
+		.fc-saturday-header, .fc-saturday {
+		    color: #0031AE !important; /* 토요일 글씨 색상 */
+		}
+
+    	/* 일요일 셀 배경색 */
+		.fc-sunday {
+		    background-color: #FFF8F8 !important; /* 연한 빨간색 배경 */
+		}
+		
+		/* 토요일 셀 배경색 */
+		.fc-saturday {
+		    background-color: #F4FBFF !important; /* 연한 파란색 배경 */
+		}
+		
+		.fc-scrollgrid-sync-inner {
+		    height: 100%; /* 전체 캘린더 높이 */
+		}
+		
+		.swal-custom-button {
+			background-color: #5f76e8 !important;
+			color: white; /* 버튼 텍스트 색상 */
+			border: none; /* 버튼 테두리 제거 */
+			padding: 10px 20px; /* 버튼 패딩 */
+			font-size: 16px; /* 버튼 폰트 크기 */
+			cursor: pointer; /* 마우스 커서 포인터 */
+		}
+		
+		.swal-custom-button:hover {
+		  background-color: #3e59e3 !important;
+		}
+		
+		.list-group-item{
+			border: none;
+			text-align: center;
+			font-size:18px;
+			margin-bottom:0px !important;
+		}
+		
+	    
+	    .btn-group-custom{
+	    	width:225px;
+	    	height:50px;
+	    }
+	    
+	    .scrollable-list {
+	        max-height: calc(100% - 100px); /* ul의 최대 높이를 등록 버튼 위까지로 설정 */
+	        overflow-y: auto; /* 수직 스크롤바 추가 */
+		    margin-bottom: 60px; /* 하단 마진 */
+	        padding-right: 10px; /* 스크롤바와 내용 간의 간격 */
+	    }
+	    
+	    /* 스크롤바 스타일링 */
+		.scrollable-list::-webkit-scrollbar {
+		    width: 20px; /* 스크롤바의 너비 */
+		    padding-bottom:20px;
+		}
+		
+		/* 스크롤바 트랙 스타일링 */
+		.scrollable-list::-webkit-scrollbar-track {
+		    margin-top:10px;
+		}
+		
+		/* 스크롤바 손잡이(thumb) 스타일링 */
+		.scrollable-list::-webkit-scrollbar-thumb {
+		    background-color: #ccc; /* 스크롤바 손잡이 색상 */
+		    border-radius: 10px; /* 손잡이 전체를 둥글게 */
+		    border: 3px solid transparent; /* 내부 여백과 배경색 유지 */
+		    background-clip: padding-box; /* 내부 여백 유지 */
+		}
+	    
+	    /* 버튼 활성화 스타일 (Bootstrap의 기본 버튼 스타일 사용) */
+		.btn-group-custom .btn.active {
+		    background-color: #007bff;
+		    color: white;
+		}
+		
+	</style>
+</head>
+<th:block layout:fragment="content">
+<body>
+	<div class="page-wrapper">
+			<div class="container-fluid" style="margin-bottom:-10px;">
+
+                <div class="row">
+				    <div class="col-12">
+				        <div class="card">
+				            <div class="card-body" style="padding:50px 80px">
+				                <!-- "범주관리" 타이틀과 하단 선 -->
+				                <div class="row" style="margin-left:0px !important; margin-right:0px !important; border-bottom: 1px solid gray; padding-bottom: 20px; display:flex; align-items: center;">
+				                    <div class="col d-flex justify-content-start align-items-center" style="padding-left:0px; max-width:140px;">
+				                        <div style="font-size:30px;">일정관리</div>
+				                    </div>
+				                    <!-- 공용/개인 선택 버튼 -->
+						            <div class="btn-group btn-group-custom" role="group" aria-label="범주 유형 선택" style="margin-right: 10px;">
+									    <button type="button" class="btn btn-outline-primary active" id="total-button" onclick="showTotalCategories()">전체</button>
+									    <button type="button" class="btn btn-outline-primary" id="public-button" onclick="showPublicCategories()">공용</button>
+									    <button type="button" class="btn btn-outline-primary" id="private-button" onclick="showPrivateCategories()">개인</button>
+									</div>
+
+				                </div>
+				                
+				                <!-- 좌측 네모난 div와 오른쪽 콘텐츠를 같은 행에 배치 -->
+				                <div class="row mt-4">
+				                    <!-- 좌측 네모난 div -->
+				                    <div class="col" style="max-width: 300px;">
+				                        <div style="border: 1px solid gray; height: calc(100vh - 330px); min-height: 200px; border-radius:10px; position: relative;">
+				                        	<!-- 범주목록 타이틀 -->
+				                            <div style="font-size: 22px; border-bottom: 1px solid gray; text-align: center;
+				                            display: flex; align-items: center; justify-content: center; height: 80px; background-color:#E8EAEC;
+				                            border-top-left-radius: 10px; border-top-right-radius: 10px; color:black;">
+				                                범주목록
+				                            </div>
+				                            
+				                            <!-- 전체 범주 목록 -->
+											<ul id="total-category-list" class="list-group scrollable-list" style="list-style: none; padding: 20px; ">
+											    <li class="list-group-item" style="display:flex; align-items: center;">
+											        <div style="width:20px; height:20px; background-color: #81B3FF; margin-right: 10px;"></div>
+											        <div>공용</div>
+											    </li>
+											    <li class="list-group-item" style="display:flex; align-items: center;">
+											        <div style="width:20px; height:20px; background-color: #E5DCFF; margin-right: 10px;"></div>
+											        <div>개인</div>
+											    </li>
+											</ul>
+				                            
+				                            <!-- 공용 범주 목록 -->
+											<ul id="public-category-list" class="list-group scrollable-list" style="list-style: none; padding: 20px;">
+											    <li th:each="category : ${publicCategoryList}" class="list-group-item"
+											        style="display:flex; align-items: center;">
+											        <div th:style="'width: 20px; height: 20px; background-color: #' + ${category.category_color} + '; margin-right: 10px;'"></div>
+											        <div th:text="${category.category_name}"></div>
+											    </li>
+											</ul>
+											
+											<!-- 개인 범주 목록 -->
+											<ul id="private-category-list" class="list-group scrollable-list" style="list-style: none; padding: 20px; display: none;"> <!-- 처음에는 숨김 -->
+											    <li th:each="category : ${privateCategoryList}" class="list-group-item"
+											        style="display:flex; align-items: center;">
+											        <div th:style="'width: 20px; height: 20px; background-color: #' + ${category.category_color} + '; margin-right: 10px;'"></div>
+											        <div th:text="${category.category_name}"></div>
+											    </li>
+											</ul>
+				                        </div>
+				                    </div>
+				                    <!-- 우측 테이블 컨텐츠 -->
+									<div class="col" style="padding-right: 0;"> <!-- 오른쪽 패딩 조정 -->
+										<div id="calendar"></div>
+									</div>
+				            </div>
+				        </div>
+				    </div>
+				</div>
+            </div>
+        </div>
+    </div>
+	<script src="/assets/libs/jquery/dist/jquery.min.js"></script>
+    <!-- Bootstrap tether Core JavaScript -->
+    <script src="/assets/libs/popper.js/dist/umd/popper.min.js"></script>
+    <script src="/assets/libs/bootstrap/dist/js/bootstrap.min.js"></script>
+    <!-- apps -->
+    <!-- apps -->
+    <script src="/dist/js/app-style-switcher.js"></script>
+    <script src="/dist/js/feather.min.js"></script>
+    <!-- slimscrollbar scrollbar JavaScript -->
+    <script src="/assets/libs/perfect-scrollbar/dist/perfect-scrollbar.jquery.min.js"></script>
+    <script src="/assets/extra-libs/sparkline/sparkline.js"></script>
+    <!--Menu sidebar -->
+    <script src="/dist/js/sidebarmenu.js"></script>
+    <!--Custom JavaScript -->
+    <script src="/dist/js/custom.min.js"></script>
+    
+    <script>
+	 	// 전역 변수로 현재 범주 유형 설정
+		let currentCategoryType = 0; // 기본값: 전체 (0)
+		
+		// 로컬 스토리지에서 범주 유형을 로드
+		const savedCategoryType = localStorage.getItem('currentCategoryType');
+		if (savedCategoryType) {
+		    currentCategoryType = parseInt(savedCategoryType, 10); // 저장된 값을 불러와 현재 범주 유형으로 설정
+		}
+		
+		// 전체 범주 목록 표시 함수
+		window.showTotalCategories = function () {
+		    // 전체 범주를 보이게 하고, 공용과 개인 범주는 숨김
+		    document.getElementById('total-category-list').style.display = 'block';
+		    document.getElementById('public-category-list').style.display = 'none';
+		    document.getElementById('private-category-list').style.display = 'none';
+	
+		    // 버튼 상태 업데이트
+		    document.getElementById('total-button').classList.add('active');
+		    document.getElementById('public-button').classList.remove('active');
+		    document.getElementById('private-button').classList.remove('active');
+		    
+		 	// 현재 범주 유형 설정: 전체
+		    currentCategoryType = 0;
+		    
+		    // 로컬 스토리지에 저장
+		    localStorage.setItem('currentCategoryType', currentCategoryType);
+		};
+		
+		// 공용 범주 목록 표시 함수
+		window.showPublicCategories = function () {
+		    // 공용 범주를 보이게 하고, 전체와 개인 범주는 숨김
+		    document.getElementById('total-category-list').style.display = 'none';
+		    document.getElementById('public-category-list').style.display = 'block';
+		    document.getElementById('private-category-list').style.display = 'none';
+	
+		    // 버튼 상태 업데이트
+		    document.getElementById('total-button').classList.remove('active');
+		    document.getElementById('public-button').classList.add('active');
+		    document.getElementById('private-button').classList.remove('active');
+		    
+		 	// 현재 범주 유형 설정: 공용
+		    currentCategoryType = 1;
+		    
+		    // 로컬 스토리지에 저장
+		    localStorage.setItem('currentCategoryType', currentCategoryType);
+		};
+	
+		// 개인 범주 목록 표시 함수
+		window.showPrivateCategories = function () {
+		    // 개인 범주를 보이게 하고, 전체와 공용 범주는 숨김
+		    document.getElementById('total-category-list').style.display = 'none';
+		    document.getElementById('public-category-list').style.display = 'none';
+		    document.getElementById('private-category-list').style.display = 'block';
+	
+		    // 버튼 상태 업데이트
+		    document.getElementById('total-button').classList.remove('active');
+		    document.getElementById('public-button').classList.remove('active');
+		    document.getElementById('private-button').classList.add('active');
+		    
+		 	// 현재 범주 유형 설정: 개인
+		    currentCategoryType = 2;
+		    
+		 	// 로컬 스토리지에 저장
+		    localStorage.setItem('currentCategoryType', currentCategoryType);
+		};
+		
+		$(document).ready(function () {
+			// 초기화: 로컬 스토리지에 저장된 값에 따라 범주 목록을 보여줌
+			if(currentCategoryType === 0){
+				showTotalCategories();
+			} else if (currentCategoryType === 1) {
+		        showPrivateCategories(); // 개인 범주 보여줌
+		    } else {
+		        showPublicCategories(); // 공용 범주 보여줌
+		    }
+		});
+    </script>
+    
+<script>
+    // FullCalendar 초기화 함수
+    function initFullCalendar() {
+        var calendarEl = document.getElementById('calendar');
+        var calendar = new FullCalendar.Calendar(calendarEl, {
+            initialView: 'dayGridMonth',
+            locale: 'ko',
+            headerToolbar: {
+                left: 'prev,next today',
+                center: 'title',
+                right: 'dayGridMonth,timeGridWeek,timeGridDay'
+            },
+            buttonText: { // 버튼 텍스트를 사용자 정의
+                today: '오늘',
+                month: '월간',
+                week: '주간',
+                day: '일간',
+                prev: '이전',
+                next: '다음'
+            },
+            titleFormat: function (date) { // 커스텀 titleFormat 설정
+                return date.date.year + '년 ' + (date.date.month + 1) + '월';
+            },
+            dayCellDidMount: function (arg) { // 날짜 셀이 렌더링된 후 호출
+                const today = new Date(); // 오늘 날짜
+                if (
+                    arg.date.getDate() === today.getDate() &&
+                    arg.date.getMonth() === today.getMonth() &&
+                    arg.date.getFullYear() === today.getFullYear()
+                ) {
+                    // 오늘 날짜 셀에 클래스를 추가
+                    arg.el.classList.add('fc-day-today');
+                }
+            },
+            events: function(fetchInfo, successCallback, failureCallback) { // 이벤트 로드 함수
+                fetch('/getHolidayData') // 서버에서 공휴일 데이터 로드
+                    .then(response => response.json())
+                    .then(data => {
+                        const holidayEvents = data.flatMap(holiday => {
+                            // 기본 이벤트 객체
+                            let event = {
+                                title: holiday.holiday_name,
+                                start: holiday.start_date,
+                                end: holiday.is_period === 'Y' ? holiday.end_date : holiday.start_date,
+                                classNames: ['fc-holiday'],
+                                allDay: holiday.is_period === 'N' ? true : false,
+                                backgroundColor: '#FFF8F8',
+                                textColor: '#FF0000',
+                                editable: false // 휴일 이벤트는 드래그 불가하도록 설정
+                            };
+
+                            // 반복 타입이 YEARLY라면 매년 반복 이벤트 생성
+                            if (holiday.repeat_type === 'YEARLY') {
+                                return createYearlyEvents(holiday);
+                            } else {
+                                return [event]; // 반복이 없을 경우 기본 이벤트만 반환
+                            }
+                        });
+                        
+                     	// 일정 데이터 로드
+                        fetch('/getTotalScheduleData')
+                            .then(response => response.json())
+                            .then(scheduleData => {
+                            	const scheduleEvents = scheduleData.map(schedule => {
+                            	    // 시작일과 종료일을 비교하여 날짜 차이 계산
+                            	    const startDate = new Date(schedule.start_time);
+                            	    const endDate = new Date(schedule.end_time);
+
+                            	 	// is_all_day가 'Y'이거나 날짜 차이가 1일 이상인 경우 allDay를 true로 설정
+                            	    const isAllDayEvent = schedule.is_all_day === 'Y' || 
+                            	        (endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24) >= 1;
+
+                            	    return {
+                            	        title: schedule.schedule_title,
+                            	        start: schedule.start_time, // 시작 시간
+                            	        end: schedule.end_time, // 종료 시간
+                            	        allDay: isAllDayEvent, // 날짜 차이에 따라 종일 일정 여부 결정
+                            	        backgroundColor: `#${schedule.category_color}`, // 배경색 설정
+                            	        textColor: 'black',
+                            	        editable: true, // 드래그 가능
+                            	        classNames: ['fc-schedule'] // 일정 클래스 추가
+                            	    };
+                            	});
+
+                                // 두 이벤트 데이터를 합쳐서 FullCalendar에 전달
+                                successCallback([...holidayEvents, ...scheduleEvents]);
+                                addHolidayClassToDateNumbers(); // 공휴일 날짜 셀에 클래스 추가
+                            })
+                            .catch(error => failureCallback(error.message));
+                    })
+                    .catch(error => failureCallback(error.message));
+            },
+            editable: true, // 전체적으로 일정 수정 가능
+            eventStartEditable: true, // 드래그로 시작 시간 변경 가능
+            eventDurationEditable: true, // 드래그로 일정 길이 변경 가능
+            eventAllow: function(dropInfo, draggedEvent) {
+                // 휴일 이벤트는 드래그할 수 없도록 설정
+                if (draggedEvent.classNames.includes('fc-holiday')) {
+                    return false; // 드래그 불가
+                }
+                return true; // 다른 일정은 드래그 가능
+            },
+            droppable: true,
+            selectable: true, // 일정 선택 가능
+            height: 'calc(100vh - 330px)',  // 높이를 자동으로 조정
+            dayMaxEvents: true,  // 각 셀의 최대 이벤트 수를 제한
+            dayMaxEventRows: 2,  // 각 셀의 최대 이벤트 행 수 설정
+            moreLinkContent: function(args) { // "more" 링크의 내용 커스터마이징
+                // 더보기 링크를 감싸는 span 생성
+                let moreLinkSpan = document.createElement('span');
+                moreLinkSpan.className = 'more-link-content';
+                moreLinkSpan.textContent = `${args.num}`; // 더 많은 일정의 개수 표시
+
+                return { domNodes: [moreLinkSpan] };
+            },
+            dayHeaderClassNames: function(arg) { // 헤더 부분의 특정 요일에 클래스를 추가
+                if (arg.date.getDay() === 0) {
+                    return ['fc-sunday-header'];
+                } else if (arg.date.getDay() === 6) {
+                    return ['fc-saturday-header'];
+                }
+            },
+            dayCellClassNames: function(arg) { // 특정 요일에 클래스를 추가
+                if (arg.date.getDay() === 0) {
+                    return ['fc-sunday'];
+                } else if (arg.date.getDay() === 6) {
+                    return ['fc-saturday'];
+                }
+            },
+            dayCellContent: function(e) { // 날짜 셀의 숫자만 표시되도록 설정
+                e.dayNumberText = e.date.getDate(); // '1일' 대신 '1'만 표시
+            },
+            eventDidMount: function() { // 이벤트가 마운트될 때
+                addHolidayClassToDateNumbers(); // 각 이벤트 렌더링 후 호출하여 날짜 셀에 클래스 추가
+            }
+        });
+
+        calendar.render(); // 캘린더 렌더링
+    }
+
+    // 매년 반복 이벤트 생성 함수
+    function createYearlyEvents(holiday) {
+        const events = [];
+        const startYear = new Date().getFullYear(); // 현재 연도
+        const endYear = startYear + 10; // 10년간 반복 예시
+
+        for (let year = startYear; year <= endYear; year++) {
+            const startDate = new Date(holiday.start_date);
+            const endDate = holiday.is_period === 'Y' ? new Date(holiday.end_date) : startDate;
+
+            // 시작일과 종료일의 연도를 현재 반복하는 연도로 설정
+            startDate.setFullYear(year);
+            endDate.setFullYear(year);
+
+            events.push({
+                title: holiday.holiday_name, // 공휴일 이름
+                start: startDate.toISOString().split('T')[0], // ISO 포맷으로 변환
+                end: endDate.toISOString().split('T')[0],
+                classNames: ['fc-holiday'], // 공휴일 클래스 추가
+                allDay: holiday.is_period === 'N' ? true : false,
+				backgroundColor: '#FFF8F8',
+				textColor: '#FF0000',
+				editable: false // 휴일 이벤트는 드래그 불가하도록 설정
+            });
+        }
+
+        return events;
+    }
+
+ 	// 공휴일 날짜 셀의 숫자에 클래스를 추가하는 함수
+    function addHolidayClassToDateNumbers() {
+        const holidayEvents = document.querySelectorAll('.fc-h-event.fc-holiday'); // 공휴일 이벤트만 선택
+        holidayEvents.forEach(eventEl => {
+            const dayCell = eventEl.closest('.fc-daygrid-day'); // fc-h-event의 조상 중에서 fc-daygrid-day 찾기
+            if (dayCell) {
+                const dayNumber = dayCell.querySelector('.fc-daygrid-day-number'); // fc-daygrid-day 안에 있는 fc-daygrid-day-number 찾기
+                if (dayNumber) {
+                    dayNumber.classList.add('holiday-number'); // 클래스 추가
+                }
+            }
+        });
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        initFullCalendar();
+        window.dispatchEvent(new Event('resize')); // 캘린더 초기화 후 리사이즈 이벤트 강제 발생
+    });
+</script>
+</th:block>
+</body>
+</html>
