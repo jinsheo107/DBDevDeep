@@ -1,9 +1,7 @@
 package com.dbdevdeep.student.service;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -60,14 +58,30 @@ public class StudentService {
 	
 	// 학생리스트를 옮겨주기 위해 dto로 변환하여 담아주는 절차
 	public List<StudentClassDto> selectStudentList(StudentClassDto studentClassDto){
-		List<StudentClass> studentClassList = studentClassRepository.findRecentYearAll();
-		List<StudentClassDto> studentClassDtoList = new ArrayList<>();
-		for(StudentClass sc : studentClassList) {
-			StudentClassDto dto = new StudentClassDto().toDto(sc);
-			studentClassDtoList.add(dto);
-		}
-		return studentClassDtoList;
-	} 
+	    List<Object[]> studentClassList = studentClassRepository.findRecentYearAll();
+	    List<StudentClassDto> studentClassDtoList = new ArrayList<>();
+	    
+	    for(Object[] entry : studentClassList) {
+	        Student student = (Student) entry[0];
+	        StudentClass studentClass = (StudentClass) entry[1];  // 반 배정이 안된 학생일 경우 null일 수 있음
+	        
+	        // DTO 변환
+	        StudentClassDto dto = new StudentClassDto();
+	        dto.setStudent_no(student.getStudentNo());
+	        dto.setStudent(student);
+	        dto.setStudent_id(studentClass != null ? studentClass.getStudentId() : null);
+	        
+	        if (studentClass != null) {
+	            dto.setTeacher_history(studentClass.getTeacherHistory()); // teacher_history 설정
+	        } else {
+	            dto.setTeacher_history(null);  // 반 배정되지 않은 경우
+	        }
+	        
+	        studentClassDtoList.add(dto);
+	    }
+	    System.out.println(studentClassDtoList);
+	    return studentClassDtoList;
+	}
 	
 	// 학생번호를 통해 선택한 학생의 정보를 dto로 변환하여 담아주는 절차
 	public StudentDto selectStudentOne(Long student_no) {
