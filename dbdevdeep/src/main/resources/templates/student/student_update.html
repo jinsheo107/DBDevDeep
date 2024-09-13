@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{include/student_layout}">
+<th:block layout:fragment="content">
+	<body>
+		<div class="page-wrapper">
+			<div class="page-breadcrumb">
+				<div class="row">
+					<div id="content">
+						<h3>1 학생 정보 등록</h3>
+						<div class="form-section">
+							<form id="student_update_form" th:object="${dto}">
+								<input type="hidden" id="csrf_token" th:value="${_csrf.token}">
+								<div class="form-group">
+									<input type="hidden" name="student_no" th:field="*{student_no}">
+									<label for="name">이름</label> <input type="text" id="name"
+										name="student_name" th:field="*{student_name}">
+								</div>
+								<div class="form-group">
+									<label for="student_status">재학 여부</label> <select
+										id="student_status" name="student_status"
+										th:field="*{student_status}">
+										<option value="재학">재학</option>
+										<option value="휴학">휴학</option>
+										<option value="전학">전학</option>
+										<option value="퇴학">퇴학</option>
+									</select>
+								</div>
+								<div class="form-group">
+									<label for="student_birth">생년월일</label> <input type="date"
+										name="student_birth" id="student_birth"
+										th:field="*{student_birth}">
+								</div>
+								<div class="form-group">
+									<label for="zipcode">우편번호</label> <input type="text"
+										id="zipcode" name="student_post_code"
+										th:field="*{student_post_code}"> <input type="button"
+										id="student_location" value="우편찾기">
+								</div>
+								<div class="form-group">
+									<label for="address">주소</label> <input type="text"
+										id="student_address" name="student_addr"
+										th:field="*{student_addr}">
+								</div>
+								<div class="form-group">
+									<label for="address-detail">상세주소</label> <input type="text"
+										id="address-detail" name="student_detail_addr"
+										th:field="*{student_detail_addr}">
+								</div>
+								<div class="form-group">
+									<label for="phone">전화번호</label> <input type="text" id="sp1"
+										maxlength="3"> - <input type="text" id="sp2"
+										maxlength="4"> - <input type="text" id="sp3"
+										maxlength="4">
+								</div>
+								<div class="form-group">
+									<label for="photo">사진</label> <input type="file" id="photo"
+										name="file"> <span> ※ 이미지 파일을 수정하시려면 새로운 파일을
+										등록하세요. </span><br>
+								</div>
+								<div class="form-group">
+									<label>성별</label> <input type="radio" id="male"
+										name="student_gender" value="M" th:field="*{student_gender}">
+									남자 <input type="radio" id="female" name="student_gender"
+										value="W" th:field="*{student_gender}"> 여자
+								</div>
+								<div class="form-group" style="text-align: right;">
+									<input type="button" value="취소"
+										th:onclick="|location.href='@{/student}'|"> <input
+										type="submit" value="수정">
+								</div>
+							</form>
+
+						</div>
+					</div>
+
+				</div>
+				<div class="container-fluid"></div>
+			</div>
+		</div>
+		<script src="/assets/libs/jquery/dist/jquery.min.js"></script>
+		<script src="/assets/libs/popper.js/dist/umd/popper.min.js"></script>
+		<script src="/assets/libs/bootstrap/dist/js/bootstrap.min.js"></script>
+		<script src="/dist/js/app-style-switcher.js"></script>
+		<script src="/dist/js/feather.min.js"></script>
+		<script
+			src="/assets/libs/perfect-scrollbar/dist/perfect-scrollbar.jquery.min.js"></script>
+		<script src="/assets/extra-libs/sparkline/sparkline.js"></script>
+		<script src="/dist/js/sidebarmenu.js"></script>
+		<script src="/dist/js/custom.min.js"></script>
+		<script
+			src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+		<script>
+	  window.onload = function() {
+	    // student_phone의 값을 가져와 각 부분을 나눠서 각 input에 설정
+	    const fullPhone = document.getElementById('student_phone').value;
+	
+	    if (fullPhone) {
+	      // 첫 3자리
+	      document.getElementById('sphone-1').value = fullPhone.substring(0, 3);
+	      // 중간 4자리
+	      document.getElementById('sphone-2').value = fullPhone.substring(3, 7);
+	      // 마지막 4자리
+	      document.getElementById('sphone-3').value = fullPhone.substring(7, 11);
+	    }
+	  };
+	</script>
+		<script>
+	window.onload = function(){
+	    document.getElementById("student_location").addEventListener("click", function(){ //주소입력칸을 클릭하면
+	        //카카오 지도 발생
+	        new daum.Postcode({
+	            oncomplete: function(data) { //선택시 입력값 세팅
+	                document.getElementById("zipcode").value = data.zonecode;
+	                document.getElementById("student_address").value = data.address; // 주소 넣기
+	            }
+	        }).open();
+	    });
+	}
+	</script>
+
+
+		<script>
+	const form=document.getElementById("student_update_form");
+	form.addEventListener('submit',(e)=>{
+		e.preventDefault();
+		// 유효성 검사 성공 가정
+		let vali_check = true;
+		const year = document.getElementById('birth-year').value;
+	    const month = document.getElementById('birth-month').value.padStart(2, '0');
+	    const day = document.getElementById('birth-day').value.padStart(2, '0');
+	    const fullBirthDate = `${year}-${month}-${day}`;
+	    document.getElementById("student_birth").value = fullBirthDate;
+	    
+	    
+	    const phone1 = document.getElementById('sp1').value;
+	    const phone2 = document.getElementById('sp2').value;
+	    const phone3 = document.getElementById('sp3').value;
+	    const fullPhoneNumber = `${phone1}-${phone2}-${phone3}`;
+	    document.getElementById('student_phone').value = fullPhoneNumber;
+	    
+		if(vali_check == false){
+			alert('유효성 검사 중 문제가 발생하였습니다.');
+		}else{
+			const payload = new FormData(form);
+			const csrfToken = document.getElementById('csrf_token').value;
+			const studentNo = form.student_no.value;
+			fetch('/student/'+studentNo,{
+				method:'post',
+				headers : {
+					'X-CSRF-TOKEN':csrfToken
+				},
+				body:payload
+			})
+			.then(response => response.json())
+			.then(data=>{
+				if(data.res_code == '200'){
+					Swal.fire({
+						icon : 'success',
+						title : '성공',
+						text : data.res_msg
+					}).then((result)=>{
+						location.href = "/student";
+					});
+				}else{
+					Swal.fire({
+						icon : 'error',
+						title : '실패',
+						text : data.res_msg
+					});
+				}
+				
+			})
+		}
+		
+	});
+	</script>
+	</body>
+</html>

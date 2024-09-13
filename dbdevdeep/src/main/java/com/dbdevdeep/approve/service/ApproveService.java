@@ -93,7 +93,6 @@ public class ApproveService {
 					.build();
 			
 			approveDtoList.add(dto);
-			System.out.println(approveDtoList);
 		}
 		return approveDtoList;
 	}
