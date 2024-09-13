@@ -1,7 +1,9 @@
 package com.dbdevdeep.student.service;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -57,14 +59,14 @@ public class StudentService {
 	}
 	
 	// 학생리스트를 옮겨주기 위해 dto로 변환하여 담아주는 절차
-	public List<StudentDto> selectStudentList(StudentDto studentDto){
-		List<Student> studentList = studentRepository.findAll();
-		List<StudentDto> studentDtoList = new ArrayList<StudentDto>();
-		for(Student s : studentList) {
-			StudentDto dto = new StudentDto().toDto(s);
-			studentDtoList.add(dto);
+	public List<StudentClassDto> selectStudentList(StudentClassDto studentClassDto){
+		List<StudentClass> studentClassList = studentClassRepository.findRecentYearAll();
+		List<StudentClassDto> studentClassDtoList = new ArrayList<>();
+		for(StudentClass sc : studentClassList) {
+			StudentClassDto dto = new StudentClassDto().toDto(sc);
+			studentClassDtoList.add(dto);
 		}
-		return studentDtoList;
+		return studentClassDtoList;
 	} 
 	
 	// 학생번호를 통해 선택한 학생의 정보를 dto로 변환하여 담아주는 절차

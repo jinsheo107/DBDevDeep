@@ -43,8 +43,8 @@ public class StudentViewController {
 	
 	// 학생 목록 페이지로 이동
 	@GetMapping("/student/list")
-	public String listStudentPage(Model model, StudentDto dto) {
-		List<StudentDto> resultList = studentService.selectStudentList(dto);
+	public String listStudentPage(Model model, StudentClassDto dto) {
+		List<StudentClassDto> resultList = studentService.selectStudentList(dto);
 		model.addAttribute("resultList",resultList);
 		return "student/student_list";
 	}
