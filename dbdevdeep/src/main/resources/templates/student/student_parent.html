@@ -51,14 +51,14 @@ div.dataTables_wrapper div.dataTables_paginate ul.pagination {
 									<img src="https://via.placeholder.com/150" alt="학생 사진">
 									<div class="student-details">
 										<input type="hidden" id="csrf_token" th:value="${_csrf.token}">
+										<input type="hidden" name="parent_no" th:value="${resultList.parent_no}"> 
 										<input type="hidden" name="student_no"
 											th:value="${sdto.student_no}">
 										<ul>
 											<li>
 												<p th:text="'이름 : '+${sdto.student_name}"></p>
 												<p th:text="'생년월일 : '+${sdto.student_birth}"></p>
-												<p
-													th:text="'주소 : '+${sdto.student_addr}+${sdto.student_detail_addr}+'('+${sdto.student_post_code}+')'"></p>
+												<p th:text="'주소 : '+${sdto.student_addr}+${sdto.student_detail_addr}+'('+${sdto.student_post_code}+')'"></p>
 												<p th:text="'전화번호 : '+${sdto.student_phone}"></p>
 											</li>
 											<li>
@@ -82,11 +82,11 @@ div.dataTables_wrapper div.dataTables_paginate ul.pagination {
 														<th:block th:if="${!#lists.isEmpty(resultList)}">
 															<tr th:each="parent, parentStat : ${resultList}">
 																<td th:text="${parent.parent_relation}"></td>
-																<td th:text="${parent.parent_name"></td>
+																<td th:text="${parent.parent_name}"></td>
 																<td th:text="${parent.parent_phone}"></td>
 																<td th:text="${parent.parent_birth}"></td>
 																<td><button type="button" class="btn btn-primary" data-toggle="modal" data-target="#parent_update_primary-header-modal">수정</button></td>
-																<td><a>삭제</a><br></td>
+																<td><a th:onclick="studentParnetDelete([[${parent.parent_no}]])">삭제</a><br></td>
 															</tr>
 														</th:block>
 													</tbody>
@@ -108,7 +108,7 @@ div.dataTables_wrapper div.dataTables_paginate ul.pagination {
 		</div>
 
 		<!-- 부모 정보 수정 모달 -->
-		<div id="parent_update_primary-header-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="primary-header-modalLabel" aria-hidden="true">
+		<!-- <div id="parent_update_primary-header-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="primary-header-modalLabel">
 			<div class="modal-dialog">
 				<div class="modal-content">
 					<div class="modal-header modal-colored-header bg-primary">
@@ -116,11 +116,11 @@ div.dataTables_wrapper div.dataTables_paginate ul.pagination {
 					</div>
 				</div>
 			</div>
-		</div>
+		</div> -->
 		
 		
 		<!-- 부모 정보 등록 모달 -->
-		<div id="parent_create_primary-header-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="primary-header-modalLabel" aria-hidden="true">
+		<div id="parent_create_primary-header-modal" class="modal fade show" tabindex="-1" role="dialog" aria-labelledby="primary-header-modalLabel" aria-modal="true" style="display: none;">
 			<div class="modal-dialog">
 				<div class="modal-content">
 					<div class="modal-header modal-colored-header bg-primary">
@@ -132,8 +132,8 @@ div.dataTables_wrapper div.dataTables_paginate ul.pagination {
 								<form id="student_parent_create_form" method="post">
 								<input type="hidden" id="csrf_token" th:value="${_csrf.token}">
 								<input type="hidden" name="student_no" th:value="${sdto.student_no}"> 
-									<select>
-										<option>관계</option>
+									<select name="parent_relation">
+										<option value="" disabled selected>관계</option>
 										<option value="부">부</option>
 										<option value="모">모</option>
 									</select> 
@@ -172,6 +172,7 @@ div.dataTables_wrapper div.dataTables_paginate ul.pagination {
 		<script src="/dist/js/pages/datatable/datatable-basic.init.js"></script>
 		<script>
 			const form=document.getElementById("student_parent_create_form");
+			var studentNo = '[[${sdto.student_no}]]';
 			form.addEventListener('submit',(e)=>{
 				e.preventDefault();
 				// 유효성 검사 성공 가정
@@ -186,6 +187,7 @@ div.dataTables_wrapper div.dataTables_paginate ul.pagination {
 			    
 				if(vali_check == false){
 					alert('유효성 검사 중 문제가 발생하였습니다.');
+					submitButton.disabled = false;
 				}else{
 					const payload = new FormData(form);
 					const csrfToken = document.getElementById('csrf_token').value;
@@ -204,7 +206,7 @@ div.dataTables_wrapper div.dataTables_paginate ul.pagination {
 								title : '성공',
 								text : data.res_msg
 							}).then((result)=>{
-								location.href = "@{/student/parent/@{sdto.student_no}}";
+								location.href = "/student/parent/" + studentNo;
 							});
 						}else{
 							Swal.fire({
@@ -213,12 +215,57 @@ div.dataTables_wrapper div.dataTables_paginate ul.pagination {
 								text : data.res_msg
 							});
 						}
-						
+						 submitButton.disabled = false;
 					})
+					.catch(error => {
+			            console.error('Error:', error);
+			            submitButton.disabled = false;  // 다시 버튼 활성화
+			        });
 				}
 				
 			});
 		</script>
-		
+		<script>
+			$(document).ready(function () {
+			    $('#parent_create_primary-header-modal').on('show.bs.modal', function () {
+			        $(this).css('display', 'block');  // 모달 열릴 때 display 속성 설정
+			    });
+			});
+			$('#parent_create_primary-header-modal').on('hide.bs.modal', function () {
+			    $(this).attr('aria-hidden', 'true').attr('inert', '');  // 모달 닫힐 때 설정
+			});
+		</script>
+		<script>
+			const studentParentDelete = function(parentNo){
+				if(confirm("정말 삭제하시겠습니까?")){
+					const csrfToken = document.getElementById('csrf_token').value;
+					const parentNo = document.querySelector('input[name="parent_no"]').value;
+					 fetch('/student/parent/'+parentNo,{
+						 method : 'delete',
+						 headers : {
+								'X-CSRF-TOKEN':csrfToken}
+					 })
+					 .then(response => response.json())
+					 .then(data => {
+						 if(data.res_code == '200'){
+								Swal.fire({
+									icon :'success',
+									title:'성공',
+									text : data.res_msg ,
+									confirmButtonText:"닫기"
+								}).then((result)=>{
+									location.href=`/student/class/${studentNo}`;
+								});
+							} else{
+								Swal.fire({
+									icon:'error',
+									title:'실패',
+									text: data.res_msg,
+									confirmButtonText:"닫기"
+						 		});
+							}
+						})
+				}}
+		</script>
 	</body>
 </html>

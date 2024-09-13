@@ -79,7 +79,6 @@ public class StudentService {
 	        
 	        studentClassDtoList.add(dto);
 	    }
-	    System.out.println(studentClassDtoList);
 	    return studentClassDtoList;
 	}
 	
@@ -185,14 +184,20 @@ public class StudentService {
 		return parentDtoList;
 	}
 	
-	/*
-	 * // 학부모 등록 public Parent createParent(ParentDto dto) { Parent parent =
-	 * Parent.builder() .parentNo(dto.getParent_no())
-	 * .studentNo(dto.getStudent_no()) .parentName(dto.getParent_name())
-	 * .parentPhone(dto.getParent_phone()) .parentBirth(dto.getParent_birth())
-	 * .build();
-	 * 
-	 * return parentRepository.save(parent); }
-	 */
+	
+	 // 학부모 등록 
+	public Parent createParentInfo(ParentDto dto) { 
+		Student sdt = studentRepository.findBystudentNo(dto.getStudent_no());
+		Parent parent = Parent.builder() 
+				.parentNo(dto.getParent_no())
+				.parentName(dto.getParent_name())
+				.student(sdt)
+				.parentPhone(dto.getParent_phone()) 
+				.parentBirth(dto.getParent_birth())
+				.parentRelation(dto.getParent_relation())
+				.build();
+		
+		return parentRepository.save(parent); 
+	 }
 	
 }

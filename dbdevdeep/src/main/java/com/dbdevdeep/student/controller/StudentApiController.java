@@ -140,6 +140,7 @@ public class StudentApiController {
 	    return data;
 	}
 	
+	// 학년 이력 내림차순 조회
 	@GetMapping("/student/student_class/selectByYearAndGrade/{t_year}/{grade}")
 	@ResponseBody
 	public List<TeacherHistoryDto> getDataByYearAndGrade(@PathVariable("t_year") String t_year, @PathVariable("grade") String grade) {
@@ -181,20 +182,20 @@ public class StudentApiController {
 		return map;
 	}
 		
-	/*
-	 * // 부모 정보 등록
-	 * 
-	 * @ResponseBody
-	 * 
-	 * @PostMapping("/student/parent") public Map<String,String>
-	 * createParent(ParentDto dto){ Map<String,String> resultMap = new
-	 * HashMap<String,String>(); resultMap.put("res_code", "404");
-	 * resultMap.put("res_msg", "반 배정 중 오류가 발생했습니다.");
-	 * 
-	 * if(studentService.createParent(dto) != null) { resultMap.put("res_code",
-	 * "200"); resultMap.put("res_msg", "반 배정이 성공적으로 수행되었습니다."); } return resultMap;
-	 * }
-	 */
+	
+	 // 부모 정보 등록
+	 @ResponseBody
+	 @PostMapping("/student/parent") 
+	 public Map<String,String> createParent(ParentDto dto){
+		 Map<String,String> resultMap = new HashMap<String,String>();
+		 resultMap.put("res_code", "404");
+		 resultMap.put("res_msg", "가족 사항 등록 중 오류가 발생했습니다.");
+		 if(studentService.createParentInfo(dto) != null) {
+			 resultMap.put("res_code","200");
+			 resultMap.put("res_msg", "가족 사항 등록이 성공적으로 수행되었습니다.");
+			 }
+		 return resultMap;
+		 }
 		
 		
 }

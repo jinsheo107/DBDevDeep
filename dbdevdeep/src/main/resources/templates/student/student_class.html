@@ -51,8 +51,7 @@ div.dataTables_wrapper div.dataTables_paginate ul.pagination {
 									<img src="https://via.placeholder.com/150" alt="학생 사진">
 									<div class="student-details">
 										<input type="hidden" id="csrf_token" th:value="${_csrf.token}">
-										<input type="hidden" name="student_no"
-											th:value="${sdto.student_no}">
+										<input type="hidden" name="student_no" th:value="${sdto.student_no}">
 										<ul>
 											<li>
 												<p th:text="'이름 : '+${sdto.student_name}"></p>
