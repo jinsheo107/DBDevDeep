@@ -1,6 +1,7 @@
 package com.dbdevdeep.approve.domain;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 import com.dbdevdeep.employee.domain.Department;
 import com.dbdevdeep.employee.domain.Employee;
@@ -26,6 +27,7 @@ public class ApproveDto {
 	private Long temp_no;
 	private String dept_code;
 	private String job_code;
+	private String appro_name;
 	private LocalDateTime appro_time;
 	private int appro_type;
 	private int appro_status;
@@ -42,6 +44,7 @@ public class ApproveDto {
 				.tempEdit(tempEdit)
 				.department(department)
 				.job(job)
+				.approName(appro_name)
 				.approTime(appro_time)
 				.approType(appro_type)
 				.approStatus(appro_status)
@@ -50,19 +53,22 @@ public class ApproveDto {
 				.build();
 	}
 	
-	public ApproveDto toDto(Approve approve) {
-		return ApproveDto.builder()
-				.appro_no(approve.getApproNo())
-				.emp_id(approve.getEmployee().getEmpId())
-				.temp_no(approve.getTempEdit().getTempNo())
-				.dept_code(approve.getDepartment().getDeptCode())
-				.job_code(approve.getJob().getJobCode())
-				.appro_time(approve.getApproTime())
-				.appro_type(approve.getApproType())
-				.appro_status(approve.getApproStatus())
-				.appro_title(approve.getApproTitle())
-				.appro_content(approve.getApproContent())
-				.build();
+	 public ApproveDto toDto(Approve approve) {
+	        // TempEdit이 null인 경우 안전하게 처리합니다.
+	        Long tempNo = Optional.ofNullable(approve.getTempEdit()).map(TempEdit::getTempNo).orElse(null);
+
+	        return ApproveDto.builder()
+	                .appro_no(approve.getApproNo())
+	                .emp_id(approve.getEmployee().getEmpId())
+	                .temp_no(tempNo)  // TempEdit의 temp_no 설정
+	                .dept_code(approve.getDepartment().getDeptCode())
+	                .job_code(approve.getJob().getJobCode())
+	                .appro_name(approve.getApproName())
+	                .appro_time(approve.getApproTime())
+	                .appro_type(approve.getApproType())
+	                .appro_status(approve.getApproStatus())
+	                .appro_title(approve.getApproTitle())
+	                .appro_content(approve.getApproContent())
+	                .build();
+	    }
 	}
-	
-}

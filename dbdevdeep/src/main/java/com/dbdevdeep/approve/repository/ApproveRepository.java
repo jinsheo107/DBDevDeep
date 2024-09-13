@@ -13,5 +13,14 @@ import com.dbdevdeep.approve.domain.Approve;
 
 public interface ApproveRepository extends JpaRepository<Approve, Long> {
 
-	List<Approve> findByEmployeeEmpId(String empId);
+	@Query("SELECT a FROM Approve a LEFT JOIN a.vacationRequests v WHERE a.approType = 0 AND a.employee.empId = :empId")
+	List<Approve> findByTypeAndEmpId(@Param("empId") String empId);
+	
+	@Query(value = "SELECT * FROM approve a " +
+            "LEFT JOIN approve_line al ON a.appro_no = al.appro_no " +
+            "WHERE al.emp_id = :empId AND al.appro_line_status IN (1, 2, 3)", 
+    nativeQuery = true)
+	List<Approve> findByListAndEmpId(@Param("empId") String empId);
+	
+	Approve findByApproNo(Long approNo);
 }

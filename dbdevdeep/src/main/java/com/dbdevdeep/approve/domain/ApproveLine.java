@@ -37,6 +37,9 @@ public class ApproveLine {
     @ManyToOne
     @JoinColumn(name = "emp_id")
     private Employee employee;
+    
+    @Column(name = "appro_line_name")
+    private String approLineName;
 
     @Column(name = "appro_line_order")
     private int approLineOrder;

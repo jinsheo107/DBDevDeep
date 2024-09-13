@@ -14,6 +14,8 @@ import com.dbdevdeep.employee.mybatis.mapper.TeacherHistoryVoMapper;
 import com.dbdevdeep.employee.repository.EmployeeRepository;
 import com.dbdevdeep.employee.repository.TeacherHistoryRepository;
 import com.dbdevdeep.employee.vo.GradeClassGroup;
+import com.dbdevdeep.student.domain.Student;
+import com.dbdevdeep.student.domain.StudentDto;
 
 @Service
 public class TeacherHistoryService {
@@ -203,6 +205,31 @@ public class TeacherHistoryService {
 		}
 		
 		return thListDto;
+	}
+		
+	public List<TeacherHistoryDto> selectClassList(){
+		List<TeacherHistory> thList = teacherHistoryRepository.findAll();
+		List<TeacherHistoryDto> thDtoList = new ArrayList<TeacherHistoryDto>();
+		for(TeacherHistory t : thList) {
+			TeacherHistoryDto dto = new TeacherHistoryDto().toDto(t);
+			thDtoList.add(dto);
+		}
+		return thDtoList;
+	}
+	
+	public List<TeacherHistoryDto> getDataByYearAndGradeList(String t_year,String grade){
+		List<TeacherHistory> teacherHistoryList = teacherHistoryRepository.findByYearAndGrade(t_year,grade);
+		List<TeacherHistoryDto> teacherHistoryDtoList = new ArrayList<TeacherHistoryDto>();
+		
+		  for (TeacherHistory t : teacherHistoryList) {
+		        if (t.getEmployee() != null) {
+		            TeacherHistoryDto dto = new TeacherHistoryDto().toDto(t);
+		            dto.setTeach_emp_id(t.getEmployee().getEmpId());
+		            dto.setTeach_emp_name(t.getEmployee().getEmpName());
+		            teacherHistoryDtoList.add(dto);  // 리스트에 추가
+		        }
+		    }
+		return teacherHistoryDtoList;
 	}
 	
 }
