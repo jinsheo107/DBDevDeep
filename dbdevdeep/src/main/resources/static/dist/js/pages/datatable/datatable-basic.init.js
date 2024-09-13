@@ -627,6 +627,7 @@ $('.dataTables_paginate').after(searchBoxContainer);
 $('div.dataTables_filter').hide();
 }
 });
+
 /******************************************
  * 			item Table
  * ****************************************/

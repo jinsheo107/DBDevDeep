@@ -29,7 +29,7 @@ public class ItemViewController {
 	@GetMapping("/item")
 	public String selectItemList(Model model,ItemDto itemDto) {
 		List<ItemDto> resultList = itemService.selectItemList(itemDto);
-		model.addAttribute("reseultList",resultList);
+		model.addAttribute("resultList",resultList);
 		
 		// 다른 동적으로 계산된 값도 전달 가능
 				for (ItemDto dto : resultList) {

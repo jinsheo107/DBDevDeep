@@ -158,8 +158,7 @@ a:hover {
 										<div style="font-size: 30px;">기자재관리</div>
 									</div>
 									<div class="col d-flex justify-content-end" sec:authorize="hasAnyAuthority('D3')">
-										<button type="button" onclick=""
-										class="btn waves-effect waves-light btn-primary m-1" style="width:80px; height:50px;" >등록</button>
+										<button type="button" onclick="" class="btn waves-effect waves-light btn-primary m-1" style="width:80px; height:50px;" >등록</button>
 									</div>
 								</div>
 							<div class="table-responsive mt-2">
@@ -184,11 +183,7 @@ a:hover {
 										<th:block th:if="${!#lists.isEmpty(resultList)}">
 											<tr th:each="item, itemStat : ${resultList}">
 												<td th:text="${item.place_name}"></td>
-												<td>
-													<a th:href="@{/item/{itemNo}(itemNo=${item.item_no})}">
-														<span th:text="${item.item_name}"></span>
-													</a>
-												</td>
+												<td th:text ="${item.item_name}"></td>
 												<td th:text="${item.place_location}"></td>
 												<td th:text="${item.item_status == 'Y' ? '사용가능' : '사용불가능'}"></td>
 												<td th:text="${item.item_quantity}"></td>
@@ -253,5 +248,15 @@ a:hover {
 		<!--This page plugins -->
 		<script src="assets/extra-libs/datatables.net/js/jquery.dataTables.min.js"></script>
 		<script src="dist/js/pages/datatable/datatable-basic.init.js"></script>
+		<script>
+			$('#item_list').on('click', 'td', function(){
+				let itemNo = $(this).closest('tr').find('td:nth-child(1)').text();
+				
+				if(itemNo){
+					window.location.href = '/item/' + itemNo;
+				}
+			});
+			
+		</script>
 	</body>
 </html>

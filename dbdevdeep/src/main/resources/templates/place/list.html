@@ -124,17 +124,7 @@ div.dataTables_wrapper div.dataTables_paginate ul.pagination {
 	white-space: nowrap;
 	justify-content: center;
 }
-/* a 태그 속성 제거 */
-a {
-	text-decoration: none; /* 밑줄 제거 */
-	color: inherit; /* 기본 색상 제거, 부모 요소의 색상 사용 */
-	cursor: pointer; /* 커서 스타일 변경 */
-}
-/* a 태그 호버 시 스타일 */
-a:hover {
-	text-decoration: none; /* 호버 시 밑줄 추가 */
-	color: inherit; /* 호버 시 색상 변경 */
-}
+
 </style>
 <body>
 		<!-- ============================================================== -->
@@ -183,11 +173,7 @@ a:hover {
 										<th:block th:if="${!#lists.isEmpty(resultList)}">
 											<tr th:each="place, placeStat : ${resultList}">
 												<td th:text="${place.place_no}"></td>
-												<td>
-													<a th:href="@{/place/{placeNo}(placeNo=${place.place_no})}">
-														<span th:text="${place.place_name}"></span>
-													</a>
-												</td>
+												<td th:text="${place.place_name}"></td>
 												<td th:text="${place.place_location}"></td>
 												<td th:text="${place.formattedTimeRange}"></td>
 												<td th:text="${place.place_status == 'Y' ? '사용가능' : '사용 불가능'}"></td>
@@ -251,5 +237,16 @@ a:hover {
 		<!--This page plugins -->
 		<script src="assets/extra-libs/datatables.net/js/jquery.dataTables.min.js"></script>
 		<script src="dist/js/pages/datatable/datatable-basic.init.js"></script>
+		<script>
+			$('#place_list').on('click', 'td', function(){
+				let placeNo = $(this).closest('tr').find('td:nth-child(1)').text();
+				
+				if(placeNo){
+					window.location.href = '/place/' + placeNo;
+				}
+			});
+		</script>
+	
+	
 	</body>
 </html>
