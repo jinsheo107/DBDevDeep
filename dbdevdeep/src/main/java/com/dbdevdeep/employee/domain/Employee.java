@@ -10,6 +10,9 @@ import com.dbdevdeep.approve.domain.LineDraft;
 import com.dbdevdeep.approve.domain.Reference;
 import com.dbdevdeep.approve.domain.ReferenceDraft;
 import com.dbdevdeep.attendance.domain.Attendance;
+import com.dbdevdeep.chat.domain.ChatMemberInfo;
+import com.dbdevdeep.notice.domain.Notice;
+import com.dbdevdeep.notice.domain.NoticeReadCheck;
 import com.dbdevdeep.schedule.domain.Category;
 import com.dbdevdeep.schedule.domain.Schedule;
 
@@ -133,4 +136,16 @@ public class Employee {
 	// 근태관리 관련
 	@OneToMany(mappedBy = "employee")
 	private List<Attendance> attendances;
+	
+	// 공지사항
+	@OneToMany(mappedBy = "employee")
+	private List<Notice> notice;
+	// 공지사항 읽음확인
+	@OneToMany(mappedBy = "employee")
+	private List<NoticeReadCheck> noticeReadCheck;
+	
+	// 채팅 참여자 정보
+	@OneToMany(mappedBy = "employee")
+	private List<ChatMemberInfo> chatMemberInfo;
+	
 }

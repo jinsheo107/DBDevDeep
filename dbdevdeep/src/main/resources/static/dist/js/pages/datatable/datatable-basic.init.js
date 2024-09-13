@@ -88,7 +88,7 @@ $('#notice_config').DataTable({
 
 			searchButton.on('click', function () {
 				var searchTerm = searchInput.val();  // 검색어 가져오기
-				$('#holiday_config').DataTable().search(searchTerm).draw();  // 검색어로 필터링
+				$('#notice_config').DataTable().search(searchTerm).draw();  // 검색어로 필터링
 			});
 
 			searchBoxContainer.append(searchInput).append(searchButton);
