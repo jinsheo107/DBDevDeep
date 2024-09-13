@@ -10,4 +10,5 @@ import com.dbdevdeep.approve.domain.VacationRequest;
 public interface VacationRequestRepository extends JpaRepository<VacationRequest, Long>{
 
 	VacationRequest findByApprove(Approve approve);
+	int deleteByApprove(Approve approve);
 }

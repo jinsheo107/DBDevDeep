@@ -78,21 +78,57 @@ public class ApproveService {
         this.fileService = fileService;
 	}
 	
-		
-	//결재 삭제
+	@Transactional
 	public int deleteApprove(Long appro_no) {
-		int result = 0;
-		try {
-			referenceRepository.deleteById(appro_no);
-			vacationRequestRepository.deleteById(appro_no);
-			approveLineRepository.deleteById(appro_no);
-			approveRepository.deleteById(appro_no);
-			
-			result = 1;
-		}catch(Exception e) {
-			e.printStackTrace();
-		}
-		return result;
+	    int result = 0;
+	    try {
+	        // 결재 정보 가져오기
+	        Approve approve = approveRepository.findById(appro_no).orElse(null);
+	        if (approve == null) {
+	            return result; // 결재 정보가 없으면 아무 작업도 하지 않음
+	        }
+
+	        // 관련된 휴가 요청 가져오기
+	        VacationRequest vacationRequest = vacationRequestRepository.findByApprove(approve);
+	        if (vacationRequest != null) {
+	            // 휴가 유형 확인 및 복구할 시간 계산
+	            int vacType = vacationRequest.getVacType();
+	            if (vacType == 0 || vacType == 3 || vacType == 6 || vacType == 7 || vacType == 8) {
+	                // 복구할 시간 계산
+	                int hoursToRestore = minusVac(new VacationRequestDto().toDto(vacationRequest));
+
+	                // 사용자 정보 가져오기
+	                Employee employee = approve.getEmployee();
+
+	                // 부서와 직급 가져오기
+	                Department department = approve.getDepartment();
+	                Job job = approve.getJob();
+
+	                // 사용자의 vacation_hour 복구
+	                EmployeeDto employeeDto = new EmployeeDto().toDto(employee);
+	                int updatedVacationHour = employeeDto.getVacation_hour() + hoursToRestore;
+	                employeeDto.setVacation_hour(Math.max(updatedVacationHour, 0)); // 0 미만으로 가지 않도록 설정
+
+	                // 부서와 직급 설정
+	                employeeDto.setDepartment(department);
+	                employeeDto.setJob(job);
+
+	                // 업데이트된 DTO를 엔티티로 변환하여 저장
+	                employeeRepository.save(employeeDto.toEntity());
+	            }
+	        }
+
+	        // 관련된 참조, 휴가 요청, 승인 라인, 결재 정보를 삭제
+	        referenceRepository.deleteByApprove(approve);
+	        vacationRequestRepository.deleteByApprove(approve);
+	        approveLineRepository.deleteByApprove(approve);
+	        approveRepository.deleteById(appro_no);
+
+	        result = 1;
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    }
+	    return result;
 	}
 	
 	// 내가 결재 요청한 목록 조회
