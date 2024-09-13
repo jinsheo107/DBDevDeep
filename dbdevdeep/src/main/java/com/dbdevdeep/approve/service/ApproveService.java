@@ -7,6 +7,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import java.sql.Timestamp;
+
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -157,31 +159,31 @@ public class ApproveService {
 		return approveDtoList;
 	}
 	
-	// 요청 받은 목록 조회
-		public List<ApproveDto> selectComeApproveList(String empId){
-			List<Approve> approveList = approveRepository.findByListAndEmpId(empId);
-			List<ApproveDto> approveDtoList = new ArrayList<ApproveDto>();
-			
-			for(Approve a : approveList) {
-			
-				ApproveDto dto = ApproveDto.builder()
-						.appro_no(a.getApproNo())
-						.emp_id(a.getEmployee().getEmpId())
-						.dept_code(a.getDepartment().getDeptCode())
-						.job_code(a.getJob().getJobCode())
-						.appro_time(a.getApproTime())
-						.appro_type(a.getApproType())
-						.appro_status(a.getApproStatus())
-						.appro_title(a.getApproTitle())
-						.appro_content(a.getApproContent())
-						.build();
-				
-				
-				approveDtoList.add(dto);
-			}
-			
-			return approveDtoList;
-		}
+	// 요청 받은 결재 내역
+	public List<ApproveDto> getApprovalRequestsForUser(String loggedInUserEmpId) {
+	    List<Object[]> results = approveRepository.findApprovalRequestsForUser(loggedInUserEmpId);
+	    
+	    List<ApproveDto> approvalList = new ArrayList<>();
+	    for (Object[] result : results) {
+	        // Timestamp를 LocalDateTime으로 변환
+	        LocalDateTime approTime = null;
+	        if (result[2] != null) {
+	            approTime = ((Timestamp) result[2]).toLocalDateTime();
+	        }
+
+	        ApproveDto dto = ApproveDto.builder()
+	                .appro_no(((Number) result[0]).longValue())  // appro_no
+	                .appro_title((String) result[1])             // appro_title
+	                .appro_time(approTime)                      // 변환된 LocalDateTime 사용
+	                .appro_name((String) result[3])              // appro_name
+	                .appro_status((Integer) result[4])           // appro_status
+	                .vac_type(result[5] != null ? (Integer) result[5] : null)  // vac_type, nullable 처리
+	                .build();
+	        approvalList.add(dto);
+	    }
+	    
+	    return approvalList;
+	}
 	
 	public Map<String, Object> getApproveDetail(Long approNo) {
 	    Map<String, Object> detailMap = new HashMap<>();

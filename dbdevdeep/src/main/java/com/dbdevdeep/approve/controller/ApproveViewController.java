@@ -45,8 +45,8 @@ public class ApproveViewController {
 			Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 	        String username = authentication.getName();
 			
-			List<ApproveDto> resultList = approveService.selectComeApproveList(username);
-			model.addAttribute("resultList",resultList);
+			List<ApproveDto> approvalList = approveService.getApprovalRequestsForUser(username);
+			model.addAttribute("approvalList",approvalList);
 			return "approve/comeApprove";
 		}
 	
