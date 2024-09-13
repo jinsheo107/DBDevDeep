@@ -12,4 +12,7 @@ public interface MySignRepository extends JpaRepository <MySign, Long> {
 
 	@Query("SELECT ms FROM MySign ms WHERE ms.employee.empId = :emp_id")
 	List<MySign> mySignfindAllByEmpid(@Param("emp_id") String emp_id);
+	
+	@Query("SELECT ms FROM MySign ms WHERE ms.employee.empId = :emp_id AND ms.repYn = 'Y'")
+	List<MySign> findByEmpIdAndRepYn(@Param("emp_id") String emp_id);
 }

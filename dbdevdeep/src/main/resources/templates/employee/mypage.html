@@ -1,55 +1,87 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{include/mypage_layout}">
-	<th:block layout:fragment="content">
-	<!-- ============================================================== -->
-	<!-- End Left Sidebar - style you can find in sidebar.scss  -->
-	<!-- ============================================================== -->
-	<!-- ============================================================== -->
-	<!-- Page wrapper  -->
-	<!-- ============================================================== -->
+<th:block layout:fragment="content">
 	<div class="page-wrapper">
-		<!-- ============================================================== -->
-		<!-- Bread crumb and right sidebar toggle -->
-		<!-- ============================================================== -->
-		<div class="page-breadcrumb">
-			<div class="row">
-				<div class="col-7 align-self-center">
-					<h4 class="page-title text-truncate text-dark font-weight-medium mb-1">Basic Table</h4>
-					<div class="d-flex align-items-center">
-						<nav aria-label="breadcrumb">
-							<ol class="breadcrumb m-0 p-0">
-								<li class="breadcrumb-item"><a href="index.html" class="text-muted">Home</a></li>
-								<li class="breadcrumb-item text-muted active" aria-current="page">Library</li>
-							</ol>
-						</nav>
-					</div>
-				</div>
-				<div class="col-5 align-self-center">
-					<div class="customize-input float-right">
-						<select class="custom-select custom-select-set form-control bg-white border-0 custom-shadow custom-radius">
-							<option selected>Aug 19</option>
-							<option value="1">July 19</option>
-							<option value="2">Jun 19</option>
-						</select>
-					</div>
-				</div>
-			</div>
-		</div>
-		<!-- ============================================================== -->
-		<!-- End Bread crumb and right sidebar toggle -->
-		<!-- ============================================================== -->
-		<!-- ============================================================== -->
-		<!-- Container fluid  -->
-		<!-- ============================================================== -->
 		<div class="container-fluid">
 			<!-- ============================================================== -->
 			<!-- Start Page Content -->
 			<!-- ============================================================== -->
 			<div class="row">
 				<div class="col-12">
-					<div class="card">
+					<div class="card" style="padding: 40px;">
 						<div class="card-body">
-							
+							<h4 class="card-title">내 정보</h4>
+							<hr>
+
+							<div class="row">
+								<div class="col-md-1 "></div>
+
+
+								<!-- 사진등록 -->
+								<div class="col-md-2 ">
+									<div class="form-group" style="margin-top: 20px;">
+										<div class="row">
+											<img th:src="@{'/UploadImg/employee/' + ${empDto.new_pic_name}}" width="150px" style="border-radius: 50%; object-fit: cover; aspect-ratio: 1 / 1;">
+										</div>
+									</div>
+								</div>
+								
+								<div class="col-md-8">
+									<table class="table table-bordered no-wrap">
+										<colgroup>
+											<col style="width: 20%">
+											<col style="width: 80%">
+										</colgroup>
+										<tr>
+											<th>직원번호</th>
+											<td th:text="${empDto.emp_id}"></td>
+										</tr>
+										<tr>
+											<th>교육청관리번호</th>
+											<td th:text="'N - ' + ${empDto.gov_id}"></td>
+										</tr>
+										<tr>
+											<th>이름</th>
+											<td th:text="${empDto.emp_name}"></td>
+										</tr>
+										<tr>
+											<th>부서</th>
+											<td th:text="${empDto.dept_name}"></td>
+										</tr>
+										<tr>
+											<th>직급</th>
+											<td th:text="${empDto.job_name}"></td>
+										</tr>
+										<tr th:if="${empDto.dept_code} == 'D4'">
+											<th>담당</th>
+											<td th:if="${thDto == null}">미배정</td>
+											<th:block th:if="${thDto != null}">
+												<td th:text="${thDto.t_year} + '학년도 ' + ${thDto.grade} + '학년 ' + ${thDto.grade_class} + '반'"></td>
+											</th:block>
+										</tr>
+										<tr>
+											<th>주민등록번호</th>
+											<td th:text="${#strings.substring(empDto.emp_rrn, 0, 8)} + '******'"></td>
+										</tr>
+										<tr>
+											<th>주소</th>
+											<td th:text="${empDto.emp_addr} + ' ' + ${empDto.emp_detail_addr}"></td>
+										</tr>
+										<tr>
+											<th>전화번호</th>
+											<td th:text="${empDto.emp_phone}"></td>
+										</tr>
+										<tr>
+											<th>내선전화번호</th>
+											<td th:text="${empDto.emp_internal_phone}"></td>
+										</tr>
+										<tr>
+											<th>입사일</th>
+											<td th:text="${empDto.hire_date}"></td>
+										</tr>
+									</table>
+								</div>
+							</div>
 						</div>
 					</div>
 				</div>
@@ -109,5 +141,5 @@
 	<!--This page plugins -->
 	<script src="/assets/extra-libs/datatables.net/js/jquery.dataTables.min.js"></script>
 	<script src="/dist/js/pages/datatable/datatable-basic.init.js"></script>
-	</th:block>
+</th:block>
 </html>

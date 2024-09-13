@@ -16,16 +16,21 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.dbdevdeep.employee.domain.EmployeeDto;
 import com.dbdevdeep.employee.domain.MySignDto;
+import com.dbdevdeep.employee.domain.TeacherHistoryDto;
 import com.dbdevdeep.employee.service.EmployeeService;
+import com.dbdevdeep.employee.service.TeacherHistoryService;
 
 @Controller
 public class EmployeeViewController {
 	
 	private final EmployeeService employeeService;
+	private final TeacherHistoryService teacherHistoryService;
 	
 	@Autowired
-	public EmployeeViewController(EmployeeService employeeService) {
+	public EmployeeViewController(EmployeeService employeeService,
+			TeacherHistoryService teacherHistoryService) {
 		this.employeeService = employeeService;
+		this.teacherHistoryService = teacherHistoryService;
 	}
 
 	@GetMapping("/login")
@@ -49,7 +54,16 @@ public class EmployeeViewController {
 	}
 	
 	@GetMapping("/mypage")
-	public String mypagePage() {
+	public String mypagePage(Model model) {
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		User user = (User)authentication.getPrincipal();
+		
+		EmployeeDto dto = employeeService.selectEmployeeOne(user.getUsername());
+		TeacherHistoryDto thDto = teacherHistoryService.selectHistoryOne(dto);
+		
+		model.addAttribute("empDto", dto);
+		model.addAttribute("thDto", thDto);
+		
 		return "employee/mypage";
 	}
 	
@@ -81,17 +95,49 @@ public class EmployeeViewController {
 		
 		return resultMap;
 	}
+
+	@GetMapping("/editmypage")
+	public String editMyPage(Model model) {
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		User user = (User)authentication.getPrincipal();
+		
+		EmployeeDto dto = employeeService.selectEmployeeOne(user.getUsername());
+		
+		model.addAttribute("empDto", dto);
+		
+		return "employee/edit_my_info";
+	}
 	
-	/*
-	 * @ResponseBody
-	 * 
-	 * @GetMapping("/mysign/{emp_id}") public List<MySignDto>
-	 * employeeSignPage(@PathVariable("emp_id") String emp_id) {
-	 * 
-	 * List<MySignDto> resultList = employeeService.employeeSignGet(emp_id);
-	 * 
-	 * return resultList; }
-	 */
+	@GetMapping("/editmypw")
+	public String editMyPwPage() {
+				
+		return "employee/edit_my_pw";
+	}
 	
+	@GetMapping("/allemployee")
+	public String allEmployee(Model model) {
+		
+		List<EmployeeDto> resultList = employeeService.selectEmployeeList();
+		
+		List<TeacherHistoryDto> historyList = teacherHistoryService.selectClassByOrderLastesList();
+		
+		model.addAttribute("resultList", resultList);
+		model.addAttribute("historyList", historyList);
+		
+		return "employee/all_employee";
+	}
+	
+	@GetMapping("/employee/{emp_id}")
+	public String employeeDetail(Model model, @PathVariable("emp_id") String emp_id) {
+		
+		EmployeeDto empDto = employeeService.selectEmployeeOne(emp_id);
+		
+		List<TeacherHistoryDto> thDtoList = teacherHistoryService.selectTeacherHistoryByEmployee(emp_id);
+		
+		model.addAttribute("thDtoList", thDtoList);
+		model.addAttribute("empDto", empDto);
+		
+		return "employee/employee_detail";
+	}
 
 }

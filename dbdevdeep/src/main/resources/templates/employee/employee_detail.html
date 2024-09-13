@@ -61,6 +61,10 @@
 	justify-content: center;
 	align-items: center;
 }
+
+input:read-only {
+	border: none;
+}
 </style>
 		<!-- ============================================================== -->
 		<!-- End Left Sidebar - style you can find in sidebar.scss  -->
@@ -91,44 +95,41 @@
 										<!-- 사진등록 -->
 										<div class="col-md-1 ">
 											<div class="form-group" style="margin-top: 20px;">
-												<label>사진 <span style="color: red;">*</span></label>
+												<label>사진</label>
 												<div class="row">
 													<div class="preview-container hidden" id="preview-container">
-														<img id="imagePreview" src="">
+														<img th:src="@{'/UploadImg/employee/' + ${empDto.new_pic_name}}" width="150px" style="border-radius: 50%; object-fit: cover; aspect-ratio: 1 / 1;">
 													</div>
-													<input type="button" class="addPic" id="addPic" value="+">
 												</div>
 											</div>
 										</div>
 
 										<div class="col-md-9 m-auto">
 											<div class="form-group">
-												<label for="gov_id">교육청관리번호 <span style="color: red;">*</span></label>
+												<label for="gov_id">교육청관리번호</label>
 												<div class="row">
 													<div class="col-md-8">
-														<input type="text" class="form-control" id="gov_id" name="gov_id" placeholder="00000000000" maxlength="11">
+														<input type="text" class="form-control" id="gov_id" name="gov_id" 
+															placeholder="00000000000" maxlength="11" th:value="${'N -' + empDto.gov_id}" readonly>
 														<div id="gov_id_feedback" class="mt-2"></div>
-													</div>
-													<div class="col-md-1">
-														<input type="button" id="gov_check_button" class="btn waves-effect waves-light btn-primary" disabled value="중복확인" onclick="dupGov();">
 													</div>
 												</div>
 											</div>
 
 											<div class="form-group">
-												<label for="gov_id">이름 <span style="color: red;">*</span></label>
+												<label for="gov_id">이름</label>
 												<div class="row">
 													<div class="col-md-8">
-														<input type="text" class="form-control" id="emp_name" name="emp_name" placeholder="홍길동">
+														<input type="text" class="form-control" id="emp_name" name="emp_name" placeholder="홍길동" th:value="${empDto.emp_name}" readonly>
 														<div id="emp_name_feedback" class="mt-2"></div>
 													</div>
 												</div>
 											</div>
 											<div class="form-group">
-												<label for="gov_id">부서 <span style="color: red;">*</span></label>
+												<label for="gov_id">부서</label>
 												<div class="row">
 													<div class="col-md-8">
-														<select class="form-control" id="department" name="dept_code" style="background-image: none;">
+														<select class="form-control" id="department" name="dept_code" style="background-image: none;" readonly th:value="${empDto.dept_code}">
 															<option value="0">부서를 선택하세요.</option>
 															<option value="D4">행정부</option>
 															<option value="D3">교무부</option>
@@ -140,10 +141,10 @@
 												</div>
 											</div>
 											<div class="form-group">
-												<label for="gov_id">직급 <span style="color: red;">*</span></label>
+												<label for="gov_id">직급</label>
 												<div class="row">
 													<div class="col-md-8">
-														<select class="form-control" id="job" name="job_code" style="background-image: none;">
+														<select class="form-control" id="job" name="job_code" readonly th:value="${empDto.job_code}" style="background-image: none;">
 															<option value="0">직급을 선택하세요.</option>
 															<option value="J4">직원</option>
 															<option value="J3">부장</option>
@@ -155,45 +156,43 @@
 												</div>
 											</div>
 											<div class="form-group">
-												<label for="gov_id">주민등록번호 <span style="color: red;">*</span></label>
+												<label for="gov_id">주민등록번호</label>
 												<div class="row">
 													<div class="col-md-4">
-														<input type="text" class="form-control" id="firstempRrn" placeholder="000101" maxlength="6">
+														<input type="text" class="form-control" id="firstempRrn" placeholder="000101" th:value="${#strings.substring(empDto.emp_rrn, 5)}" readonly maxlength="6">
 
 													</div>
+													
 													<div class="col-md-4">
-														<input type="text" class="form-control" id="secondempRrn" placeholder="4111111" maxlength="7">
+														<input type="text" class="form-control" id="secondempRrn" readonly th:value="${#strings.substring(empDto.emp_rrn, 6, 13)}" placeholder="4111111" maxlength="7">
 													</div>
 													<input type="text" id="emp_rrn" name="emp_rrn" hidden="hidden">
 													<div id="emp_rrn_feedback" class="mt-2 col-md-8"></div>
 												</div>
 											</div>
 											<div class="form-group">
-												<label for="gov_id">우편번호 <span style="color: red;">*</span></label>
+												<label for="gov_id">우편번호</label>
 												<div class="row">
 													<div class="col-md-8">
-														<input type="text" name="emp_post_code" class="form-control" id="sample6_postcode" placeholder="우편번호" onclick="sample6_execDaumPostcode()" readonly><br> 
-														<input type="text" name="emp_addr" class="form-control" id="sample6_address" placeholder="주소" readonly><br> 
-														<input type="text" name="emp_detail_addr" class="form-control" id="sample6_detailAddress" placeholder="상세주소"> 
+														<input type="text" name="emp_post_code" class="form-control" id="sample6_postcode" placeholder="우편번호" th:value="${empDto.emp_post_code}" readonly><br> 
+														<input type="text" name="emp_addr" class="form-control" id="sample6_address" placeholder="주소" th:value="${empDto.emp_addr}" readonly><br> 
+														<input type="text" name="emp_detail_addr" class="form-control" id="sample6_detailAddress" th:value="${empDto.emp_detail_addr}" readonly placeholder="상세주소"> 
 														<input type="text" id="sample6_extraAddress" placeholder="참고항목" hidden="hidden">
 														<div id="emp_post_code_feedback" class="mt-2"></div>
-													</div>
-													<div class="col-md-1">
-														<input type="button" id="postBtn" onclick="sample6_execDaumPostcode()" value="우편번호 찾기" class="btn waves-effect waves-light btn-primary">
 													</div>
 												</div>
 											</div>
 											<div class="form-group">
-												<label for="gov_id">전화번호 <span style="color: red;">*</span></label>
+												<label for="gov_id">전화번호</label>
 												<div class="row">
 													<div class="col-md-2">
-														<input type="text" class="form-control" id="firstPhone" placeholder="010" maxlength="3">
+														<input type="text" class="form-control" id="firstPhone" th:value="${#strings.substring(empDto.emp_phone, 0, 2)}" readonly placeholder="010" maxlength="3">
 													</div>
 													<div class="col-md-3">
-														<input type="text" class="form-control" id="secondPhone" placeholder="1111" maxlength="4">
+														<input type="text" class="form-control" id="secondPhone" readonly th:value="${#strings.substirng(empDto.emp_phone, 3, 6)}" placeholder="1111" maxlength="4">
 													</div>
 													<div class="col-md-3">
-														<input type="text" class="form-control" id="thirdPhone" placeholder="2222" maxlength="4">
+														<input type="text" class="form-control" id="thirdPhone" readonly th:value="${#strings.substirng(empDto.emp_phone, 7, )}" placeholder="2222" maxlength="4">
 													</div>
 													<div id="emp_phone_feedback" class="mt-2 col-md-8"></div>
 													<input type="text" id="empPhone" name="emp_phone" hidden="hidden">

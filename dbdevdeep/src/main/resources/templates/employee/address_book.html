@@ -2,12 +2,24 @@
 <html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{include/adress_book_layout}">
 <th:block layout:fragment="content">
 	<body>
-	<style>
+	<style>		
+			/* datatable css */
 		div.dataTables_wrapper div.dataTables_paginate ul.pagination {
 		  margin: 2px 0;
 		  white-space: nowrap;
 		  justify-content: center;
+		}
+		/* a 태그 속성 제거 */
+		a {
+		    text-decoration: none; /* 밑줄 제거 */
+		    color: inherit;        /* 기본 색상 제거, 부모 요소의 색상 사용 */
+		    cursor: pointer;       /* 커서 스타일 변경 */
 		}	
+		/* a 태그 호버 시 스타일 */
+		a:hover {
+		    text-decoration: none; /* 호버 시 밑줄 추가 */
+		    color: inherit;           /* 호버 시 색상 변경 */
+		}
 	</style>
 		<!-- ============================================================== -->
 		<!-- End Left Sidebar - style you can find in sidebar.scss  -->
@@ -16,39 +28,6 @@
 		<!-- Page wrapper  -->
 		<!-- ============================================================== -->
 		<div class="page-wrapper">
-			<!-- ============================================================== -->
-			<!-- Bread crumb and right sidebar toggle -->
-			<!-- ============================================================== -->
-			<div class="page-breadcrumb">
-				<div class="row">
-					<div class="col-7 align-self-center">
-						<h4 class="page-title text-truncate text-dark font-weight-medium mb-1">Basic Table</h4>
-						<div class="d-flex align-items-center">
-							<nav aria-label="breadcrumb">
-								<ol class="breadcrumb m-0 p-0">
-									<li class="breadcrumb-item"><a href="index.html" class="text-muted">Home</a></li>
-									<li class="breadcrumb-item text-muted active" aria-current="page">Library</li>
-								</ol>
-							</nav>
-						</div>
-					</div>
-					<div class="col-5 align-self-center">
-						<div class="customize-input float-right">
-							<select class="custom-select custom-select-set form-control bg-white border-0 custom-shadow custom-radius">
-								<option selected>Aug 19</option>
-								<option value="1">July 19</option>
-								<option value="2">Jun 19</option>
-							</select>
-						</div>
-					</div>
-				</div>
-			</div>
-			<!-- ============================================================== -->
-			<!-- End Bread crumb and right sidebar toggle -->
-			<!-- ============================================================== -->
-			<!-- ============================================================== -->
-			<!-- Container fluid  -->
-			<!-- ============================================================== -->
 			<div class="container-fluid">
 				<!-- ============================================================== -->
 				<!-- Start Page Content -->
@@ -57,9 +36,10 @@
 					<div class="col-12">
 						<div class="card">
 							<div class="card-body">
-								<h4 class="card-title">주소록</h4>
+								<h3 class="card-title">공지사항 게시판</h3>
+                                <hr>
 								<div class="table-responsive">
-									<table id="address_book" class="table table-hover table-bordered no-wrap">
+									<table id="address_book" class="table table-hover table-bordered no-wrap" style="width:100%">
 										<thead>
 											<tr>
 												<th scope="col">번호</th>
@@ -99,7 +79,6 @@
 						</div>
 					</div>
 				</div>
-
 				<!-- ============================================================== -->
 				<!-- End PAge Content -->
 				<!-- ============================================================== -->
@@ -124,17 +103,5 @@
 			<!-- End footer -->
 			<!-- ============================================================== -->
 		</div>
-		<!-- ============================================================== -->
-		<!-- End Page wrapper  -->
-		<!-- ============================================================== -->
-		</div>
-		<!-- ============================================================== -->
-		<!-- End Wrapper -->
-		<!-- ============================================================== -->
-		<!-- End Wrapper -->
-		<!-- ============================================================== -->
-		<!-- All Jquery -->
-		<!-- ============================================================== -->
-		
 	</body>
 </html>

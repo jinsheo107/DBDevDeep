@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.dbdevdeep.employee.domain.Employee;
+import com.dbdevdeep.employee.domain.EmployeeDto;
 import com.dbdevdeep.employee.domain.TeacherHistory;
 import com.dbdevdeep.employee.domain.TeacherHistoryDto;
 import com.dbdevdeep.employee.mybatis.mapper.TeacherHistoryVoMapper;
@@ -76,16 +77,26 @@ public class TeacherHistoryService {
 		return result;
 	}
 	
-	public void saveTeacherHistory(int grade, int gradeClass, String t_year) {
-		TeacherHistoryDto dto = new TeacherHistoryDto();
+	public int saveTeacherHistory(int grade, int gradeClass, String t_year) {
+		int result = -1;
 		
-		dto.setGrade(grade);
-		dto.setGrade_class(gradeClass);
-		dto.setT_year(t_year);
+		try {
+			TeacherHistoryDto dto = new TeacherHistoryDto();
+			
+			dto.setGrade(grade);
+			dto.setGrade_class(gradeClass);
+			dto.setT_year(t_year);
+			
+			TeacherHistory th = dto.toEntity();
+			
+			teacherHistoryRepository.save(th);
+			
+			result = 1;
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
 		
-		TeacherHistory th = dto.toEntity();
-		
-		teacherHistoryRepository.save(th);
+		return result;
 	}
 	
 	public int addTeacher(TeacherHistoryDto dto) {
@@ -102,6 +113,7 @@ public class TeacherHistoryService {
 					.build();
 			
 			teacherHistoryRepository.save(th);
+			
 			result = 1;
 		} catch(Exception e) {
 			e.printStackTrace();
@@ -132,6 +144,69 @@ public class TeacherHistoryService {
 		return teacherHistoryDtoList;
 	}
 	
+	public TeacherHistoryDto selectHistoryOne(EmployeeDto dto) {
+		TeacherHistoryDto resultDto = null;
+		
+		String t_year = teacherHistoryRepository.findMostRecentYear();
+		
+		TeacherHistory th = teacherHistoryRepository.selectHistoryOne(dto.getEmp_id(), t_year);
+		
+		if(th != null) {
+			resultDto.toDto(th);			
+		}
+		
+		return resultDto;
+	}
+	
+	public int deleteByTYear(String t_year) {
+		int result = -1;
+		
+		try {
+			teacherHistoryRepository.deleteByTYear(t_year);
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+		
+		return result;
+	}
+	
+	public int deleteByGradeClassTyear(int grade, int grade_class, String t_year) {
+		int result = -1;
+		
+		try {
+			Long teacherNo = teacherHistoryRepository.selectByGradeClassTyear(grade, grade_class, t_year);
+			teacherHistoryRepository.deleteById(teacherNo);
+			
+			result = 1;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return result;
+	}
+	
+	public int tYearGradeCount(String t_year, int grade) {
+		return teacherHistoryRepository.countByTyearGrade(t_year, grade);
+	}
+	
+	public List<TeacherHistoryDto> selectTeacherHistoryByEmployee (String emp_id) {
+		List<TeacherHistoryDto> thListDto = null;
+		
+		try {
+			List<TeacherHistory> th = teacherHistoryRepository.selectTeacherHistoryByEmployee(emp_id);
+			
+			for(TeacherHistory t : th) {
+				TeacherHistoryDto thDto = new TeacherHistoryDto().toDto(t);
+				
+				thListDto.add(thDto);
+			}
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+		
+		return thListDto;
+	}
+		
 	public List<TeacherHistoryDto> selectClassList(){
 		List<TeacherHistory> thList = teacherHistoryRepository.findAll();
 		List<TeacherHistoryDto> thDtoList = new ArrayList<TeacherHistoryDto>();
@@ -155,7 +230,6 @@ public class TeacherHistoryService {
 		        }
 		    }
 		return teacherHistoryDtoList;
-		
 	}
 	
 }
