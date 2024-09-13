@@ -46,7 +46,4 @@ public class VacationRequest {
     @Column(name = "end_time")
     private LocalDateTime endTime;
     
-    @Version
-    @Column(name = "version")
-    private Integer version;
 }

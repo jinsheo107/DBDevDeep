@@ -39,7 +39,7 @@ public class ApproveViewController {
 	}
 	
 	// 결재 받은 목록 조회
-		@GetMapping("/approve/comeApprove")
+		@GetMapping("/comeApprove")
 		public String selectComeApproveList(Model model) {
 			
 			Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
