@@ -154,44 +154,46 @@ a:hover {
 						<div class="card">
 							<div class="card-body" style="padding: 50px 80px">
 								<div class="row" style="margin-left: 0px !important; margin-right: 0px !important;">
-									<div class="col d-flex justify-content-start align-items-center" style="padding-left: 0px; max-width: 140px;">
-										<div style="font-size: 30px;">장소관리</div>
+									<div class="col d-flex justify-content-start align-items-center" style="padding-left: 0px;">
+										<div style="font-size: 30px;">기자재관리</div>
 									</div>
 									<div class="col d-flex justify-content-end" sec:authorize="hasAnyAuthority('D3')">
-										<button type="button" onclick="location.href='/place/create'"
+										<button type="button" onclick=""
 										class="btn waves-effect waves-light btn-primary m-1" style="width:80px; height:50px;" >등록</button>
 									</div>
 								</div>
 							<div class="table-responsive mt-2">
-								<table id="place_list" class="table table-hover table-bordered no-wrap" style="width: 100%; text-align: center;">
+								<table id="item_list" class="table table-hover table-bordered no-wrap" style="width: 100%; text-align: center;">
 									<thead>
 										<tr>
-											<th scope="col">장소번호</th>
 											<th scope="col">장소명</th>
+											<th scope="col">기자재명</th>
 											<th scope="col">위치</th>
-											<th scope="col">사용 가능 시간</th>
 											<th scope="col">사용 가능 여부</th>
-											<th scope="col">사용 불가 일</th>
+											<th scope="col">총 갯수</th>
+											<th scope="col">사용 가능 갯수</th>
+											<th scope="col">사용 불가능 갯수</th>
 										</tr>
 									</thead>
 									<tbody>
 										<th:block th:if="${#lists.isEmpty(resultList)}">
 											<tr>
-												<td colspan="6">해당하는 글이 없습니다.</td>
+												<td colspan="7">해당하는 글이 없습니다.</td>
 											</tr>
 										</th:block>
 										<th:block th:if="${!#lists.isEmpty(resultList)}">
-											<tr th:each="place, placeStat : ${resultList}">
-												<td th:text="${place.place_no}"></td>
+											<tr th:each="item, itemStat : ${resultList}">
+												<td th:text="${item.place_name}"></td>
 												<td>
-													<a th:href="@{/place/{placeNo}(placeNo=${place.place_no})}">
-														<span th:text="${place.place_name}"></span>
+													<a th:href="@{/item/{itemNo}(itemNo=${item.item_no})}">
+														<span th:text="${item.item_name}"></span>
 													</a>
 												</td>
-												<td th:text="${place.place_location}"></td>
-												<td th:text="${place.formattedTimeRange}"></td>
-												<td th:text="${place.place_status == 'Y' ? '사용가능' : '사용 불가능'}"></td>
-												<td th:text="${place.unuseable_start_date != null ? place.unuseable_start_date : ''} + ' - ' + ${place.unuseable_end_date != null ? place.unuseable_end_date : ''}"></td>
+												<td th:text="${item.place_location}"></td>
+												<td th:text="${item.item_status == 'Y' ? '사용가능' : '사용불가능'}"></td>
+												<td th:text="${item.item_quantity}"></td>
+												<td th:text="${item.item_quantity - item.unuseable_quantity}"></td>
+												<td th:text="${item.unuseable_quantity}"></td>
 											</tr>
 										</th:block>
 									</tbody>

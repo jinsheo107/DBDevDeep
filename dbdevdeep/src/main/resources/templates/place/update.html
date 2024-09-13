@@ -7,6 +7,13 @@
   
   <style>
  
+ input[type="text"] {
+    		width : 485px;
+    	}
+    
+ 
+ 
+ 
 body {
     background-color: #f7f7f7;
     font-family: 'Arial', sans-serif;
@@ -85,7 +92,12 @@ input, select, textarea {
                 <!-- ============================================================== -->
                 <!-- Start Page Content -->
                 <!-- ============================================================== -->
-<div class="container mt-5">
+  				<div class="row">
+                	<div class="col-sm-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <h3 class="card-title">장소 수정</h3>
+                                <hr>
     <form id="updateForm">
       <!-- CSRF 토큰 추가 -->
         <input type="hidden" id="csrf_token" th:value="${_csrf.token}">
@@ -98,66 +110,29 @@ input, select, textarea {
             </div>
         </div>
 
-        <div class="row mb-3">
-            <!-- 2. 사용 가능 여부 -->
-            <label for="usable" class="col-sm-2 col-form-label">사용 가능 여부</label>
-            <div class="col-sm-10">
-                <div class="form-check form-check-inline">
-                    <input class="form-check-input" type="radio" id="usable" name="place_status" value="Y" th:checked="${dto.place_status == 'Y'}" onchange="toggleUnusableFields()">
-                    <label class="form-check-label" for="usable">사용 가능</label>
-                </div>
-                <div class="form-check form-check-inline">
-                    <input class="form-check-input" type="radio" id="unusable" name="place_status" value="N" th:checked="${dto.place_status == 'N'}" onchange="toggleUnusableFields()">
-                    <label class="form-check-label" for="unusable">사용 불가능</label>
-                </div>
-            </div>
-        </div>
 
-        <!-- 3. 사용 가능 시간 -->
-        <div class="row mb-3">
-            <label for="startTime" class="col-sm-2 col-form-label">사용 가능 시간</label>
-            <div class="col-sm-5">
-                <input type="time" class="form-control" id="startTime" name="place_start_time" th:value="${dto.place_start_time}" required>
-            </div>
-            <label class="col-sm-1 col-form-label text-center">~</label>
-            <div class="col-sm-4">
-                <input type="time" class="form-control" id="endTime" name="place_end_time" th:value="${dto.place_end_time}" required>
-            </div>
-        </div>
-
-        <!-- 숨겨진 필드: 사용 불가능한 사유 및 기간 -->
-        <div class="unusable-fields" id="unusableFields">
-            <!-- 4. 사유 (사용 불가능한 사유) -->
-            <div class="row mb-3">
-                <label for="reason" class="col-sm-2 col-form-label">사유</label>
-                <div class="col-sm-10">
-                    <input type="text" class="form-control" id="reason" name="unuseable_reason" th:value="${dto.unuseable_reason}">
-                </div>
-            </div>
-
-            <!-- 5. 사용 불가 기간 -->
-            <div class="row mb-3">
-                <label for="startDate" class="col-sm-2 col-form-label">사용 불가 기간</label>
-                <div class="col-sm-5">
-                    <input type="date" class="form-control" id="startDate" name="unuseable_start_date" th:value="${dto.unuseable_start_date}">
-                </div>
-                <label class="col-sm-1 col-form-label text-center">~</label>
-                <div class="col-sm-4">
-                    <input type="date" class="form-control" id="endDate" name="unuseable_end_date" th:value="${dto.unuseable_end_date}">
-                </div>
-            </div>
-        </div>
-
-        <div class="row mb-3">
-            <!-- 6. 내용 (장소에 대한 내용) -->
+		<!-- 2. 사용 가능 시간 -->
+		    <div class="row mb-3">
+		        <label for="startTime" class="col-sm-2 col-form-label">사용 가능 시간</label>
+		        <div class="col-sm-4">
+		            <input type="time" class="form-control" id="startTime" name="place_start_time" th:value="${dto.place_start_time}" required>
+		        </div>
+		        <label class="col-sm-1 col-form-label text-center">~</label>
+		        <div class="col-sm-4">
+		            <input type="time" class="form-control" id="endTime" name="place_end_time" th:value="${dto.place_end_time}" required>
+		        </div>
+		    </div>
+		    
+		     <div class="row mb-3">
+            <!-- 3. 내용 (장소에 대한 내용) -->
             <label for="content" class="col-sm-2 col-form-label">내용</label>
             <div class="col-sm-10">
-                <input type="text" class="form-control" id="content" name="place_content" th:value="${dto.place_content}">
+               <textarea class="form-control" id="content" name="place_content" th:text="${dto.place_content}" style="width: 100%; height: 120px; resize: none;" required></textarea>
             </div>
         </div>
-
+        
         <div class="row mb-3">
-            <!-- 7. 위치 선택 -->
+            <!-- 4. 위치 선택 -->
             <label for="location" class="col-sm-2 col-form-label">위치</label>
             <div class="col-sm-10">
                 <div class="form-check">
@@ -178,6 +153,52 @@ input, select, textarea {
                 </div>
             </div>
         </div>
+        
+        
+        
+        <div class="row mb-3">
+            <!-- 5. 사용 가능 여부 -->
+            <label for="usable" class="col-sm-2 col-form-label">사용 가능 여부</label>
+            <div class="col-sm-10">
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" id="usable" name="place_status" value="Y" th:checked="${dto.place_status == 'Y'}" onchange="toggleUnusableFields()">
+                    <label class="form-check-label" for="usable">사용 가능</label>
+                </div>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" id="unusable" name="place_status" value="N" th:checked="${dto.place_status == 'N'}" onchange="toggleUnusableFields()">
+                    <label class="form-check-label" for="unusable">사용 불가능</label>
+                </div>
+            </div>
+        </div>
+
+       
+
+        <!-- 숨겨진 필드: 사용 불가능한 사유 및 기간 -->
+        <div class="unusable-fields" id="unusableFields">
+            <!-- 6. 사유 (사용 불가능한 사유) -->
+            <div class="row mb-3">
+                <label for="reason" class="col-sm-2 col-form-label">사유</label>
+                <div class="col-sm-10">
+                    <textarea class="form-control" id="reason" name="unuseable_reason" style="width: 100%; height: 120px; resize:none;" th:text="${dto.unuseable_reason}"></textarea>
+                </div>
+            </div>
+
+            <!-- 7. 사용 불가 기간 -->
+            <div class="row mb-3">
+                <label for="startDate" class="col-sm-2 col-form-label">사용 불가 기간</label>
+                <div class="col-sm-4">
+                    <input type="date" class="form-control" id="startDate" name="unuseable_start_date" th:value="${dto.unuseable_start_date}">
+                </div>
+                <label class="col-sm-1 col-form-label text-center">~</label>
+                <div class="col-sm-4">
+                    <input type="date" class="form-control" id="endDate" name="unuseable_end_date" th:value="${dto.unuseable_end_date}">
+                </div>
+            </div>
+        </div>
+
+       
+
+        
 
         <div class="row mb-3">
             <!-- 8. 파일 업로드 -->
@@ -203,7 +224,9 @@ input, select, textarea {
         <input type="hidden" class="form-control" id="place_no" name="place_no" th:value="${dto.place_no}">
     </form>
 </div>
-
+</div>
+</div>
+</div>
 <script>
 	function toggleUnusableFields(){
 		// 사용 가능 여부 라디오 버튼의 값

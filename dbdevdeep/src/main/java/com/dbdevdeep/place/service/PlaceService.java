@@ -61,6 +61,13 @@ public class PlaceService {
 
 	         Employee e = employeeRepository.findByempId(dto.getEmp_id());
 	    		
+	         // 만약 상태가 "사용가능"이라면 사용 불가 날짜를 null로 설정
+	         if ("Y".equals(dto.getPlace_status())) {
+	             dto.setUnuseable_start_date(null);
+	             dto.setUnuseable_end_date(null);
+	             dto.setUnuseable_reason(null);
+	         }
+	         
 	    		Place p = Place.builder()
 	    				.placeNo(dto.getPlace_no())
 	    				.employee(e)
@@ -109,16 +116,8 @@ public class PlaceService {
 				.place_end_time(p.getPlaceEndtime())
 				.unuseable_reason(p.getUnuseableReason())
 				   // 날짜 포맷 적용: null이 아닌 경우에만 포맷을 적용 ==> yyyy-MM-dd , yyyy.MM.dd
-                .unuseable_start_date(
-                    p.getUnuseableStartDate() != null 
-                    ? LocalDate.parse(p.getUnuseableStartDate()).format(outputFormatter) 
-                    : null
-                )
-                .unuseable_end_date(
-                    p.getUnuseableEndDate() != null 
-                    ? LocalDate.parse(p.getUnuseableEndDate()).format(outputFormatter) 
-                    : null
-                )
+				.unuseable_start_date(p.getUnuseableStartDate())
+                .unuseable_end_date(p.getUnuseableEndDate())
 				.ori_pic_name(p.getOriPicname() != null ? p.getOriPicname() : "Default oriPicname")
                 .new_pic_name(p.getNewPicname() != null ? p.getNewPicname() : "Default newPicname")			
 				.place_content(p.getPlaceContent())

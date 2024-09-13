@@ -41,6 +41,7 @@ public class PlaceViewController {
 	    model.addAttribute("e_dto", e_dto);
 	    
 	    PlaceDto dto = placeService.selectPlaceOne(place_no);
+
 	    model.addAttribute("dto", dto);
 	    
 	    return "place/update";
