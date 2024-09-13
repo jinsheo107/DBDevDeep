@@ -106,7 +106,6 @@ public class CategoryService {
 		temp.setCategory_type(dto.getCategory_type());
 		temp.setEmp_id(dto.getEmp_id());
 		
-		System.out.println(temp.getEmp_id());
 		
 		Category category = temp.toEntity(employeeRepository);
 		Category result = categoryRepository.save(category);

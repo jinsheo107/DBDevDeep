@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{include/mypage_layout}">
+<th:block layout:fragment="content">
+
+	<style>
+		.eye-position {
+			cursor: pointer; 
+			position: relative; 
+			bottom: 27px; 
+			right: 10px;
+		}
+	</style>
+
+	<div class="page-wrapper">
+		<div class="container-fluid">
+			<!-- ============================================================== -->
+			<!-- Start Page Content -->
+			<!-- ============================================================== -->
+			<div class="row">
+				<div class="col-12">
+					<div class="card" style="padding: 40px;">
+						<div class="card-body">
+							<h4 class="card-title">비밀번호 수정</h4>
+							<hr>
+							<input type="hidden" id="csrf_token" th:value="${_csrf.token}">
+							<form id="editMyPwFrm">
+								<div class="form-body">
+									<div class="col-md-4">
+										<div class="form-group">
+											<label for="ori_emp_pw">현재 비밀번호 <span style="color: red;">*</span></label> 
+											<div>
+												<input type="password" class="form-control" name="ori_emp_pw" id="ori_emp_pw" maxlength="18" placeholder="현재 비밀번호를 입력하세요."> 
+												<i class="fa fa-eye-slash float-right eye-position" id="eye_icon_ori"></i>
+											</div>
+										</div>
+										<div class="form-group">
+											<label for="new_emp_pw">변경 비밀번호 <span style="color: red;">*</span></label> 
+											<div>
+												<input type="password" class="form-control" name="new_emp_pw" id="new_emp_pw" maxlength="18" placeholder="변경하실 비밀번호를 입력하세요.">
+												<i class="fa fa-eye-slash float-right eye-position" id="eye_icon_new"></i>
+												<div id="new_emp_pw_feedback"></div>
+											</div>
+										</div>
+										<div class="form-group">
+											<div>
+												<label for="new_emp_pw_check">변경 비밀번호 확인 <span style="color: red;">*</span></label> 
+												<input type="password" class="form-control" id="new_emp_pw_check" maxlength="18" placeholder="변경하실 비밀번호를 입력하세요.">
+												<i class="fa fa-eye-slash float-right eye-position" id="eye_icon_check"></i>
+												<div id="new_emp_pw_check_feedback"></div>
+											</div>
+										</div>
+									</div>
+									<div class="col-4">
+										<button class="btn btn-info float-right" disabled id="submitBtn">수정</button>
+										<button type="reset" class="btn btn-light float-right" style="margin-right: 10px;">취소</button>
+									</div>
+								</div>
+							</form>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- ============================================================== -->
+		<!-- End Container fluid  -->
+		<!-- ============================================================== -->
+		<!-- ============================================================== -->
+		<!-- footer -->
+		<!-- ============================================================== -->
+		<footer class="footer text-center text-muted">
+			All Rights Reserved by Adminmart. Designed and Developed by <a href="https://wrappixel.com">WrapPixel</a>.
+		</footer>
+		<!-- ============================================================== -->
+		<!-- End footer -->
+		<!-- ============================================================== -->
+	</div>
+	<script src="/assets/libs/jquery/dist/jquery.min.js"></script>
+	<!-- Bootstrap tether Core JavaScript -->
+	<script src="/assets/libs/popper.js/dist/umd/popper.min.js"></script>
+	<script src="/assets/libs/bootstrap/dist/js/bootstrap.min.js"></script>
+	<!-- apps -->
+	<!-- apps -->
+	<script src="/dist/js/app-style-switcher.js"></script>
+	<script src="/dist/js/feather.min.js"></script>
+	<!-- slimscrollbar scrollbar JavaScript -->
+	<script src="/assets/libs/perfect-scrollbar/dist/perfect-scrollbar.jquery.min.js"></script>
+	<script src="/assets/extra-libs/sparkline/sparkline.js"></script>
+	<!--Wave Effects -->
+	<!-- themejs -->
+	<!--Menu sidebar -->
+	<script src="/dist/js/sidebarmenu.js"></script>
+	<!--Custom JavaScript -->
+	<script src="/dist/js/custom.min.js"></script>
+
+	<script>
+		const passwordField = document.getElementById('new_emp_pw');
+	    const passwordCheckField = document.getElementById('new_emp_pw_check');
+	    const passwordFeedback = document.getElementById('new_emp_pw_feedback');
+	    const passwordCheckFeedback = document.getElementById('new_emp_pw_check_feedback');
+	    
+	    function validatePassword(password) {
+	        // 정규 표현식: 영문자, 숫자, 특수기호, 대문자를 각각 포함
+	        const minLength = 8; // 최소 길이 (예: 8자)
+	        /* const hasUpperCase = /[A-Z]/.test(password);
+	        const hasLowerCase = /[a-z]/.test(password);
+	        const hasDigit = /\d/.test(password);
+	        const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(password); */
+	        const isValidLength = password.length >= minLength;
+	
+	        /* return hasUpperCase && hasLowerCase && hasDigit && hasSpecialChar && isValidLength; */
+	        return isValidLength;
+	    }
+	
+	    function validatePasswordMatch() {
+	        if (passwordField.value !== passwordCheckField.value) {
+	            passwordCheckFeedback.textContent = '비밀번호가 일치하지 않습니다.';
+	            passwordCheckFeedback.style.color = 'red';
+	            document.getElementById('submitBtn').disabled = true;
+	        } else {
+	            passwordCheckFeedback.textContent = '';
+	            document.getElementById('submitBtn').disabled = false;
+	        }
+	    }
+	
+	    function checkPassword() {
+	        if (!validatePassword(passwordField.value)) {
+	            passwordFeedback.textContent = '영문자, 숫자, 특수기호, 대문자를 포함한 8~20자 사이로 입력해주세요.';
+	            passwordFeedback.style.color = 'red';
+	        } else {
+	            passwordFeedback.textContent = '';
+	        }
+	        validatePasswordMatch();
+	    }
+	
+	    passwordField.addEventListener('input', checkPassword);
+	    passwordCheckField.addEventListener('input', validatePasswordMatch);
+
+		// 비밀번호 노출
+		var eye_icon_ori = document.getElementById('eye_icon_ori');
+		var eye_icon_new = document.getElementById('eye_icon_new');
+		var eye_icon_check = document.getElementById('eye_icon_check');
+		
+		var ori_password = document.getElementById("ori_emp_pw");
+		var new_password = document.getElementById("new_emp_pw");
+		var password_chck = document.getElementById("new_emp_pw_check");
+		
+		eye_icon_ori.addEventListener('click', () => {
+			hideAndShowPass(eye_icon_ori, ori_password);
+		});
+		
+		eye_icon_new.addEventListener('click', () => {
+			hideAndShowPass(eye_icon_new, new_password);
+		});
+		
+		eye_icon_check.addEventListener('click', () => {
+			hideAndShowPass(eye_icon_check, password_chck);
+		});
+
+		const hideAndShowPass = (eye_icon, password) => {
+		  if (eye_icon.classList.contains("fa-eye-slash")) {
+		    eye_icon.classList.remove('fa-eye-slash');
+		    eye_icon.classList.add('fa-eye');
+		    password.setAttribute('type', 'text');
+
+		  }
+		  else {
+		    eye_icon.classList.remove('fa-eye');
+		    eye_icon.classList.add('fa-eye-slash');
+		    password.setAttribute('type', 'password');
+		  }
+		};
+	</script>
+
+	<script>
+		const form = document.getElementById('editMyPwFrm');
+		form.addEventListener('submit', (e) => {
+			e.preventDefault();
+			
+				const payload = new FormData(form);
+				
+				const csrfToken = document.getElementById("csrf_token").value;
+				
+				fetch('/edit-mypw', {
+					method:'POST',
+					headers: {
+						'X-CSRF-TOKEN': csrfToken
+					},
+					body: payload
+				})
+				.then(response => response.json())
+				.then(data => {
+					if(data.res_code == "200") {
+						Swal.fire({
+							icon: 'success',
+							title: '성공',
+							text: data.res_msg,
+							confirmButtonText: "닫기"
+						})
+						.then((result) => {
+							location.href="/editmypw";
+						})
+					} else {
+						Swal.fire({
+							icon: 'error',
+							title: '실패',
+							text: data.res_msg,
+							confirmButtonText: '닫기'
+						});
+					};
+				});
+		});
+		
+	</script>
+
+</th:block>
+</html>
