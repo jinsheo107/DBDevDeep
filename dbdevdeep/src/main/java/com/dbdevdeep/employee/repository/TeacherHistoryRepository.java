@@ -31,4 +31,7 @@ public interface TeacherHistoryRepository extends JpaRepository<TeacherHistory, 
 	
 	@Query("SELECT COUNT(t) FROM TeacherHistory t WHERE t.tYear = :tYear AND t.grade = :grade")
 	int countByTyearGrade(@Param("tYear") String tYear, @Param("grade") int grade);
+	
+	@Query("SELECT t FROM FROM TeacherHistory t WHERE t.employee.empId = :empId")
+	List<TeacherHistory> selectTeacherHistoryByEmployee(@Param("empId") String empId);
 }

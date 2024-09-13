@@ -187,5 +187,22 @@ public class TeacherHistoryService {
 		return teacherHistoryRepository.countByTyearGrade(t_year, grade);
 	}
 	
+	public List<TeacherHistoryDto> selectTeacherHistoryByEmployee (String emp_id) {
+		List<TeacherHistoryDto> thListDto = null;
+		
+		try {
+			List<TeacherHistory> th = teacherHistoryRepository.selectTeacherHistoryByEmployee(emp_id);
+			
+			for(TeacherHistory t : th) {
+				TeacherHistoryDto thDto = new TeacherHistoryDto().toDto(t);
+				
+				thListDto.add(thDto);
+			}
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+		
+		return thListDto;
+	}
 	
 }

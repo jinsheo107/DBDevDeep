@@ -126,5 +126,18 @@ public class EmployeeViewController {
 		
 		return "employee/all_employee";
 	}
+	
+	@GetMapping("/employee/{emp_id}")
+	public String employeeDetail(Model model, @PathVariable("emp_id") String emp_id) {
+		
+		EmployeeDto empDto = employeeService.selectEmployeeOne(emp_id);
+		
+		List<TeacherHistoryDto> thDtoList = teacherHistoryService.selectTeacherHistoryByEmployee(emp_id);
+		
+		model.addAttribute("thDtoList", thDtoList);
+		model.addAttribute("empDto", empDto);
+		
+		return "employee/employee_detail";
+	}
 
 }
