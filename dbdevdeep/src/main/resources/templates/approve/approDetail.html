@@ -119,7 +119,10 @@
                                             <tr>
                                                 <td>반려사유</td>
                                                 <td colspan="3">
-                                                    
+											        <span th:if="${backReason != null}">
+											            <span th:text="${backReason.reason_back}">반려사유가 없습니다.</span>
+											        </span>
+											        <span th:if="${backReason == null}"></span>
                                                 </td>
                                             </tr>
 								                <tr>
@@ -167,12 +170,13 @@
                                             <!-- 목록으로 이동 -->
                                             <input type="button" value="목록" th:onclick="|location.href='@{/approve}'|" class="btn btn-success">
                                         </div>
-                                        <div class="text-center mt-3" th:if="${aDto.appro_status == 0}"> 
-											<button type="button" class="btn btn-danger delete_board_button"
-											        th:onclick="|approDelete(${aDto.appro_no})|">삭제	</button>	
-											<button type="button" class="btn btn-primary update_board_button"
-            										th:onclick="|location.href='/approUpdate/' + ${aDto.appro_no}|">수정</button>
-                                        </div>
+                                        <div class="text-center mt-3" 
+										     th:if="${aDto.appro_status == 0} and (${aDto.emp_id} == ${#authentication.principal.dto.emp_id})">
+										    <button type="button" class="btn btn-danger delete_board_button"
+										            th:onclick="|approDelete(${aDto.appro_no})|">삭제</button>	
+										    <button type="button" class="btn btn-primary update_board_button"
+										            th:onclick="|location.href='/approUpdate/' + ${aDto.appro_no}|">수정</button>
+										</div>
                                     </div>
                                 </form>
                             </div>

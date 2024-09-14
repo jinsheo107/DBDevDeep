@@ -2,6 +2,7 @@ package com.dbdevdeep.approve.controller;
 
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -14,16 +15,20 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.dbdevdeep.approve.domain.ApproFileDto;
 import com.dbdevdeep.approve.domain.ApproveDto;
+import com.dbdevdeep.approve.domain.ApproveLineDto;
+import com.dbdevdeep.approve.service.ApproveLineService;
 import com.dbdevdeep.approve.service.ApproveService;
 
 @Controller
 public class ApproveViewController {
 
 	private final ApproveService approveService;
+	private final ApproveLineService approveLineService;
 	
 	@Autowired
-	public ApproveViewController(ApproveService approveService) {
+	public ApproveViewController(ApproveService approveService , ApproveLineService approveLineService) {
 		this.approveService = approveService;
+		this.approveLineService = approveLineService;
 	}
 	
 	//목록조회
@@ -45,12 +50,27 @@ public class ApproveViewController {
 			Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 	        String username = authentication.getName();
 			
-			List<ApproveDto> approvalList = approveService.getApprovalRequestsForUser(username);
+			List<ApproveDto> approvalList = approveService.comeApproveRequestList(username);
 			model.addAttribute("approvalList",approvalList);
 			return "approve/comeApprove";
 		}
-	
-	
+		
+	// 참조 지정 받은 목록 조회
+		@GetMapping("/refApprove")
+		public String refApproveList(Model model) {
+					
+			Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+			String username = authentication.getName();
+					
+			List<ApproveDto> refList = approveService.comeRefList(username);
+			model.addAttribute("refList",refList);
+			return "approve/refApprove";
+		}
+
+		
+
+		
+		
 	// 결재 작성
 	@GetMapping("/approCreate")
     public String showApproCreatePage() {
@@ -60,7 +80,18 @@ public class ApproveViewController {
 	// 결재 상세
 	@GetMapping("/approDetail/{appro_no}")
 	public String selectBoardOne(Model model, @PathVariable("appro_no") Long approNo) {
+		// 결재 정보 상세
 		Map<String, Object> detailMap = approveService.getApproveDetail(approNo);
+		
+		// 반려 사유 정보 가져오기
+		try {
+	        ApproveLineDto backReason = approveLineService.approBackReason(approNo);
+	        detailMap.put("backReason", backReason); // 반려 사유를 Map에 추가
+	    } catch (NoSuchElementException e) {
+	        // 반려 정보가 없는 경우 null 추가
+	        detailMap.put("backReason", null);
+	    }
+		
 		model.addAllAttributes(detailMap);
 		return "approve/approDetail";
 	}

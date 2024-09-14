@@ -31,7 +31,7 @@ public class ApproveLineDto {
 
     public ApproveLine toEntity(Approve approve, Employee employee) {
         if (employee == null) {
-            return null; // 이 경우, 적절한 처리 (예: 예외 던지기)도 고려할 수 있습니다.
+            return null; 
         }
 
         return ApproveLine.builder()

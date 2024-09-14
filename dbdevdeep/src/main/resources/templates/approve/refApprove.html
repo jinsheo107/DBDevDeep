@@ -38,7 +38,7 @@
 				<div class="col-sm-12 col-md-12">
 					<div class="card">
 						<div class="card-body">
-							<h3 class="card-title">결재 대기함</h3>
+							<h3 class="card-title">참조 목록</h3>
 							<hr>
 							
 							
@@ -51,7 +51,6 @@
                         <div class="card">
                             <div class="card-body">
 		                        <div class="row mb-2">
-		                        	
 	                            </div>
                                 <div class="table-responsive">
                                     <table id="approve_config" class="table table-hover table-bordered no-wrap" style="width:100%">
@@ -66,26 +65,26 @@
                                         </thead>
                                         <tbody>
                                         <!-- 게시글이 없는 경우 -->
-                                        <th:block th:if="${#lists.isEmpty(approvalList)}">
+                                        <th:block th:if="${#lists.isEmpty(refList)}">
                                         	<tr>
                                         			<td colspan="5">요청된 결재건이 없습니다.</td>
                                         	</tr>
                                         </th:block>
                                         
                                         <!-- 게시글이 존재하는 경우 -->
-                                        <th:block th:if="${!#lists.isEmpty(approvalList)}">
-                                        	<tr th:each="approve, approveStat : ${approvalList}">
+                                        <th:block th:if="${!#lists.isEmpty(refList)}">
+                                        	<tr th:each="ref, approveStat : ${refList}">
                                         		<td>
-                                        		 <a th:href="@{approDetail/{no}(no=${approve.appro_no})}" th:text = "${approve.appro_title}"></a>
+                                        		 <a th:href="@{approDetail/{no}(no=${ref.appro_no})}" th:text = "${ref.appro_title}"></a>
                                         		</td>
-                                        		<td th:text="${approve.appro_time}"></td>
-                                        		<td th:text="${approve.appro_name}"></td>
-                                        		<td th:switch="${approve.appro_status}">
+                                        		<td th:text="${ref.appro_time}"></td>
+                                        		<td th:text="${ref.appro_name}"></td>
+                                        		<td th:switch="${ref.appro_status}">
 												    <span th:case="0">결재대기중</span>
 												    <span th:case="1">완료</span>
 												    <span th:case="2">반려</span>
 												</td>
-												<td th:text ="${approve.vac_type}"></td>
+												<td th:text ="${ref.vac_type}"></td>
                                         	</tr>
                                         </th:block>
                                         </tbody>

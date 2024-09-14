@@ -16,6 +16,7 @@ public interface ApproveRepository extends JpaRepository<Approve, Long> {
 	@Query("SELECT a FROM Approve a LEFT JOIN a.vacationRequests v WHERE a.approType = 0 AND a.employee.empId = :empId")
 	List<Approve> findByTypeAndEmpId(@Param("empId") String empId);
 	
+	// 결재 요청받은 쿼리
 	@Query(value = "SELECT a.appro_no AS approNo, a.appro_title AS approTitle, a.appro_time AS approTime, " +
             "a.appro_name AS approName, a.appro_status AS approStatus, " +
             "vr.vac_type AS vacType " +
@@ -25,7 +26,15 @@ public interface ApproveRepository extends JpaRepository<Approve, Long> {
             "WHERE al.emp_id = :loggedInUserEmpId " +
             "AND al.appro_line_status IN (1, 2, 3)", 
     nativeQuery = true)
-List<Object[]> findApprovalRequestsForUser(@Param("loggedInUserEmpId") String loggedInUserEmpId);
+	List<Object[]> findApprovalRequestsForUser(@Param("loggedInUserEmpId") String loggedInUserEmpId);
 	
 	Approve findByApproNo(Long approNo);
+	
+	// 참조 요청받은 쿼리
+	@Query("SELECT a.approNo, a.approTitle, a.approTime, a.approName, a.approStatus, vr.vacType " +
+		       "FROM Approve a " +
+		       "LEFT JOIN a.vacationRequests vr " + // 엔티티 필드를 사용하여 조인
+		       "LEFT JOIN a.references r " +       // 엔티티 필드를 사용하여 조인
+		       "WHERE r.employee.empId = :empId")
+		List<Object[]> refRequests(@Param("empId") String empId);
 }

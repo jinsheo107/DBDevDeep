@@ -160,8 +160,9 @@ public class ApproveService {
 	}
 	
 	// 요청 받은 결재 내역
-	public List<ApproveDto> getApprovalRequestsForUser(String loggedInUserEmpId) {
-	    List<Object[]> results = approveRepository.findApprovalRequestsForUser(loggedInUserEmpId);
+	// native 를 사용했을 경우 Timestamp 를 변환하는 과정
+	public List<ApproveDto> comeApproveRequestList(String username) {
+	    List<Object[]> results = approveRepository.findApprovalRequestsForUser(username);
 	    
 	    List<ApproveDto> approvalList = new ArrayList<>();
 	    for (Object[] result : results) {
@@ -172,17 +173,41 @@ public class ApproveService {
 	        }
 
 	        ApproveDto dto = ApproveDto.builder()
-	                .appro_no(((Number) result[0]).longValue())  // appro_no
-	                .appro_title((String) result[1])             // appro_title
-	                .appro_time(approTime)                      // 변환된 LocalDateTime 사용
-	                .appro_name((String) result[3])              // appro_name
-	                .appro_status((Integer) result[4])           // appro_status
-	                .vac_type(result[5] != null ? (Integer) result[5] : null)  // vac_type, nullable 처리
+	                .appro_no(((Number) result[0]).longValue())  
+	                .appro_title((String) result[1])             
+	                .appro_time(approTime)                      
+	                .appro_name((String) result[3])             
+	                .appro_status((Integer) result[4])          
+	                .vac_type(result[5] != null ? (Integer) result[5] : null)
 	                .build();
 	        approvalList.add(dto);
 	    }
 	    
 	    return approvalList;
+	}
+	
+	// 참조 지정 받은 결재 내역
+	// native 를 사용하지 않으면 localDateTime 만 설정해주면 된다.
+	public List<ApproveDto> comeRefList(String empId) {
+	    List<Object[]> results = approveRepository.refRequests(empId);
+	    
+	    List<ApproveDto> refList = new ArrayList<>();
+	    for (Object[] result : results) {
+	        // 결과 배열에서 데이터 추출
+	        LocalDateTime approTime = (LocalDateTime) result[2]; // LocalDateTime으로 캐스팅
+
+	        ApproveDto dto = ApproveDto.builder()
+	                .appro_no(((Number) result[0]).longValue())  
+	                .appro_title((String) result[1])             
+	                .appro_time(approTime)                      
+	                .appro_name((String) result[3])             
+	                .appro_status((Integer) result[4])          
+	                .vac_type(result[5] != null ? (Integer) result[5] : null)  
+	                .build();
+	        refList.add(dto);
+	    }
+	    
+	    return refList;
 	}
 	
 	public Map<String, Object> getApproveDetail(Long approNo) {
