@@ -16,6 +16,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
@@ -26,6 +27,7 @@ import com.dbdevdeep.approve.domain.ApproveDto;
 import com.dbdevdeep.approve.domain.ApproveLineDto;
 import com.dbdevdeep.approve.domain.ReferenceDto;
 import com.dbdevdeep.approve.domain.VacationRequestDto;
+import com.dbdevdeep.approve.service.ApproveLineService;
 import com.dbdevdeep.approve.service.ApproveService;
 import com.dbdevdeep.employee.domain.Employee;
 import com.dbdevdeep.employee.domain.EmployeeDto;
@@ -36,6 +38,7 @@ public class ApproveApiController {
 
 	private final ApproveService approveService;
 	private final FileService fileService;
+	private final ApproveLineService approveLineService;
 	private final EmployeeRepository employeeRepository;
 	
 	// 직원 아이디 추출
@@ -63,9 +66,10 @@ public class ApproveApiController {
 	
 	
 	@Autowired
-	public ApproveApiController(ApproveService approveService, FileService fileService, EmployeeRepository employeeRepository) {
+	public ApproveApiController(ApproveService approveService, FileService fileService, ApproveLineService approveLineService ,EmployeeRepository employeeRepository) {
 		this.approveService = approveService;
 		this.fileService = fileService;
+		this.approveLineService = approveLineService;
 		this.employeeRepository =employeeRepository;
 	}
 	
@@ -90,6 +94,49 @@ public class ApproveApiController {
 	        map.put("res_msg", "파일 삭제 중 오류가 발생하였습니다.");
 	    }
 	    return map;
+	}
+	
+	// 반려 처리
+	@ResponseBody
+	@PostMapping("/backApprove")
+	public Map<String, String> backApprove(@RequestBody Map<String, Object> requestData) {
+	    Map<String, String> resultMap = new HashMap<>();
+	    resultMap.put("res_code", "404");
+	    resultMap.put("res_msg", "반려 처리 중 오류가 발생했습니다.");
+
+	    try {
+	        // 요청 데이터 파싱
+	        Long approNo = Long.valueOf((String) requestData.get("approNo"));
+	        String empId = (String) requestData.get("empId");
+	        String principalId = (String) requestData.get("principalId");
+	        String deptCode = (String) requestData.get("deptCode");
+	        String jobCode = (String) requestData.get("jobCode");
+	        int vacType = Integer.parseInt((String) requestData.get("vacType"));
+	        LocalDateTime startDate = changeTime((String) requestData.get("startDate"));
+	        LocalDateTime endDate = changeTime((String) requestData.get("endDate"));
+	        String reasonBack = (String) requestData.get("reasonBack");
+
+	        // ApproveLineDto 생성
+	        ApproveLineDto approveLineDto = new ApproveLineDto();
+	        approveLineDto.setAppro_no(approNo);
+	        approveLineDto.setEmp_id(principalId);
+	        approveLineDto.setReason_back(reasonBack);
+
+	        // 서비스 호출
+	        int result = approveService.backApproveLine(approveLineDto, empId, vacType, startDate, endDate, deptCode, jobCode);
+
+	        if (result > 0) {
+	            resultMap.put("res_code", "200");
+	            resultMap.put("res_msg", "반려 처리되었습니다.");
+	        } else {
+	            resultMap.put("res_msg", "반려 처리가 실패하였습니다.");
+	        }
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        resultMap.put("res_msg", "처리 중 오류가 발생했습니다.");
+	    }
+
+	    return resultMap;
 	}
 	
 	// 결재 수정
@@ -120,20 +167,6 @@ public class ApproveApiController {
 		Map<String,String> resultMap = new HashMap<String,String>();
 		resultMap.put("res_code", "404");
 		resultMap.put("res_msg", "게시글 수정중 오류가 발생했습니다.");
-		
-		// ApproFileDto approFileDto = new ApproFileDto();
-		// if(file != null && "".equals(approFileDto.getOri_file()) == false) {
-		//	String savedFileName = fileService.approveUpload(file);
-		//	if(savedFileName != null) {
-		//		approFileDto.setOri_file(approFileDto.getOri_file());
-		//		approFileDto.setNew_file(savedFileName);
-		//		if(fileService.approFileDelete(approNo) > 0) {
-		//			resultMap.put("res_msg", "기존 파일이 정상적으로 삭제되었습니다.");
-		//		}
-		//	} else {
-		//		resultMap.put("res_msg", "파일 업로드가 실패하였습니다.");
-		//	}
-		// }
 		
 		ApproFileDto approFileDto = null;
 		if (file != null && !file.isEmpty()) { 

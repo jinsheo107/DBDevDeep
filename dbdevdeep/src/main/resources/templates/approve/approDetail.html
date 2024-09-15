@@ -48,7 +48,7 @@
                                         <tbody>
                                             <tr>
                                                 <td>성명</td>
-                                                <input type="hidden" name="appro_no" th:value="${aDto.appro_no}">
+                                                <input type="hidden" id="approNoHidden" name="appro_no" th:value="${aDto.appro_no}">
                                                 <td><input type="text" name="appro_name" th:value="${aDto.appro_name}" readonly style="border: 0; outline: none;"></td>
                                                 <td>부서</td>
                                                 <td>
@@ -57,13 +57,13 @@
 			                                                    		aDto.dept_code == 'D2' ? '교감'	:
 			                                                    		aDto.dept_code == 'D3' ? '행정부' : '교무부'}" 
 			                                                    		readonly style="border: 0; outline: none;">
-                                                    <!-- 숨겨진 필드로 dept_code 값을 유지 -->
-                                                    <input type="hidden" name="dept_code" th:value="${aDto.dept_code}">
+                                                    <input type="hidden" id="deptCode" name="dept_code" th:value="${aDto.dept_code}">
                                                 </td>
                                             </tr>
                                             <tr>
                                                 <td>직원번호</td>
-                                                <td><input type="text" name="emp_id" th:value="${aDto.emp_id}" readonly style="border: 0; outline: none;"></td>
+                                                <td><input type="text" id="empId" name="emp_id" th:value="${aDto.emp_id}" readonly style="border: 0; outline: none;"></td>
+                                                <input type="hidden" id="principalId" name="principalId" th:value="${#authentication.principal.dto.emp_id}">
                                                 <td>직급</td>
                                                 <td>
                                                     <input type="text" name="job_name_display" 
@@ -71,8 +71,7 @@
                                                                        aDto.job_code == 'J2' ? '교감' :
                                                                        aDto.job_code == 'J3' ? '부장' : '직원'}"
                                                            readonly style="border: 0; outline: none;">
-                                                    <!-- 실제 job_code를 숨겨진 필드로 추가 -->
-                                                    <input type="hidden" name="job_code" th:value="${aDto.job_code}">
+                                                    <input type="hidden" id="jobCode" name="job_code" th:value="${aDto.job_code}">
                                                 </td>
                                             </tr>
                                             <tr>
@@ -80,15 +79,14 @@
                                                 <td><input type="text" id="appro_title" name="appro_title" class="form-control" th:value="${aDto.appro_title}" readonly style="border: 0; outline: none;"></td>
                                                 <td>결재 상태</td>
                                                 <td><input type="text" id="appro_status" name="appro_status" class="form-control" 
-                                                            th:value="${aDto.appro_status == 0 ? '대기중' :
-                                                                        aDto.appro_status == 1 ? '결재진행중' : 
-                                                                        aDto.appro_status == 2 ? '승인' : '반려'}" 
+                                                            th:value="${aDto.appro_status == 0 ? '결재진행중' :
+                                                                        aDto.appro_status == 1 ? '승인' : '반려'}" 
                                                             readonly style="border: 0; outline: none;"></td>
                                             </tr>
                                             <tr>
                                                 <td>종류</td>
                                                 <td>
-                                                    <input type="text" name="vac_type_display" class="form-control" th:value="${vDto.vac_type}" readonly style="border: 0; outline: none;">
+                                                    <input type="text" id="vacType" name="vac_type_display" class="form-control" th:value="${vDto.vac_type}" readonly style="border: 0; outline: none;">
                                                     <input type="hidden" name="vac_type" th:value="${vDto.vac_type}">
                                                 </td>
                                                 <td>일정</td>
@@ -168,8 +166,9 @@
                                     <div style="display: flex; justify-content: space-between; align-items: center;">
                                         <div class="text-center mt-3">
                                             <!-- 목록으로 이동 -->
-                                            <input type="button" value="목록" th:onclick="|location.href='@{/approve}'|" class="btn btn-success">
+                                            <input type="button" value="목록" th:onclick="'history.back()'" class="btn btn-success">
                                         </div>
+                                        <div style="display: flex; justify-content: flex-end; align-items: center;">
                                         <div class="text-center mt-3" 
 										     th:if="${aDto.appro_status == 0} and (${aDto.emp_id} == ${#authentication.principal.dto.emp_id})">
 										    <button type="button" class="btn btn-danger delete_board_button"
@@ -177,9 +176,59 @@
 										    <button type="button" class="btn btn-primary update_board_button"
 										            th:onclick="|location.href='/approUpdate/' + ${aDto.appro_no}|">수정</button>
 										</div>
+										<div class="text-center mt-3"
+										     th:if="${#lists.contains(lDto.?[appro_line_status == 1].![emp_id], #authentication.principal.dto.emp_id)} or
+										            ${#lists.contains(cDto.?[appro_line_status == 1].![emp_id], #authentication.principal.dto.emp_id)}">
+										    <button id="backApproveBtn" type="button" class="btn btn-danger" data-toggle="modal" data-target="#backApprove">반려</button>
+										    <button id="agreeApproveBtn" type="button" class="btn btn-primary update_board_button">승인</button>
+										</div>
+										</div>
                                     </div>
                                 </form>
                             </div>
+                            <!-- 반려시 사용할 모달 -->
+									<div class="modal fade" id="backApprove" tabindex="-1" role="dialog" aria-labelledby="treeModalLabel" aria-hidden="true">
+									    <div class="modal-dialog" role="document">
+									        <div class="modal-content">
+									            <div class="modal-header">
+									                <h5 class="modal-title" id="backApproveLabel">반려 사유</h5>
+									                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+									                    <span aria-hidden="true">&times;</span>
+									                </button>
+									            </div>
+									            <div class="modal-body">
+									                <!-- 모달 내부 내용 -->
+									                <input type="text" id="backReasonInput" class="form-control" placeholder="반려 사유를 입력하세요">
+									            </div>
+									            <div class="modal-footer">
+									                <button type="button" class="btn btn-primary" id="confirmBack">반려</button>
+									                <button type="button" class="btn btn-secondary" data-dismiss="modal">닫기</button>
+									            </div>
+									        </div>
+									    </div>
+									</div>
+									<!-- 승인시 사용할 모달 -->
+									<div class="modal fade" id="agreeApprove" tabindex="-1" role="dialog" aria-labelledby="treeModalLabel" aria-hidden="true">
+									    <div class="modal-dialog" role="document">
+									        <div class="modal-content">
+									            <div class="modal-header">
+									                <h5 class="modal-title" id="agreeApproveLabel">승인 서명</h5>
+									                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+									                    <span aria-hidden="true">&times;</span>
+									                </button>
+									            </div>
+									            <div class="modal-body">
+									                로그인한 사용자의 "${#authentication.principal.dto.emp_id}" 로 signature 테이블에서 new_pic_name 조회 해서 radio 버튼과 묶어서
+									                나열 , 선택해서 승인시 approve_line 테이블에 approve_img 에 선택된 sign 이름 저장 
+									                
+									            </div>
+									            <div class="modal-footer">
+									                <button type="button" class="btn btn-primary" id="confirmSelection">승인</button>
+									                <button type="button" class="btn btn-secondary" data-dismiss="modal">닫기</button>
+									            </div>
+									        </div>
+									    </div>
+									</div>
                 <!-- ============================================================== -->
                 <!-- End PAge Content -->
                 <!-- ============================================================== -->
@@ -252,7 +301,60 @@
 	<script src="/assets/extra-libs/datatables.net/js/jquery.dataTables.min.js"></script>
     <script src="/dist/js/pages/datatable/datatable-basic.init.js"></script>
     <script>
+	// 반려사유 입력 모달
+	document.getElementById('confirmBack').addEventListener('click', function () {
+        const reason = document.getElementById('backReasonInput').value;
+        const empId =  document.getElementById('empId').value;
+        const principalId = document.getElementById('principalId').value;
+        const deptCode = document.getElementById('deptCode').value;
+        const jobCode = document.getElementById('jobCode').value;
+        const approNo =  document.getElementById('approNoHidden').value;
+        const vacType = document.getElementById('vacType').value;
+        const startDate = document.getElementById('start_date').value;
+        const endDate = document.getElementById('end_date').value;
+
+        if (reason.trim() === "") {
+            alert("반려 사유를 입력해주세요.");
+            return;
+        }
+
+        const csrfToken = document.getElementById("csrf_token").value; 
+
+        fetch('/backApprove', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': csrfToken 
+            },
+            body: JSON.stringify({ approNo: approNo, empId:empId ,reasonBack: reason , vacType : vacType , startDate : startDate , endDate : endDate , principalId : principalId , deptCode : deptCode , jobCode : jobCode}) // 서버로 보낼 데이터
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.res_code === '200') {
+                Swal.fire({
+                    icon: 'success',
+                    title: '성공',
+                    text: data.res_msg
+                }).then((result) => {
+                    location.reload();
+                });
+            } else {
+                Swal.fire({
+                    icon: 'error',
+                    title: '오류',
+                    text: data.res_msg,
+                    confirmButtonText: '닫기'
+                });
+            }
+        })
+        .catch(error => {
+            console.error('Error during fetch:', error);
+        });
+    });
+
 	
+    
+    // 문서 삭제 
     const approDelete = function(approNo) {
         if (confirm("정말 삭제하시겠습니까?")) {
             const csrfToken = document.getElementById("csrf_token").value; // CSRF 토큰 가져오기

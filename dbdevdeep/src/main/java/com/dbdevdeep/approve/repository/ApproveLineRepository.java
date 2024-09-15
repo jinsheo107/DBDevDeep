@@ -20,4 +20,9 @@ public interface ApproveLineRepository extends JpaRepository<ApproveLine, Long>{
 	// 반려 정보를 조회하는 메서드
     @Query("SELECT al FROM ApproveLine al WHERE al.approve.approNo = :approNo AND al.approLineStatus = 3")
     ApproveLine backReasonByApproveNo(@Param("approNo") Long approNo);
+
+    @Query(value = "SELECT * FROM approve_line WHERE appro_no = :approveId AND emp_id = :empId", nativeQuery = true)
+    ApproveLine findByApproveIdAndEmpId(@Param("approveId") Long approveId, @Param("empId") String empId);
+
+	
 }
