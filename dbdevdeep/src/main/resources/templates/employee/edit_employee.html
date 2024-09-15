@@ -79,7 +79,7 @@
 				<div class="col-sm-12 col-md-12">
 					<div class="card">
 						<div class="card-body">
-							<h4 class="card-title">직원 계정 등록</h4>
+							<h4 class="card-title">직원 정보 수정</h4>
 							<hr>
 							<form id="employeeAddFrm">
 								<input type="hidden" id="csrf_token" th:value="${_csrf.token}">
@@ -93,34 +93,38 @@
 											<div class="form-group" style="margin-top: 20px;">
 												<label>사진 <span style="color: red;">*</span></label>
 												<div class="row">
-													<div class="preview-container hidden" id="preview-container">
-														<img id="imagePreview" src="">
+													<div class="preview-container" id="preview-container">
+														<img id="imagePreview" th:src="@{'/UploadImg/employee/' + ${empDto.new_pic_name}}" width="150px" style="border-radius: 50%; object-fit: cover; aspect-ratio: 1 / 1">
 													</div>
-													<input type="button" class="addPic" id="addPic" value="+">
+													<input type="button" class="addPic littleButton" id="addPic" value="+">
 												</div>
 											</div>
 										</div>
 
 										<div class="col-md-9 m-auto">
 											<div class="form-group">
-												<label for="gov_id">교육청관리번호 <span style="color: red;">*</span></label>
+												<label for="gov_id">직원번호</label>
 												<div class="row">
 													<div class="col-md-8">
-														<input type="text" class="form-control" id="gov_id" name="gov_id" placeholder="00000000000" maxlength="11">
-														<div id="gov_id_feedback" class="mt-2"></div>
+														<input type="text" class="form-control" id="emp_id" name="emp_id" th:value="${empDto.emp_id}" readonly>
 													</div>
-													<div class="col-md-1">
-														<input type="button" id="gov_check_button" class="btn waves-effect waves-light btn-primary" disabled value="중복확인" onclick="dupGov();">
+												</div>
+											</div>
+										
+											<div class="form-group">
+												<label for="gov_id">교육청관리번호</label>
+												<div class="row">
+													<div class="col-md-8">
+														<input type="text" class="form-control" id="gov_id" name="gov_id" th:value="${empDto.gov_id}" readonly placeholder="00000000000" maxlength="11">
 													</div>
 												</div>
 											</div>
 
 											<div class="form-group">
-												<label for="gov_id">이름 <span style="color: red;">*</span></label>
+												<label for="gov_id">이름</label>
 												<div class="row">
 													<div class="col-md-8">
-														<input type="text" class="form-control" id="emp_name" name="emp_name" placeholder="홍길동">
-														<div id="emp_name_feedback" class="mt-2"></div>
+														<input type="text" class="form-control" id="emp_name" name="emp_name" th:value="${empDto.emp_name}" readonly placeholder="홍길동">
 													</div>
 												</div>
 											</div>
@@ -128,7 +132,8 @@
 												<label for="gov_id">부서 <span style="color: red;">*</span></label>
 												<div class="row">
 													<div class="col-md-8">
-														<select class="form-control" id="department" name="dept_code" style="background-image: none;">
+														<input type="hidden" id="dept_code" th:value="${empDto.dept_code}">
+														<select class="form-control" id="department" name="dept_code"  style="background-image: none;">
 															<option value="0">부서를 선택하세요.</option>
 															<option value="D4">행정부</option>
 															<option value="D3">교무부</option>
@@ -143,7 +148,8 @@
 												<label for="gov_id">직급 <span style="color: red;">*</span></label>
 												<div class="row">
 													<div class="col-md-8">
-														<select class="form-control" id="job" name="job_code" style="background-image: none;">
+														<input type="hidden" id="job_code" th:value="${empDto.job_code}">
+														<select class="form-control" id="job" name="job_code" th:value="${empDto.job_code}" style="background-image: none;">
 															<option value="0">직급을 선택하세요.</option>
 															<option value="J4">직원</option>
 															<option value="J3">부장</option>
@@ -155,16 +161,16 @@
 												</div>
 											</div>
 											<div class="form-group">
-												<label for="gov_id">주민등록번호 <span style="color: red;">*</span></label>
+												<label for="gov_id">주민등록번호</label>
 												<div class="row">
 													<div class="col-md-4">
-														<input type="text" class="form-control" id="firstempRrn" placeholder="000101" maxlength="6">
-
+														<input type="text" class="form-control" id="firstempRrn" th:value="${#strings.substring(empDto.emp_rrn, 0, 6)}" readonly placeholder="000101" maxlength="6">
 													</div>
 													<div class="col-md-4">
-														<input type="text" class="form-control" id="secondempRrn" placeholder="4111111" maxlength="7">
+														<input type="text" class="form-control" id="secondempRrn" th:value="${#strings.substring(empDto.emp_rrn, 7, 8) + '******'}" readonly placeholder="4111111" maxlength="7">
+														<input type="hidden" class="form-control" id="secondempRrn" th:value="${#strings.substring(empDto.emp_rrn, 7, 14)}" readonly placeholder="4111111" maxlength="7">
 													</div>
-													<input type="text" id="emp_rrn" name="emp_rrn" hidden="hidden">
+													<input type="hidden" id="emp_rrn" name="emp_rrn" th:value="${empDto.emp_rrn}">
 													<div id="emp_rrn_feedback" class="mt-2 col-md-8"></div>
 												</div>
 											</div>
@@ -172,9 +178,9 @@
 												<label for="gov_id">우편번호 <span style="color: red;">*</span></label>
 												<div class="row">
 													<div class="col-md-8">
-														<input type="text" name="emp_post_code" class="form-control" id="sample6_postcode" placeholder="우편번호" onclick="sample6_execDaumPostcode()" readonly><br> 
-														<input type="text" name="emp_addr" class="form-control" id="sample6_address" placeholder="주소" readonly><br> 
-														<input type="text" name="emp_detail_addr" class="form-control" id="sample6_detailAddress" placeholder="상세주소"> 
+														<input type="text" name="emp_post_code" class="form-control" id="sample6_postcode" th:value="${empDto.emp_post_code}" placeholder="우편번호" onclick="sample6_execDaumPostcode()" readonly><br> 
+														<input type="text" name="emp_addr" class="form-control" id="sample6_address" th:value="${empDto.emp_addr}" placeholder="주소" readonly><br> 
+														<input type="text" name="emp_detail_addr" class="form-control" id="sample6_detailAddress" th:value="${empDto.emp_detail_addr}" placeholder="상세주소"> 
 														<input type="text" id="sample6_extraAddress" placeholder="참고항목" hidden="hidden">
 														<div id="emp_post_code_feedback" class="mt-2"></div>
 													</div>
@@ -187,16 +193,16 @@
 												<label for="gov_id">전화번호 <span style="color: red;">*</span></label>
 												<div class="row">
 													<div class="col-md-2">
-														<input type="text" class="form-control" id="firstPhone" placeholder="010" maxlength="3">
+														<input type="text" class="form-control" id="firstPhone" placeholder="010" th:value="${#strings.setSplit(empDto.emp_phone, '-')[0]}" maxlength="3">
 													</div>
 													<div class="col-md-3">
-														<input type="text" class="form-control" id="secondPhone" placeholder="1111" maxlength="4">
+														<input type="text" class="form-control" id="secondPhone" placeholder="1111" th:value="${#strings.setSplit(empDto.emp_phone, '-')[1]}" maxlength="4">
 													</div>
 													<div class="col-md-3">
-														<input type="text" class="form-control" id="thirdPhone" placeholder="2222" maxlength="4">
+														<input type="text" class="form-control" id="thirdPhone" placeholder="2222" th:value="${#strings.setSplit(empDto.emp_phone, '-')[2]}" maxlength="4">
 													</div>
 													<div id="emp_phone_feedback" class="mt-2 col-md-8"></div>
-													<input type="text" id="empPhone" name="emp_phone" hidden="hidden">
+													<input type="hidden" id="empPhone" name="emp_phone" th:value="${empDto.emp_phone}">
 
 												</div>
 											</div>
@@ -204,35 +210,8 @@
 												<label for="gov_id">내선전화번호 <span style="color: red;">*</span></label>
 												<div class="row">
 													<div class="col-md-8">
-														<input type="text" class="form-control" id="emp_internal_phone" name="emp_internal_phone" placeholder="0000" maxlength="4">
+														<input type="text" class="form-control" id="emp_internal_phone" th:value="${empDto.emp_internal_phone}" name="emp_internal_phone" placeholder="0000" maxlength="4">
 														<div id="emp_internal_phone_feedback" class="mt-2"></div>
-													</div>
-												</div>
-											</div>
-											<div class="form-group">
-												<label for="gov_id">비밀번호 <span style="color: red;">*</span></label>
-												<div class="row">
-													<div class="col-md-8">
-														<input type="text" class="form-control" id="emp_pw" name="emp_pw" placeholder="주민등록번호를 입력하세요" readonly>
-														<div id="emp_pw_feedback" class="mt-2"></div>
-													</div>
-												</div>
-											</div>
-											<div class="form-group">
-												<label for="gov_id">이전학교번호</label>
-												<div class="row">
-													<div class="col-md-8">
-														<input type="text" class="form-control " id="trans_school_id" placeholder="00000000" maxlength="8">
-														<div id="trans_school_id_feedback" class="mt-2"></div>
-													</div>
-												</div>
-											</div>
-											<div class="form-group">
-												<label for="gov_id">입사일 <span style="color: red;">*</span></label>
-												<div class="row">
-													<div class="col-md-8">
-														<input type="date" class="form-control " id="hire_date" name="hire_date">
-														<div id="trans_school_id_feedback" class="mt-2"></div>
 													</div>
 												</div>
 											</div>
@@ -241,8 +220,8 @@
 													<div class="col-md-8"></div>
 													<div class="col-md-2">
 														<br> 
-														<input type="submit" class="btn waves-effect waves-light btn-primary" value="등록"> 
 														<input type="button" onclick="cancelBtn();" class="btn waves-effect waves-light btn-light" value="취소">
+														<input type="submit" class="btn waves-effect waves-light btn-primary" value="수정"> 
 													</div>
 												</div>
 											</div>
@@ -255,63 +234,45 @@
 					</div>
 				</div>
 			</div>
-			<!-- ============================================================== -->
-			<!-- End PAge Content -->
-			<!-- ============================================================== -->
-			<!-- ============================================================== -->
-			<!-- Right sidebar -->
-			<!-- ============================================================== -->
-			<!-- .right-sidebar -->
-			<!-- ============================================================== -->
-			<!-- End Right sidebar -->
-			<!-- ============================================================== -->
 		</div>
-		<!-- ============================================================== -->
-		<!-- End Container fluid  -->
-		<!-- ============================================================== -->
-		<!-- ============================================================== -->
-		<!-- footer -->
-		<!-- ============================================================== -->
 		<footer class="footer text-center text-muted">
 			All Rights Reserved by Adminmart. Designed and Developed by <a href="https://wrappixel.com">WrapPixel</a>.
 		</footer>
-		<!-- ============================================================== -->
-		<!-- End footer -->
-		<!-- ============================================================== -->
-	</div>
-	<!-- ============================================================== -->
-	<!-- End Page wrapper  -->
-	<!-- ============================================================== -->
-	</div>
-	<!-- ============================================================== -->
-	<!-- End Wrapper -->
-	<!-- ============================================================== -->
-	<!-- End Wrapper -->
-	<!-- ============================================================== -->
-	<!-- All Jquery -->
-	<!-- ============================================================== -->
-	<script src="assets/libs/jquery/dist/jquery.min.js"></script>
+	<script src="/assets/libs/jquery/dist/jquery.min.js"></script>
 	<!-- Bootstrap tether Core JavaScript -->
-	<script src="assets/libs/popper.js/dist/umd/popper.min.js"></script>
-	<script src="assets/libs/bootstrap/dist/js/bootstrap.min.js"></script>
+	<script src="/assets/libs/popper.js/dist/umd/popper.min.js"></script>
+	<script src="/assets/libs/bootstrap/dist/js/bootstrap.min.js"></script>
 	<!-- apps -->
 	<!-- apps -->
-	<script src="dist/js/app-style-switcher.js"></script>
-	<script src="dist/js/feather.min.js"></script>
+	<script src="/dist/js/app-style-switcher.js"></script>
+	<script src="/dist/js/feather.min.js"></script>
 	<!-- slimscrollbar scrollbar JavaScript -->
-	<script src="assets/libs/perfect-scrollbar/dist/perfect-scrollbar.jquery.min.js"></script>
-	<script src="assets/extra-libs/sparkline/sparkline.js"></script>
+	<script src="/assets/libs/perfect-scrollbar/dist/perfect-scrollbar.jquery.min.js"></script>
+	<script src="/assets/extra-libs/sparkline/sparkline.js"></script>
 	<!--Wave Effects -->
 	<!-- themejs -->
 	<!--Menu sidebar -->
-	<script src="dist/js/sidebarmenu.js"></script>
+	<script src="/dist/js/sidebarmenu.js"></script>
 	<!--Custom JavaScript -->
-	<script src="dist/js/custom.min.js"></script>
+	<script src="/dist/js/custom.min.js"></script>
+	
+	<script>
+		$(document).ready(function() {
+		    const dept_code = $("#dept_code").val();
+		    const job_code = $("#job_code").val();
+		    
+		    if (dept_code) {
+		        $('#department').val(dept_code);
+		    }
+		    if (job_code) {
+		        $('#job').val(job_code);
+		    }
+		});
+
+	</script>
 
 	<!-- 입력여부 -->
-	<script>
-		let valiCount = 0;
-	
+	<script>	
 		const form = document.getElementById('employeeAddFrm');
 		
 		form.addEventListener('submit', (e) => {
@@ -320,12 +281,7 @@
 			let vali_check = false;
 			let vali_text = '';
 			
-			if(form.gov_id.value == "" || valiCount == 0){
-				form.gov_id.focus();
-			} else if(form.emp_name.value == "" || !/^[가-힣]{1,6}$/.test(form.emp_name.value)) {
-				form.emp_name.value = "";
-				form.emp_name.focus();
-			} else if(form.dept_code.value == "0") {
+			if(form.dept_code.value == "0") {
 				form.dept_code.focus();
 			} else if(form.job_code.value == "0") {
 				form.job_code.focus();
@@ -339,12 +295,10 @@
 				document.getElementById("firstPhone").focus();
 			} else if(form.emp_internal_phone.value == "") {
 				form.emp_internal_phone.focus();
-			} else if(form.file.value == "") {
-				document.getElementById('addPic').focus();
 			} else {
 					const payload = new FormData(form);
 					const csrfToken = document.getElementById("csrf_token").value;
-					fetch('/signup',{
+					fetch('/employee/edit',{
 						method:'POST',
 						headers : {
 							'X-CSRF-TOKEN': csrfToken
@@ -359,7 +313,9 @@
 								title:'성공',
 								text : data.res_msg,
 								confirmButtonText:"닫기"
-							});
+							}).then(() => {
+								window.location.reload()
+							})
 						} else{
 							Swal.fire({
 								icon:'error',
@@ -404,8 +360,7 @@
         govCheckButton.disabled = true;
 	    }
 		});
-		
-		/* 직원명 */
+				/* 직원명 */
 		const empNameInput = document.getElementById('emp_name');
 		
 		empNameInput.addEventListener('input', function() {
@@ -433,8 +388,8 @@
 		    } else {
 		    	empNamefeedback.textContent = '한글 1 ~ 6자리를 입력해주세요.';
 		    	empNamefeedback.style.color = 'red';
-		        empNameInput.classList.add('is-invalid');
-		        empNameInput.classList.remove('is-valid');
+	        empNameInput.classList.add('is-invalid');
+	        empNameInput.classList.remove('is-valid');
 	        
 	        valiCount = 0;
 		    }
@@ -442,6 +397,7 @@
 		    return valiCount;
 		});
 		
+
 		const departmentInput = document.getElementById('department');
 		
 		departmentInput.addEventListener('change', function() {
@@ -687,31 +643,6 @@
     		document.getElementById('emp_internal_phone_feedback').style.color = 'red';
     	}
     });
-    
-    const today = new Date();
-    const year = today.getFullYear();
-    const month = (today.getMonth() + 1).toString().padStart(2, '0');
-    const day = today.getDate().toString().padStart(2, '0');
-
-    const formattedDate = `${year}-${month}-${day}`;
-
-    document.getElementById('hire_date').value = formattedDate;
-    
-    const transInput = document.getElementById('trans_school_id');
-    
-    transInput.addEventListener('input', onlyNumber);
-    transInput.addEventListener('keyup', () => {
-    	if(transInput.value.length == 8 || transInput.value.length == 0) {
-    		document.getElementById('trans_school_id_feedback').textContent = '';
-    		transInput.classList.add('is-valid');
-    		transInput.classList.remove('is-invalid');
-    	} else {
-    		document.getElementById('trans_school_id_feedback').textContent = '';
-    		document.getElementById('trans_school_id_feedback').style.color = 'red';
-    		transInput.classList.add('is-invalid');
-    		transInput.classList.remove('is-valid');
-    	}
-    });
 	</script>
 
 	<!-- 교육청관리번호 중복 확인 -->
@@ -802,9 +733,9 @@
             } else {
                 Swal.fire({
                 	icon:'error',
-					title:'실패',
-					text: '이미지 파일만 선택할 수 있습니다.',
-					confirmButtonText:"닫기"
+									title:'실패',
+									text: '이미지 파일만 선택할 수 있습니다.',
+									confirmButtonText:"닫기"
                 });
                 fileInput.value = ''; 
                 imagePreview.src = '';

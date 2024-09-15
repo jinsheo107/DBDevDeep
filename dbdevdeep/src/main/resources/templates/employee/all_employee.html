@@ -1,41 +1,28 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{include/employee_layout}">
 <th:block layout:fragment="content">
-	<body>
-		<style>
+	<style>
 /* datatable css */
 div.dataTables_wrapper div.dataTables_paginate ul.pagination {
-	margin: 2px 0;
-	white-space: nowrap;
-	justify-content: center;
+	margin: 2px 0; white-space: nowrap; justify-content: center;
 }
 /* a 태그 속성 제거 */
 a {
-	text-decoration: none; /* 밑줄 제거 */
-	color: inherit; /* 기본 색상 제거, 부모 요소의 색상 사용 */
-	cursor: pointer; /* 커서 스타일 변경 */
+	text-decoration: none; /* 밑줄 제거 */ color: inherit; /* 기본 색상 제거, 부모 요소의 색상 사용 */ cursor: pointer; /* 커서 스타일 변경 */
 }
 /* a 태그 호버 시 스타일 */
 a:hover {
-	text-decoration: none; /* 호버 시 밑줄 추가 */
-	color: inherit; /* 호버 시 색상 변경 */
+	text-decoration: none; /* 호버 시 밑줄 추가 */ color: inherit; /* 호버 시 색상 변경 */
 }
 
 /* 첫 번째 td를 수평 및 수직 가운데 정렬 */
 .bordered tbody tr td.align-center {
-	text-align: center; /* 수평 가운데 정렬 */
-	vertical-align: middle;
-	padding-bottom: 8px;
+	text-align: center; /* 수평 가운데 정렬 */ vertical-align: middle; padding-bottom: 8px;
 }
 
 /* 정렬 아이콘의 위치 및 정렬 설정 */
 table.dataTable thead .sorting:before, table.dataTable thead .sorting:after, table.dataTable thead .sorting_asc:before, table.dataTable thead .sorting_asc:after, table.dataTable thead .sorting_desc:before, table.dataTable thead .sorting_desc:after, table.dataTable thead .sorting_asc_disabled:before, table.dataTable thead .sorting_asc_disabled:after, table.dataTable thead .sorting_desc_disabled:before, table.dataTable thead .sorting_desc_disabled:after {
-	display: inline-block; /* 아이콘을 인라인 블록으로 설정 */
-	position: relative; /* 아이콘 위치를 텍스트 옆으로 설정 */
-	margin-left: 10px !important; /* 텍스트와 아이콘 사이의 간격을 조정 */
-	bottom: 0; /* 아이콘을 텍스트 높이에 맞추기 위해 위치 설정 */
-	opacity: 0.7; /* 아이콘의 불투명도 설정 */
-	content: ''; /* 정렬 아이콘을 CSS로 설정 */
+	display: inline-block; /* 아이콘을 인라인 블록으로 설정 */ position: relative; /* 아이콘 위치를 텍스트 옆으로 설정 */ margin-left: 10px !important; /* 텍스트와 아이콘 사이의 간격을 조정 */ bottom: 0; /* 아이콘을 텍스트 높이에 맞추기 위해 위치 설정 */ opacity: 0.7; /* 아이콘의 불투명도 설정 */ content: ''; /* 정렬 아이콘을 CSS로 설정 */
 }
 
 table.dataTable thead .sorting:after, table.dataTable thead .sorting_asc:after, table.dataTable thead .sorting_desc:after, table.dataTable thead .sorting_asc_disabled:after, table.dataTable thead .sorting_desc_disabled:after {
@@ -50,27 +37,79 @@ table.dataTable thead .sorting_asc:after {
 table.dataTable thead .sorting_desc:after {
 	content: "\25BC"; /* 아래쪽 삼각형 화살표 */
 }
+
+.filter {
+	border-collapse: separate; border-spacing: 0; width: 100%;
+}
+
+.pad {
+	height: 5px; background: none;
+}
+
+.filter tr {
+	background-color: #e9ecef; border-radius: 50px;
+}
+
+.filter td, th {
+	padding: 8px;
+}
+
+.filter th {
+	border-bottom-left-radius: 5px; border-top-left-radius: 5px; padding-left: 20px;
+}
+
+.filter td:last-child {
+	border-bottom-right-radius: 5px; border-top-right-radius: 5px; padding-right: 20px;
+}
+
+.filter input[type="checkbox"] {
+	border: 1px solid #e9ecef; width: 16px; height: 16px; margin: 0px 5px;
+}
+
+.filter label {
+	display: flex; align-items: center; margin: 0px auto;
+}
 </style>
-		<!-- ============================================================== -->
-		<!-- End Left Sidebar - style you can find in sidebar.scss  -->
-		<!-- ============================================================== -->
-		<!-- ============================================================== -->
-		<!-- Page wrapper  -->
-		<!-- ============================================================== -->
+	<body>
 		<div class="page-wrapper">
 			<div class="container-fluid">
-				<!-- ============================================================== -->
-				<!-- Start Page Content -->
-				<!-- ============================================================== -->
 				<div class="row">
 					<div class="col-12">
 						<div class="card">
-							<div class="card-body" style="padding: 50px 80px;">
+							<div class="card-body" style="padding: 50px;">
 								<div class="col d-flex justify-content-start align-items-center" style="padding-left: 0px; max-width: 140px;">
 									<div style="font-size: 30px;">직원 목록</div>
 								</div>
-								<div class="col d-flex justify-content-end" style="height: 58px;"></div>
+								<div class="col d-flex justify-content-end" style="height: 20px;"></div>
 								<div class="table-responsive">
+									<div class="container mt-4">
+										<div class="row">
+											<div class="col-md-6">
+												<table class="filter">
+													<tr>
+														<th><strong>재직상태</strong></th>
+														<td><label><input type="checkbox" class="filter-status" value="전체"> 전체</label></td>
+														<td><label><input type="checkbox" class="filter-status" value="재직"> 재직</label></td>
+														<td><label><input type="checkbox" class="filter-status" value="퇴직"> 퇴직</label></td>
+														<td><label><input type="checkbox" class="filter-status" value="휴직"> 휴직</label></td>
+														<td><label><input type="checkbox" class="filter-status" value="전근"> 전근</label></td>
+													</tr>
+												</table>
+											</div>
+											<div class="col-md-6">
+												<table class="filter">
+													<tr>
+														<th><strong>직급</strong></th>
+														<td><label><input type="checkbox" class="filter-job" value="전체"> 전체</label></td>
+														<td><label><input type="checkbox" class="filter-job" value="교장"> 교장</label></td>
+														<td><label><input type="checkbox" class="filter-job" value="교감"> 교감</label></td>
+														<td><label><input type="checkbox" class="filter-job" value="부장"> 부장</label></td>
+														<td><label><input type="checkbox" class="filter-job" value="직원"> 직원</label></td>
+													</tr>
+												</table>
+											</div>
+										</div>
+									</div>
 									<table id="address_all_book" class="table table-hover table-bordered no-wrap" style="width: 100%">
 										<thead>
 											<tr>
@@ -87,11 +126,11 @@ table.dataTable thead .sorting_desc:after {
 										<tbody>
 											<th:block th:if="${#lists.isEmpty(resultList)}">
 												<tr>
-													<td colspan="7">주소록이 없습니다.</td>
+													<td colspan="7">직원이 없습니다.</td>
 												</tr>
 											</th:block>
 											<th:block th:if="${!#lists.isEmpty(resultList)}">
-												<tr th:each="employee, employeeStat : ${resultList}" th:data-emp="${employee.emp_id}" id="employee-detail" style="cursor: pointer;">
+												<tr th:each="employee, employeeStat : ${resultList}" th:data-emp="${employee.emp_id}" class="employee-detail" style="cursor: pointer;">
 													<td scope="row" th:text="${employeeStat.count}"></td>
 													<td th:text="${employee.emp_id}"></td>
 													<td th:text="${employee.emp_name}"></td>
@@ -106,7 +145,11 @@ table.dataTable thead .sorting_desc:after {
 													                (employee.job_code == 'J4' ? 
 													                 #strings.substring(employee.dept_name, 0, 1) + employee.job_name : 
 													                 '-'))}"></td>
-													<td id="history"></td>
+													<td class="status-cell" th:data-dept-code="${employee.dept_code}"><th:block th:each="history : ${historyList}">
+															<th:block th:if="${history.teach_emp_id == employee.emp_id}">
+																<th:block th:text="${history.grade + '-' + history.grade_class}"></th:block>
+															</th:block>
+														</th:block></td>
 													<td th:text="${employee.emp_internal_phone}"></td>
 													<td th:text="${employee.emp_phone}"></td>
 												</tr>
@@ -118,60 +161,113 @@ table.dataTable thead .sorting_desc:after {
 						</div>
 					</div>
 				</div>
-				<!-- ============================================================== -->
-				<!-- End PAge Content -->
-				<!-- ============================================================== -->
-				<!-- ============================================================== -->
-				<!-- Right sidebar -->
-				<!-- ============================================================== -->
-				<!-- .right-sidebar -->
-				<!-- ============================================================== -->
-				<!-- End Right sidebar -->
-				<!-- ============================================================== -->
 			</div>
-			<!-- ============================================================== -->
-			<!-- End Container fluid  -->
-			<!-- ============================================================== -->
-			<!-- ============================================================== -->
-			<!-- footer -->
-			<!-- ============================================================== -->
 			<footer class="footer text-center text-muted">
 				All Rights Reserved by Adminmart. Designed and Developed by <a href="https://wrappixel.com">WrapPixel</a>.
 			</footer>
-			<!-- ============================================================== -->
-			<!-- End footer -->
-			<!-- ============================================================== -->
+
+			<script>
+				$(document).ready(function() {
+					var table = $('#address_all_book').DataTable();
+
+					// 필터링 함수
+					function filterTable() {
+						var statusFilters = [];
+						var jobFilters = [];
+
+						$('.filter-status:checked').each(
+								function() {
+									statusFilters.push($(this)
+											.val());
+								});
+
+						$('.filter-job:checked').each(
+								function() {
+									jobFilters.push($(this)
+											.val());
+								});
+
+						table.column(3).search(
+								statusFilters.join('|'), true,
+								false).draw();
+						table.column(4).search(
+								jobFilters.join('|'), true,
+								false).draw();
+					}
+
+					// 체크박스 변경 이벤트
+					$('.filter-status, .filter-job').on('change', function() {
+						if ($(this).hasClass('filter-status')&& $(this).val() === '전체') {
+							if ($(this).is(':checked')) {
+								$('.filter-status').not('.filter-status[value="전체"]').prop('checked', true);
+							} else {
+								$('.filter-status').not('.filter-status[value="전체"]').prop('checked', false);
+							}
+						}
+						
+						if ($(this).hasClass('filter-job') && $(this).val() === '전체') {
+							if ($(this).is(':checked')) {
+								$('.filter-job').not('.filter-job[value="전체"]').prop('checked', true);
+							} else {
+								$('.filter-job').not('.filter-job[value="전체"]').prop('checked', false);
+							}
+						}
+						
+						
+						// 필터 적용
+						filterTable();
+					});
+
+					// 초기 필터링
+					filterTable();
+				});
+			</script>
+			<script>
+				document.addEventListener("DOMContentLoaded", function() {
+					var table = $('#address_all_book').DataTable();
+
+					// 담당 셀 업데이트 함수
+					function updateStatusCells() {
+						var cells = document.querySelectorAll('.status-cell');
+
+						cells
+								.forEach(function(cell) {
+									var dept_code = cell
+											.getAttribute('data-dept-code');
+
+									if (!cell.textContent.trim()) {
+										switch (dept_code) {
+										case 'D4':
+											cell.textContent = '미배정';
+											break;
+										case 'D3':
+											cell.textContent = '행정업무';
+											break;
+										case 'D2':
+											cell.textContent = '교감업무';
+											break;
+										case 'D1':
+											cell.textContent = '교장업무';
+											break;
+										default:
+											cell.textContent = '알 수 없음'; // 기본값 처리
+											break;
+										}
+									}
+								});
+					}
+
+					// 페이지 변경, 정렬, 필터링, 데이터 로드 후 호출
+					table.on('draw', function() {
+						updateStatusCells();
+					});
+
+					// 페이지 로드 시 초기 업데이트
+					updateStatusCells();
+				});
+			</script>
+
 		</div>
-
-		<script src="/assets/libs/jquery/dist/jquery.min.js"></script>
-		<!-- Bootstrap tether Core JavaScript -->
-		<script src="/assets/libs/popper.js/dist/umd/popper.min.js"></script>
-		<script src="/assets/libs/bootstrap/dist/js/bootstrap.min.js"></script>
-		<!-- apps -->
-		<!-- apps -->
-		<script src="/dist/js/app-style-switcher.js"></script>
-		<script src="/dist/js/feather.min.js"></script>
-		<!-- slimscrollbar scrollbar JavaScript -->
-		<script src="/assets/libs/perfect-scrollbar/dist/perfect-scrollbar.jquery.min.js"></script>
-		<script src="/assets/extra-libs/sparkline/sparkline.js"></script>
-		<!--Wave Effects -->
-		<!-- themejs -->
-		<!--Menu sidebar -->
-		<script src="/dist/js/sidebarmenu.js"></script>
-		<!--Custom JavaScript -->
-		<script src="/dist/js/custom.min.js"></script>
-		<!--This page plugins -->
-		<script src="/assets/extra-libs/datatables.net/js/jquery.dataTables.min.js"></script>
-		<script src="/dist/js/pages/datatable/datatable-basic.init.js"></script>
-
-		<script>
-			$('#employee-detail').on('click', function() {
-				var emp_id = $(this).data('emp');
-
-				location.href = "/employee/" + emp_id;
-			});
-		</script>
-
 	</body>
 </th:block>
 </html>

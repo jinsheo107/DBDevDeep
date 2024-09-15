@@ -189,8 +189,6 @@ public class TeacherHistoryService {
 		for (TeacherHistory t : th) {
 			TeacherHistoryDto thDto = new TeacherHistoryDto().toDto(t);
 			
-			System.out.println(thDto);
-
 			thListDto.add(thDto);
 		}
 

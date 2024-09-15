@@ -205,7 +205,7 @@
 											<label for="gov_id">이전학교번호</label>
 											<div class="row">
 												<div class="col-md-8">
-													<input type="text" class="form-control " id="trans_school_id" placeholder="00000000" maxlength="8">
+													<input type="text" class="form-control " id="trans_school_id" name="trans_school_id" placeholder="00000000" maxlength="7">
 													<div id="trans_school_id_feedback" class="mt-2"></div>
 												</div>
 											</div>
@@ -215,7 +215,7 @@
 											<div class="row">
 												<div class="col-md-8">
 													<input type="date" class="form-control " id="hire_date" name="hire_date">
-													<div id="trans_school_id_feedback" class="mt-2"></div>
+													<div id="hire_date_feedback" class="mt-2"></div>
 												</div>
 											</div>
 										</div>
@@ -256,39 +256,7 @@
 	<footer class="footer text-center text-muted">
 		All Rights Reserved by Adminmart. Designed and Developed by <a href="https://wrappixel.com">WrapPixel</a>.
 	</footer>
-	<!-- ============================================================== -->
-	<!-- End footer -->
-	<!-- ============================================================== -->
-	</div>
-	<!-- ============================================================== -->
-	<!-- End Page wrapper  -->
-	<!-- ============================================================== -->
-	</div>
-	<!-- ============================================================== -->
-	<!-- End Wrapper -->
-	<!-- ============================================================== -->
-	<!-- End Wrapper -->
-	<!-- ============================================================== -->
-	<!-- All Jquery -->
-	<!-- ============================================================== -->
-	<script src="assets/libs/jquery/dist/jquery.min.js"></script>
-	<!-- Bootstrap tether Core JavaScript -->
-	<script src="assets/libs/popper.js/dist/umd/popper.min.js"></script>
-	<script src="assets/libs/bootstrap/dist/js/bootstrap.min.js"></script>
-	<!-- apps -->
-	<!-- apps -->
-	<script src="dist/js/app-style-switcher.js"></script>
-	<script src="dist/js/feather.min.js"></script>
-	<!-- slimscrollbar scrollbar JavaScript -->
-	<script src="assets/libs/perfect-scrollbar/dist/perfect-scrollbar.jquery.min.js"></script>
-	<script src="assets/extra-libs/sparkline/sparkline.js"></script>
-	<!--Wave Effects -->
-	<!-- themejs -->
-	<!--Menu sidebar -->
-	<script src="dist/js/sidebarmenu.js"></script>
-	<!--Custom JavaScript -->
-	<script src="dist/js/custom.min.js"></script>
-
+	
 	<!-- 입력여부 -->
 	<script>
 		let valiCount = 0;
@@ -325,7 +293,7 @@
 			} else {
 					const payload = new FormData(form);
 					const csrfToken = document.getElementById("csrf_token").value;
-					fetch('/signup',{
+					fetch('/employee/add',{
 						method:'POST',
 						headers : {
 							'X-CSRF-TOKEN': csrfToken
@@ -340,7 +308,9 @@
 								title:'성공',
 								text : data.res_msg,
 								confirmButtonText:"닫기"
-							});
+							}).then(() => {
+								location.href="/employee/add";
+							})
 						} else{
 							Swal.fire({
 								icon:'error',
@@ -682,7 +652,7 @@
     
     transInput.addEventListener('input', onlyNumber);
     transInput.addEventListener('keyup', () => {
-    	if(transInput.value.length == 8 || transInput.value.length == 0) {
+    	if(transInput.value.length == 7 || transInput.value.length == 0) {
     		document.getElementById('trans_school_id_feedback').textContent = '';
     		transInput.classList.add('is-valid');
     		transInput.classList.remove('is-invalid');
@@ -766,7 +736,7 @@
         const file = event.target.files[0];
 
         if (file) {
-            const validExtensions = ['jpg', 'jpeg', 'png'];
+            const validExtensions = ['jpg', 'jpeg', 'png', 'jfif'];
             const fileExtension = file.name.split('.').pop().toLowerCase();
 
             if (validExtensions.includes(fileExtension)) {

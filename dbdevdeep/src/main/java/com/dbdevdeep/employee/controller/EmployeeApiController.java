@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -21,7 +22,11 @@ import org.springframework.web.multipart.MultipartFile;
 import com.dbdevdeep.FileService;
 import com.dbdevdeep.employee.domain.Employee;
 import com.dbdevdeep.employee.domain.EmployeeDto;
+import com.dbdevdeep.employee.domain.EmployeeStatus;
+import com.dbdevdeep.employee.domain.EmployeeStatusDto;
 import com.dbdevdeep.employee.domain.MySignDto;
+import com.dbdevdeep.employee.domain.Transfer;
+import com.dbdevdeep.employee.domain.TransferDto;
 import com.dbdevdeep.employee.service.EmployeeService;
 import com.dbdevdeep.security.service.SecurityService;
 
@@ -58,8 +63,8 @@ public class EmployeeApiController {
 	}
 
 	@ResponseBody
-	@PostMapping("/signup")
-	public Map<String, String> signup(EmployeeDto dto, @RequestParam("file") MultipartFile file) {
+	@PostMapping("/employee/add")
+	public Map<String, String> signup(EmployeeDto dto, @RequestParam("file") MultipartFile file, @RequestParam(name = "trans_school_id", required = false) String trans_school_id) {
 
 		Map<String, String> resultMap = new HashMap<String, String>();
 		resultMap.put("res_code", "404");
@@ -70,17 +75,34 @@ public class EmployeeApiController {
 		if (savedFileName != null) {
 			dto.setOri_pic_name(file.getOriginalFilename());
 			dto.setNew_pic_name(savedFileName);
+			
+			Employee employee = employeeService.addEmployee(dto);
 
-			if (employeeService.addEmployee(dto) > 0) {
-				resultMap.put("res_code", "200");
-				resultMap.put("res_msg", "계정 등록에 성공하였습니다.");
+			if (employee != null) {
+				
+				EmployeeDto employeeDto = new EmployeeDto().toDto(employee);
+				
+				TransferDto transferDto = new TransferDto();
+				transferDto.setEmp_id(employeeDto.getEmp_id());
+				transferDto.setTrans_date(employeeDto.getHire_date());
+				transferDto.setTrans_school_id(trans_school_id);
+				transferDto.setTrans_type("F");
+				
+				Transfer transferResult = employeeService.employeeTransfer(transferDto);
+				
+				if(transferResult != null) {
+					resultMap.put("res_code", "200");
+					resultMap.put("res_msg", "계정 등록에 성공하였습니다.");
+				} else {
+					resultMap.put("res_msg", "전근 기록에 실패하였습니다.");
+				}
 			}
 		} else {
 			resultMap.put("res_msg", "파일 업로드가 실패하였습니다.");
 		}
 		return resultMap;
 	}
-	
+
 	@ResponseBody
 	@PostMapping("/addsign")
 	public Map<String, String> addSign(MySignDto dto, @RequestParam("file") MultipartFile file) {
@@ -103,7 +125,7 @@ public class EmployeeApiController {
 		}
 		return resultMap;
 	}
-	
+
 	@ResponseBody
 	@PostMapping("/editsign")
 	public Map<String, String> editSign(MySignDto dto, @RequestParam("file") MultipartFile file) {
@@ -126,27 +148,27 @@ public class EmployeeApiController {
 		}
 		return resultMap;
 	}
-	
+
 	@ResponseBody
-	@DeleteMapping("/mysign/{sign_no}")
+	@DeleteMapping("/mypage/sign/{sign_no}")
 	public Map<String, String> deleteBoard(@PathVariable("sign_no") Long sign_no) {
-				
+
 		Map<String, String> resultMap = new HashMap<String, String>();
 
 		resultMap.put("res_code", "404");
 		resultMap.put("res_msg", "게시글 삭제 중 오류가 발생했습니다.");
-		
-			
-		if(employeeService.deleteSign(sign_no) > 0) {
+
+		if (employeeService.deleteSign(sign_no) > 0) {
 			resultMap.put("res_code", "200");
 			resultMap.put("res_msg", "게시글이 성공적으로 삭제되었습니다.");
 		}
-		
+
 		return resultMap;
 	}
 
+	// 내 정보 수정
 	@ResponseBody
-	@PostMapping("/edit-myinfo")
+	@PostMapping("/mypage/edit")
 	public Map<String, String> editMyInfo(EmployeeDto dto,
 			@RequestParam(name = "file", required = false) MultipartFile file, HttpServletRequest request) {
 		Map<String, String> resultMap = new HashMap<String, String>();
@@ -200,6 +222,7 @@ public class EmployeeApiController {
 		return resultMap;
 	}
 
+	// 내 비밀번호 수정
 	@ResponseBody
 	@PostMapping("/edit-mypw")
 	public Map<String, String> editMyPw(@RequestParam("new_emp_pw") String newEmpPw,
@@ -246,31 +269,140 @@ public class EmployeeApiController {
 
 		return resultMap;
 	}
-	
+
 	// 상태 메시지 수정
 	@ResponseBody
-    @PostMapping("/status/{empId}")
-    public Map<String,String> updateStatus(@RequestBody EmployeeDto dto){
-		Map<String,String> map = new HashMap<String, String>();
+	@PostMapping("/status/{empId}")
+	public Map<String, String> updateStatus(@RequestBody EmployeeDto dto) {
+		Map<String, String> map = new HashMap<String, String>();
 		map.put("res_code", "404");
 		map.put("res_msg", "게시글 삭제 중 오류가 발생했습니다.");
-		
+
 		int result = employeeService.editChatStatus(dto.getEmp_id(), dto.getChat_status_msg());
-		
-		if(result>0) {
+
+		if (result > 0) {
 			map.put("res_code", "200");
 			map.put("res_msg", "상태메세지가 수정되었습니다.");
 		}
-		
+
 		return map;
 	}
-	
+
 	// 채팅 상대 프로필 조회
 	@ResponseBody
-    @GetMapping("/profile/{empId}")
-	public EmployeeDto selectProfile(Model model, @PathVariable("empId") String emp_id){
+	@GetMapping("/profile/{empId}")
+	public EmployeeDto selectProfile(Model model, @PathVariable("empId") String emp_id) {
 		EmployeeDto dto = employeeService.selectEmployeeOne(emp_id);
-		
+
 		return dto;
+	}
+
+	// 비밀번호 초기화
+	@ResponseBody
+	@PutMapping("/reset-pw")
+	public Map<String, String> editMyPw(@RequestParam("emp_id") String emp_id, @RequestParam("emp_pw") String emp_pw) {
+		Map<String, String> resultMap = new HashMap<String, String>();
+
+		resultMap.put("res_code", "404");
+		resultMap.put("res_msg", "비밀번호 초기화 중 오류가 발생했습니다.");
+
+		Employee e = employeeService.resetPw(emp_id, emp_pw);
+
+		if (e != null) {
+			resultMap.put("res_code", "200");
+			resultMap.put("res_msg", "비밀번호가 성공적으로 초기화되었습니다.");
+
+		}
+
+		return resultMap;
+	}
+	
+	@ResponseBody
+	@PostMapping("/employee/edit")
+	public Map<String, String> employeeInfoEdit(EmployeeDto dto,
+			@RequestParam(name = "file", required = false) MultipartFile file) {
+		Map<String, String> resultMap = new HashMap<String, String>();
+
+		resultMap.put("res_code", "404");
+		resultMap.put("res_msg", "정보 수정 중 오류가 발생하였습니다.");
+
+		if (file != null && "".equals(file.getOriginalFilename()) == false) {
+			String savedFileName = fileService.employeePicUpload(file);
+
+			if (savedFileName != null) {
+				dto.setOri_pic_name(file.getOriginalFilename());
+				dto.setNew_pic_name(savedFileName);
+
+				if (fileService.employeePicDelete(dto.getEmp_id()) > 0) {
+					resultMap.put("res_msg", "기존 파일이 정상적으로 삭제되었습니다.");
+				}
+			} else {
+				resultMap.put("res_msg", "파일 업로드가 실패하였습니다.");
+			}
+		}
+
+		Employee e = employeeService.employeeInfoEdit(dto);
+
+		if (e != null) {
+			resultMap.put("res_code", "200");
+			resultMap.put("res_msg", dto.getEmp_name() + "님의 정보가 성공적으로 수정되었습니다.");
+		}
+
+		return resultMap;
+	}
+	
+	@ResponseBody
+	@PostMapping("/employee/transfer")
+	public Map<String, String> employeeTransfer(TransferDto dto) {
+		
+		Map<String, String> resultMap = new HashMap<String, String>();
+
+		resultMap.put("res_code", "404");
+		resultMap.put("res_msg", "전근 등록 중 오류가 발생하였습니다.");
+		
+		int result = employeeService.findBySameTransfer(dto);
+				
+		if(result == 0) {
+			Transfer transfer = employeeService.employeeTransfer(dto);
+			
+			if(transfer != null) {
+				resultMap.put("res_code", "200");
+				resultMap.put("res_msg", "전근 등록에 성공하였습니다.");
+			} else {
+				resultMap.put("res_msg", "전근은 재직 상태인 직원만 가능합니다.");
+			}
+		} else {
+			resultMap.put("res_msg", "중복된 전근 기록이 존재합니다.");
+		}
+		
+		return resultMap;
+	}
+	
+	@ResponseBody
+	@PostMapping("/employee/rest")
+	public Map<String, String> employeeRest(EmployeeStatusDto dto) {
+		
+		Map<String, String> resultMap = new HashMap<String, String>();
+
+		resultMap.put("res_code", "404");
+		resultMap.put("res_msg", "휴직 등록 중 오류가 발생하였습니다.");
+		
+		// 중복 확인
+		int result = employeeService.findBySameRest(dto);
+				
+		if(result == 0) {
+			EmployeeStatus employeeStatus = employeeService.employeeRest(dto);
+			
+			if(employeeStatus != null) {
+				resultMap.put("res_code", "200");
+				resultMap.put("res_msg", "휴직 등록에 성공하였습니다.");
+			} else {
+				resultMap.put("res_msg", "휴직은 재직 상태인 직원만 가능합니다.");
+			}
+		} else {
+			resultMap.put("res_msg", "중복된 휴직 기록이 존재합니다.");
+		}
+		
+		return resultMap;
 	}
 }

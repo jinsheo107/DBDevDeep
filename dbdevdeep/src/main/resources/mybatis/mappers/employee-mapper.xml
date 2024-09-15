@@ -17,4 +17,12 @@
 	    LEFT JOIN teacher_history t ON e.emp_id = t.emp_id AND t.t_year = #{t_year}
 	    WHERE e.dept_code = 'D4' AND t.emp_id IS NULL;
 	</select>
+	
+	<update id="employeeEntStatusTransfer" parameterType="com.dbdevdeep.employee.vo.EmployeeVo">
+	    UPDATE `employee`
+	    SET ent_status = #{ent_status}
+	    <where>
+	    	emp_id = #{emp_id}
+	    </where>
+	</update>
 </mapper>

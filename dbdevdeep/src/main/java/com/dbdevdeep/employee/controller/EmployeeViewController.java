@@ -4,7 +4,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
@@ -17,28 +16,25 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.dbdevdeep.employee.domain.EmployeeDto;
 import com.dbdevdeep.employee.domain.MySignDto;
 import com.dbdevdeep.employee.domain.TeacherHistoryDto;
+import com.dbdevdeep.employee.domain.TransferDto;
 import com.dbdevdeep.employee.service.EmployeeService;
 import com.dbdevdeep.employee.service.TeacherHistoryService;
 
+import lombok.RequiredArgsConstructor;
+
+@RequiredArgsConstructor
 @Controller
 public class EmployeeViewController {
 	
 	private final EmployeeService employeeService;
 	private final TeacherHistoryService teacherHistoryService;
-	
-	@Autowired
-	public EmployeeViewController(EmployeeService employeeService,
-			TeacherHistoryService teacherHistoryService) {
-		this.employeeService = employeeService;
-		this.teacherHistoryService = teacherHistoryService;
-	}
 
 	@GetMapping("/login")
 	public String loginPage() {
 		return "employee/login";
 	}
 	
-	@GetMapping("/signup")
+	@GetMapping("/employee/add")
 	public String createEmployeePage() {
 		return"employee/signup";
 	}
@@ -67,7 +63,7 @@ public class EmployeeViewController {
 		return "employee/mypage";
 	}
 	
-	@GetMapping("/mysign")
+	@GetMapping("/mypage/sign")
 	public String mysignPage(Model model) {
 		
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -96,7 +92,7 @@ public class EmployeeViewController {
 		return resultMap;
 	}
 
-	@GetMapping("/editmypage")
+	@GetMapping("/mypage/edit")
 	public String editMyPage(Model model) {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		User user = (User)authentication.getPrincipal();
@@ -108,13 +104,13 @@ public class EmployeeViewController {
 		return "employee/edit_my_info";
 	}
 	
-	@GetMapping("/editmypw")
+	@GetMapping("/mypage/pw")
 	public String editMyPwPage() {
 				
 		return "employee/edit_my_pw";
 	}
 	
-	@GetMapping("/allemployee")
+	@GetMapping("/employee/list")
 	public String allEmployee(Model model) {
 		
 		List<EmployeeDto> resultList = employeeService.selectEmployeeList();
@@ -127,17 +123,29 @@ public class EmployeeViewController {
 		return "employee/all_employee";
 	}
 	
-	@GetMapping("/employee/{emp_id}")
+	@GetMapping("/employee/detail/{emp_id}")
 	public String employeeDetail(Model model, @PathVariable("emp_id") String emp_id) {
 				
 		EmployeeDto empDto = employeeService.selectEmployeeOne(emp_id);
 		
 		List<TeacherHistoryDto> thDtoList = teacherHistoryService.selectTeacherHistoryByEmployee(emp_id);
+		List<TransferDto> tDtoList = employeeService.selectTransferHistoryByEmployee(emp_id);
 					
+		model.addAttribute("tDtoList", tDtoList);
 		model.addAttribute("thDtoList", thDtoList);
 		model.addAttribute("empDto", empDto);
 		
 		return "employee/employee_detail";
+	}
+	
+	@GetMapping("/employee/edit/{emp_id}")
+	public String employeeDetailEdit(Model model, @PathVariable("emp_id") String emp_id) {
+				
+		EmployeeDto empDto = employeeService.selectEmployeeOne(emp_id);
+		
+		model.addAttribute("empDto", empDto);
+		
+		return "employee/edit_employee";
 	}
 
 }
