@@ -67,11 +67,11 @@ public class PlaceApiController {
 	    Map<String, String> resultMap = new HashMap<String, String>();
 	    
 	    resultMap.put("res_code", "404");
-	    resultMap.put("res_msg", "게시글 작성 중 오류가 발생하였습니다.");
+	    resultMap.put("res_msg", "장소 등록 중 오류가 발생하였습니다.");
 	    
 	    if(placeService.createPlace(dto) > 0) {
 	    	resultMap.put("res_code", "200");
-	    	resultMap.put("res_msg", "게시글 작성에 성공하였습니다.");
+	    	resultMap.put("res_msg", "장소 등록에 성공하였습니다.");
 	    }
 	    return resultMap;
 	}

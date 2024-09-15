@@ -32,6 +32,11 @@ public class PlaceService {
 		this.employeeRepository = employeeRepository;
 	}
 	
+	// 모든 Place 엔티티를 조회하는 기본 메서드,(select용)
+    public List<Place> getAllPlaces() {
+        return placeRepository.findAll();
+    }
+	
 	
 	// 삭제하기
 	public int deletePlace(Long place_no) {

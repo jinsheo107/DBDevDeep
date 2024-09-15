@@ -3,11 +3,18 @@ package com.dbdevdeep.place.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
+import com.dbdevdeep.employee.domain.EmployeeDto;
+import com.dbdevdeep.employee.service.EmployeeService;
 import com.dbdevdeep.place.domain.ItemDto;
+import com.dbdevdeep.place.domain.Place;
 import com.dbdevdeep.place.service.ItemService;
 import com.dbdevdeep.place.service.PlaceService;
 
@@ -16,13 +23,38 @@ public class ItemViewController {
 
 	private final ItemService itemService;
 	private final PlaceService placeService;
-	
+	private final EmployeeService employeeService;
 	
 	@Autowired
-	public ItemViewController(ItemService itemService, PlaceService placeService) {
+	public ItemViewController(ItemService itemService, PlaceService placeService, EmployeeService employeeService) {
 		this.itemService = itemService;
 		this.placeService = placeService;
+		this.employeeService = employeeService;
 	}
+	
+	// 등록
+	@GetMapping("/item/create")
+	public String createItem(Model model) {
+	    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+	    User user = (User) authentication.getPrincipal();
+	    String emp_id = user.getUsername();
+	    EmployeeDto e_dto = employeeService.selectEmployeeOne(emp_id); 
+	    
+	    // Place 목록 가져오기(select용)
+	    List<Place> placeList = placeService.getAllPlaces();
+	    model.addAttribute("placeList",placeList);
+	    
+	    model.addAttribute("writer",e_dto);
+	    
+	    return "place/item_create";
+	}
+	
+	// 장소별 항목 조회
+		@GetMapping("/item/place")
+		public String selectItemsByPlace(@RequestParam("placeNo") Long placeNo, Model model) {
+			model.addAttribute("itemList", itemService.selectItemsByPlace(placeNo));
+			return "place/item_list";
+		}
 	
 	
 	// 목록조회
