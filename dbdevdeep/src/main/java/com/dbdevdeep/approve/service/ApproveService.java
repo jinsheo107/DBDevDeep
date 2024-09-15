@@ -36,9 +36,12 @@ import com.dbdevdeep.employee.domain.Department;
 import com.dbdevdeep.employee.domain.Employee;
 import com.dbdevdeep.employee.domain.EmployeeDto;
 import com.dbdevdeep.employee.domain.Job;
+import com.dbdevdeep.employee.domain.MySign;
+import com.dbdevdeep.employee.domain.MySignDto;
 import com.dbdevdeep.employee.repository.DepartmentRepository;
 import com.dbdevdeep.employee.repository.EmployeeRepository;
 import com.dbdevdeep.employee.repository.JobRepository;
+import com.dbdevdeep.employee.repository.MySignRepository;
 
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
@@ -56,6 +59,7 @@ public class ApproveService {
 	private final DepartmentRepository departmentRepository;
 	private final JobRepository jobRepository;
 	private final TempEditRepository tempEditRepository;
+	private final MySignRepository mySignRepository;
 	
 	@Autowired
 	public ApproveService(ApproveRepository approveRepository, 
@@ -67,7 +71,8 @@ public class ApproveService {
             DepartmentRepository departmentRepository,
             JobRepository jobRepository,
             TempEditRepository tempEditRepository,
-            FileService fileService) {
+            FileService fileService,
+            MySignRepository mySignRepository) {
 		this.approveRepository = approveRepository;
 		this.vacationRequestRepository = vacationRequestRepository;
         this.approveLineRepository = approveLineRepository;
@@ -78,6 +83,7 @@ public class ApproveService {
         this.jobRepository = jobRepository;
         this.tempEditRepository = tempEditRepository;
         this.fileService = fileService;
+        this.mySignRepository = mySignRepository;
 	}
 	
 	// 휴가 삭제
@@ -263,6 +269,18 @@ public class ApproveService {
 	    }
 	    
 	    return refList;
+	}
+	
+	// 서명 리스트 출력
+	public List<MySignDto> signList(String empId){
+		List<MySign> mySignList = mySignRepository.mySignfindAllByEmpid(empId);
+		
+		List<MySignDto> mDto = new ArrayList<>();
+		for (MySign signDto : mySignList) {
+			MySignDto mySignDto = new MySignDto().toDto(signDto);
+			mDto.add(mySignDto);
+		}
+		return mDto;
 	}
 	
 	public Map<String, Object> getApproveDetail(Long approNo) {

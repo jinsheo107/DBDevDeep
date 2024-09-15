@@ -18,6 +18,7 @@ import com.dbdevdeep.approve.domain.ApproveDto;
 import com.dbdevdeep.approve.domain.ApproveLineDto;
 import com.dbdevdeep.approve.service.ApproveLineService;
 import com.dbdevdeep.approve.service.ApproveService;
+import com.dbdevdeep.employee.domain.MySignDto;
 
 @Controller
 public class ApproveViewController {
@@ -66,10 +67,6 @@ public class ApproveViewController {
 			model.addAttribute("refList",refList);
 			return "approve/refApprove";
 		}
-
-		
-
-		
 		
 	// 결재 작성
 	@GetMapping("/approCreate")
@@ -80,6 +77,9 @@ public class ApproveViewController {
 	// 결재 상세
 	@GetMapping("/approDetail/{appro_no}")
 	public String selectBoardOne(Model model, @PathVariable("appro_no") Long approNo) {
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		String username = authentication.getName();
+		
 		// 결재 정보 상세
 		Map<String, Object> detailMap = approveService.getApproveDetail(approNo);
 		
@@ -92,6 +92,10 @@ public class ApproveViewController {
 	        detailMap.put("backReason", null);
 	    }
 		
+		// 사인정보 가져오기 
+		List<MySignDto> signDto = approveService.signList(username);
+		
+		model.addAttribute("sDto", signDto);
 		model.addAllAttributes(detailMap);
 		return "approve/approDetail";
 	}

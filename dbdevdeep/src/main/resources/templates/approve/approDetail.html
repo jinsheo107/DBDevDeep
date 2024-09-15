@@ -44,6 +44,70 @@
                                 <form id="approReUpFrm">
                                     <input type="hidden" id="csrf_token" th:value="${_csrf.token}">
                                     <h2 class="text-center">휴가 신청서</h2>
+                                    
+<br>
+
+<div style="display: flex; justify-content: flex-end; align-items: flex-start;">
+
+    <!-- 협의 영역 -->
+    <div th:if="${cDto != null and #lists.size(cDto) > 0}">
+        <table border="1" style="text-align: center; width: 120px;">
+            <tr>
+            <td rowspan="3">협의</td>
+                <th:block th:each="item : ${cDto}">
+                    <td th:text="${#strings.contains(item.appro_line_name, ' ') ? item.appro_line_name.split(' ')[0] : '직원'}"></td>
+                </th:block>
+            </tr>
+            <tr>
+                <th:block th:each="item : ${cDto}">
+                    <td th:text="${#strings.contains(item.appro_line_name, ' ') ? item.appro_line_name.split(' ')[1] : item.appro_line_name}"></td>
+                </th:block>
+            </tr>
+            <tr>
+                <th:block th:each="item : ${cDto}">
+                    <td>
+                         <span>-</span>
+                    </td>
+                </th:block>
+            </tr>
+        </table>
+    </div>
+    <div>
+    	<table>
+    	<tr><td></td><td></td><td></td><td></td></tr>
+    	</table>
+    </div>
+    <!-- 결재 영역 -->
+    <div>
+        <table border="1" style="text-align: center; width: 250px;">
+            <!-- 직급 반복 -->
+            <tr>
+            <td rowspan="3">결재</td>
+                <th:block th:each="item : ${lDto}">
+                    <td th:text="${#strings.contains(item.appro_line_name, ' ') ? item.appro_line_name.split(' ')[0] : '직원'}"></td>
+                </th:block>
+            </tr>
+            
+            <!-- 이름 반복 -->
+            <tr>
+                <th:block th:each="item : ${lDto}">
+                    <td th:text="${#strings.contains(item.appro_line_name, ' ') ? item.appro_line_name.split(' ')[1] : item.appro_line_name}"></td>
+                </th:block>
+            </tr>
+
+            <!-- 서명 반복 -->
+            <tr>
+                <th:block th:each="item : ${lDto}">
+                    <td>
+                         <span>-</span>
+                    </td>
+                </th:block>
+            </tr>
+        </table>
+    </div>
+</div>
+<br>
+                                    
                                     <table class="table table-bordered">
                                         <tbody>
                                             <tr>
@@ -118,7 +182,7 @@
                                                 <td>반려사유</td>
                                                 <td colspan="3">
 											        <span th:if="${backReason != null}">
-											            <span th:text="${backReason.reason_back}">반려사유가 없습니다.</span>
+											            <span th:text="${backReason.appro_line_name+'('+backReason.emp_id+')'+'  -  '+ backReason.reason_back}"></span>
 											        </span>
 											        <span th:if="${backReason == null}"></span>
                                                 </td>
@@ -180,7 +244,7 @@
 										     th:if="${#lists.contains(lDto.?[appro_line_status == 1].![emp_id], #authentication.principal.dto.emp_id)} or
 										            ${#lists.contains(cDto.?[appro_line_status == 1].![emp_id], #authentication.principal.dto.emp_id)}">
 										    <button id="backApproveBtn" type="button" class="btn btn-danger" data-toggle="modal" data-target="#backApprove">반려</button>
-										    <button id="agreeApproveBtn" type="button" class="btn btn-primary update_board_button">승인</button>
+										    <button id="agreeApproveBtn" type="button" class="btn btn-primary update_board_button" data-toggle="modal" data-target="#agreeApprove">승인</button>
 										</div>
 										</div>
                                     </div>
@@ -209,26 +273,37 @@
 									</div>
 									<!-- 승인시 사용할 모달 -->
 									<div class="modal fade" id="agreeApprove" tabindex="-1" role="dialog" aria-labelledby="treeModalLabel" aria-hidden="true">
-									    <div class="modal-dialog" role="document">
-									        <div class="modal-content">
-									            <div class="modal-header">
-									                <h5 class="modal-title" id="agreeApproveLabel">승인 서명</h5>
-									                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-									                    <span aria-hidden="true">&times;</span>
-									                </button>
-									            </div>
-									            <div class="modal-body">
-									                로그인한 사용자의 "${#authentication.principal.dto.emp_id}" 로 signature 테이블에서 new_pic_name 조회 해서 radio 버튼과 묶어서
-									                나열 , 선택해서 승인시 approve_line 테이블에 approve_img 에 선택된 sign 이름 저장 
-									                
-									            </div>
-									            <div class="modal-footer">
-									                <button type="button" class="btn btn-primary" id="confirmSelection">승인</button>
-									                <button type="button" class="btn btn-secondary" data-dismiss="modal">닫기</button>
-									            </div>
-									        </div>
-									    </div>
-									</div>
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="agreeApproveLabel">승인 서명</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <!-- sign 정보가 있는 경우 -->
+            <div class="modal-body" th:if="${sDto != null and !sDto.isEmpty()}">
+                <div style="display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 20px;">
+                    <div th:each="sign : ${sDto}" style="text-align: center;">
+                        <input type="radio" name="signSelection" th:value="${sign.new_pic_name}">
+                        <label>
+                            <img th:src="@{'/signatures/' + ${sign.new_pic_name}}" alt="서명 이미지" style="max-width: 100px; max-height: 50px;"/>
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <!-- sign 정보가 없는 경우 -->
+            <div class="modal-body" th:if="${sDto == null or sDto.isEmpty()}">
+                <p style="text-align: center;">사용 가능한 서명이 없습니다.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" id="confirmSelection" th:disabled="${sDto == null or sDto.isEmpty()}">승인</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">닫기</button>
+            </div>
+        </div>
+    </div>
+</div>
+
                 <!-- ============================================================== -->
                 <!-- End PAge Content -->
                 <!-- ============================================================== -->
