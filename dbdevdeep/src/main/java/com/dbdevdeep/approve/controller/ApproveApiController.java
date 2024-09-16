@@ -96,6 +96,39 @@ public class ApproveApiController {
 	    return map;
 	}
 	
+	// 승인 처리
+	@ResponseBody
+	@PostMapping("/agreeApprove")
+	public Map<String,String> agreeApprove(@RequestBody Map<String, Object> requestData){
+		Map<String,String> resultMap = new HashMap<>();
+		resultMap.put("res_code", "404");
+		resultMap.put("res_msg", "승인 처리 중 오류가 발생했습니다.");
+		
+		try {
+			Long approNo = Long.valueOf((String) requestData.get("approNo"));
+	        String empId = (String) requestData.get("empId");
+	        String principalId = (String) requestData.get("principalId");
+	        String deptCode = (String) requestData.get("deptCode");
+	        String jobCode = (String) requestData.get("jobCode");
+			String signImage = (String) requestData.get("signImage");
+			
+			int result = approveService.agreeApproveLine(approNo, empId, principalId , deptCode, jobCode, signImage);
+
+	        if (result > 0) {
+	            resultMap.put("res_code", "200");
+	            resultMap.put("res_msg", "승인 처리되었습니다.");
+	        } else {
+	            resultMap.put("res_msg", "승인 처리가 실패하였습니다.");
+	        }
+	        
+		}catch (Exception e) {
+	        e.printStackTrace();
+	        resultMap.put("res_msg", "승인처리 중 오류가 발생했습니다.");
+	    }
+
+	    return resultMap;
+	}
+	
 	// 반려 처리
 	@ResponseBody
 	@PostMapping("/backApprove")
@@ -220,7 +253,7 @@ public class ApproveApiController {
 					String consultName = pullName(c);
 					int status = firstSet ? 0 : 1;
 					firstSet = true;
-					approveLineDtos.add(new ApproveLineDto(null, null, consultId, consultName ,order++, status, currentTime ,null, "Y"));
+					approveLineDtos.add(new ApproveLineDto(null, null, consultId, consultName ,order++, status, currentTime ,null, "Y" , null));
 				}
 			}
 			if(approval != null && !approval.isEmpty()) {
@@ -230,7 +263,7 @@ public class ApproveApiController {
 					String approvalName = pullName(a);
 					int status = firstSet ? 0 : 1;
 					firstSet = true;
-					approveLineDtos.add(new ApproveLineDto(null, null, approvalId , approvalName ,order++ , status , currentTime ,null, "N"));
+					approveLineDtos.add(new ApproveLineDto(null, null, approvalId , approvalName ,order++ , status , currentTime ,null, "N" , null));
 				}
 			}
 			

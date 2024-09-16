@@ -140,6 +140,50 @@ public class ApproveService {
 	    return result;
 	}
 	
+	// 승인 처리
+	@Transactional
+	public int agreeApproveLine(Long approNo, String empId, String principalId , String deptCode, String jobCode, String signImage) {
+		Approve approve = approveRepository.findByApproNo(approNo);
+	    Employee employee = employeeRepository.findByempId(empId); // 문서 직원
+	    Employee principalEmployee = employeeRepository.findByempId(principalId); // 결재를 하는 직원
+	    Department department = departmentRepository.findByDeptCode(deptCode);
+	    Job job = jobRepository.findByJobCode(jobCode);
+	    ApproveLine approveLine = approveLineRepository.findByApproveIdAndEmpId(approNo, principalId);
+	    
+	    ApproveLineDto alDto = new ApproveLineDto().toDto(approveLine);
+	    alDto.setAppro_line_no(approveLine.getApproLineNo());
+	    alDto.setAppro_line_status(2); // 승인 상태
+	    alDto.setAppro_line_sign(signImage);
+	    ApproveLine updateAl = alDto.toEntity(approve, principalEmployee);
+	    approveLineRepository.save(updateAl);
+	    
+	    int nowEmpNo = approveLine.getApproLineOrder();
+	    
+	    int maxEmpNo = approveLineRepository.findMaxOrderByApproNo(approNo);
+	    
+	    if(nowEmpNo < maxEmpNo) {
+	    	int nextEmpNo = nowEmpNo + 1;
+	    	ApproveLine nextApproveLine = approveLineRepository.findByApproNoAndOrder(approNo,nextEmpNo);
+	    	if(nextApproveLine != null) {
+	    		ApproveLineDto nextDto = new ApproveLineDto().toDto(nextApproveLine);
+	    		nextDto.setAppro_line_no(nextApproveLine.getApproLineNo());
+	    		nextDto.setAppro_line_status(1);
+	    		Employee nextEmployee = employeeRepository.findByempId(nextApproveLine.getEmployee().getEmpId());
+	    		ApproveLine nextEmpDto = nextDto.toEntity(approve, nextEmployee);
+	    		approveLineRepository.save(nextEmpDto);
+	    	}
+	    }else {
+	    	if(approve != null) {
+	    		ApproveDto aDto = new ApproveDto().toDto(approve);
+	    		aDto.setAppro_no(approNo);
+	    		aDto.setAppro_status(1);
+	    		Approve finalApprove = aDto.toEntity(employee, department, job, null);
+	    		approveRepository.save(finalApprove);
+	    	}
+	    }
+	    return 1;
+	}
+	
 	// 반려 처리
 	@Transactional
 	public int backApproveLine(ApproveLineDto approveLineDto, String empId, int vacType, LocalDateTime startDate, LocalDateTime endDate, String deptCode, String jobCode) {
@@ -357,7 +401,6 @@ public class ApproveService {
 	        aDto.setTemp_no(null); // TempEdit이 null일 경우
 	    }
 
-	    // 나머지 Approve 정보를 설정합니다.
 	    aDto.setAppro_no(approve.getApproNo());
 	    aDto.setEmp_id(approve.getEmployee().getEmpId());
 	    aDto.setDept_code(approve.getDepartment().getDeptCode());

@@ -23,6 +23,11 @@ public interface ApproveLineRepository extends JpaRepository<ApproveLine, Long>{
 
     @Query(value = "SELECT * FROM approve_line WHERE appro_no = :approveId AND emp_id = :empId", nativeQuery = true)
     ApproveLine findByApproveIdAndEmpId(@Param("approveId") Long approveId, @Param("empId") String empId);
-
-	
+    
+    @Query("SELECT MAX(a.approLineOrder) FROM ApproveLine a WHERE a.approve.id = :approNo")
+    int findMaxOrderByApproNo(@Param("approNo") Long approNo);
+    
+    @Query("SELECT a FROM ApproveLine a WHERE a.approve.id = :approNo AND a.approLineOrder = :approLineOrder")
+    ApproveLine findByApproNoAndOrder(@Param("approNo") Long approNo, @Param("approLineOrder") int approLineOrder);
+    
 }
