@@ -104,9 +104,6 @@
 				                            onclick="location.href='/notice'">목록</button>
 				                            
 			                        	</div>
-			                        	<th:block th:if="${dto.writer_id != readDto.emp_id}">
-				                        	
-			                        	</th:block>
 			                        	<th:block th:if="${dto.writer_id == readDto.emp_id}">
 				                        	<div class="col-6 d-flex justify-content-end">
 					                            <button type="button" class="btn waves-effect waves-light btn-light m-1" 
@@ -119,57 +116,59 @@
                                 </form>
                             </div>
                         </div>
-                        <!-- 1. 댓글창 생성여부 : false -->
-						<th:block th:if="${dto.is_cmt==0}">
-							<div class="card">
-		                    	<div class="card-body">
-		                    		<h4 class="card-title">댓글을 작성할 수 없는 게시글입니다.</h4>
-		                    	</div>
-		                    </div>
-						</th:block>
-						<!-- 1. 댓글창 생성여부 : true -->
-						<th:block th:if="${dto.is_cmt==1}">
-							<div class="card">
-		                    	<div class="card-body">
-		                    		<h4 class="card-title">댓글</h4>
-		                    		<hr>
-		                    		<!-- 댓글창 시작 -->
-									<div class="comment_list" id="comment_place">
-										댓글 리스트를 불러와서 if문으로 없으면 없다고 표시, 있으면 댓글창 출력
-										
-										<!-- <c:choose>
-											<c:when test="${empty c_list }">
-												<div class="card mb-4">
-														<div class="card-body">
-															<p>작성된 댓글이 없습니다.</p>
-														</div>
+                        
+	                        <!-- 댓글창 생성여부 : false -->
+							<th:block th:if="${dto.is_cmt==0}">
+								<div class="card">
+			                    	<div class="card-body">
+			                    		<h4 class="card-title">댓글을 작성할 수 없는 게시글입니다.</h4>
+			                    	</div>
+			                    </div>
+							</th:block>
+							<!-- 댓글창 생성여부 : true -->
+							<th:block th:if="${dto.is_cmt==1}">
+								<div class="card">
+			                    	<div class="card-body">
+			                    		<h4 class="card-title">댓글</h4>
+			                    		<hr>
+										<div class="comment_list" id="comment_place" th:fragment="comment_place">
+											<th:block th:if="${#lists.isEmpty(cmtDtoList)}">
+	                                       		<div class="card mb-4">
+													<div class="card-body">
+														<p>작성된 댓글이 없습니다.</p>
 													</div>
-											</c:when>
-											<c:otherwise>
-												<c:forEach items="${c_list }" var="c" varStatus="status">
-													<div class="card mb-4">
-														<div class="card-body">
-															<p>${c.comment_main }</p>
-															<div class="d-flex justify-content-between">
-																<div class="d-flex flex-row align-items-center">
-																	<p class="small mb-0 ms-2">${c.user_name }</p>
-																</div>
-																<div class="d-flex flex-row align-items-center">
-																	<p class="small text-muted mb-0">${c.reg_time }</p>
-																</div>
+												</div>
+	                                       	</th:block>
+											<th:block th:if="${!#lists.isEmpty(cmtDtoList)}">
+												<div class="card mb-4">
+													<div class="card-body" th:each="cmt, cmtStat : ${cmtDtoList}">
+														<p th:text="${cmt.cmt_content }"></p>
+														<div class="d-flex justify-content-between">
+															<div class="d-flex flex-row align-items-center">
+																<p class="small mb-0 ms-2" th:text="${cmt.writer_name }"></p>
+															</div>
+															<div class="d-flex flex-row align-items-center">
+																<p class="small text-muted mb-0" 
+																th:text="${#temporals.format(cmt.reg_time, 'yyyy.MM.dd')}"></p>
 															</div>
 														</div>
 													</div>
-												</c:forEach>
-											</c:otherwise>
-										</c:choose> -->
-									</div>
-						            <!-- 댓글창 종료 -->
-		                    	</div>
-		                    </div>
-						</th:block>
-	                    
-                    </div>                    
+												</div>
+											</th:block>
+										</div>
+					                    <!-- 댓글 입력창 시작 -->
+										<div data-mdb-input-init class="card-body">
+											<a id="cmt_writer_name" name="cmt_writer_name" th:text="${readDto.emp_name}"></a>
+											<input type="hidden" id="cmt_writer_id" name="cmt_writer_id" th:value="${readDto.emp_id}">
+											<textarea id="cmt_content" name="cmt_content" class="form-control" placeholder="댓글을 입력하세요." ></textarea>
+											<button class="btn btn-primary m-2" type="button" onclick="addComment();">댓글 작성</button>
+										</div>
+										<!-- 댓글 입력창 종료 -->
+			                    	</div>
+			                    </div>
+							</th:block>
+                        
+					</div>                    
                 </div>
                 <!-- ============================================================== -->
                 <!-- End Page Content -->
@@ -280,6 +279,116 @@
 		    })
 	
     }
+	</script>
+	<!-- 댓글 작성 -->
+	<script>
+	// 댓글 작성
+    const addComment = function(){
+		const noticeNo = document.getElementById('notice_no').value;
+		const cmtWriterId = document.getElementById('cmt_writer_id').value;
+		const cmtContent = document.getElementById('cmt_content').value.trim();
+		
+		// 댓글 유효성 검사
+		let vali_check = false;
+		let vali_text ="";
+	    		
+		if(cmtContent==""){
+			vali_text += "댓글 내용을 입력하세요.";
+			document.getElementById('cmt_content').focus();
+			// alert(vali_text);
+		}else{
+			vali_check = true;
+		}
+		
+		
+		if(vali_check == false){
+   			// vali_check == false
+   			
+   			Swal.fire({
+  				icon:'error',
+  				title:'실패',
+  				text: vali_text
+   			});
+   		} else{
+   			// vali_check == true
+   			
+   			// 데이터를 json화
+   			const commentData = {
+   				    notice_no: noticeNo,
+   				 	writer_id: cmtWriterId,
+   				 	cmt_content: cmtContent
+   				};
+   			// JSON 문자열로 변환
+   			const commentJSON = JSON.stringify(commentData);
+   			
+   			// CSRF(Cross-Site Request Forgery, 사이트 간 요청 위조)방지를 위한 토큰
+  			const csrfToken = document.getElementById("csrf_token").value;
+	  			
+   			// fetch
+   			fetch('/notice/comment',{
+   				method:'post',
+	  				headers:{
+	  					"Content-Type": "application/json;charset=utf-8",
+	  					"Accept": "application/json",
+	  					'X-CSRF-TOKEN': csrfToken
+	  				},
+	  				body:commentJSON
+   			})
+   			.then(response=>response.json())
+  			.then(data=>{
+  				if(data.res_code == '200'){
+  				// 성공 시 댓글 리스트를 비동기적으로 새로고침
+  			        Swal.fire({
+  			            icon: 'success',
+  			            title: '성공',
+  			            text: data.res_msg
+  			        }).then(() => {
+  			        	// 작성 댓글 초기화
+  			        	document.getElementById('cmt_content').value = "";
+  			            // 댓글 리스트 갱신 함수 호출
+  			            refreshCommentSection(data.notice_no);  // 게시글 번호를 인자로 넘김
+  			        });
+  				} else{
+  					Swal.fire({
+  						icon:'error',
+  						title:'실패',
+  						text: data.res_msg
+  					});
+  				}
+  			})
+   		}
+		
+	}
+	
+ 	// 댓글 리스트 영역을 비동기적으로 새로고침하는 함수
+    const refreshCommentSection = function(noticeNo) {
+        // 댓글 리스트를 불러올 경로 설정 (게시글 번호를 포함)
+        const url = `/notice/comment/${noticeNo}`;
+        
+     	// CSRF(Cross-Site Request Forgery, 사이트 간 요청 위조)방지를 위한 토큰
+		const csrfToken = document.getElementById("csrf_token").value;
+
+        // 서버에서 새로운 댓글 리스트 HTML을 가져와서 교체
+        fetch(url, {
+            method: 'GET',
+            headers: {
+                'X-CSRF-TOKEN': csrfToken
+            } 
+        })
+        .then(response => response.text())  // 서버로부터 HTML 형태로 응답 받음
+        .then(html => {
+            // comment_place 영역을 새로운 HTML로 업데이트
+            document.getElementById('comment_place').innerHTML = html;
+        })
+        .catch(error => {
+        	Swal.fire({
+					icon:'error',
+					title:'실패',
+					text: '댓글목록 갱신 중 오류 발생 : ',error
+				});
+        });
+    };
+
 	</script>
     <!-- ============================================================== -->
     <!-- All Jquery -->

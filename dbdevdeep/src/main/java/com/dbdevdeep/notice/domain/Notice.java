@@ -70,5 +70,13 @@ public class Notice {
 	// 공지사항 읽음확인
 	@OneToMany(mappedBy = "notice")
 	private List<NoticeReadCheck> noticeReadCheck;
-		
+	
+	// 공지사항 첨부파일
+	@OneToMany(mappedBy = "notice")
+	private List<NoticeAttachment> noticeAttachment;
+	
+	// 공지사항 댓글
+	@OneToMany(mappedBy = "notice")
+	private List<NoticeComment> noticeComment;
+	
 }

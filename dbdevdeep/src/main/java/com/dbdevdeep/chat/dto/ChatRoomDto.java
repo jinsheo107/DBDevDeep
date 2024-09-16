@@ -5,7 +5,6 @@ import java.time.LocalDateTime;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import com.dbdevdeep.chat.domain.ChatRoom;
-import com.dbdevdeep.notice.domain.Notice;
 
 import groovy.transform.ToString;
 import lombok.AllArgsConstructor;

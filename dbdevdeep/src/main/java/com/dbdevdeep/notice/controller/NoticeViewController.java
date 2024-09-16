@@ -13,8 +13,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 import com.dbdevdeep.employee.domain.EmployeeDto;
 import com.dbdevdeep.employee.service.EmployeeService;
-import com.dbdevdeep.notice.domain.NoticeReadCheck;
+import com.dbdevdeep.notice.dto.NoticeCommentDto;
 import com.dbdevdeep.notice.dto.NoticeDto;
+import com.dbdevdeep.notice.service.NoticeCommentService;
 import com.dbdevdeep.notice.service.NoticeService;
 
 @Controller
@@ -23,10 +24,13 @@ public class NoticeViewController {
 	// 의존성 주입
 	private final NoticeService noticeService;
 	private final EmployeeService employeeService;
+	private final NoticeCommentService noticeCommentService;
 	@Autowired
-	public NoticeViewController(NoticeService noticeService, EmployeeService employeeService) {
+	public NoticeViewController(NoticeService noticeService, EmployeeService employeeService, 
+			NoticeCommentService noticeCommentService) {
 		this.noticeService = noticeService;
 		this.employeeService = employeeService;
+		this.noticeCommentService = noticeCommentService;
 	}
 
 	// 리스트 출력
@@ -70,8 +74,12 @@ public class NoticeViewController {
 		NoticeDto dto = noticeService.selectNoticeOne(notice_no);
 		model.addAttribute("dto", dto);
 		
+		// 3. 댓글 조회
+		List<NoticeCommentDto> cmtDtoList = noticeCommentService.selectNoticeCommentList(notice_no);
+		model.addAttribute("cmtDtoList", cmtDtoList);
+		
 		if(dto!=null) {
-			// 3. 읽음 확인 추가
+			// 4. 읽음 확인 추가
 			noticeService.readCheck(read_id, notice_no);			
 		}
 		
