@@ -2,24 +2,14 @@
 <html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{include/employee_layout}">
 <th:block layout:fragment="content">
 	<style>
-div.dataTables_wrapper div.dataTables_paginate ul.pagination {
-	margin: 2px 0;
-	white-space: nowrap;
-	justify-content: center;
-}
-</style>
-
-	<!-- ============================================================== -->
-	<!-- End Left Sidebar - style you can find in sidebar.scss  -->
-	<!-- ============================================================== -->
-	<!-- ============================================================== -->
-	<!-- Page wrapper  -->
-	<!-- ============================================================== -->
+		div.dataTables_wrapper div.dataTables_paginate ul.pagination {
+			margin: 2px 0;
+			white-space: nowrap;
+			justify-content: center;
+		}
+	</style>
 	<div class="page-wrapper">
 		<div class="container-fluid">
-			<!-- ============================================================== -->
-			<!-- Start Page Content -->
-			<!-- ============================================================== -->
 			<div class="row">
 				<div class="col-12">
 					<div class="card">
@@ -57,7 +47,7 @@ div.dataTables_wrapper div.dataTables_paginate ul.pagination {
 												        <td scope="row" th:text="${historyStat.count}"></td>
 												        <td th:text="${history.t_year + ' 학년도'}"></td>
 												        <td th:text="${history.total - history.is_assign == 0 ? '배정완료' : '미배정(' + (history.total - history.is_assign) + ')'}"></td>
-												        <td><a th:href="@{/class-year/{t_year}(t_year=${history.t_year})}">이동하기</a></td>
+												        <td><a th:href="@{/grade-class/{t_year}(t_year=${history.t_year})}">이동하기</a></td>
 											    </tr>
 										</th:block>
 									</tbody>
@@ -105,61 +95,11 @@ div.dataTables_wrapper div.dataTables_paginate ul.pagination {
 				<!-- /.modal-dialog -->
 			</div>
 			<!-- /.modal -->
-			<!-- ============================================================== -->
-			<!-- End PAge Content -->
-			<!-- ============================================================== -->
-			<!-- ============================================================== -->
-			<!-- Right sidebar -->
-			<!-- ============================================================== -->
-			<!-- .right-sidebar -->
-			<!-- ============================================================== -->
-			<!-- End Right sidebar -->
-			<!-- ============================================================== -->
 		</div>
-		<!-- ============================================================== -->
-		<!-- End Container fluid  -->
-		<!-- ============================================================== -->
-		<!-- ============================================================== -->
-		<!-- footer -->
-		<!-- ============================================================== -->
 		<footer class="footer text-center text-muted">
 			All Rights Reserved by Adminmart. Designed and Developed by <a href="https://wrappixel.com">WrapPixel</a>.
 		</footer>
-		<!-- ============================================================== -->
-		<!-- End footer -->
-		<!-- ============================================================== -->
 	</div>
-	<!-- ============================================================== -->
-	<!-- End Page wrapper  -->
-	<!-- ============================================================== -->
-	<!-- ============================================================== -->
-	<!-- End Wrapper -->
-	<!-- ============================================================== -->
-	<!-- End Wrapper -->
-	<!-- ============================================================== -->
-	<!-- All Jquery -->
-	<!-- ============================================================== -->
-	<script src="/assets/libs/jquery/dist/jquery.min.js"></script>
-	<!-- Bootstrap tether Core JavaScript -->
-	<script src="/assets/libs/popper.js/dist/umd/popper.min.js"></script>
-	<script src="/assets/libs/bootstrap/dist/js/bootstrap.min.js"></script>
-	<!-- apps -->
-	<!-- apps -->
-	<script src="/dist/js/app-style-switcher.js"></script>
-	<script src="/dist/js/feather.min.js"></script>
-	<!-- slimscrollbar scrollbar JavaScript -->
-	<script src="/assets/libs/perfect-scrollbar/dist/perfect-scrollbar.jquery.min.js"></script>
-	<script src="/assets/extra-libs/sparkline/sparkline.js"></script>
-	<!--Wave Effects -->
-	<!-- themejs -->
-	<!--Menu sidebar -->
-	<script src="/dist/js/sidebarmenu.js"></script>
-	<!--Custom JavaScript -->
-	<script src="/dist/js/custom.min.js"></script>
-	<!--This page plugins -->
-	<script src="/assets/extra-libs/datatables.net/js/jquery.dataTables.min.js"></script>
-	<script src="/dist/js/pages/datatable/datatable-basic.init.js"></script>
-
 	<script>
         // 현재 년도를 기준으로 100년 전부터 10년 후까지의 년도 선택
         const startYear = new Date().getFullYear() - 100;
@@ -257,7 +197,7 @@ div.dataTables_wrapper div.dataTables_paginate ul.pagination {
     
     <script>
 	    function redirectToUrl(t_year) {
-	    	var url = '/class-year/' + t_year;
+	    	var url = '/grade-class/' + t_year;
             window.location.href = url;
 	    }
 	</script>
