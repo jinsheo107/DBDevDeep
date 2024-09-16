@@ -102,7 +102,7 @@ public class ApproveService {
 	        if (vacationRequest != null) {
 	            // 휴가 유형 확인 및 복구할 시간 계산
 	            int vacType = vacationRequest.getVacType();
-	            if (vacType == 0 || vacType == 3 || vacType == 6 || vacType == 7 || vacType == 8) {
+	            if (vacType == 0 || vacType == 3 || vacType == 6 || vacType == 7 ) {
 	                // 복구할 시간 계산
 	                int hoursToRestore = minusVac(new VacationRequestDto().toDto(vacationRequest));
 
@@ -195,31 +195,28 @@ public class ApproveService {
 	    Job job = jobRepository.findByJobCode(jobCode);
 	    ApproveLine approveLine = approveLineRepository.findByApproveIdAndEmpId(approveLineDto.getAppro_no(), approveLineDto.getEmp_id());
 
-	    if (approve == null || employee == null || principalEmployee == null || department == null || job == null) {
-	        return 0; // 필수 데이터가 없으면 작업 중단
-	    }
-	    
-
 	    // 2. Approve 엔티티 업데이트
 	    ApproveDto approveDto = new ApproveDto().toDto(approve); // 기존 Approve를 DTO로 변환
 	    approveDto.setAppro_status(2); // 반려 상태로 설정
 	    Approve updatedApprove = approveDto.toEntity(employee, department, job, null); // DTO를 다시 엔티티로 변환
 	    approveRepository.save(updatedApprove); // 업데이트된 엔티티 저장
 
+	    String backSign = "반려";
 	    // 3. ApproveLine 엔티티 업데이트
 	    ApproveLineDto alDto = new ApproveLineDto().toDto(approveLine);
 	    alDto.setAppro_line_no(approveLine.getApproLineNo());
 	    alDto.setAppro_line_status(3); // 반려 상태
 	    alDto.setReason_back(approveLineDto.getReason_back()); // 반려 사유 설정
+	    alDto.setAppro_line_sign(backSign);
 	    ApproveLine updateAl = alDto.toEntity(approve, principalEmployee);
 	    approveLineRepository.save(updateAl); // 업데이트된 엔티티 저장
 
 	    // 4. Employee 엔티티 업데이트 (휴가 시간 계산 및 반영)
 
 	 // 6. 휴가 시간 차감 로직 추가
-	    if (vacType == 0 || vacType == 3 || vacType == 6 || vacType == 7 || vacType == 8) {
+	    if (vacType == 0 || vacType == 3 || vacType == 6 || vacType == 7 ) {
 	        // 사용자가 선택한 휴가 유형에 따른 차감 시간 계산
-	        int plusHour = plusVac(startDate , endDate);
+	        int plusHour = plusVac(vacType ,startDate , endDate);
 
 	        // 기존 vacation_hour에서 차감
 	        EmployeeDto employeeDto = new EmployeeDto().toDto(employee); // Employee 객체를 DTO로 변환
@@ -233,7 +230,7 @@ public class ApproveService {
 	        employeeRepository.save(employeeDto.toEntity());
 	    }
 	    
-	    return 1; // 성공
+	    return 1; 
 	}
 
 
@@ -347,6 +344,7 @@ public class ApproveService {
 	            .appro_permit_time(a.getApproPermitTime())
 	            .reason_back(a.getReasonBack())
 	            .consult_yn(a.getConsultYn()) 
+	            .appro_line_sign(a.getApproLineSign())
 	            .build())
 	        .collect(Collectors.toList());
 
@@ -360,13 +358,14 @@ public class ApproveService {
 	            .appro_permit_time(a.getApproPermitTime())
 	            .reason_back(a.getReasonBack())
 	            .consult_yn(a.getConsultYn())
+	            .appro_line_sign(a.getApproLineSign())
 	            .build())
 	        .collect(Collectors.toList());
 
 	    detailMap.put("lDto", approveLineList); // 결재자 리스트
 	    detailMap.put("cDto", consultLineList); // 협의자 리스트
 	    
-	    // 3. Reference를 가져옵니다.
+	    // 3. Reference
 	    List<Reference> reference = referenceRepository.findByApprove(approve);
 	    List<ReferenceDto> refList = reference.stream()
 	        .map(r -> ReferenceDto.builder()
@@ -376,7 +375,7 @@ public class ApproveService {
 	        .collect(Collectors.toList());
 	    detailMap.put("rDto", refList);
 
-	    // 4. VacationRequest를 가져옵니다.
+	    // 4. VacationRequest
 	    VacationRequest vRequest = vacationRequestRepository.findByApprove(approve);
 	    VacationRequestDto vDto = null;
 	    if (vRequest != null) {
@@ -429,10 +428,6 @@ public class ApproveService {
 	    TempEdit tempEdit = null;
 	    if (approveDto.getTemp_no() != null) {  // temp_no가 null이 아닐 때만 findById를 호출합니다.
 	        tempEdit = tempEditRepository.findById(approveDto.getTemp_no()).orElse(null);
-	    }
-	    
-	    if (employee == null || department == null || job == null) {
-	        return 0;
 	    }
 	    
 			// 1. approve 테이블에 저장
@@ -497,7 +492,7 @@ public class ApproveService {
 
             // 특정 휴가 유형에 대해 차감 로직을 수행
             if ((oriVacDto.getVac_type() == 0 || oriVacDto.getVac_type() == 3 || oriVacDto.getVac_type() == 6 ||
-                 oriVacDto.getVac_type() == 7 || oriVacDto.getVac_type() == 8) &&
+                 oriVacDto.getVac_type() == 7 ) &&
                 (oriVacDto.getVac_type() != newVacDto.getVac_type() ||
                  !oriVacDto.getStart_time().equals(newVacDto.getStart_time()) ||
                  !oriVacDto.getEnd_time().equals(newVacDto.getEnd_time()))) {
@@ -508,7 +503,7 @@ public class ApproveService {
 
             // 새로운 휴가 유형에 대해 차감 로직을 수행
             if (newVacDto.getVac_type() == 0 || newVacDto.getVac_type() == 3 || newVacDto.getVac_type() == 6 ||
-                newVacDto.getVac_type() == 7 || newVacDto.getVac_type() == 8) {
+                newVacDto.getVac_type() == 7 ) {
 
                 // 변경 후 시간 차감
                 vacHours -= minusVac(newVacDto);
@@ -601,13 +596,13 @@ public class ApproveService {
 
 	    // 6. 휴가 시간 차감 로직 추가
 	    int vacationType = vacationRequestDto.getVac_type();
-	    if (vacationType == 0 || vacationType == 3 || vacationType == 6 || vacationType == 7 || vacationType == 8) {
+	    if (vacationType == 0 || vacationType == 3 || vacationType == 6 || vacationType == 7 ) {
 	        // 사용자가 선택한 휴가 유형에 따른 차감 시간 계산
-	        int hoursToDeduct = minusVac(vacationRequestDto);
+	        int minusHour = minusVac(vacationRequestDto);
 
 	        // 기존 vacation_hour에서 차감
 	        EmployeeDto employeeDto = new EmployeeDto().toDto(employee); // Employee 객체를 DTO로 변환
-	        int updatedVacationHour = employeeDto.getVacation_hour() - hoursToDeduct;
+	        int updatedVacationHour = employeeDto.getVacation_hour() - minusHour;
 	        employeeDto.setVacation_hour(Math.max(updatedVacationHour, 0)); // 0 미만으로 가지 않도록 설정
 
 	        employeeDto.setDepartment(department); // Department 엔티티 설정
@@ -625,41 +620,56 @@ public class ApproveService {
 	private int minusVac(VacationRequestDto vacationRequestDto) {
 	    LocalDateTime startDate = vacationRequestDto.getStart_time();
 	    LocalDateTime endDate = vacationRequestDto.getEnd_time();
+	    int vacType = vacationRequestDto.getVac_type(); 
+	    int hoursToDeduct = 0; 
 
 	    // 두 날짜의 연도, 월, 일이 동일한 경우
 	    if (startDate.toLocalDate().equals(endDate.toLocalDate())) {
 	        // 시작과 끝의 시간이 동일하면 하루(8시간)
 	        if (startDate.toLocalTime().equals(endDate.toLocalTime())) {
-	            return 8;
+	            hoursToDeduct = 8;
 	        } else {
 	            // 시간이 다르면, 시간 차이만큼 차감
-	            return endDate.getHour() - startDate.getHour();
+	            hoursToDeduct = endDate.getHour() - startDate.getHour();
 	        }
 	    } else {
 	        // 날짜가 다를 경우 전체 일수 * 8 시간 계산
-	        long daysBetween = java.time.Duration.between(startDate.toLocalDate().atStartOfDay(), endDate.toLocalDate().atStartOfDay()).toDays() + 1; // 포함된 일 수
-	        return (int) (daysBetween * 8);
+	        long daysBetween = java.time.Duration.between(startDate.toLocalDate().atStartOfDay(), endDate.toLocalDate().atStartOfDay()).toDays() + 1; 
+	        hoursToDeduct = (int) (daysBetween * 8);
 	    }
+
+	    // 반차의 경우 차감 시간을 4로 설정
+	    if (vacType == 6 || vacType == 7) {
+	        hoursToDeduct = 4;
+	    }
+
+	    return hoursToDeduct;
 	}
 	
 	// 반려시 추가시간 메서드
-		private int plusVac(LocalDateTime startTime , LocalDateTime endTime) {
+	private int plusVac(int vacType, LocalDateTime startTime, LocalDateTime endTime) {
+	    int hoursToAdd = 0; 
 
-		    // 두 날짜의 연도, 월, 일이 동일한 경우
-		    if (startTime.toLocalDate().equals(endTime.toLocalDate())) {
-		        // 시작과 끝의 시간이 동일하면 하루(8시간)
-		        if (startTime.toLocalTime().equals(endTime.toLocalTime())) {
-		            return 8;
-		        } else {
-		            // 시간이 다르면, 시간 차이만큼 차감
-		            return endTime.getHour() - startTime.getHour();
-		        }
-		    } else {
-		        // 날짜가 다를 경우 전체 일수 * 8 시간 계산
-		        long daysBetween = java.time.Duration.between(startTime.toLocalDate().atStartOfDay(), endTime.toLocalDate().atStartOfDay()).toDays() + 1; // 포함된 일 수
-		        return (int) (daysBetween * 8);
-		    }
-		}
-	
-	
+	    // 두 날짜의 연도, 월, 일이 동일한 경우
+	    if (startTime.toLocalDate().equals(endTime.toLocalDate())) {
+	        // 시작과 끝의 시간이 동일하면 하루(8시간)
+	        if (startTime.toLocalTime().equals(endTime.toLocalTime())) {
+	            hoursToAdd = 8;
+	        } else {
+	            // 시간이 다르면, 시간 차이만큼 추가
+	            hoursToAdd = endTime.getHour() - startTime.getHour();
+	        }
+	    } else {
+	        // 날짜가 다를 경우 전체 일수 * 8 시간 계산
+	        long daysBetween = java.time.Duration.between(startTime.toLocalDate().atStartOfDay(), endTime.toLocalDate().atStartOfDay()).toDays() + 1; 
+	        hoursToAdd = (int) (daysBetween * 8);
+	    }
+
+	    // vacType이 6 또는 7일 경우 추가 시간을 4로 설정
+	    if (vacType == 6 || vacType == 7) {
+	        hoursToAdd = 4;
+	    }
+
+	    return hoursToAdd;
+	}
 }

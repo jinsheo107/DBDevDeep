@@ -75,7 +75,7 @@
                                         <th:block th:if="${!#lists.isEmpty(refList)}">
                                         	<tr th:each="ref, approveStat : ${refList}">
                                         		<td>
-                                        		 <a th:href="@{approDetail/{no}(no=${ref.appro_no})}" th:text = "${ref.appro_title}"></a>
+                                        		 <a th:href="@{refDetail/{no}(no=${ref.appro_no})}" th:text = "${ref.appro_title}"></a>
                                         		</td>
                                         		<td th:text="${ref.appro_time}"></td>
                                         		<td th:text="${ref.appro_name}"></td>

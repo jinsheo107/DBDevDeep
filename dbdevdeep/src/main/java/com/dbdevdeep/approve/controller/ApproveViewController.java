@@ -99,6 +99,32 @@ public class ApproveViewController {
 		model.addAllAttributes(detailMap);
 		return "approve/approDetail";
 	}
+	
+	// 참조 상세
+		@GetMapping("/refDetail/{appro_no}")
+		public String refBoardOne(Model model, @PathVariable("appro_no") Long approNo) {
+			Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+			String username = authentication.getName();
+			
+			// 결재 정보 상세
+			Map<String, Object> detailMap = approveService.getApproveDetail(approNo);
+			
+			// 반려 사유 정보 가져오기
+			try {
+		        ApproveLineDto backReason = approveLineService.approBackReason(approNo);
+		        detailMap.put("backReason", backReason); // 반려 사유를 Map에 추가
+		    } catch (NoSuchElementException e) {
+		        // 반려 정보가 없는 경우 null 추가
+		        detailMap.put("backReason", null);
+		    }
+			
+			// 사인정보 가져오기 
+			List<MySignDto> signDto = approveService.signList(username);
+			
+			model.addAttribute("sDto", signDto);
+			model.addAllAttributes(detailMap);
+			return "approve/refDetail";
+		}
 
 	// 결재 수정
 	@GetMapping("/approUpdate/{appro_no}")
