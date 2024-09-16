@@ -14,9 +14,12 @@ import com.dbdevdeep.student.domain.Student;
 import com.dbdevdeep.student.domain.StudentClass;
 import com.dbdevdeep.student.domain.StudentClassDto;
 import com.dbdevdeep.student.domain.StudentDto;
+import com.dbdevdeep.student.domain.Subject;
+import com.dbdevdeep.student.domain.SubjectDto;
 import com.dbdevdeep.student.repository.ParentRepository;
 import com.dbdevdeep.student.repository.StudentClassRepository;
 import com.dbdevdeep.student.repository.StudentRepository;
+import com.dbdevdeep.student.repository.SubjectRepository;
 
 import jakarta.transaction.Transactional;
 
@@ -28,13 +31,15 @@ public class StudentService {
 	private final TeacherHistoryRepository teacherHistoryRepository;
 	private final StudentClassRepository studentClassRepository;
 	private final ParentRepository parentRepository;
+	private final SubjectRepository subjectRepository;
 	
 	@Autowired
-	public StudentService(StudentRepository studentRepository, TeacherHistoryRepository teacherHistoryRepository, StudentClassRepository studentClassRepository, ParentRepository parentRepository) {
+	public StudentService(StudentRepository studentRepository, TeacherHistoryRepository teacherHistoryRepository, StudentClassRepository studentClassRepository, ParentRepository parentRepository,SubjectRepository subjectRepository) {
 		this.studentRepository = studentRepository;
 		this.teacherHistoryRepository = teacherHistoryRepository;
 		this.studentClassRepository = studentClassRepository;
 		this.parentRepository = parentRepository;
+		this.subjectRepository = subjectRepository;
 	}
 	
 	// 입력 form에서 받아온 dto data를 Student로 바꿔서 저장하는 절차
@@ -51,9 +56,7 @@ public class StudentService {
 				.studentNewPic(dto.getStudent_new_pic())
 				.studentStatus(dto.getStudent_status())
 				.build();
-		
 		return studentRepository.save(student);
-				
 	}
 	
 	// 학생리스트를 옮겨주기 위해 dto로 변환하여 담아주는 절차
@@ -70,7 +73,6 @@ public class StudentService {
 	        dto.setStudent_no(student.getStudentNo());
 	        dto.setStudent(student);
 	        dto.setStudent_id(studentClass != null ? studentClass.getStudentId() : null);
-	        
 	        if (studentClass != null) {
 	            dto.setTeacher_history(studentClass.getTeacherHistory()); // teacher_history 설정
 	        } else {
@@ -199,5 +201,23 @@ public class StudentService {
 		
 		return parentRepository.save(parent); 
 	 }
+	
+	// 과목 리스트 페이지에서 목록 조회
+	public List<SubjectDto> mySubjectList(String emp_name){
+		List<Subject> subjectList = subjectRepository.findBysubjectTeacher(emp_name);
+		List<SubjectDto> subjectDtoList = new ArrayList<SubjectDto>();
+		for(Subject s : subjectList) {
+			SubjectDto dto = new SubjectDto().toDto(s);
+			subjectDtoList.add(dto);
+		}
+		return subjectDtoList;
+	}
+	
+	// 과목 상세 정보 조회
+		public SubjectDto selectSubjectOne(Long subject_no) {
+			Subject subjectDetail = subjectRepository.findBysubjectNo(subject_no);
+			SubjectDto dto = new SubjectDto().toDto(subjectDetail);
+			return dto;
+		}
 	
 }

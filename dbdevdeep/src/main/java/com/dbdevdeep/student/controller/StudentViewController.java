@@ -5,6 +5,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,6 +18,7 @@ import com.dbdevdeep.employee.service.TeacherHistoryService;
 import com.dbdevdeep.student.domain.ParentDto;
 import com.dbdevdeep.student.domain.StudentClassDto;
 import com.dbdevdeep.student.domain.StudentDto;
+import com.dbdevdeep.student.domain.SubjectDto;
 import com.dbdevdeep.student.service.StudentService;
 
 @Controller
@@ -99,4 +103,22 @@ public class StudentViewController {
 		return "student/student_parent";
 	}
 	
+	// 과목 리스트 조회 페이지로 이동
+	@GetMapping("/student/subject")
+	public String listSubjectPage(Model model, SubjectDto dto) {
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		User user = (User)authentication.getPrincipal();
+		
+		List<SubjectDto> resultList = studentService.mySubjectList(user.getUsername());
+		model.addAttribute("resultList",resultList);
+		return "student/subject_list";
+	}
+
+	// 과목 정보 상세 페이지로 이동
+		@GetMapping("/subject/{subject_no}")
+		public String selectSubjectOne(Model model, @PathVariable("subject_no") Long subject_no) {
+			SubjectDto dto = studentService.selectSubjectOne(subject_no);
+			model.addAttribute("dto",dto);
+			return "student/subject_detail";
+		}
 }
