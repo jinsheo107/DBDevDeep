@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.dbdevdeep.employee.domain.EmployeeDto;
+import com.dbdevdeep.employee.domain.EmployeeStatusDto;
 import com.dbdevdeep.employee.domain.MySignDto;
 import com.dbdevdeep.employee.domain.TeacherHistoryDto;
 import com.dbdevdeep.employee.domain.TransferDto;
@@ -130,10 +131,14 @@ public class EmployeeViewController {
 		
 		List<TeacherHistoryDto> thDtoList = teacherHistoryService.selectTeacherHistoryByEmployee(emp_id);
 		List<TransferDto> tDtoList = employeeService.selectTransferHistoryByEmployee(emp_id);
+		List<EmployeeStatusDto> restDtoList = employeeService.selectRestHistoryByEmployee(emp_id);
+		List<EmployeeStatusDto> leaveDtoList = employeeService.selectLeaveHistoryByEmployee(emp_id);
 					
 		model.addAttribute("tDtoList", tDtoList);
 		model.addAttribute("thDtoList", thDtoList);
 		model.addAttribute("empDto", empDto);
+		model.addAttribute("restDtoList", restDtoList);
+		model.addAttribute("leaveDtoList", leaveDtoList);
 		
 		return "employee/employee_detail";
 	}

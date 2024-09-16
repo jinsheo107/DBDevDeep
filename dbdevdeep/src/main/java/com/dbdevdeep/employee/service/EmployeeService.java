@@ -1,5 +1,6 @@
 package com.dbdevdeep.employee.service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -100,12 +101,12 @@ public class EmployeeService {
 
 			Employee e = Employee.builder().empId(emp_id).empPw(dto.getEmp_pw()).govId(dto.getGov_id())
 					.empName(dto.getEmp_name()).empRrn(dto.getEmp_rrn()).empPhone(dto.getEmp_phone())
-					.oriPicName(dto.getOri_pic_name()).newPicName(dto.getNew_pic_name()).empPostCode(dto.getEmp_post_code())
-					.empAddr(dto.getEmp_addr()).empDetailAddr(dto.getEmp_detail_addr())
-					.empInternalPhone(dto.getEmp_internal_phone()).vacationHour(dto.getVacation_hour())
-					.hireDate(dto.getHire_date()).endDate(dto.getEnd_date()).entStatus(dto.getEnt_status())
-					.loginYn(dto.getLogin_yn()).accountStatus(dto.getAccount_status()).chatStatusMsg(dto.getChat_status_msg())
-					.job(job).department(dept).build();
+					.oriPicName(dto.getOri_pic_name()).newPicName(dto.getNew_pic_name())
+					.empPostCode(dto.getEmp_post_code()).empAddr(dto.getEmp_addr())
+					.empDetailAddr(dto.getEmp_detail_addr()).empInternalPhone(dto.getEmp_internal_phone())
+					.vacationHour(dto.getVacation_hour()).hireDate(dto.getHire_date()).endDate(dto.getEnd_date())
+					.entStatus(dto.getEnt_status()).loginYn(dto.getLogin_yn()).accountStatus(dto.getAccount_status())
+					.chatStatusMsg(dto.getChat_status_msg()).job(job).department(dept).build();
 
 			result = employeeRepository.save(e);
 
@@ -235,8 +236,9 @@ public class EmployeeService {
 						MySignDto msDto = new MySignDto().toDto(signList.get(i));
 
 						MySign ms = MySign.builder().signNo(msDto.getSign_no()).signTitle(msDto.getSign_title())
-								.signType(msDto.getSign_type()).oriPicName(msDto.getOri_pic_name()).newPicName(msDto.getNew_pic_name())
-								.regTime(msDto.getReg_time()).modTime(msDto.getMod_time()).repYn("N").employee(employee).build();
+								.signType(msDto.getSign_type()).oriPicName(msDto.getOri_pic_name())
+								.newPicName(msDto.getNew_pic_name()).regTime(msDto.getReg_time())
+								.modTime(msDto.getMod_time()).repYn("N").employee(employee).build();
 
 						mySignRepository.save(ms);
 					}
@@ -248,9 +250,10 @@ public class EmployeeService {
 				dto.setMod_time(ldt);
 			}
 
-			MySign ms = MySign.builder().signNo(dto.getSign_no()).signTitle(dto.getSign_title()).signType(dto.getSign_type())
-					.oriPicName(dto.getOri_pic_name()).newPicName(dto.getNew_pic_name()).regTime(dto.getReg_time())
-					.modTime(dto.getMod_time()).repYn(dto.getRep_yn() == null ? "N" : "Y").employee(employee).build();
+			MySign ms = MySign.builder().signNo(dto.getSign_no()).signTitle(dto.getSign_title())
+					.signType(dto.getSign_type()).oriPicName(dto.getOri_pic_name()).newPicName(dto.getNew_pic_name())
+					.regTime(dto.getReg_time()).modTime(dto.getMod_time()).repYn(dto.getRep_yn() == null ? "N" : "Y")
+					.employee(employee).build();
 
 			mySignRepository.save(ms);
 
@@ -301,12 +304,12 @@ public class EmployeeService {
 
 		Employee emp = Employee.builder().empId(temp.getEmp_id()).empPw(temp.getEmp_pw()).govId(temp.getGov_id())
 				.empName(temp.getEmp_name()).empRrn(temp.getEmp_rrn()).empPhone(temp.getEmp_phone())
-				.oriPicName(temp.getOri_pic_name()).newPicName(temp.getNew_pic_name()).empPostCode(temp.getEmp_post_code())
-				.empAddr(temp.getEmp_addr()).empDetailAddr(temp.getEmp_detail_addr())
-				.empInternalPhone(temp.getEmp_internal_phone()).vacationHour(temp.getVacation_hour())
-				.hireDate(temp.getHire_date()).endDate(temp.getEnd_date()).entStatus(temp.getEnt_status())
-				.loginYn(temp.getLogin_yn()).accountStatus(temp.getAccount_status()).chatStatusMsg(temp.getChat_status_msg())
-				.job(job).department(dept).build();
+				.oriPicName(temp.getOri_pic_name()).newPicName(temp.getNew_pic_name())
+				.empPostCode(temp.getEmp_post_code()).empAddr(temp.getEmp_addr())
+				.empDetailAddr(temp.getEmp_detail_addr()).empInternalPhone(temp.getEmp_internal_phone())
+				.vacationHour(temp.getVacation_hour()).hireDate(temp.getHire_date()).endDate(temp.getEnd_date())
+				.entStatus(temp.getEnt_status()).loginYn(temp.getLogin_yn()).accountStatus(temp.getAccount_status())
+				.chatStatusMsg(temp.getChat_status_msg()).job(job).department(dept).build();
 
 		Employee result = employeeRepository.save(emp);
 
@@ -328,13 +331,13 @@ public class EmployeeService {
 		Job job = jobRepository.findByJobCode(temp.getJob_code());
 
 		Employee emp = Employee.builder().empId(temp.getEmp_id()).empPw(passwordEncoder.encode(newPw))
-				.govId(temp.getGov_id()).empName(temp.getEmp_name()).empRrn(temp.getEmp_rrn()).empPhone(temp.getEmp_phone())
-				.oriPicName(temp.getOri_pic_name()).newPicName(temp.getNew_pic_name()).empPostCode(temp.getEmp_post_code())
-				.empAddr(temp.getEmp_addr()).empDetailAddr(temp.getEmp_detail_addr())
-				.empInternalPhone(temp.getEmp_internal_phone()).vacationHour(temp.getVacation_hour())
-				.hireDate(temp.getHire_date()).endDate(temp.getEnd_date()).entStatus(temp.getEnt_status())
-				.loginYn(temp.getLogin_yn()).accountStatus(temp.getAccount_status()).chatStatusMsg(temp.getChat_status_msg())
-				.job(job).department(dept).build();
+				.govId(temp.getGov_id()).empName(temp.getEmp_name()).empRrn(temp.getEmp_rrn())
+				.empPhone(temp.getEmp_phone()).oriPicName(temp.getOri_pic_name()).newPicName(temp.getNew_pic_name())
+				.empPostCode(temp.getEmp_post_code()).empAddr(temp.getEmp_addr())
+				.empDetailAddr(temp.getEmp_detail_addr()).empInternalPhone(temp.getEmp_internal_phone())
+				.vacationHour(temp.getVacation_hour()).hireDate(temp.getHire_date()).endDate(temp.getEnd_date())
+				.entStatus(temp.getEnt_status()).loginYn(temp.getLogin_yn()).accountStatus(temp.getAccount_status())
+				.chatStatusMsg(temp.getChat_status_msg()).job(job).department(dept).build();
 
 		e = employeeRepository.save(emp);
 
@@ -353,13 +356,13 @@ public class EmployeeService {
 		Job job = jobRepository.findByJobCode(temp.getJob_code());
 
 		Employee emp = Employee.builder().empId(temp.getEmp_id()).empPw(passwordEncoder.encode(emp_pw))
-				.govId(temp.getGov_id()).empName(temp.getEmp_name()).empRrn(temp.getEmp_rrn()).empPhone(temp.getEmp_phone())
-				.oriPicName(temp.getOri_pic_name()).newPicName(temp.getNew_pic_name()).empPostCode(temp.getEmp_post_code())
-				.empAddr(temp.getEmp_addr()).empDetailAddr(temp.getEmp_detail_addr())
-				.empInternalPhone(temp.getEmp_internal_phone()).vacationHour(temp.getVacation_hour())
-				.hireDate(temp.getHire_date()).endDate(temp.getEnd_date()).entStatus(temp.getEnt_status())
-				.loginYn(temp.getLogin_yn()).accountStatus(temp.getAccount_status()).chatStatusMsg(temp.getChat_status_msg())
-				.job(job).department(dept).build();
+				.govId(temp.getGov_id()).empName(temp.getEmp_name()).empRrn(temp.getEmp_rrn())
+				.empPhone(temp.getEmp_phone()).oriPicName(temp.getOri_pic_name()).newPicName(temp.getNew_pic_name())
+				.empPostCode(temp.getEmp_post_code()).empAddr(temp.getEmp_addr())
+				.empDetailAddr(temp.getEmp_detail_addr()).empInternalPhone(temp.getEmp_internal_phone())
+				.vacationHour(temp.getVacation_hour()).hireDate(temp.getHire_date()).endDate(temp.getEnd_date())
+				.entStatus(temp.getEnt_status()).loginYn(temp.getLogin_yn()).accountStatus(temp.getAccount_status())
+				.chatStatusMsg(temp.getChat_status_msg()).job(job).department(dept).build();
 
 		e = employeeRepository.save(emp);
 
@@ -381,12 +384,12 @@ public class EmployeeService {
 
 		Employee emp = Employee.builder().empId(dto.getEmp_id()).empPw(temp.getEmp_pw()).govId(dto.getGov_id())
 				.empName(dto.getEmp_name()).empRrn(dto.getEmp_rrn()).empPhone(dto.getEmp_phone())
-				.oriPicName(temp.getOri_pic_name()).newPicName(temp.getNew_pic_name()).empPostCode(dto.getEmp_post_code())
-				.empAddr(dto.getEmp_addr()).empDetailAddr(dto.getEmp_detail_addr())
+				.oriPicName(temp.getOri_pic_name()).newPicName(temp.getNew_pic_name())
+				.empPostCode(dto.getEmp_post_code()).empAddr(dto.getEmp_addr()).empDetailAddr(dto.getEmp_detail_addr())
 				.empInternalPhone(dto.getEmp_internal_phone()).vacationHour(temp.getVacation_hour())
 				.hireDate(temp.getHire_date()).endDate(temp.getEnd_date()).entStatus(temp.getEnt_status())
-				.loginYn(temp.getLogin_yn()).accountStatus(temp.getAccount_status()).chatStatusMsg(temp.getChat_status_msg())
-				.job(job).department(dept).build();
+				.loginYn(temp.getLogin_yn()).accountStatus(temp.getAccount_status())
+				.chatStatusMsg(temp.getChat_status_msg()).job(job).department(dept).build();
 
 		Employee result = employeeRepository.save(emp);
 
@@ -394,22 +397,13 @@ public class EmployeeService {
 	}
 
 	// 직원 전근 등록
-	@Transactional
 	public Transfer employeeTransfer(TransferDto dto) {
 		Transfer transfer = null;
 
 		Employee employee = employeeRepository.findByempId(dto.getEmp_id());
 
-		EmployeeVo employeeVo = new EmployeeVo().EntityToVo(employee);
-
 		// 직원의 재직 상태가 재직인 경우에만 전출 가능
 		if (employee.getEntStatus().equals("Y")) {
-			if ("T".equals(dto.getTrans_type())) {
-				employeeVo.setEnt_status("L");
-
-				employeeVoMapper.employeeEntStatusTransfer(employeeVo); // 직원 재직 상태 변경
-			}
-
 			transfer = transferRepository.save(dto.toEntityWithJoin(employee)); // transfer 테이블에 전근 데이터 저장
 		}
 
@@ -421,7 +415,8 @@ public class EmployeeService {
 		int result = -1;
 
 		try {
-			result = transferRepository.findBySameTransfer(dto.getEmp_id(), dto.getTrans_date(), dto.getTrans_school_id(), dto.getTrans_type());
+			result = transferRepository.findBySameTransfer(dto.getEmp_id(), dto.getTrans_date(),
+					dto.getTrans_school_id(), dto.getTrans_type());
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -429,54 +424,46 @@ public class EmployeeService {
 
 		return result;
 	}
-	
+
 	// 직원 별 전근 기록
 	public List<TransferDto> selectTransferHistoryByEmployee(String emp_id) {
 		List<TransferDto> tDtoList = new ArrayList<TransferDto>();
-		
+
 		List<Transfer> tList = transferRepository.selectTransferHistoryByEmployee(emp_id);
-		
-		for(Transfer t : tList) {
+
+		for (Transfer t : tList) {
 			TransferDto dto = new TransferDto().toDto(t);
-			
+
 			tDtoList.add(dto);
 		}
-		
+
 		return tDtoList;
 	}
-	
+
 	// 휴직 등록
-	@Transactional
 	public EmployeeStatus employeeRest(EmployeeStatusDto dto) {
 		EmployeeStatus employeeStatus = null;
 
 		Employee employee = employeeRepository.findByempId(dto.getEmp_id());
 
-		EmployeeVo employeeVo = new EmployeeVo().EntityToVo(employee);
-
 		// 직원의 재직 상태가 재직인 경우에만 전출 가능
 		if (employee.getEntStatus().equals("Y")) {
-			if ("R".equals(dto.getStatus_type())) {
-				employeeVo.setEnt_status("R");
-				
-				employeeVoMapper.employeeEntStatusTransfer(employeeVo); // 직원 재직 상태 변경
-			}
 			dto.setStatus_type("R");
-			
-			System.out.println(dto.toEntityWithJoin(employee));
-			
-			employeeStatus = employeeStatusRepository.save(dto.toEntityWithJoin(employee)); // employee_status 테이블에 전근 데이터 저장
+
+			employeeStatus = employeeStatusRepository.save(dto.toEntityWithJoin(employee)); // employee_status 테이블에 전근
+																							// 데이터 저장
 		}
 
 		return employeeStatus;
 	}
-	
+
 	// 휴직 중복 방지
 	public int findBySameRest(EmployeeStatusDto dto) {
 		int result = -1;
 
 		try {
-			result = employeeStatusRepository.findBySameRest(dto.getEmp_id(), dto.getStop_date(), dto.getExcepted_date(), dto.getStop_reason(), dto.getStatus_type());
+			result = employeeStatusRepository.findBySameRest(dto.getEmp_id(), dto.getStop_date(),
+					dto.getExcepted_date(), dto.getStop_reason(), dto.getStatus_type());
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -484,19 +471,174 @@ public class EmployeeService {
 
 		return result;
 	}
-	
-//직원 별 휴직 기록
+
+	// 직원 별 휴직 기록
 	public List<EmployeeStatusDto> selectRestHistoryByEmployee(String emp_id) {
 		List<EmployeeStatusDto> esDtoList = new ArrayList<EmployeeStatusDto>();
-		
-		List<EmployeeStatus>esList = employeeStatusRepository.selectRestHistoryByEmployee(emp_id);
-		
-		for(EmployeeStatus es : esList) {
+
+		List<EmployeeStatus> esList = employeeStatusRepository.selectRestHistoryByEmployee(emp_id);
+
+		for (EmployeeStatus es : esList) {
 			EmployeeStatusDto dto = new EmployeeStatusDto().toDto(es);
-			
+
 			esDtoList.add(dto);
 		}
-		
+
 		return esDtoList;
+	}
+
+	// 휴직 등록
+	public EmployeeStatus employeeReturn(EmployeeStatusDto dto) {
+		EmployeeStatus employeeStatus = null;
+
+		Employee employee = employeeRepository.findByempId(dto.getEmp_id());
+
+		// 직원의 재직 상태가 휴직인 경우에만 전출 가능
+		if (employee.getEntStatus().equals("R")) {
+			dto.setStatus_type("Y");
+
+			employeeStatus = employeeStatusRepository.save(dto.toEntityWithJoin(employee)); // employee_status 테이블에 전근
+																							// 데이터 저장
+		}
+
+		return employeeStatus;
+	}
+
+	// 퇴직 등록
+	public EmployeeStatus employeeLeave(EmployeeStatusDto dto) {
+		EmployeeStatus employeeStatus = null;
+
+		Employee employee = employeeRepository.findByempId(dto.getEmp_id());
+
+		// 직원의 재직 상태가 재직인 경우에만 전출 가능
+		if (employee.getEntStatus().equals("Y")) {
+			dto.setStatus_type("N");
+
+			employeeStatus = employeeStatusRepository.save(dto.toEntityWithJoin(employee)); // employee_status 테이블에 전근
+																							// // 데이터 저장
+		}
+
+		return employeeStatus;
+	}
+
+	// 퇴직 중복 방지
+	public int findBySameLeave(EmployeeStatusDto dto) {
+		int result = -1;
+
+		try {
+			result = employeeStatusRepository.findBySameLeave(dto.getEmp_id(), dto.getStatus_type());
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return result;
+	}
+
+	// 직원 별 퇴직 기록
+	public List<EmployeeStatusDto> selectLeaveHistoryByEmployee(String emp_id) {
+		List<EmployeeStatusDto> esDtoList = new ArrayList<EmployeeStatusDto>();
+
+		List<EmployeeStatus> esList = employeeStatusRepository.selectLeaveHistoryByEmployee(emp_id);
+
+		for (EmployeeStatus es : esList) {
+			EmployeeStatusDto dto = new EmployeeStatusDto().toDto(es);
+
+			esDtoList.add(dto);
+		}
+
+		return esDtoList;
+	}
+
+	public List<TransferDto> findTransfersToProcess(LocalDate now) { // 전근 예정인 직원 목록을 조회
+		List<TransferDto> transferDtoList = new ArrayList<TransferDto>();
+
+		LocalDate yesterday = now.minusDays(1);
+
+		List<Transfer> transferList = transferRepository.findTransfersToProcess(yesterday);
+
+		for (Transfer t : transferList) {
+			TransferDto dto = new TransferDto().toDto(t);
+
+			transferDtoList.add(dto);
+		}
+
+		return transferDtoList;
+	}
+
+	public void processTransfer(TransferDto dto) { // 직원 상태를 "전근"으로 업데이트
+		EmployeeVo vo = new EmployeeVo();
+		vo.setEmp_id(dto.getEmp_id());
+		vo.setEnt_status("L");
+		employeeVoMapper.updateEntStatus(vo);
+	}
+
+	public List<EmployeeStatusDto> findRestsToProcess(LocalDate now) { // 휴직 예정인 직원 목록을 조회합니다.
+		List<EmployeeStatusDto> restDtoList = new ArrayList<EmployeeStatusDto>();
+
+		LocalDate yesterday = now.minusDays(1);
+
+		List<EmployeeStatus> restList = employeeStatusRepository.findRestsToProcess(yesterday);
+
+		for (EmployeeStatus r : restList) {
+			EmployeeStatusDto dto = new EmployeeStatusDto().toDto(r);
+
+			restDtoList.add(dto);
+		}
+
+		return restDtoList;
+	}
+
+	public void processRest(EmployeeStatusDto dto) { // 직원 상태를 "휴직"으로 업데이트합니다.
+		EmployeeVo vo = new EmployeeVo();
+		vo.setEmp_id(dto.getEmp_id());
+		vo.setEnt_status("R");
+		employeeVoMapper.updateEntStatus(vo);
+	}
+
+	public List<EmployeeStatusDto> findLeavesToProcess(LocalDate now) { // 퇴직 예정인 직원 목록을 조회합니다.
+		List<EmployeeStatusDto> leaveDtoList = new ArrayList<EmployeeStatusDto>();
+
+		LocalDate yesterday = now.minusDays(1);
+
+		List<EmployeeStatus> leaveList = employeeStatusRepository.findLeavesToProcess(yesterday);
+
+		for (EmployeeStatus l : leaveList) {
+			EmployeeStatusDto dto = new EmployeeStatusDto().toDto(l);
+
+			leaveDtoList.add(dto);
+		}
+
+		return leaveDtoList;
+	}
+
+	public void processLeave(EmployeeStatusDto dto) { // 직원 상태를 "퇴사"로 업데이트합니다.
+		EmployeeVo vo = new EmployeeVo();
+		vo.setEmp_id(dto.getEmp_id());
+		vo.setEnt_status("N");
+		employeeVoMapper.updateEntStatus(vo);
+	}
+
+	public List<EmployeeStatusDto> findReturnsToProcess(LocalDate now) { // 복귀 예정인 직원 목록을 조회합니다.
+		List<EmployeeStatusDto> returnDtoList = new ArrayList<EmployeeStatusDto>();
+
+		LocalDate yesterday = now.minusDays(1);
+
+		List<EmployeeStatus> returnList = employeeStatusRepository.findReturnsToProcess(yesterday);
+
+		for (EmployeeStatus r : returnList) {
+			EmployeeStatusDto dto = new EmployeeStatusDto().toDto(r);
+
+			returnDtoList.add(dto);
+		}
+
+		return returnDtoList;
+	}
+
+	public void processReturn(EmployeeStatusDto dto) { // 직원 상태를 "재직"으로 업데이트합니다.
+		EmployeeVo vo = new EmployeeVo();
+		vo.setEmp_id(dto.getEmp_id());
+		vo.setEnt_status("Y");
+		employeeVoMapper.updateEntStatus(vo);
 	}
 }

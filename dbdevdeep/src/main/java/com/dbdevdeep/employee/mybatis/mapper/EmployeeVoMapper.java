@@ -13,4 +13,6 @@ public interface EmployeeVoMapper {
 	List<EmployeeVo> selectEmployeeByNotTeacher(String t_year);
 	
 	int employeeEntStatusTransfer(EmployeeVo vo);
+	
+	void updateEntStatus(EmployeeVo vo);
 }

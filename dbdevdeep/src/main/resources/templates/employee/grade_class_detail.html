@@ -46,9 +46,28 @@
 									<tbody>
 										<tr th:each="grade : ${#numbers.sequence(1, 6)}">
 											<td th:text="${grade} + ' 학년'" class="gradeTextCenter"></td>
-											<td th:each="i : ${#numbers.sequence(1, maxClass)}" style="padding: 0px;"><span th:if="${gradeToClassMap[grade + ''] != null and #lists.size(gradeToClassMap[grade + '']) >= i and gradeToClassMap[grade + ''][i-1].teach_emp_name != 'null'}" th:text="${gradeToClassMap[grade + ''][i-1].teach_emp_name}" th:data-grade="${grade}" th:data-class="${i}" th:data-empname="${gradeToClassMap[grade + ''][i-1].teach_emp_name}" th:data-empid="${gradeToClassMap[grade + ''][i-1].teach_emp_id}" th:data-teacherno="${gradeToClassMap[grade + ''][i-1].teacher_no}" th:data-tyear="${gradeToClassMap[grade + ''][i-1].t_year}" class="teacher-span" data-toggle="modal" data-target="#editClass"> </span> <span th:if="${gradeToClassMap[grade + ''] != null and #lists.size(gradeToClassMap[grade + '']) >= i and gradeToClassMap[grade + ''][i-1].teach_emp_name == 'null'}" th:text="미배정" th:data-grade="${grade}" th:data-class="${i}"
-												th:data-teacherno="${gradeToClassMap[grade + ''][i-1].teacher_no}" th:data-tyear="${gradeToClassMap[grade + ''][i-1].t_year}" data-toggle="modal" data-target="#addClass" class="add-span"
-											> </span> <span th:if="${gradeToClassMap[grade + ''] == null or #lists.size(gradeToClassMap[grade + '']) < i}" style="cursor: default;"> </span></td>
+											<td th:each="i : ${#numbers.sequence(1, maxClass)}" style="padding: 0px;">
+												<span th:if="${gradeToClassMap[grade + ''] != null and #lists.size(gradeToClassMap[grade + '']) >= i and gradeToClassMap[grade + ''][i-1].teach_emp_name != 'null'}" 
+													th:text="${gradeToClassMap[grade + ''][i-1].teach_emp_name}" 
+													th:data-grade="${grade}" th:data-class="${i}" 
+													th:data-empname="${gradeToClassMap[grade + ''][i-1].teach_emp_name}" 
+													th:data-empid="${gradeToClassMap[grade + ''][i-1].teach_emp_id}" 
+													th:data-teacherno="${gradeToClassMap[grade + ''][i-1].teacher_no}" 
+													th:data-tyear="${gradeToClassMap[grade + ''][i-1].t_year}" 
+													class="teacher-span" 
+													data-toggle="modal" 
+													data-target="#editClass"> </span> 
+												<span th:if="${gradeToClassMap[grade + ''] != null and #lists.size(gradeToClassMap[grade + '']) >= i and gradeToClassMap[grade + ''][i-1].teach_emp_name == 'null'}" 
+													th:text="미배정" 
+													th:data-grade="${grade}" 
+													th:data-class="${i}"
+													th:data-teacherno="${gradeToClassMap[grade + ''][i-1].teacher_no}" 
+													th:data-tyear="${gradeToClassMap[grade + ''][i-1].t_year}" 
+													data-toggle="modal" 
+													data-target="#addClass" 
+													class="add-span"> </span> 
+												<span th:if="${gradeToClassMap[grade + ''] == null or #lists.size(gradeToClassMap[grade + '']) < i}" style="cursor: default;"> </span>
+											</td>
 										</tr>
 									</tbody>
 								</table>

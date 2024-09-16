@@ -25,4 +25,12 @@
 	    	emp_id = #{emp_id}
 	    </where>
 	</update>
+	
+	<update id="updateEntStatus" parameterType="com.dbdevdeep.employee.vo.EmployeeVo">
+		UPDATE `employee`
+		SET ent_status = #{ent_status}
+		<where>
+			emp_id = #{emp_id}
+		</where>
+	</update>
 </mapper>

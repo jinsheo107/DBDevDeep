@@ -16,4 +16,7 @@ public interface TransferRepository extends JpaRepository<Transfer, Long>{
 	
 	@Query("SELECT t FROM Transfer t WHERE t.employee.empId = :empId")
 	List<Transfer> selectTransferHistoryByEmployee(@Param("empId") String empId);
+	
+	@Query("SELECT t FROM Transfer t WHERE t.transDate = :yesterday")
+	List<Transfer> findTransfersToProcess(@Param("yesterday") LocalDate yesterday);
 }

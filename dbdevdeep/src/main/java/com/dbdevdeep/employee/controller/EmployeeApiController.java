@@ -64,7 +64,8 @@ public class EmployeeApiController {
 
 	@ResponseBody
 	@PostMapping("/employee/add")
-	public Map<String, String> signup(EmployeeDto dto, @RequestParam("file") MultipartFile file, @RequestParam(name = "trans_school_id", required = false) String trans_school_id) {
+	public Map<String, String> signup(EmployeeDto dto, @RequestParam("file") MultipartFile file,
+			@RequestParam(name = "trans_school_id", required = false) String trans_school_id) {
 
 		Map<String, String> resultMap = new HashMap<String, String>();
 		resultMap.put("res_code", "404");
@@ -75,22 +76,22 @@ public class EmployeeApiController {
 		if (savedFileName != null) {
 			dto.setOri_pic_name(file.getOriginalFilename());
 			dto.setNew_pic_name(savedFileName);
-			
+
 			Employee employee = employeeService.addEmployee(dto);
 
 			if (employee != null) {
-				
+
 				EmployeeDto employeeDto = new EmployeeDto().toDto(employee);
-				
+
 				TransferDto transferDto = new TransferDto();
 				transferDto.setEmp_id(employeeDto.getEmp_id());
 				transferDto.setTrans_date(employeeDto.getHire_date());
 				transferDto.setTrans_school_id(trans_school_id);
 				transferDto.setTrans_type("F");
-				
+
 				Transfer transferResult = employeeService.employeeTransfer(transferDto);
-				
-				if(transferResult != null) {
+
+				if (transferResult != null) {
 					resultMap.put("res_code", "200");
 					resultMap.put("res_msg", "계정 등록에 성공하였습니다.");
 				} else {
@@ -316,7 +317,7 @@ public class EmployeeApiController {
 
 		return resultMap;
 	}
-	
+
 	@ResponseBody
 	@PostMapping("/employee/edit")
 	public Map<String, String> employeeInfoEdit(EmployeeDto dto,
@@ -350,22 +351,23 @@ public class EmployeeApiController {
 
 		return resultMap;
 	}
-	
+
+	// 전근 등록 및 직원 status 변경
 	@ResponseBody
 	@PostMapping("/employee/transfer")
 	public Map<String, String> employeeTransfer(TransferDto dto) {
-		
+
 		Map<String, String> resultMap = new HashMap<String, String>();
 
 		resultMap.put("res_code", "404");
 		resultMap.put("res_msg", "전근 등록 중 오류가 발생하였습니다.");
-		
+
 		int result = employeeService.findBySameTransfer(dto);
-				
-		if(result == 0) {
+
+		if (result == 0) {
 			Transfer transfer = employeeService.employeeTransfer(dto);
-			
-			if(transfer != null) {
+
+			if (transfer != null) {
 				resultMap.put("res_code", "200");
 				resultMap.put("res_msg", "전근 등록에 성공하였습니다.");
 			} else {
@@ -374,26 +376,27 @@ public class EmployeeApiController {
 		} else {
 			resultMap.put("res_msg", "중복된 전근 기록이 존재합니다.");
 		}
-		
+
 		return resultMap;
 	}
-	
+
+	// 휴직 등록 및 직원 status 변경
 	@ResponseBody
 	@PostMapping("/employee/rest")
 	public Map<String, String> employeeRest(EmployeeStatusDto dto) {
-		
+
 		Map<String, String> resultMap = new HashMap<String, String>();
 
 		resultMap.put("res_code", "404");
 		resultMap.put("res_msg", "휴직 등록 중 오류가 발생하였습니다.");
-		
+
 		// 중복 확인
 		int result = employeeService.findBySameRest(dto);
-				
-		if(result == 0) {
+
+		if (result == 0) {
 			EmployeeStatus employeeStatus = employeeService.employeeRest(dto);
-			
-			if(employeeStatus != null) {
+
+			if (employeeStatus != null) {
 				resultMap.put("res_code", "200");
 				resultMap.put("res_msg", "휴직 등록에 성공하였습니다.");
 			} else {
@@ -402,7 +405,58 @@ public class EmployeeApiController {
 		} else {
 			resultMap.put("res_msg", "중복된 휴직 기록이 존재합니다.");
 		}
-		
+
+		return resultMap;
+	}
+
+	// 퇴직 등록 및 직원 status 변경
+	@ResponseBody
+	@PostMapping("/employee/leave")
+	public Map<String, String> employeeLeave(EmployeeStatusDto dto) {
+
+		Map<String, String> resultMap = new HashMap<String, String>();
+
+		resultMap.put("res_code", "404");
+		resultMap.put("res_msg", "퇴직 등록 중 오류가 발생하였습니다.");
+
+		// 중복 확인
+		int result = employeeService.findBySameLeave(dto);
+
+		if (result == 0) {
+			EmployeeStatus employeeStatus = employeeService.employeeLeave(dto);
+
+			if (employeeStatus != null) {
+				resultMap.put("res_code", "200");
+				resultMap.put("res_msg", "퇴직 등록에 성공하였습니다.");
+			} else {
+				resultMap.put("res_msg", "퇴직은 재직 상태인 직원만 가능합니다.");
+			}
+		} else {
+			resultMap.put("res_msg", "중복된 퇴직 기록이 존재합니다.");
+		}
+
+		return resultMap;
+	}
+
+	// 휴직 등록 및 직원 status 변경
+	@ResponseBody
+	@PostMapping("/employee/return")
+	public Map<String, String> employeeReturn(EmployeeStatusDto dto) {
+
+		Map<String, String> resultMap = new HashMap<String, String>();
+
+		resultMap.put("res_code", "404");
+		resultMap.put("res_msg", "복직 등록 중 오류가 발생하였습니다.");
+
+		EmployeeStatus employeeStatus = employeeService.employeeRest(dto);
+
+		if (employeeStatus != null) {
+			resultMap.put("res_code", "200");
+			resultMap.put("res_msg", "복직 등록에 성공하였습니다.");
+		} else {
+			resultMap.put("res_msg", "복직은 휴직 상태인 직원만 가능합니다.");
+		}
+
 		return resultMap;
 	}
 }

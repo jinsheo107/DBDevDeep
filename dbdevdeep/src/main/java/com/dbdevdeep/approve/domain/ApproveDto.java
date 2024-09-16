@@ -34,6 +34,7 @@ public class ApproveDto {
 	private String appro_title;
 	private String appro_content;
 	
+	private Integer vac_type;
 	private int search_type = 1;
 	private String search_text;
 	
@@ -53,7 +54,26 @@ public class ApproveDto {
 				.build();
 	}
 	
-	 public ApproveDto toDto(Approve approve) {
+	public ApproveDto toDto(Approve approve) {
+        // TempEdit이 null인 경우 안전하게 처리합니다.
+        Long tempNo = Optional.ofNullable(approve.getTempEdit()).map(TempEdit::getTempNo).orElse(null);
+
+        return ApproveDto.builder()
+                .appro_no(approve.getApproNo())
+                .emp_id(approve.getEmployee().getEmpId())
+                .temp_no(tempNo)  // TempEdit의 temp_no 설정
+                .dept_code(approve.getDepartment().getDeptCode())
+                .job_code(approve.getJob().getJobCode())
+                .appro_name(approve.getApproName())
+                .appro_time(approve.getApproTime())
+                .appro_type(approve.getApproType())
+                .appro_status(approve.getApproStatus())
+                .appro_title(approve.getApproTitle())
+                .appro_content(approve.getApproContent())
+                .build();
+    }
+	
+	 public ApproveDto toDto(Approve approve , Integer vacType) {
 	        // TempEdit이 null인 경우 안전하게 처리합니다.
 	        Long tempNo = Optional.ofNullable(approve.getTempEdit()).map(TempEdit::getTempNo).orElse(null);
 
@@ -69,6 +89,7 @@ public class ApproveDto {
 	                .appro_status(approve.getApproStatus())
 	                .appro_title(approve.getApproTitle())
 	                .appro_content(approve.getApproContent())
+	                .vac_type(vacType) // 휴가 유형 설정
 	                .build();
 	    }
 	}

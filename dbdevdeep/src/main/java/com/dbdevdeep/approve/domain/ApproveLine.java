@@ -55,4 +55,7 @@ public class ApproveLine {
 
     @Column(name = "consult_yn")
     private String consultYn;
+    
+    @Column(name = "appro_line_sign")
+    private String approLineSign;
 }

@@ -219,11 +219,11 @@ input:read-only {
 									</div>
 								</div>
 							</div>
-
 							<div class="tab-pane" id="employee-status">
 								<div class="form-group">
 									<div class="row">
 										<div class="col-md-8" style="margin-top: 40px;">
+											<label>전근</label>
 											<div class="table-responsive">
 												<table id="employee_transfer_history_list" class="table table-bordered no-wrap" style="width: 100%">
 													<colgroup>
@@ -252,6 +252,92 @@ input:read-only {
 																<td th:text="${history.trans_school_id}"></td>
 																<td th:text="${history.trans_date}"></td>
 																<td th:text="${history.trans_type == 'T' ? '전출' : history.trans_type == 'F' ? '전입' : '-'}"></td>
+															</tr>
+														</th:block>
+													</tbody>
+												</table>
+											</div>
+										</div>
+									</div>
+									<div class="row">
+										<div class="col-md-8" style="margin-top: 40px;">
+											<label>휴직</label>
+											<div class="table-responsive">
+												<table id="employee_rest_history_list" class="table table-bordered no-wrap" style="width: 100%">
+													<colgroup>
+														<col style="width: 10%;">
+														<col style="width: 20%;">
+														<col style="width: 20%;">
+														<col style="width: 20%;">
+														<col style="width: 30%;">
+													</colgroup>
+													<thead>
+														<tr>
+															<th scope="col">번호</th>
+															<th scope="col">휴직일</th>
+															<th scope="col">복귀예정일</th>
+															<th scope="col">복귀일</th>
+															<th scope="col">휴직사유</th>
+														</tr>
+													</thead>
+													<tbody>
+														<th:block th:if="${#lists.isEmpty(restDtoList)}">
+															<tr>
+																<td colspan="5">휴직이력이 없습니다.</td>
+															</tr>
+														</th:block>
+														<th:block th:if="${!#lists.isEmpty(restDtoList)}">
+															<tr th:each="history, historyStat : ${restDtoList}" 
+																th:data-no="${history.status_no}"
+																th:data-emp="${history.emp_id}"
+																th:data-reason="${history.stop_reason}"
+																th:data-stop="${history.stop_date}"
+																th:data-excepted="${history.excepted_date}"
+																th:data-return="${history.return_date}"
+																th:data-status="${history.status_type}"
+																class="rest_history"
+																data-toggle="modal" 
+																data-target="#return_modal">
+																<td scope="row" th:text="${historyStat.count}"></td>
+																<td th:text="${history.stop_date}"></td>
+																<td th:text="${history.excepted_date}"></td>
+																<td th:text="${history.return_date == null ? '-' : history.return_date}"></td>
+																<td th:text="${history.stop_reason}"></td>
+															</tr>
+														</th:block>
+													</tbody>
+												</table>
+											</div>
+										</div>
+									</div>
+									<div class="row">
+										<div class="col-md-8" style="margin-top: 40px;">
+											<label>퇴직</label>
+											<div class="table-responsive">
+												<table id="employee_leave_history_list" class="table table-bordered no-wrap" style="width: 100%">
+													<colgroup>
+														<col style="width: 10%;">
+														<col style="width: 40%;">
+														<col style="width: 50%;">
+													</colgroup>
+													<thead>
+														<tr>
+															<th scope="col">번호</th>
+															<th scope="col">퇴직일</th>
+															<th scope="col">퇴직사유</th>
+														</tr>
+													</thead>
+													<tbody>
+														<th:block th:if="${#lists.isEmpty(leaveDtoList)}">
+															<tr>
+																<td colspan="4">퇴직이력이 없습니다.</td>
+															</tr>
+														</th:block>
+														<th:block th:if="${!#lists.isEmpty(leaveDtoList)}">
+															<tr th:each="history, historyStat : ${leaveDtoList}">
+																<td scope="row" th:text="${historyStat.count}"></td>
+																<td th:text="${history.stop_date}"></td>
+																<td th:text="${history.stop_reason}"></td>
 															</tr>
 														</th:block>
 													</tbody>
@@ -368,10 +454,12 @@ input:read-only {
 						<div class="form-group">
 							<div class="row">
 								<div class="col-md-6">
-									<label for="gov_id">이름</label> <input type="text" class="form-control" id="emp_name" name="emp_name" placeholder="홍길동" th:value="${empDto.emp_name}" readonly>
+									<label for="gov_id">이름</label> 
+									<input type="text" class="form-control" id="emp_name" name="emp_name" placeholder="홍길동" th:value="${empDto.emp_name}" readonly>
 								</div>
 								<div class="col-md-6">
-									<label for="gov_id">직원번호</label> <input type="text" class="form-control" id="emp_id" name="emp_id" th:value="${empDto.emp_id}" placeholder="00000000000" maxlength="11" readonly>
+									<label for="gov_id">직원번호</label> 
+									<input type="text" class="form-control" id="emp_id" name="emp_id" th:value="${empDto.emp_id}" placeholder="00000000000" maxlength="11" readonly>
 								</div>
 							</div>
 						</div>
@@ -419,6 +507,97 @@ input:read-only {
 		</div>
 	</div>
 	<!-- /.modal -->
+	
+	<!-- 복직 모달창 -->
+	<div id="return_modal" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header modal-colored-header bg-info">
+					<h4 class="modal-title" id="info-header-modalLabel">전근</h4>
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+				</div>
+				<div class="modal-body">
+					<div class="col-12">
+
+						<div class="form-group">
+							<div class="row">
+								<div class="col-md-6">
+									<label>교육청관리번호</label> 
+									<input type="text" class="form-control" id="gov_id" name="gov_id" placeholder="00000000000" maxlength="11" th:value="${'N - ' + empDto.gov_id}" readonly>
+								</div>
+								<div class="col-md-6">
+									<label>재직상태</label> 
+									<input type="text" class="form-control" readonly th:value="${empDto.ent_status == 'Y' ? '재직' : 
+										empDto.ent_status == 'N' ? '퇴직' : empDto.ent_status == 'R' ? '휴직' : 
+										empDto.ent_status == 'L' ? '전근' : '-'}">
+								</div>
+							</div>
+						</div>
+
+						<div class="form-group">
+							<div class="row">
+								<div class="col-md-6">
+									<label for="gov_id">이름</label> 
+									<input type="text" class="form-control" id="emp_name" name="emp_name" placeholder="홍길동" th:value="${empDto.emp_name}" readonly>
+								</div>
+								<div class="col-md-6">
+									<label for="gov_id">직원번호</label> 
+									<input type="text" class="form-control" id="emp_id" name="emp_id" th:value="${empDto.emp_id}" placeholder="00000000000" maxlength="11" readonly>
+								</div>
+							</div>
+						</div>
+
+						<div class="form-group">
+							<div class="row">
+								<div class="col-md-6">
+									<label>부서</label> <input type="text" class="form-control" readonly th:value="${empDto.dept_name}">
+								</div>
+								<div class="col-md-6">
+									<label>직급</label> <input type="text" class="form-control" readonly th:value="${empDto.job_name}">
+								</div>
+							</div>
+						</div>
+					</div>
+					<hr>
+
+					<form class="pl-3 pr-3" id="returnFrm">
+						<input type="hidden" id="csrf_token" th:value="${_csrf.token}"> 
+						<input type="hidden" name="status_no" id="status_no"> 
+						<input type="hidden" name="emp_id" th:value="${empDto.emp_id}"> 
+						<input type="hidden" name="status_type" th:value="${'R'}">
+						
+						<div class="form-group">
+							<label for="stop_date">휴직일</label> 
+							<input type="date" class="form-control" id="stop_date_r" name="stop_date" readonly>
+							<div id="stop_date_feedback" class="mt-2"></div>
+						</div>
+						<div class="form-group">
+							<label for="excepted_date">복귀예정일</label> 
+							<input type="date" class="form-control" id="excepted_date_r" name="excepted_date" readonly>
+							<div id="excepted_date_feedback" class="mt-2"></div>
+						</div>
+						<div class="form-group">
+							<label for="stop_reason">휴직사유</label> 
+							<input type="text" class="form-control" placeholder="휴직 사유를 33자 이내로 입력하세요." id="stop_reason_r" name="stop_reason" maxlength="33" readonly>
+							<div id="stop_reason_feedback" class="mt-2"></div>
+						</div>
+						
+						<div class="form-group">
+							<label for="excepted_date">복귀일 <span style="color: red;">*</span></label> 
+							<input type="date" class="form-control" id="return_date_r" name="return_date">
+							<div id="excepted_date_feedback" class="mt-2"></div>
+						</div>
+						
+						<div class="col-12 d-flex justify-content-end">
+							<button type="button" class="btn waves-effect waves-light btn-light m-1" data-dismiss="modal" aria-hidden="true">취소</button>
+							<button type="submit" disabled="disabled" class="btn waves-effect waves-light btn-primary m-1" id="returnBtn">휴직</button>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- /.modal -->
 
 	<!-- leave 모달창 -->
 	<div id="leave_modal" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
@@ -434,10 +613,12 @@ input:read-only {
 						<div class="form-group">
 							<div class="row">
 								<div class="col-md-6">
-									<label>교육청관리번호</label> <input type="text" class="form-control" id="gov_id" name="gov_id" placeholder="00000000000" maxlength="11" th:value="${'N - ' + empDto.gov_id}" readonly>
+									<label>교육청관리번호</label> 
+									<input type="text" class="form-control" id="gov_id" name="gov_id" placeholder="00000000000" maxlength="11" th:value="${'N - ' + empDto.gov_id}" readonly>
 								</div>
 								<div class="col-md-6">
-									<label>재직상태</label> <input type="text" class="form-control" readonly th:value="${empDto.ent_status == 'Y' ? '재직' : 
+									<label>재직상태</label> 
+									<input type="text" class="form-control" readonly th:value="${empDto.ent_status == 'Y' ? '재직' : 
 										empDto.ent_status == 'N' ? '퇴직' : empDto.ent_status == 'R' ? '휴직' : 
 										empDto.ent_status == 'L' ? '전근' : '-'}">
 								</div>
@@ -447,10 +628,12 @@ input:read-only {
 						<div class="form-group">
 							<div class="row">
 								<div class="col-md-6">
-									<label for="gov_id">이름</label> <input type="text" class="form-control" id="emp_name" name="emp_name" placeholder="홍길동" th:value="${empDto.emp_name}" readonly>
+									<label for="gov_id">이름</label> 
+									<input type="text" class="form-control" id="emp_name" name="emp_name" placeholder="홍길동" th:value="${empDto.emp_name}" readonly>
 								</div>
 								<div class="col-md-6">
-									<label for="gov_id">직원번호</label> <input type="text" class="form-control" id="emp_id" name="emp_id" th:value="${empDto.emp_id}" placeholder="00000000000" maxlength="11" readonly>
+									<label for="gov_id">직원번호</label> 
+									<input type="text" class="form-control" id="emp_id" name="emp_id" th:value="${empDto.emp_id}" placeholder="00000000000" maxlength="11" readonly>
 								</div>
 							</div>
 						</div>
@@ -470,20 +653,21 @@ input:read-only {
 					<hr>
 					<form class="pl-3 pr-3" id="leaveFrm">
 						<input type="hidden" id="csrf_token" th:value="${_csrf.token}"> 
-						<input type="hidden" name="emp_id" th:value="${empDto.emp_id}"> <input type="hidden" name="status_type" value="N">
+						<input type="hidden" name="emp_id" th:value="${empDto.emp_id}"> 
+						<input type="hidden" name="status_type" value="N">
 						<div class="form-group">
 							<label for="stop_date_L">퇴직일 <span style="color: red;">*</span></label> 
 							<input type="date" class="form-control" id="stop_date_L" name="stop_date">
-							<div id="trans_date_feedback" class="mt-2"></div>
+							<div id="stop_date_L_feedback" class="mt-2"></div>
 						</div>
 						<div class="form-group">
-							<label for="stop_reason_L">전근 학교 코드 <span style="color: red;">*</span></label> 
+							<label for="stop_reason_L">퇴직 사유 <span style="color: red;">*</span></label> 
 							<input type="text" class="form-control" placeholder="퇴직 사유를 33자 이내로 입력하세요." id="stop_reason_L" name="stop_reason" maxlength="33">
-							<div id="trans_school_id_feedback" class="mt-2"></div>
+							<div id="stop_reason_L_feedback" class="mt-2"></div>
 						</div>
 						<div class="col-12 d-flex justify-content-end">
 							<button type="button" class="btn waves-effect waves-light btn-light m-1" data-dismiss="modal" aria-hidden="true">취소</button>
-							<button type="submit" disabled="disabled" class="btn waves-effect waves-light btn-primary m-1" id="transBtn">전근</button>
+							<button type="submit" disabled="disabled" class="btn waves-effect waves-light btn-primary m-1" id="leaveBtn">전근</button>
 						</div>
 					</form>
 				</div>
@@ -491,6 +675,7 @@ input:read-only {
 		</div>
 	</div>
 	<!-- /.modal -->
+	
 
 	<script>
 		// script.js
@@ -705,7 +890,7 @@ input:read-only {
 						text : data.res_msg,
 						confirmButtonText:"닫기"
 					}).then(() => {
-						location.href="/employee/detail/" + document.getElementById('restFrm').emp_id;
+						location.href="/employee/detail/" + document.getElementById('restFrm').emp_id.value;
 					})
 					
 				} else{
@@ -718,6 +903,154 @@ input:read-only {
 				}
 			});
 		});
+	</script>
+	
+	<script>
+		document.getElementById('stop_date_L').value = formattedDate;
+		  
+		  $(document).ready(function() {
+		    function validateForm() {
+		       var isValid = true;
+		
+		       if ($('#stop_date_L').val() === '') {
+		           $('#stop_date_L').removeClass('is-valid').addClass('is-invalid');
+		           $('#stop_date_L_feedback').text('휴직일을 선택하세요').css('color', 'red');
+		           isValid = false;
+		       } else {
+		           $('#stop_date_L').removeClass('is-invalid').addClass('is-valid');
+		           $('#stop_date_L_feedback').text('');
+		       }
+		       		
+		       var inputVal = $('#stop_reason_L').val();
+		       if (inputVal === '') {
+		           $('#stop_reason_L').removeClass('is-valid').addClass('is-invalid');
+		           $('#stop_reason_L_feedback').text('휴직사유를 입력하세요').css('color', 'red');
+		           isValid = false;
+		       } else if (inputVal.length > 33) {
+		           $('#stop_reason_L').removeClass('is-valid').addClass('is-invalid');
+		           $('#stop_reason_L_feedback').text('33자 이하로 입력하세요').css('color', 'red');
+		           isValid = false;
+		       } else {
+		           $('#stop_reason_L').removeClass('is-invalid').addClass('is-valid');
+		           $('#stop_reason_L_feedback').text('');
+		       }
+		       
+		       $('#leaveBtn').prop('disabled', !isValid);
+		    }
+	
+	    $('#stop_date_L').on('change', validateForm);
+	    $('#stop_reason_L').on('input', validateForm);
+	  });
+		  
+	  $('#leaveFrm').submit(function(e) {
+			e.preventDefault();
+			
+			const csrfToken = document.getElementById("csrf_token").value;
+			const payload = new FormData(document.getElementById('leaveFrm'));
+			
+			fetch('/employee/leave', {
+				method: 'POST',
+				headers : {
+					'X-CSRF-TOKEN': csrfToken
+				},
+				body: payload
+			})
+			.then(response => response.json())
+			.then(data=>{
+				if(data.res_code == '200'){
+					Swal.fire({
+						icon :'success',
+						title:'성공',
+						text : data.res_msg,
+						confirmButtonText:"닫기"
+					}).then(() => {
+						location.href="/employee/detail/" + document.getElementById('leaveFrm').emp_id.value;
+					})
+					
+				} else{
+					Swal.fire({
+						icon:'error',
+						title:'실패',
+						text: data.res_msg,
+						confirmButtonText:"닫기"
+					});
+				}
+			});
+		});
+	</script>
+	
+	<script>
+		$(document).ready(function() {
+			$('.rest_history').on('click', function() {
+	        var status_no = $(this).data('no');
+	        var emp_id = $(this).data('emp');
+	        var stop_reason = $(this).data('reason');
+	        var stop_date = $(this).data('stop');
+	        var excepted_date = $(this).data('excepted')
+	        var return_date = $(this).data('return');
+		
+	        $('#status_no').val(status_no);
+	        $('#stop_reason_r').val(stop_reason);
+	        $('#stop_date_r').val(stop_date);
+	        $('#excepted_date_r').val(excepted_date);
+	        $('#return_date_r').val(return_date);
+	    });
+		
+		document.getElementById('return_date_r').value = formattedDate;
+		  
+		    function validateForm() {
+		       var isValid = true;
+		
+		       if ($('#return_date_r').val() === '') {
+		           $('#return_date_r').removeClass('is-valid').addClass('is-invalid');
+		           $('#return_date_r_feedback').text('복직일을 선택하세요').css('color', 'red');
+		           isValid = false;
+		       } else {
+		           $('#return_date_r').removeClass('is-invalid').addClass('is-valid');
+		           $('#return_date_r_feedback').text('');
+		       }
+		       
+		       $('#returnBtn').prop('disabled', !isValid);
+		    }
+	
+	    $('#return_date_r').on('change', validateForm);
+		  
+	  $('#returnFrm').submit(function(e) {
+			e.preventDefault();
+			
+			const csrfToken = document.getElementById("csrf_token").value;
+			const payload = new FormData(document.getElementById('returnFrm'));
+			
+			fetch('/employee/return', {
+				method: 'POST',
+				headers : {
+					'X-CSRF-TOKEN': csrfToken
+				},
+				body: payload
+			})
+			.then(response => response.json())
+			.then(data=>{
+				if(data.res_code == '200'){
+					Swal.fire({
+						icon :'success',
+						title:'성공',
+						text : data.res_msg,
+						confirmButtonText:"닫기"
+					}).then(() => {
+						location.href="/employee/detail/" + document.getElementById('returnFrm').emp_id.value;
+					})
+					
+				} else{
+					Swal.fire({
+						icon:'error',
+						title:'실패',
+						text: data.res_msg,
+						confirmButtonText:"닫기"
+					});
+				}
+			});
+		});
+		})
 	</script>
 	</body>
 </th:block>
