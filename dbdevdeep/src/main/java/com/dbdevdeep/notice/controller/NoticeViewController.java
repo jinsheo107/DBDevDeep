@@ -74,10 +74,10 @@ public class NoticeViewController {
 		NoticeDto dto = noticeService.selectNoticeOne(notice_no);
 		model.addAttribute("dto", dto);
 		
-		// 3. 댓글 조회
-		List<NoticeCommentDto> cmtDtoList = noticeCommentService.selectNoticeCommentList(notice_no);
-		model.addAttribute("cmtDtoList", cmtDtoList);
-		
+		// 3. 댓글 리스트 조회
+        List<NoticeCommentDto> cmtDtoList = noticeCommentService.selectNoticeCommentList(notice_no);
+        model.addAttribute("cmtDtoList", cmtDtoList);
+        
 		if(dto!=null) {
 			// 4. 읽음 확인 추가
 			noticeService.readCheck(read_id, notice_no);			

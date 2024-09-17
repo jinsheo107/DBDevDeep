@@ -1,6 +1,9 @@
 package com.dbdevdeep.notice.dto;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import com.dbdevdeep.employee.domain.Employee;
 import com.dbdevdeep.notice.domain.Notice;
@@ -30,6 +33,7 @@ public class NoticeCommentDto {
     private LocalDateTime reg_time;
 	private LocalDateTime mod_time;
 	private int is_delete;
+	private List<NoticeCommentDto> childComments;
 	
 	public NoticeComment toEntity(Notice n,Employee e,NoticeComment nc) {
 		return NoticeComment.builder()
@@ -45,6 +49,16 @@ public class NoticeCommentDto {
 	}
 	
 	public NoticeCommentDto toDto(NoticeComment ncmt) {
+		
+		/// 자식 댓글 리스트를 초기화
+	    List<NoticeCommentDto> childCommentDtos = new ArrayList<>();
+
+	    // 자식 댓글을 NoticeCommentDto로 변환하여 리스트에 추가
+	    for (NoticeComment child : ncmt.getChildComments()) {
+	        NoticeCommentDto childDto = toDto(child); // 재귀적으로 자식 댓글도 변환
+	        childCommentDtos.add(childDto); // 리스트에 추가
+	    }
+		
 	    return NoticeCommentDto.builder()
 	        .cmt_no(ncmt.getCmtNo())
 	        .notice_no(ncmt.getNotice().getNoticeNo())
@@ -56,6 +70,7 @@ public class NoticeCommentDto {
 	        .is_delete(ncmt.getIsDelete())
 	        // 부모 댓글이 null인지 확인하고, null이 아니면 parent comment의 cmt_no를 설정
 	        .parent_cmt_no(ncmt.getParentComment() != null ? ncmt.getParentComment().getCmtNo() : null)
+	        .childComments(childCommentDtos) // 자식 댓글 DTO 리스트를 추가
 	        .build();
 	}
 

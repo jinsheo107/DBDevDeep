@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.dbdevdeep.employee.domain.Employee;
 import com.dbdevdeep.employee.repository.EmployeeRepository;
@@ -30,15 +31,34 @@ public class NoticeCommentService {
 	}
 	
 	// 댓글 목록 조회
-	public List<NoticeCommentDto> selectNoticeCommentList(Long notice_no){
-		List<NoticeComment> cmtList = noticeCommentRepository.findByNoticeNo(notice_no);
-		List<NoticeCommentDto> cmtDtoList = new ArrayList<NoticeCommentDto>();
+	public List<NoticeCommentDto> selectNoticeCommentList(Long noticeNo){
 		
-		for(NoticeComment nc : cmtList) {
-			NoticeCommentDto ncDto = new NoticeCommentDto().toDto(nc);
-			cmtDtoList.add(ncDto);
-		}
-		return cmtDtoList;
+		// 댓글 리스트 조회 (부모 댓글만)
+		List<NoticeComment> parentComments = 
+				noticeCommentRepository.findByNoticeNoticeNoAndParentCommentIsNull(noticeNo);
+		
+        // 부모 댓글에 대한 자식 댓글을 조회하고 DTO로 변환
+        List<NoticeCommentDto> commentDtos = new ArrayList<>();
+        for (NoticeComment parentComment : parentComments) {
+            NoticeCommentDto parentDto = new NoticeCommentDto().toDto(parentComment);
+            
+            // 자식 댓글 조회
+            List<NoticeComment> childComments = 
+            		noticeCommentRepository.findByParentCommentCmtNo(parentComment.getCmtNo());
+            
+            List<NoticeCommentDto> childDtos = new ArrayList<>();
+            for (NoticeComment childComment : childComments) {
+                childDtos.add(new NoticeCommentDto().toDto(childComment));
+                
+            }
+
+            // 부모 DTO에 자식 댓글 리스트를 설정
+            parentDto.setChildComments(childDtos);
+            commentDtos.add(parentDto);
+        }
+
+        return commentDtos;
+    
 	}
 	
 	// 댓글 작성
@@ -59,4 +79,21 @@ public class NoticeCommentService {
 		
 		return result;
 	}
+	
+	// 댓글 삭제
+	@Transactional
+	public int deleteComment(Long cmtNo) {
+		int result =-1;
+		
+		NoticeComment nc = noticeCommentRepository.findBycmtNo(cmtNo);
+		
+		if(nc.getIsDelete()==0) {
+			int isDelete = 1;
+			result = noticeCommentRepository.deleteCmtId(cmtNo,isDelete);
+		}
+		
+		return result;
+	}
+	
+	// 댓글 수정
 }
