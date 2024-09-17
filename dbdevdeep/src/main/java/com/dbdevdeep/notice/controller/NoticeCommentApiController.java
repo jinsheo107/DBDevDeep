@@ -32,11 +32,11 @@ public class NoticeCommentApiController {
 	public Map<String,String> createNoticeComment(@RequestBody NoticeCommentDto dto){
 		Map<String,String> resultMap = new HashMap<String,String>();
 		resultMap.put("res_code", "404");
-		resultMap.put("res_msg", "댓글 작성 중 오류가 발생하였습니다.");
+		resultMap.put("res_msg", "작성 중 오류가 발생하였습니다.");
 		
 		if(noticeCommentService.createNoticeComment(dto)>0) {
 			resultMap.put("res_code", "200");
-			resultMap.put("res_msg", "댓글 작성에 성공하였습니다.");
+			resultMap.put("res_msg", "작성에 성공하였습니다.");
 			resultMap.put("notice_no", dto.getNotice_no().toString());  // 게시글 번호 반환
 			
 		}
@@ -68,11 +68,11 @@ public class NoticeCommentApiController {
 	public Map<String,String> updateNoticeCommnet(@RequestBody NoticeCommentDto dto){
 		Map<String,String> resultMap = new HashMap<String,String>();
 		resultMap.put("res_code", "404");
-		resultMap.put("res_msg", "댓글 수정 중 오류가 발생하였습니다.");
+		resultMap.put("res_msg", "수정 중 오류가 발생하였습니다.");
 		
 		if(noticeCommentService.updateNoticeComment(dto)>0) {
 			resultMap.put("res_code", "200");
-			resultMap.put("res_msg", "댓글 작성에 성공하였습니다.");
+			resultMap.put("res_msg", "수정에 성공하였습니다.");
 			resultMap.put("notice_no", dto.getNotice_no().toString());  // 게시글 번호 반환
 			
 		}

@@ -16,8 +16,8 @@ public interface NoticeCommentRepository extends JpaRepository<NoticeComment,Lon
 	// 부모 댓글만 조회 (parent_cmt_no가 null인 댓글)
     List<NoticeComment> findByNoticeNoticeNoAndParentCommentIsNull(Long noticeNo);
     
-    // 특정 부모 댓글의 자식 댓글 조회
-    List<NoticeComment> findByParentCommentCmtNo(Long parentCommentNo);
+    // 특정 부모 댓글의 삭제되지 않은 자식 댓글 조회
+    List<NoticeComment> findByParentCommentCmtNoAndIsDelete(Long parentCommentNo, int isDelete);
 	
 	
 	// 댓글 번호로 단일 댓글 조회

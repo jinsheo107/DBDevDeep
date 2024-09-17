@@ -44,7 +44,7 @@ public class NoticeCommentService {
             
             // 자식 댓글 조회
             List<NoticeComment> childComments = 
-            		noticeCommentRepository.findByParentCommentCmtNo(parentComment.getCmtNo());
+            		noticeCommentRepository.findByParentCommentCmtNoAndIsDelete(parentComment.getCmtNo(),0);
             
             List<NoticeCommentDto> childDtos = new ArrayList<>();
             for (NoticeComment childComment : childComments) {
@@ -71,15 +71,16 @@ public class NoticeCommentService {
 		
 	}
 	
-	// 댓글 작성
+	// 댓글,대댓글 작성
 	public int createNoticeComment(NoticeCommentDto dto) {
 		int result = -1;
 		
 		try {
 			Notice n = noticeRepository.findBynoticeNo(dto.getNotice_no());
 			Employee e = employeeRepository.findByempId(dto.getWriter_id());
+			NoticeComment pnc = noticeCommentRepository.findBycmtNo(dto.getParent_cmt_no());
 			
-			NoticeComment nc = dto.toEntity(n, e, null);
+			NoticeComment nc = dto.toEntity(n, e, pnc);
 			
 			noticeCommentRepository.save(nc);
 			result = 1;
