@@ -13,10 +13,6 @@ import com.dbdevdeep.notice.domain.NoticeComment;
 @Repository
 public interface NoticeCommentRepository extends JpaRepository<NoticeComment,Long> {
 	
-//	// 게시글에 해당하는 댓글 리스트 조회
-//	@Query("SELECT nc FROM NoticeComment nc WHERE nc.notice.noticeNo = :noticeNo")
-//    List<NoticeComment> findByNoticeNo(@Param("noticeNo") Long noticeNo);
-	
 	// 부모 댓글만 조회 (parent_cmt_no가 null인 댓글)
     List<NoticeComment> findByNoticeNoticeNoAndParentCommentIsNull(Long noticeNo);
     
@@ -31,4 +27,9 @@ public interface NoticeCommentRepository extends JpaRepository<NoticeComment,Lon
 	@Modifying
 	@Query("UPDATE NoticeComment nc SET nc.isDelete = :isDelete WHERE nc.cmtNo = :cmtNo")
 	int deleteCmtId(@Param("cmtNo") Long cmtNo, @Param("isDelete") int isDelete);
+	
+	// 댓글 수정
+	@Modifying
+	@Query("UPDATE NoticeComment nc SET nc.cmtContent = :cmtContent WHERE nc.cmtNo = :cmtNo")
+	int updateByCmtNoToCmtContent(@Param("cmtNo") Long cmtNo, @Param("cmtContent") String cmtContent);
 }

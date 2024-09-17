@@ -133,7 +133,7 @@
 			                    		<hr>
 										<div class="comment_list" id="comment_place" th:fragment="comment_place">
 											<th:block th:if="${#lists.isEmpty(cmtDtoList)}">
-	                                       		<!-- 댓글 구역 -->
+	                                       		<!-- 댓글창 구역 -->
 	                                       		<div class="card mb-4">
 													<div class="card-body">
 														<p>작성된 댓글이 없습니다.</p>
@@ -153,35 +153,46 @@
 									                        		</button>
 									                        	</div>
 																<p>삭제된 댓글입니다.</p>
-															</div>
-															<th:block th:if="${!#lists.isEmpty(cmt.childComments)}">
-																<th:block th:each="childCmt : ${cmt.childComments}">
-																	<!-- 대댓글 구역 (테두리) -->
-																	<div class="card-body border rounded-2 m-3 ml-5">
-																		<!-- 메뉴버튼 -->
-																		<div class="d-flex justify-content-end">
-																			<th:block th:if="${childCmt.writer_id == readDto.emp_id}">
-													                            <button type="button" class="btn btn-sm btn-outline-primary m-1" 
-													                            th:onclick="'deleteComment(' + ${childCmt.cmt_no} + ')'">삭제</button>
-													                            <button type="button" class="btn btn-sm btn-outline-primary m-1" 
-													                            th:onclick="'modComment(' + ${childCmt.cmt_no} + ')'">수정</button>
-											                        		</th:block>
-											                        	</div>
-																		<!-- 대댓글 내용 -->
-																		<p th:text="${childCmt.cmt_content }"></p>
-																		<div class="d-flex justify-content-between">
-																			<div class="d-flex flex-row align-items-center">
-																				<p class="small mb-0 ms-2" th:text="${childCmt.writer_name }"></p>
-																			</div>
-																			<div class="d-flex flex-row align-items-center">
-																				<p class="small text-muted mb-0" 
-																				th:text="${#temporals.format(childCmt.reg_time, 'yyyy.MM.dd HH:mm')}"></p>
+																<th:block th:if="${!#lists.isEmpty(cmt.childComments)}">
+																	<th:block th:each="childCmt : ${cmt.childComments}">
+																		<!-- 대댓글 구역 (테두리) -->
+																		<div class="card-body border rounded-2 m-3 ml-5">
+																			<!-- 메뉴버튼 -->
+																			<div class="d-flex justify-content-end">
+																				<th:block th:if="${childCmt.writer_id == readDto.emp_id}">
+														                            <button type="button" class="btn btn-sm btn-outline-primary m-1" 
+														                            th:onclick="'deleteComment(' + ${childCmt.cmt_no} + ')'">삭제</button>
+														                            <button type="button" class="btn btn-sm btn-outline-primary m-1" 
+														                            th:onclick="'modComment(' + ${childCmt.cmt_no} + ', this)'">수정</button>
+												                        		</th:block>
+												                        	</div>
+																			<!-- 대댓글 내용 -->
+																			<div class="edit-content-place">
+																				<p th:text="${childCmt.cmt_content }"></p>
+																				<div class="d-flex justify-content-between">
+																					<div class="d-flex flex-row align-items-center">
+																						<p class="small mb-0 ms-2" th:text="${childCmt.writer_name }"></p>
+																					</div>
+																					<div class="d-flex flex-row align-items-center">
+																						<p class="small text-muted mb-0" 
+																						th:text="${#temporals.format(childCmt.reg_time, 'yyyy.MM.dd HH:mm')}"></p>
+																					</div>
+																				</div>
 																			</div>
 																		</div>
-																		<!-- 대댓글 작성 -->
-																	</div>
+																	</th:block>
 																</th:block>
-															</th:block>
+																<!-- 대댓글 작성 -->
+													            <div class="comment-form mt-3" style="display:none;">
+													            	<input type="hidden" name="parent_cmt_no" th:value="${cmt.cmt_no}">
+													            	<input type="hidden" name="reply_writer_id" th:value="${readDto.emp_id}">
+													                <textarea class="form-control" placeholder="대댓글을 작성하세요" name="reply_content"
+													                rows="3" style="resize:none;"></textarea>
+													                <div class="d-flex justify-content-end">
+																		<button class="btn btn-primary m-2" type="button" onclick="addReply();">대댓글 작성</button>
+																	</div>
+													            </div>
+															</div>
 														</div>
 													</th:block>
 													<th:block th:if="${cmt.is_delete == 0}">
@@ -195,7 +206,7 @@
 											                            <button type="button" class="btn btn-sm btn-outline-primary m-1" 
 											                            th:onclick="'deleteComment(' + ${cmt.cmt_no} + ')'">삭제</button>
 											                            <button type="button" class="btn btn-sm btn-outline-primary m-1" 
-											                            th:onclick="'modComment(' + ${cmt.cmt_no} + ')'">수정</button>
+											                            th:onclick="'modComment(' + ${cmt.cmt_no} + ', this)'">수정</button>
 									                        		</th:block>
 									                        		<button type="button" class="btn btn-sm btn-outline-primary m-1" 
 									                        		onclick="openReplyForm(this)">
@@ -203,56 +214,72 @@
 									                        		</button>
 									                        	</div>
 																<!-- 댓글 내용 -->
-																<p th:text="${cmt.cmt_content }"></p>
-																<div class="d-flex justify-content-between">
-																	<div class="d-flex flex-row align-items-center">
-																		<p class="small mb-0 ms-2" th:text="${cmt.writer_name }"></p>
-																	</div>
-																	<div class="d-flex flex-row align-items-center">
-																		<p class="small text-muted mb-0" 
-																		th:text="${#temporals.format(cmt.reg_time, 'yyyy.MM.dd HH:mm')}"></p>
+																<div class="edit-content-place">
+																	<p th:text="${cmt.cmt_content }"></p>
+																	<div class="d-flex justify-content-between">
+																		<div class="d-flex flex-row align-items-center">
+																			<p class="small mb-0 ms-2" th:text="${cmt.writer_name }"></p>
+																		</div>
+																		<div class="d-flex flex-row align-items-center">
+																			<p class="small text-muted mb-0" 
+																			th:text="${#temporals.format(cmt.reg_time, 'yyyy.MM.dd HH:mm')}"></p>
+																		</div>
 																	</div>
 																</div>
+																<th:block th:if="${!#lists.isEmpty(cmt.childComments)}">
+																	<th:block th:each="childCmt : ${cmt.childComments}">
+																		<th:block th:if="cmt.is_delete == 0">
+																			<!-- 대댓글 구역 (테두리) -->
+																			<div class="card-body border rounded-2 m-3 ml-5">
+																				<!-- 메뉴버튼 -->
+																				<div class="d-flex justify-content-end">
+																					<th:block th:if="${childCmt.writer_id == readDto.emp_id}">
+															                            <button type="button" class="btn btn-sm btn-outline-primary m-1" 
+															                            th:onclick="'deleteComment(' + ${childCmt.cmt_no} + ')'">삭제</button>
+															                            <button type="button" class="btn btn-sm btn-outline-primary m-1" 
+															                            th:onclick="'modComment(' + ${childCmt.cmt_no} + ', this)'">수정</button>
+													                        		</th:block>
+													                        	</div>
+																				<!-- 대댓글 내용 -->
+																				<div class="edit-content-place">
+																					<p th:text="${childCmt.cmt_content }"></p>
+																					<div class="d-flex justify-content-between">
+																						<div class="d-flex flex-row align-items-center">
+																							<p class="small mb-0 ms-2" th:text="${childCmt.writer_name }"></p>
+																						</div>
+																						<div class="d-flex flex-row align-items-center">
+																							<p class="small text-muted mb-0" 
+																							th:text="${#temporals.format(childCmt.reg_time, 'yyyy.MM.dd HH:mm')}"></p>
+																						</div>
+																					</div>
+																				</div>
+																			</div>
+																		</th:block>
+																	</th:block>
+																</th:block>
+																<!-- 대댓글 작성 -->
+													            <div class="comment-form mt-3" style="display:none;">
+													            	<input type="hidden" id="reply_writer_id" name="parent_cmt_no" th:value="${cmt.cmt_no}">
+													            	<input type="hidden" id="reply_writer_id" name="reply_writer_id" th:value="${readDto.emp_id}">
+													                <textarea class="form-control" placeholder="대댓글을 작성하세요" name="reply_content"
+													                rows="3" style="resize:none;"></textarea>
+													                <div class="d-flex justify-content-end">
+																		<button class="btn btn-primary m-2" type="button" onclick="addReply();">대댓글 작성</button>
+																	</div>
+													            </div>
 															</div>
 															
-															<th:block th:if="${!#lists.isEmpty(cmt.childComments)}">
-																<th:block th:each="childCmt : ${cmt.childComments}">
-																	<!-- 대댓글 구역 (테두리) -->
-																	<div class="card-body border rounded-2 m-3 ml-5">
-																		<!-- 메뉴버튼 -->
-																		<div class="d-flex justify-content-end">
-																			<th:block th:if="${childCmt.writer_id == readDto.emp_id}">
-													                            <button type="button" class="btn btn-sm btn-outline-primary m-1" 
-													                            th:onclick="'deleteComment(' + ${childCmt.cmt_no} + ')'">삭제</button>
-													                            <button type="button" class="btn btn-sm btn-outline-primary m-1" 
-													                            th:onclick="'modComment(' + ${childCmt.cmt_no} + ')'">수정</button>
-											                        		</th:block>
-											                        	</div>
-																		<!-- 대댓글 내용 -->
-																		<p th:text="${childCmt.cmt_content }"></p>
-																		<div class="d-flex justify-content-between">
-																			<div class="d-flex flex-row align-items-center">
-																				<p class="small mb-0 ms-2" th:text="${childCmt.writer_name }"></p>
-																			</div>
-																			<div class="d-flex flex-row align-items-center">
-																				<p class="small text-muted mb-0" 
-																				th:text="${#temporals.format(childCmt.reg_time, 'yyyy.MM.dd HH:mm')}"></p>
-																			</div>
-																		</div>
-																		<!-- 대댓글 작성 -->
-																	</div>
-																</th:block>
-															</th:block>
 														</div>
 													</th:block>
 												</th:block>
 	                                       	</th:block>
 										</div>
 					                    <!-- 댓글 입력창 시작 -->
-										<div data-mdb-input-init class="card-body  border rounded-2 m-3">
+										<div data-mdb-input-init class="card-body  border rounded-2 m-3" id="edit_form">
 											<a id="cmt_writer_name" name="cmt_writer_name" th:text="${readDto.emp_name}"></a>
 											<input type="hidden" id="cmt_writer_id" name="cmt_writer_id" th:value="${readDto.emp_id}">
-											<textarea id="cmt_content" name="cmt_content" class="form-control" 
+											<input type="hidden" id="parent_cmt_no" name="parent_cmt_no" th:value="null">
+											<textarea id="cmt_content" name="cmt_content" class="form-control edit-text-value" 
 											rows="3" style="resize:none;" placeholder="댓글을 입력하세요." ></textarea>
 											<div class="d-flex justify-content-end">
 												<button class="btn btn-primary m-2" type="button" onclick="addComment();">댓글 작성</button>
@@ -427,8 +454,91 @@
 		    })
 	}
 	
-	// 댓글 수정
-	const modComment = function(){
+	// 댓글 수정 폼
+	const modComment = function(cmtNo, button){
+
+    	const csrfToken = document.getElementById("csrf_token").value;
+    	const writerId = document.getElementById("cmt_writer_id").value;
+    	
+    	
+    	// 댓글 버튼의 상위 div인 card-body 내의 edit-content-place을 찾음
+        const contentPlace = button.closest('.card-body').querySelector('.edit-content-place');
+
+     	// fetch로 댓글 데이터를 조회
+        fetch(`/comments/${cmtNo}`)
+        .then(response => response.json())
+        .then(data => {
+            
+            contentPlace.innerHTML =  `
+            	<input type="hidden" id="edit_parent_cmt_no" value="${data.parent_cmt_no}">
+            	<input type="hidden" id="edit_cmt_no" value="${data.cmt_no}">
+            	<input type="hidden" id="edit_writer_id" value="${writerId}">
+                <textarea class="form-control" placeholder="대댓글을 작성하세요" id="edit_cmt_content"
+                rows="3" style="resize:none;">${data.cmt_content}</textarea>
+                <div class="d-flex justify-content-end">
+					<button class="btn btn-primary m-2" type="button" onclick="editComment();">대댓글 작성</button>
+				</div>
+            `;
+        })
+        .catch(error => {
+        	Swal.fire({
+				icon:'error',
+				title:'실패',
+				text: "작업 중 문제가 발생하였습니다.",
+				confirmButtonText : '닫기'
+			});
+        });
+
+	}
+	
+	// 댓글 수정 제출
+	const editComment = function(){
+		const noticeNo = document.getElementById('notice_no').value;
+		const cmtNo = document.getElementById('edit_cmt_no').value;
+		const cmtContent = document.getElementById('edit_cmt_content').value;
+		const csrfToken = document.getElementById("csrf_token").value;
+		
+		// 데이터를 json화
+			const commentData = {
+					notice_no: noticeNo,
+				    cmt_no: cmtNo,
+				    cmt_content: cmtContent
+				};
+			// JSON 문자열로 변환
+			const commentJSON = JSON.stringify(commentData);
+			
+			// fetch
+			fetch(`/comments/${cmtNo}`,{
+				method:'post',
+  				headers:{
+  					"Content-Type": "application/json;charset=utf-8",
+  					"Accept": "application/json",
+  					'X-CSRF-TOKEN': csrfToken
+  				},
+  				body:commentJSON
+			})
+			.then(response=>response.json())
+			.then(data=>{
+				if(data.res_code == '200'){
+				// 성공 시 댓글 리스트를 비동기적으로 새로고침
+			        Swal.fire({
+			            icon: 'success',
+			            title: '성공',
+			            text: data.res_msg
+			        }).then(() => {
+			            // 댓글 리스트 갱신 함수 호출
+			            refreshCommentSection(data.notice_no);  // 게시글 번호를 인자로 넘김
+			        });
+				} else{
+					Swal.fire({
+						icon:'error',
+						title:'실패',
+						text: data.res_msg
+					});
+				}
+			})
+		
+		
 		
 	}
 	
@@ -513,7 +623,7 @@
  	// 댓글 리스트 영역을 비동기적으로 새로고침하는 함수
     const refreshCommentSection = function(noticeNo) {
         // 댓글 리스트를 불러올 경로 설정 (게시글 번호를 포함)
-        const url = `/notice/comment/${noticeNo}`;
+        const url = `/comment/list/${noticeNo}`;
         
      	// CSRF(Cross-Site Request Forgery, 사이트 간 요청 위조)방지를 위한 토큰
 		const csrfToken = document.getElementById("csrf_token").value;

@@ -61,6 +61,16 @@ public class NoticeCommentService {
     
 	}
 	
+	// 댓글 조회
+	public NoticeCommentDto selectNoticeCommentOne(Long cmtNo) {
+		
+		NoticeComment nc = noticeCommentRepository.findBycmtNo(cmtNo);
+		NoticeCommentDto ncDto = new NoticeCommentDto().toDto(nc);
+		
+		return ncDto;
+		
+	}
+	
 	// 댓글 작성
 	public int createNoticeComment(NoticeCommentDto dto) {
 		int result = -1;
@@ -96,4 +106,12 @@ public class NoticeCommentService {
 	}
 	
 	// 댓글 수정
+	@Transactional
+	public int updateNoticeComment(NoticeCommentDto dto) {
+		int result = -1;
+		
+		result = noticeCommentRepository.updateByCmtNoToCmtContent(dto.getCmt_no(),dto.getCmt_content());
+			
+		return result;
+	}
 }
