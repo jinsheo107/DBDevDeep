@@ -110,7 +110,7 @@
                             <div class="card-body">
                                 <h3 class="card-title">장소 등록</h3>
                                 <hr>
-    <form id="createForm">
+    <form id="createForm" th:action="@{/place}" enctype="multipart/form-data">
       <!-- CSRF 토큰 추가 -->
         <input type="hidden" id="csrf_token" th:value="${_csrf.token}">
         <div class="row mb-3">
@@ -308,13 +308,8 @@
 					text: vali_text,
 					confirmButtonText : "닫기"
 				});
-			} else {
-				let obj = {};
-				const payload = new FormData(form);
-				payload.forEach(function(value,key){
-					obj[key] = value;
-				});
-				const jsonData = JSON.stringify(obj);
+			}  else {
+				const formData = new FormData(form); // FormData 사용, 파일 포함
 
 		        // CSRF 토큰 추가
 		        const csrfToken = document.getElementById('csrf_token').value;
@@ -322,11 +317,10 @@
 		        fetch('/place', {
 		            method: 'POST',
 		            headers: {
-		            	"Content-Type" : "application/json;charset=utf-8",
 		            	"Accept" : "application/json",
 		                'X-CSRF-TOKEN': csrfToken 
 		            },
-		            body: jsonData
+		            body: formData // JSON 대신 FormData로 전송
 		        })
 		        .then(response => response.json())
 		        .then(data => {
@@ -349,8 +343,9 @@
 		                });
 		            }
 		        })
-		       
-		        
+		        .catch(error => {
+		            console.error('Error:', error);
+		        });
 		    }
 		});
 </script>

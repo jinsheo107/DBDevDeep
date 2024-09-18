@@ -98,7 +98,7 @@ input, select, textarea {
                             <div class="card-body">
                                 <h3 class="card-title">장소 수정</h3>
                                 <hr>
-    <form id="updateForm">
+    <form id="updateForm"  th:action="@{/place/update/{place_no}(place_no=${dto.place_no})}" enctype="multipart/form-data">
       <!-- CSRF 토큰 추가 -->
         <input type="hidden" id="csrf_token" th:value="${_csrf.token}">
         <div class="row mb-3">
@@ -300,50 +300,43 @@ input, select, textarea {
 					confirmButtonText : "닫기"
 				});
 			} else {
-				let obj = {};
-				const payload = new FormData(form);
-				payload.forEach(function(value,key){
-					obj[key] = value;
-				});
-				const jsonData = JSON.stringify(obj);
+				 // FormData로 파일을 포함한 데이터를 서버로 전송
+	            const formData = new FormData(form);
+	            const csrfToken = document.getElementById('csrf_token').value;
+	            const placeNo = document.getElementById('place_no').value;
 
-		        // CSRF 토큰 추가
-		        const csrfToken = document.getElementById('csrf_token').value;
-				const placeNo = document.getElementById('place_no').value;
-		        fetch('/place/update/${placeNo}', {
-		            method: 'POST',
-		            headers: {
-		            	"Content-Type" : "application/json;charset=utf-8",
-		            	"Accept" : "application/json",
-		                'X-CSRF-TOKEN': csrfToken 
-		            },
-		            body: jsonData
-		        })
-		        .then(response => response.json())
-		        .then(data => {
-		            
-		            if (data.res_code === '200') {
-		                Swal.fire({
-		                    icon: 'success',
-		                    title: '성공',
-		                    text: data.res_msg,
-		                    confirmButtonText : '닫기'
-		                }).then((result) => {
-		                    location.href = "/place";
-		                });
-		            } else {
-		                Swal.fire({
-		                    icon: 'error',
-		                    title: '실패',
-		                    text: data.res_msg,
-		                    confirmButtonText : "닫기"
-		                });
-		            }
-		        })
-		       
-		        
-		    }
-		});
+	            fetch(`/place/update/${placeNo}`, {
+	                method: 'POST',
+	                headers: {
+	                    'X-CSRF-TOKEN': csrfToken
+	                },
+	                body: formData // FormData를 사용해 파일 포함 데이터 전송
+	            })
+	            .then(response => response.json())
+	            .then(data => {
+	                if (data.res_code === '200') {
+	                    Swal.fire({
+	                        icon: 'success',
+	                        title: '성공',
+	                        text: data.res_msg,
+	                        confirmButtonText: '닫기'
+	                    }).then(() => {
+	                        location.href = "/place";
+	                    });
+	                } else {
+	                    Swal.fire({
+	                        icon: 'error',
+	                        title: '실패',
+	                        text: data.res_msg,
+	                        confirmButtonText: "닫기"
+	                    });
+	                }
+	            })
+	            .catch(error => {
+	                console.error('Error:', error);
+	            });
+	        }
+	    });
 </script>
 				<!-- ============================================================== -->
 				<!-- End PAge Content -->

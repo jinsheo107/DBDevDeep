@@ -9,6 +9,7 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.dbdevdeep.employee.domain.EmployeeDto;
@@ -31,6 +32,44 @@ public class ItemViewController {
 		this.placeService = placeService;
 		this.employeeService = employeeService;
 	}
+	
+	//수정하기
+	@GetMapping("/item/update/{item_no}")
+	public String updateItem(Model model, @PathVariable("item_no") Long item_no) {
+		
+		// 1. 로그인한 사람 정보
+	    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+	    User user = (User) authentication.getPrincipal();
+	    String emp_id = user.getUsername();
+	    EmployeeDto e_dto = employeeService.selectEmployeeOne(emp_id);
+	    
+	    model.addAttribute("e_dto", e_dto);
+	    
+	    ItemDto dto = itemService.selectItemOne(item_no);
+	    
+	    model.addAttribute("dto" ,dto);
+	    
+	    return "place/item_update";
+	}
+	
+	// 상세 조회
+	@GetMapping("/item/{item_no}")
+	public String detailItem(Model model, @PathVariable("item_no") Long item_no) {
+		
+		// 1. 로그인한 사람 정보
+	    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+	    User user = (User) authentication.getPrincipal();
+	    String emp_id = user.getUsername();
+	    EmployeeDto e_dto = employeeService.selectEmployeeOne(emp_id);
+	    
+	    model.addAttribute("e_dto", e_dto);
+	    ItemDto dto = itemService.selectItemOne(item_no);
+	    
+	    model.addAttribute("dto" ,dto);
+	    
+	    return "place/item_detail";
+	}
+	
 	
 	// 등록
 	@GetMapping("/item/create")

@@ -75,10 +75,10 @@ public class Place {
 	private String unuseableEndDate;
 	// 원본사진명
 	@Column(name = "ori_pic_name")
-	private String oriPicname;
+	private String oriPicName;
 	// 수정사진명
 	@Column(name = "new_pic_name")
-	private String newPicname;
+	private String newPicName;
 	
 	// 등록일
 	@Column(name = "reg_date")

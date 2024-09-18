@@ -181,7 +181,7 @@ a:hover {
 											</tr>
 										</th:block>
 										<th:block th:if="${!#lists.isEmpty(resultList)}">
-											<tr th:each="item, itemStat : ${resultList}">
+											<tr th:each="item : ${resultList}" th:data-item-no="${item.item_no}">
 												<td th:text="${item.place_name}"></td>
 												<td th:text ="${item.item_name}"></td>
 												<td th:text="${item.place_location}"></td>
@@ -249,14 +249,16 @@ a:hover {
 		<script src="assets/extra-libs/datatables.net/js/jquery.dataTables.min.js"></script>
 		<script src="dist/js/pages/datatable/datatable-basic.init.js"></script>
 		<script>
-			$('#item_list').on('click', 'td', function(){
-				let itemNo = $(this).closest('tr').find('td:nth-child(1)').text();
-				
-				if(itemNo){
-					window.location.href = '/item/' + itemNo;
-				}
-			});
-			
+		$('#item_list').on('click', 'tr', function(){
+	        // 첫 번째 열에서 item_no 값을 추출
+	        let itemNo = $(this).data('item-no');
+	        
+	        if (itemNo) {
+	            window.location.href = '/item/' + itemNo;
+	        } else {
+	            alert('아이템 번호를 찾을 수 없습니다.');
+	        }
+	    });
 		</script>
 	</body>
 </html>
