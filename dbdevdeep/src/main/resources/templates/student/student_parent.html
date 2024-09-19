@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{include/student_layout}">
+<th:block layout:fragment="content">
+	<style>
+div.dataTables_wrapper div.dataTables_paginate ul.pagination {
+	margin: 2px 0;
+	white-space: nowrap;
+	justify-content: center;
+}
+</style>
+	<body>
+		<div class="page-wrapper">
+			<div class="page-breadcrumb">
+				<div class="row">
+					<div class="col-7 align-self-center">
+						<h4
+							class="page-title text-truncate text-dark font-weight-medium mb-1">Basic
+							Table</h4>
+						<div class="d-flex align-items-center">
+							<nav aria-label="breadcrumb">
+								<ol class="breadcrumb m-0 p-0">
+									<li class="breadcrumb-item"><a href="index.html"
+										class="text-muted">Home</a></li>
+									<li class="breadcrumb-item text-muted active"
+										aria-current="page">Library</li>
+								</ol>
+							</nav>
+						</div>
+					</div>
+					<div class="col-5 align-self-center">
+						<div class="customize-input float-right">
+							<select
+								class="custom-select custom-select-set form-control bg-white border-0 custom-shadow custom-radius">
+								<option selected>Aug 19</option>
+								<option value="1">July 19</option>
+								<option value="2">Jun 19</option>
+							</select>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="container-fluid">
+				<div class="row">
+					<div class="col-12">
+						<div class="card">
+							<div class="card-body">
+								<h4 class="card-title">학생 정보</h4>
+								<div class="student-info">
+									<img src="https://via.placeholder.com/150" alt="학생 사진">
+									<div class="student-details">
+										<input type="hidden" id="csrf_token" th:value="${_csrf.token}">
+										<input type="hidden" name="parent_no" th:value="${resultList.parent_no}"> 
+										<input type="hidden" name="student_no"
+											th:value="${sdto.student_no}">
+										<ul>
+											<li>
+												<p th:text="'이름 : '+${sdto.student_name}"></p>
+												<p th:text="'생년월일 : '+${sdto.student_birth}"></p>
+												<p th:text="'주소 : '+${sdto.student_addr}+${sdto.student_detail_addr}+'('+${sdto.student_post_code}+')'"></p>
+												<p th:text="'전화번호 : '+${sdto.student_phone}"></p>
+											</li>
+											<li>
+												<table>
+													<thead>
+														<tr>
+															<th>관계</th>
+															<th>성명</th>
+															<th>연락처</th>
+															<th>생년월일</th>
+															<th></th>
+															<th></th>
+														</tr>
+													</thead>
+													<tbody>
+														<th:block th:if="${#lists.isEmpty(resultList)}">
+															<tr>
+																<td colspan="7">학부모 정보가 존재하지 않습니다.</td>
+															</tr>
+														</th:block>
+														<th:block th:if="${!#lists.isEmpty(resultList)}">
+															<tr th:each="parent, parentStat : ${resultList}">
+																<td th:text="${parent.parent_relation}"></td>
+																<td th:text="${parent.parent_name}"></td>
+																<td th:text="${parent.parent_phone}"></td>
+																<td th:text="${parent.parent_birth}"></td>
+																<td><button type="button" class="btn btn-primary" data-toggle="modal" data-target="#parent_update_primary-header-modal">수정</button></td>
+																<td><a th:onclick="studentParnetDelete([[${parent.parent_no}]])">삭제</a><br></td>
+															</tr>
+														</th:block>
+													</tbody>
+												</table>
+											</li>
+											<li>
+												<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#parent_create_primary-header-modal">등록</button>
+											</li>		
+										</ul>
+										
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+
+				</div>
+			</div>
+		</div>
+
+		<!-- 부모 정보 수정 모달 -->
+		<!-- <div id="parent_update_primary-header-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="primary-header-modalLabel">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header modal-colored-header bg-primary">
+						<h4 class="modal-title" id="primary-header-modalLabel">부모 정보 수정</h4>
+					</div>
+				</div>
+			</div>
+		</div> -->
+		
+		
+		<!-- 부모 정보 등록 모달 -->
+		<div id="parent_create_primary-header-modal" class="modal fade show" tabindex="-1" role="dialog" aria-labelledby="primary-header-modalLabel" aria-modal="true" style="display: none;">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header modal-colored-header bg-primary">
+						<h4 class="modal-title" id="primary-header-modalLabel">부모 정보 등록</h4>
+					</div>
+					<div class="modal-body">
+						<div class="form-group">
+							<div>
+								<form id="student_parent_create_form" method="post">
+								<input type="hidden" id="csrf_token" th:value="${_csrf.token}">
+								<input type="hidden" name="student_no" th:value="${sdto.student_no}"> 
+									<select name="parent_relation">
+										<option value="" disabled selected>관계</option>
+										<option value="부">부</option>
+										<option value="모">모</option>
+									</select> 
+									<label for="parent_name">학부모 성명 : </label>
+									<input type="text" id="parent_name" name="parent_name"> 
+									<label for="parent_phone">연락처</label>
+					                    <input type="text" id="pp1" maxlength="3"> - 
+										<input type="text" id="pp2" maxlength="4"> - 
+										<input type="text" id="pp3" maxlength="4">
+										<input type="hidden" name="parent_phone" id="parent_phone">
+									<label for="parent_birth">생년월일</label>
+									<input type="date" id="parent_birth" name="parent_birth">
+									<div class="modal-footer">
+										<a th:href="@{/student/parent/@{sdto.student_no}}">취소</a>
+										<input type="submit" value="등록">
+									</div>
+								</form>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+
+		<script src="/assets/libs/jquery/dist/jquery.min.js"></script>
+		<script src="/assets/libs/popper.js/dist/umd/popper.min.js"></script>
+		<script src="/assets/libs/bootstrap/dist/js/bootstrap.min.js"></script>
+		<script src="/dist/js/app-style-switcher.js"></script>
+		<script src="/dist/js/feather.min.js"></script>
+		<script src="/assets/libs/perfect-scrollbar/dist/perfect-scrollbar.jquery.min.js"></script>
+		<script src="/assets/extra-libs/sparkline/sparkline.js"></script>
+		<script src="/dist/js/sidebarmenu.js"></script>
+		<script src="/dist/js/custom.min.js"></script>
+		<script src="/assets/extra-libs/datatables.net/js/jquery.dataTables.min.js"></script>
+		<script src="/dist/js/pages/datatable/datatable-basic.init.js"></script>
+		<script>
+			const form=document.getElementById("student_parent_create_form");
+			var studentNo = '[[${sdto.student_no}]]';
+			form.addEventListener('submit',(e)=>{
+				e.preventDefault();
+				// 유효성 검사 성공 가정
+				let vali_check = true;
+		
+				
+			    const pp1 = document.getElementById('pp1').value;
+			    const pp2 = document.getElementById('pp2').value;
+			    const pp3 = document.getElementById('pp3').value;
+			    const fullpp = `${pp1}-${pp2}-${pp3}`;
+			    document.getElementById('parent_phone').value = fullpp;
+			    
+				if(vali_check == false){
+					alert('유효성 검사 중 문제가 발생하였습니다.');
+					submitButton.disabled = false;
+				}else{
+					const payload = new FormData(form);
+					const csrfToken = document.getElementById('csrf_token').value;
+					fetch('/student/parent',{
+						method:'post',
+						headers : {
+							'X-CSRF-TOKEN':csrfToken
+						},
+						body:payload
+					})
+					.then(response => response.json())
+					.then(data=>{
+						if(data.res_code == '200'){
+							Swal.fire({
+								icon : 'success',
+								title : '성공',
+								text : data.res_msg
+							}).then((result)=>{
+								location.href = "/student/parent/" + studentNo;
+							});
+						}else{
+							Swal.fire({
+								icon : 'error',
+								title : '실패',
+								text : data.res_msg
+							});
+						}
+						 submitButton.disabled = false;
+					})
+					.catch(error => {
+			            console.error('Error:', error);
+			            submitButton.disabled = false;  // 다시 버튼 활성화
+			        });
+				}
+				
+			});
+		</script>
+		<script>
+			$(document).ready(function () {
+			    $('#parent_create_primary-header-modal').on('show.bs.modal', function () {
+			        $(this).css('display', 'block');  // 모달 열릴 때 display 속성 설정
+			    });
+			});
+			$('#parent_create_primary-header-modal').on('hide.bs.modal', function () {
+			    $(this).attr('aria-hidden', 'true').attr('inert', '');  // 모달 닫힐 때 설정
+			});
+		</script>
+		<script>
+			const studentParentDelete = function(parentNo){
+				if(confirm("정말 삭제하시겠습니까?")){
+					const csrfToken = document.getElementById('csrf_token').value;
+					const parentNo = document.querySelector('input[name="parent_no"]').value;
+					 fetch('/student/parent/'+parentNo,{
+						 method : 'delete',
+						 headers : {
+								'X-CSRF-TOKEN':csrfToken}
+					 })
+					 .then(response => response.json())
+					 .then(data => {
+						 if(data.res_code == '200'){
+								Swal.fire({
+									icon :'success',
+									title:'성공',
+									text : data.res_msg ,
+									confirmButtonText:"닫기"
+								}).then((result)=>{
+									location.href=`/student/class/${studentNo}`;
+								});
+							} else{
+								Swal.fire({
+									icon:'error',
+									title:'실패',
+									text: data.res_msg,
+									confirmButtonText:"닫기"
+						 		});
+							}
+						})
+				}}
+		</script>
+	</body>
+</html>

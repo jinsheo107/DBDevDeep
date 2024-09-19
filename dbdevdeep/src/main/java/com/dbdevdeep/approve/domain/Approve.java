@@ -50,6 +50,9 @@ public class Approve {
     @ManyToOne
     @JoinColumn(name = "job_code")
     private Job job;
+    
+    @Column(name = "appro_name")
+    private String approName;
 
     @Column(name = "appro_time")
     private LocalDateTime approTime;

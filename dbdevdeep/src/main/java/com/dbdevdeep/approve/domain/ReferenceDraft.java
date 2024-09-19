@@ -36,5 +36,8 @@ public class ReferenceDraft {
     @ManyToOne
     @JoinColumn(name = "emp_id")
     private Employee employee;
+    
+    @Column(name = "ref_draft_name")
+    private String refDraftName;
 
 }

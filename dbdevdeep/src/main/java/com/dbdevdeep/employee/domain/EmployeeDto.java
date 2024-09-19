@@ -36,11 +36,11 @@ public class EmployeeDto {
 	// department join
 	private String dept_code;
 	private String dept_name;
-	
+	private Department department;
 	// job join
 	private String job_code;
 	private String job_name;
-	
+	private Job job;
 	private String emp_internal_phone;
 	private int vacation_hour;
 	private LocalDate hire_date;
@@ -61,7 +61,7 @@ public class EmployeeDto {
 				.empAddr(emp_addr).empDetailAddr(emp_detail_addr)
 				.empInternalPhone(emp_internal_phone).vacationHour(vacation_hour)
 				.hireDate(hire_date).endDate(end_date).entStatus(ent_status)
-				.loginYn(login_yn).accountStatus(account_status).chatStatusMsg(chat_status_msg)
+				.loginYn(login_yn).accountStatus(account_status).chatStatusMsg(chat_status_msg).department(department).job(job)
 				.build();	
 	}
 	

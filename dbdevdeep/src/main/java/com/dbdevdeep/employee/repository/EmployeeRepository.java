@@ -25,4 +25,7 @@ public interface EmployeeRepository extends JpaRepository<Employee, String>{
 	@Query("UPDATE Employee e SET e.loginYn = :loginYn WHERE e.empId = :empId")
 	int updateByEmpidToLoginyn(@Param("empId") String empId, @Param("loginYn") String loginYn);
 	
+	@Modifying
+	@Query("UPDATE Employee e SET e.chatStatusMsg = :chatStatusMsg WHERE e.empId = :empId")
+    int updateByEmpIdToStatus(@Param("empId") String empId, @Param("chatStatusMsg") String chatStatusMsg);
 }

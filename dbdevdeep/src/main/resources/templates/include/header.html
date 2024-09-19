@@ -129,7 +129,7 @@
               </a>
             </li>
             <li class="nav-item left-nav" sec:authorize="hasAnyAuthority('D3')">
-              <a class="nav-link" th:href="@{/signup}" role="button"
+              <a class="nav-link" th:href="@{/allemployee}" role="button"
                 aria-haspopup="true" aria-expanded="false">
                 <span class="nav_text">인사관리</span>
               </a>
@@ -152,7 +152,7 @@
             <li class="nav-item dropdown">
               <a class="nav-link dropdown-toggle pl-md-3 position-relative" href="javascript:void(0)" id="bell"
                 role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                <span class="nav_text"><i data-feather="bell" class="svg-icon"></i></span>
+                <span class="nav_text"><i data-feather="bell" class="svg-icon" style="width: 24px; height: 24px;"></i></span>
                 <span class="badge badge-primary notify-no rounded-circle">5</span>
               </a>
               <div class="dropdown-menu dropdown-menu-left mailbox animated bounceInDown">
@@ -211,9 +211,9 @@
             </li>
             <!-- 채팅 -->
             <li class="nav-item dropdown">
-              <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown"
+              <a class="nav-link" th:href="@{/chat}" role="button"
                 aria-haspopup="true" aria-expanded="false">
-                <span class="nav_text"><i data-feather="mail" class="svg-icon"></i></span>
+                <span class="nav_text"><i data-feather="message-square" class="svg-icon" style="width: 24px; height: 24px;"></i></span>
                 <span class="badge badge-primary notify-no rounded-circle">3</span>
               </a>
             </li>
