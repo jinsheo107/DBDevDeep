@@ -28,10 +28,11 @@ public class ApproveLineDto {
     private LocalDateTime appro_permit_time;
     private String reason_back;
     private String consult_yn;
+    private String appro_line_sign;
 
     public ApproveLine toEntity(Approve approve, Employee employee) {
         if (employee == null) {
-            return null; // 이 경우, 적절한 처리 (예: 예외 던지기)도 고려할 수 있습니다.
+            return null; 
         }
 
         return ApproveLine.builder()
@@ -44,6 +45,7 @@ public class ApproveLineDto {
                 .approPermitTime(appro_permit_time)
                 .reasonBack(reason_back)
                 .consultYn(consult_yn)
+                .approLineSign(appro_line_sign)
                 .build();
     }
 
@@ -58,6 +60,7 @@ public class ApproveLineDto {
                 .appro_permit_time(approveLine.getApproPermitTime())
                 .reason_back(approveLine.getReasonBack())
                 .consult_yn(approveLine.getConsultYn())
+                .appro_line_sign(approveLine.getApproLineSign())
                 .build();
     }
 }
