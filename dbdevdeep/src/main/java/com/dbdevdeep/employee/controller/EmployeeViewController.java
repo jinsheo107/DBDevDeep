@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.dbdevdeep.employee.domain.AuditLogDto;
 import com.dbdevdeep.employee.domain.EmployeeDto;
 import com.dbdevdeep.employee.domain.EmployeeStatusDto;
 import com.dbdevdeep.employee.domain.MySignDto;
@@ -151,6 +152,26 @@ public class EmployeeViewController {
 		model.addAttribute("empDto", empDto);
 		
 		return "employee/edit_employee";
+	}
+	
+	@GetMapping("/log/employee")
+	public String employeeAuditLog(Model model) {
+		
+		List<AuditLogDto> logDtoList = employeeService.selectAuditLogDtoList();
+		
+		model.addAttribute("logDtoList", logDtoList);
+		
+		return "employee/log-employee";
+	}
+	
+	@GetMapping("/log/employee/{audit_no}")
+	public String employeeAuditLogDetail(Model model, @PathVariable("audit_no") Long audit_no) {
+		
+		AuditLogDto logDto = employeeService.selectAuditLogDto(audit_no);
+		
+		model.addAttribute("logDto", logDto);
+		
+		return "employee/log-employee-detail";
 	}
 
 }
