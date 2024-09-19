@@ -123,7 +123,7 @@
                             <div class="card-body" style="padding:50px 80px">
 		                        <div class="row mb-2">
 		                        	<div class="col-6 d-flex justify-content-start" style="padding-top:10px; padding-left:0px;">
-			                            <div style="font-size:36px; font-weight:bolder">학생목록</div>
+			                            <div style="font-size:36px; font-weight:bolder">교육 과목 목록</div>
 		                        	</div>
                                 <div class="table-responsive" style="margin-top:20px;">
                                     <table id="subject_list" class="table table-hover table-bordered no-wrap" style="width:100%">
@@ -137,24 +137,25 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                        	<th:block th:if="${#lists.isEmpty(resultList)}">
+                                        	<th:block th:if="${#lists.isEmpty(subjectList)}">
 												<tr>
 													<td colspan="5">존재하는 과목 정보가 없습니다.</td>
 												</tr>
 											</th:block>
-											<th:block th:if="${!#lists.isEmpty(resultList)}">
-											    <tr th:each="subject, subjectStat : ${resultList}">
+											<th:block th:if="${!#lists.isEmpty(subjectList)}">
+											    <tr th:each="subject, subjectStat : ${subjectList}">
 											        <td style="display:none;" th:text="${subject.subject_no}"></td>
-													<td th:text="${subject.subjectYear}"></td>
-													<td th:text="${subject.subjectGrade}"></td>
-											        <td th:text="${subject.subjectSemester}"></td>
-											        <td th:text="${subject.subjectName}"></td>
-											        <td th:text="${subject.subjectTeacher}"></td>
+													<td th:text="${subject.teacher_history.getTYear}"></td>
+													<td th:text="${subject.teacher_history.getGrade}"></td>
+											        <td th:text="${subject.subject_semester}"></td>
+											        <td th:text="${subject.subject_name}"></td>
+											        <td th:text="${subject.teacher_history.getEmployee().getEmpName()}"></td>
 											    </tr>
 											    </th:block>
 										</tbody>
                                         
                                     </table>
+                                    <a th:href="@{/subject/create}">등록</a>
                                 </div>
                             </div>
                         </div>
@@ -200,10 +201,8 @@
 		<script src="/dist/js/pages/datatable/datatable-basic.init.js"></script>
 		<script>
 		    $('#subject_list').on('click', 'td', function () {
-		        // 클릭된 행에서 해당 학생 번호를 추출합니다.
 		        var subjectNo = $(this).closest('tr').find('td:nth-child(1)').text(); // 번호가 있는 td를 선택
 		
-		        // 학생 상세 페이지로 이동합니다.
 		        if (subjectNo && subjectNo !== "") {
 		            window.location.href = '/subject/' + subjectNo;
 		        }

@@ -48,88 +48,48 @@ div.dataTables_wrapper div.dataTables_paginate ul.pagination {
 							<div class="card-body">
 								<h4 class="card-title">주소록</h4>
 								<div class="student-info">
-									<img src="https://via.placeholder.com/150" alt="학생 사진">
 									<div class="student-details">
 										<input type="hidden" id="csrf_token" th:value="${_csrf.token}">
 										<ul>
-											<img src="" />
 											<li>
-												<p th:text="'이름 : '+${dto.student_name}"></p>
-												<p>몇학년 몇반 몇번</p>
-												<p th:text="'생년월일 : '+${dto.student_birth}"></p>
-												<p
-													th:text="'주소 : '+${dto.student_addr}+${dto.student_detail_addr}+'('+${dto.student_post_code}+')'"></p>
-												<p th:text="'전화번호 : '+${dto.student_phone}"></p>
+												<p th:text="${subjectDetail.teacher_history.getTYear} + '학년도 ' + ${subjectDetail.subject_semester} + '학기 ' + ${subjectDetail.teacher_history.grade} + '학년 ' +${subjectDetail.teacher_history.getGradeClass} + '반 '"></p>
+												<p th:text="'담당 교사 : '+${subjectDetail.teacher_history.getEmployee().getEmpName()}"></p>
+												<p th:text="'과목명 : '+${subjectDetail.subject_name}"></p>
+			 									<p>"수업 시간 :"</p>
 											</li>
 											<li>
 												<div class="academic-info">
-													<h3>학년 이력 조회</h3>
+													<h3>평가 과정</h3>
 													<table>
 														<thead>
 															<tr>
-																<th>학년</th>
-																<th>학년도</th>
-																<th>반</th>
-																<th>번호</th>
-																<th>담임 성명</th>
+																<th>평가 항목</th>
+																<th>만점</th>
+																<th>반영 비율</th>
 															</tr>
 														</thead>
 														<tbody>
-															<th:block th:if="${#lists.isEmpty(cdto)}">
+															<th:block th:if="${#lists.isEmpty(curriDetail)}">
 																<tr>
-																	<td colspan="5">학년 이력이 존재하지 않습니다.</td>
+																	<td colspan="3">평가 과정 정보가 존재하지 않습니다.</td>
 																</tr>
 															</th:block>
-															<th:block th:if="${!#lists.isEmpty(cdto)}">
-																<tr th:each="studentClass, studentClassStat : ${cdto}">
-																	<td th:text="${studentClass.teacher_history.getGrade()}"></td>
-																	<td th:text="${studentClass.teacher_history.getTYear()}+년"></td>
-																	<td th:text="${studentClass.teacher_history.getGradeClass()}"></td>
-																	<td th:text="${studentClass.student_id}"></td>
-																	<td th:text="${studentClass.teacher_history.getEmployee().getEmpName()}"></td>
+															<th:block th:if="${!#lists.isEmpty(curriDetail)}">
+																<tr th:each="curri, curriStat : ${curriDetail}">
+																	<td th:text="${curri.curriculum_content}"></td>
+																	<td th:text="${curri.curriculum_max_score}+'점'"></td>
+																	<td th:text="${curri.curriculum_ratio}+'%'"></td>
 																</tr>
 															</th:block>
 														</tbody>
 													</table>
-													<a th:href="@{/student/class/{std_no}(std_no=${dto.student_no})}">학년 이력 수정</a><br> 
 												</div>
 											</li>
 											<li>
-												<div class="academic-info">
-													<h3>가족사항</h3>
-													<table>
-														<thead>
-															<tr>
-																<th>관계</th>
-																<th>성명</th>
-																<th>연락처</th>
-																<th>생년월일</th>
-																</tr>
-														</thead>
-														<tbody>
-															<th:block th:if="${#lists.isEmpty(cdto)}">
-																<tr>
-																	<td colspan="4">학부모 정보가 존재하지 않습니다.</td>
-																</tr>
-															</th:block>
-															<th:block th:if="${!#lists.isEmpty(cdto)}">
-																<tr th:each="studentClass, studentClassStat : ${cdto}">
-																	<td th:text="${studentClass.teacher_history.getGrade()}"></td>
-																	<td th:text="${studentClass.teacher_history.getTYear()}+년"></td>
-																	<td th:text="${studentClass.teacher_history.getGradeClass()}"></td>
-																	<td th:text="${studentClass.student_id}"></td>
-																</tr>
-															</th:block>
-														</tbody>
-													</table>
-													<a th:href="@{/student/parent/{std_no}(std_no=${dto.student_no})}">학부모 정보 수정</a>
-												</div>
 											</li>
 										</ul>
 									</div>
-									<a th:href="@{/student/list}">목록으로</a><br> 
-									<a th:href="@{/student/update/{student_no}(student_no=${dto.student_no})}">수정</a><br>
-									<a th:onclick="studentDelete([[${dto.student_no}]])">삭제</a>
+									
 								</div>
 							</div>
 						</div>
@@ -150,36 +110,6 @@ div.dataTables_wrapper div.dataTables_paginate ul.pagination {
 		<script
 			src="/assets/extra-libs/datatables.net/js/jquery.dataTables.min.js"></script>
 		<script src="/dist/js/pages/datatable/datatable-basic.init.js"></script>
-		<script>
-		const studentDelete = function(studentNo){
-			if(confirm("정말 삭제하시겠습니까?")){
-				const csrfToken = document.getElementById('csrf_token').value;
-				 fetch('/student/'+studentNo,{
-					 method : 'delete',
-					 headers : {
-							'X-CSRF-TOKEN':csrfToken}
-				 })
-				 .then(response => response.json())
-				 .then(data => {
-					 if(data.res_code == '200'){
-							Swal.fire({
-								icon :'success',
-								title:'성공',
-								text : data.res_msg ,
-								confirmButtonText:"닫기"
-							}).then((result)=>{
-								location.href="/student";
-							});
-						} else{
-							Swal.fire({
-								icon:'error',
-								title:'실패',
-								text: data.res_msg,
-								confirmButtonText:"닫기"
-					 		});
-						}
-					})
-			}}
-	</script>
+		
 	</body>
 </html>
