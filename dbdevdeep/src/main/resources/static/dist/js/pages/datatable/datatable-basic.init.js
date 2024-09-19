@@ -556,6 +556,7 @@ $('#place_list').DataTable({
         { "width": "10%", "targets": 4 },
         { "width": "25%", "targets": 5 }
     ],
+    "order": [[0, "desc"]], 
 	
   info: false,  // 테이블의 정보 표시를 비활성화
   "sDom": '<"row view-filter"<"col-sm-12"<"pull-left"l><"clearfix">>>t<"row view-pager"<"col-sm-12"<ipf>>>',
@@ -644,6 +645,7 @@ $('#item_list').DataTable({
         { "width": "15%", "targets": 5 },
         { "width": "15%", "targets": 6 }
     ],
+     
 	
   info: false,  // 테이블의 정보 표시를 비활성화
   "sDom": '<"row view-filter"<"col-sm-12"<"pull-left"l><"clearfix">>>t<"row view-pager"<"col-sm-12"<ipf>>>',

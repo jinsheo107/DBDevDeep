@@ -256,12 +256,22 @@ input, select, textarea {
 		// 선택된 라디오 버튼 값 확인
 	    const selectedLocation = document.querySelector('input[name="place_location"]:checked').value;
 		
-		const isUsable = document.getElementById('unusable').checked; // 사용 불가능 선택 여부 확인
+		const isUsable = document.getElementById('usable').checked; // 사용 불가능 선택 여부 확인
 	    
 		
 		  let vali_check = false; // 유효성 검사 플래그
 		  let vali_text = ""; 
-		    
+		   
+			// 시작시간과 종료시간 가져오기
+			const startTime = form.place_start_time.value;
+			const endTime = form.place_end_time.value;
+
+			// 시작일과 종료일 가져오기
+			const startDate = form.unuseable_start_date.value;
+			const endDate = form.unuseable_end_date.value;
+
+			// 사유 입력 여부 확인
+			const unusableReason = form.unuseable_reason.value;
 
 			// 유효성검사 장소명
 			if (form.place_name.value === '') {
@@ -271,24 +281,33 @@ input, select, textarea {
 			} else if(form.place_content.value === ''){
 				vali_text += '장소 설명을 입력하세요.';
 				form.place_content.focus();
-			} else if(form.place_start_time.value === '' || form.place_end_time.value == ''){
+			} else if (startTime === '' || endTime === '') {
 				vali_text += '사용 가능 시간을 입력하세요.';
 				form.place_start_time.focus();
-			} else if(form.place_status === '') {
-				if(form.unuseable_reason.value === ''){
+			} else if (startTime >= endTime) {
+				vali_text += '종료 시간은 시작 시간보다 이후여야 합니다.';
+			} else if (!isUsable) {
+				if (unusableReason === '') {
 					vali_text += '사유를 입력하세요.';
 					form.unuseable_reason.focus();
-				} else if(form.unuseable_start_date.value === '' || form.unuseable_end_date.value === ''){
-					vali_text = '사용 불가 기간을 입력하세요.';
+				} else if (startDate === '' || endDate === '') {
+					vali_text += '사용 불가 기간을 입력하세요.';
 					form.unuseable_start_date.focus();
+				} else {
+					const start = new Date(startDate);
+					const end = new Date(endDate);
+
+					if (start > end) {
+						vali_text += '종료일은 시작일보다 이후여야 합니다.';
+					} else {
+						vali_check = true;
+					}
 				}
-			} else if(!document.querySelector('input[name="place_location"]:checked')){
+			} else if (!document.querySelector('input[name="place_location"]:checked')) {
 				vali_text += '위치를 선택하세요.';
-				
-			} else{
+			} else {
 				vali_check = true;
 			}
-
 
 			// 유효성 검사가 실패하면 경고 메시지 표시
 			if (vali_check == false) {

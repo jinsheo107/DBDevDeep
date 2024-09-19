@@ -110,9 +110,9 @@
                             <div class="card-body">
                                 <h3 class="card-title">장소 등록</h3>
                                 <hr>
-    <form id="createForm" th:action="@{/place}" enctype="multipart/form-data">
+    <form id="createForm" th:action="@{/place}" enctype="multipart/form-data" method="post">
       <!-- CSRF 토큰 추가 -->
-        <input type="hidden" id="csrf_token" th:value="${_csrf.token}">
+        <input type="hidden" id="csrf_token" th:value="${_csrf.token}" name = "csrf_token">
         <div class="row mb-3">
             <!-- 1. 장소명 입력 -->
             <input type="hidden" class="form-control" id="emp_id" name="emp_id" th:value="${writer.emp_id}">
@@ -265,8 +265,18 @@
 		// 선택된 라디오 버튼 값 확인(위치)
 	    const selectedLocation = document.querySelector('input[name="place_location"]:checked').value;
 		// 선택된 라디오 버튼 값 확인 (여부)
-		const isUsable = document.getElementById('unusable').checked; // 사용 불가능 선택 여부 확인
+		const isUsable = document.getElementById('usable').checked; // 사용 불가능 선택 여부 확인
 	    
+		// 시작시간과 종료시간 가져오기
+		const startTime = form.place_start_time.value;
+		const endTime = form.place_end_time.value;
+
+		// 시작일과 종료일 가져오기
+		const startDate = form.unuseable_start_date.value;
+		const endDate = form.unuseable_end_date.value;
+		
+		// 사유 입력 여부 확인
+		const unusableReason = form.unuseable_reason.value;
 		
 		  let vali_check = false; // 유효성 검사 플래그
 		  let vali_text = ""; 
@@ -280,20 +290,31 @@
 			} else if(form.place_content.value === ''){
 				vali_text += '장소 설명을 입력하세요.';
 				form.place_content.focus();
-			} else if(form.place_start_time.value === '' || form.place_end_time.value == ''){
+			}  else if(startTime === '' || endTime === ''){
 				vali_text += '사용 가능 시간을 입력하세요.';
 				form.place_start_time.focus();
-			} else if(form.place_status === '') {
-				if(form.unuseable_reason.value === ''){
+			} else if (startTime >= endTime) {
+				vali_text += '종료 시간은 시작 시간보다 이후여야 합니다.';
+			} else if(!isUsable) {
+				if(unusableReason === ''){
 					vali_text += '사유를 입력하세요.';
 					form.unuseable_reason.focus();
-				} else if(form.unuseable_start_date.value === '' || form.unuseable_end_date.value === ''){
-					vali_text = '사용 불가 기간을 입력하세요.';
+				} else if(startDate === '' || endDate === ''){
+					vali_text += '사용 불가 기간을 입력하세요.';
 					form.unuseable_start_date.focus();
+				} else {
+					// 날짜 비교 (Date 객체로 변환 후 비교)
+					const start = new Date(startDate);
+					const end = new Date(endDate);
+					
+					if (start > end) {
+						vali_text += '종료일은 시작일보다 이후여야 합니다.';
+					} else {
+						vali_check = true;
+					}
 				}
 			} else if(!document.querySelector('input[name="place_location"]:checked')){
 				vali_text += '위치를 선택하세요.';
-				
 			} else{
 				vali_check = true;
 			}

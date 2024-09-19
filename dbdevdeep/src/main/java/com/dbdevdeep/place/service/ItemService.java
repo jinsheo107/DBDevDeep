@@ -14,6 +14,7 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.dbdevdeep.FileService;
 import com.dbdevdeep.place.domain.Item;
 import com.dbdevdeep.place.domain.ItemDto;
 import com.dbdevdeep.place.domain.Place;
@@ -25,15 +26,17 @@ public class ItemService {
 
 	private final ItemRepository itemRepository;
 	private final PlaceRepository placeRepository;
-	private final PlaceFileService placeFileService;
+	private final FileService fileService;
 	
 	@Autowired
 	public ItemService(ItemRepository itemRepository, PlaceRepository placeRepository,
-			PlaceFileService placeFileService) {
+			FileService fileService) {
 		this.itemRepository = itemRepository;
 		this.placeRepository = placeRepository;
-		this.placeFileService = placeFileService;
+		this.fileService = fileService;
 	}
+	// 일련번호 중복방지
+	
 	
 	
 	// 삭제하기
@@ -43,7 +46,7 @@ public class ItemService {
 		try {
 			  Item item = itemRepository.findByitemNo(item_no);
 	            if (item.getNewPicName() != null) {
-	                placeFileService.delete(item_no);  // 파일 삭제
+	                fileService.placeDelete(item_no);  // 파일 삭제
 	            }
 	            itemRepository.deleteById(item_no);  // 기자재 삭제
 	            result = 1;
@@ -72,9 +75,9 @@ public class ItemService {
 	        // 새 파일이 업로드되면 기존 파일 삭제
 	        if (file != null && !file.isEmpty()) {
 	            if (p.getNewPicName() != null) {
-	                placeFileService.delete(p.getPlaceNo());  // 기존 파일 삭제
+	                fileService.placeDelete(p.getPlaceNo());  // 기존 파일 삭제
 	            }
-	            String newPicName = placeFileService.upload(file);  // 새 파일 업로드
+	            String newPicName = fileService.placeUpload(file);  // 새 파일 업로드
 	            dto.setNew_pic_name(newPicName);
 	            dto.setOri_pic_name(file.getOriginalFilename());
 	        }

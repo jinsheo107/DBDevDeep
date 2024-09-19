@@ -15,20 +15,20 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.dbdevdeep.FileService;
 import com.dbdevdeep.place.domain.ItemDto;
 import com.dbdevdeep.place.service.ItemService;
-import com.dbdevdeep.place.service.PlaceFileService;
 
 @Controller
 public class ItemApiController {
 
 	private final ItemService itemService;
-	private final PlaceFileService placeFileService;
+	private final FileService fileService;
 	
 	@Autowired
-	public ItemApiController(ItemService itemService, PlaceFileService placeFileService) {
+	public ItemApiController(ItemService itemService, FileService fileService) {
 		this.itemService = itemService;
-		this.placeFileService = placeFileService;
+		this.fileService = fileService;
 	}
 	
 	
@@ -64,12 +64,12 @@ public class ItemApiController {
 
 	            if (originalFilename != null && !originalFilename.isEmpty()) {
 	                // 새로운 파일 업로드
-	                String savedFileName = placeFileService.upload(file);
+	                String savedFileName = fileService.placeUpload(file);
 
 	                if (savedFileName != null) {
 	                    // 기존 파일 삭제 (기존 파일이 있을 경우)
 	                    if (dto.getNew_pic_name() != null && !dto.getNew_pic_name().isEmpty()) {
-	                        placeFileService.delete(dto.getPlace_no());
+	                        fileService.placeDelete(dto.getPlace_no());
 	                    }
 
 	                    // 새로운 파일 정보 DTO에 설정
@@ -138,11 +138,20 @@ public class ItemApiController {
 	    resultMap.put("res_code", "404");
 	    resultMap.put("res_msg", "기자재 등록 중 오류가 발생하였습니다.");
 	    
+	    // 일련번호 중복 체크 추가
+	    boolean exists = itemService.checkSerialExists(dto.getPlace_no(), dto.getItem_serial_no());
+	    if (exists) {
+	        resultMap.put("res_code", "409");
+	        resultMap.put("res_msg", "이미 존재하는 일련번호입니다.");
+	        return resultMap;
+	    }
+	    
 	    if(itemService.createItem(dto) > 0) {
-	    	resultMap.put("res_code", "200");
-	    	resultMap.put("res_msg", "기자재 등록에 성공하였습니다.");
+	        resultMap.put("res_code", "200");
+	        resultMap.put("res_msg", "기자재 등록에 성공하였습니다.");
 	    }
 	    return resultMap;
 	}
+	
 	
 }
