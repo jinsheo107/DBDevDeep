@@ -56,9 +56,14 @@ div.dataTables_wrapper div.dataTables_paginate ul.pagination {
 												<p th:text="'담당 교사 : '+${subjectDetail.teacher_history.getEmployee().getEmpName()}"></p>
 												<p th:text="'과목명 : '+${subjectDetail.subject_name}"></p>
 			 									<p>
-												    수업 시간 :
-												    <span th:each="timetableDetail : ${timetableDetail}" 
-												          th:text="${timetableDetail.day} + '요일 ' + ${timetableDetail.period} + '교시' + (iterStat.hasNext ? ', ' : '')">
+												    <span th:if="${#lists.isEmpty(timetableDetail)}">
+												        등록된 수업 시간 정보가 없습니다.
+												    </span>
+												    <span th:if="${!#lists.isEmpty(timetableDetail)}">
+												        수업 시간 :
+												        <span th:each="timetableDetailItem, iterStat : ${timetableDetail}" 
+												              th:text="${timetableDetailItem.day} + '요일 ' + ${timetableDetailItem.period} + '교시' + (iterStat.hasNext ? ', ' : '')">
+												        </span>
 												    </span>
 												</p>
 											</li>

@@ -263,17 +263,27 @@ public class StudentService {
 	            subjectRepository.save(subject);
 
 	            // 2. Curriculum 저장
-	            for (CurriculumDto cdto : cdtoList) {
-	                Curriculum curriculum = cdto.toEntity();
-	                curriculum.setSubject(subject);
-	                curriculumRepository.save(curriculum);
-	            }
+	            if(cdtoList != null && !cdtoList.isEmpty()){
+		            for (CurriculumDto cdto : cdtoList) {
+		            	if (cdto.getCurriculum_content() != null && !cdto.getCurriculum_content().trim().isEmpty() &&
+		                        cdto.getCurriculum_ratio() != null && cdto.getCurriculum_max_score() != null) {
 
+		                        Curriculum curriculum = cdto.toEntity();
+		                        curriculum.setSubject(subject);
+		                        curriculumRepository.save(curriculum);
+		                    }
+		            }
+	            }
 	            // 3. TimeTable 저장
-	            for (TimeTableDto tdto : tdtoList) {
-	                TimeTable timeTable = tdto.toEntity();
-	                timeTable.setSubject(subject);
-	                timeTableRepository.save(timeTable);
+	            if (tdtoList != null && !tdtoList.isEmpty()) {
+	                for (TimeTableDto tdto : tdtoList) {
+	                    if (tdto.getDay() != null && !tdto.getDay().trim().isEmpty() && tdto.getPeriod() != null) {
+
+	                        TimeTable timeTable = tdto.toEntity();
+	                        timeTable.setSubject(subject);
+	                        timeTableRepository.save(timeTable);
+	                    }
+	                }
 	            }
 
 	            resultMap.put("res_code", "200");

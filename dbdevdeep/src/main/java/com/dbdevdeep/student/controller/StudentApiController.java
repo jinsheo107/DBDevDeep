@@ -214,13 +214,10 @@ public class StudentApiController {
 		 Map<String,String> resultMap = new HashMap<String,String>();
 		 resultMap.put("res_code", "404");
 		 resultMap.put("res_msg", "과목 정보 등록 중 오류가 발생했습니다");
-		 System.out.println(detailsDto);
-		 System.out.println(detailsDto.getCdtoList());
 		 try {
 			 Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		        User user = (User) authentication.getPrincipal();  // User 타입으로 캐스팅
 		        String teacherNo = user.getUsername();  // 여기서 getUsername()으로 teacher_no 추출
-		        System.out.println(teacherNo);
 		        
 		        TeacherHistory teacherHistory = teacherHistoryRepository.selectLatestTeacherHistoryByEmployee(teacherNo);
 		        if (teacherHistory == null) {
