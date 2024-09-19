@@ -1,5 +1,6 @@
-package com.dbdevdeep.notice.domain;
+package com.dbdevdeep.chat.domain;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import jakarta.persistence.Column;
@@ -17,23 +18,31 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name="notice_category")
+@Table(name="chat_room")
 @NoArgsConstructor(access=AccessLevel.PROTECTED)
 @AllArgsConstructor(access=AccessLevel.PROTECTED)
 @Getter
 @Setter
 @Builder
-public class NoticeCategory {
+public class ChatRoom {
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name="category_no")
-	private Long categoryNo;
+	@Column(name="room_no")
+	private Long roomNo;
 	
-	@Column(name="category_name")
-	private String categoryName;
+	@Column(name="room_name")
+	private String roomName;
 	
-	// 공지사항
-	@OneToMany(mappedBy = "noticeCategory")
-	private List<Notice> notice;
+	@Column(name="last_chat")
+	private String lastChat;
+	
+	@Column(name="last_time")
+	private LocalDateTime lastTime;
+	
+	// 채팅 참여자 정보
+	@OneToMany(mappedBy = "chatRoom")
+	private List<ChatMemberInfo> chatMemberInfo;
+		
+
 }

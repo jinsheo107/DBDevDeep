@@ -4,7 +4,9 @@ import java.time.LocalDateTime;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
+import com.dbdevdeep.employee.domain.Employee;
 import com.dbdevdeep.notice.domain.Notice;
+import com.dbdevdeep.notice.domain.NoticeCategory;
 
 import groovy.transform.ToString;
 import lombok.AllArgsConstructor;
@@ -36,10 +38,12 @@ public class NoticeDto {
 	private int is_att;
 	private int read_check;
 
-	public Notice toEntity() {
+	public Notice toEntity(Employee e, NoticeCategory nc) {
 		return Notice.builder()
 				.noticeNo(notice_no)
 				.noticeTitle(notice_title)
+				.employee(e)
+				.noticeCategory(nc)
 				.noticeContent(notice_content)
 				.isImportant(is_important)
 				.isCmt(is_cmt)
@@ -52,6 +56,10 @@ public class NoticeDto {
 	public NoticeDto toDto(Notice n) {
 		return NoticeDto.builder()
 				.notice_no(n.getNoticeNo())
+				.writer_id(n.getEmployee().getEmpId())
+				.writer_name(n.getEmployee().getEmpName())
+				.category_no(n.getNoticeCategory().getCategoryNo())
+				.category_name(n.getNoticeCategory().getCategoryName())
 				.notice_title(n.getNoticeTitle())
 				.notice_content(n.getNoticeContent())
 				.is_important(n.getIsImportant())

@@ -1,13 +1,16 @@
-package com.dbdevdeep.notice.domain;
+package com.dbdevdeep.chat.domain;
 
-import java.util.List;
+import java.time.LocalDateTime;
+
+import com.dbdevdeep.employee.domain.Employee;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -17,23 +20,30 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name="notice_category")
+@Table(name="chat_member_info")
 @NoArgsConstructor(access=AccessLevel.PROTECTED)
 @AllArgsConstructor(access=AccessLevel.PROTECTED)
 @Getter
 @Setter
 @Builder
-public class NoticeCategory {
+public class ChatMemberInfo {
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name="category_no")
-	private Long categoryNo;
+	@Column(name="info_no")
+	private Long infoNo;
 	
-	@Column(name="category_name")
-	private String categoryName;
+	@ManyToOne
+	@JoinColumn(name="member_id")
+	private Employee employee;
 	
-	// 공지사항
-	@OneToMany(mappedBy = "noticeCategory")
-	private List<Notice> notice;
+	@ManyToOne
+	@JoinColumn(name="room_no")
+	private ChatRoom chatRoom;
+	
+	@Column(name="join_time")
+	private LocalDateTime joinTime;
+	
+	@Column(name="is_admin")
+	private int isAdmin;
 }
