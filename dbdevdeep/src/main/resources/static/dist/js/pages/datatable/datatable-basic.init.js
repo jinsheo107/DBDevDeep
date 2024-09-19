@@ -12,14 +12,15 @@ $('#notice_config').DataTable({
 	 "responsive": true,
 	 // 컬럼 width 비율 조절
 	 "columnDefs": [
-        { "width": "5%", "targets": 0 },
+        { "width": "0%", "targets": 0 },
         { "width": "5%", "targets": 1 },
-        { "width": "10%", "targets": 2 },
-        { "width": "60%", "targets": 3 },
-        { "width": "10%", "targets": 4 },
-        { "width": "10%", "targets": 5 }
+        { "width": "5%", "targets": 2 },
+        { "width": "10%", "targets": 3 },
+        { "width": "60%", "targets": 4 },
+        { "width": "10%", "targets": 5 },
+        { "width": "10%", "targets": 6 }
     ],
-	"order": [[1, "desc"]], 
+	"order": [[2, "desc"]], 
 	// 정보 표시 해제
 	info: false, 
 	// DataTables의 DOM 구조를 재정의

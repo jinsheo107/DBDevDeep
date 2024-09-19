@@ -15,59 +15,64 @@
    	body{
    		color:#212529 !important;
    	}
+   	
+   	/* 다섯번째 td 요소에 커서 포인터 추가 */
+	#notice_config tbody tr td:nth-child(5) {
+	    cursor: pointer;
+	}
 	
 	div.dataTables_wrapper div.dataTables_paginate ul.pagination {
-		  white-space: nowrap;
-		  justify-content: center;
-		  margin-top:25px !important;
-		}
+	  white-space: nowrap;
+	  justify-content: center;
+	  margin-top:25px !important;
+	}
+
+	/* DataTables 검색 영역을 Flexbox로 설정하여 수평 및 수직 정렬 */
+	div.dataTables_wrapper div.dataTables_filter {
+	  display: flex; /* Flexbox 사용 */
+	  align-items: center; /* 수직 가운데 정렬 */
+	  justify-content: flex-end; /* 오른쪽 정렬 */
+	  margin-bottom: 0; /* 하단 여백 제거 */
+	}
 	
-		/* DataTables 검색 영역을 Flexbox로 설정하여 수평 및 수직 정렬 */
-		div.dataTables_wrapper div.dataTables_filter {
-		  display: flex; /* Flexbox 사용 */
-		  align-items: center; /* 수직 가운데 정렬 */
-		  justify-content: flex-end; /* 오른쪽 정렬 */
-		  margin-bottom: 0; /* 하단 여백 제거 */
-		}
+	/* 검색 input 필드 스타일 */
+	div.dataTables_wrapper div.dataTables_filter input {
+	  margin-left: 0.5em; /* 왼쪽 여백 추가 */
+	  display: inline-block; /* 인라인 블록 설정 */
+	  width: auto; /* 너비 자동 설정 */
+	  height: 30px; /* input 높이 설정 */
+	  vertical-align: middle; /* 수직 정렬 */
+	  box-sizing: border-box; /* 박스 크기 설정 */
+	}
+	
+	button.btn {
+		width:80px;
+		font-size:18px;
+	}
+	
+	/* 첫 번째 tr의 td와 th에서 상단 테두리 제거 */
+	.bordered tbody tr:first-child th,
+	.bordered tbody tr:first-child td {
+	    border-top: none; /* 상단 테두리 제거 */
+	}
 		
-		/* 검색 input 필드 스타일 */
-		div.dataTables_wrapper div.dataTables_filter input {
-		  margin-left: 0.5em; /* 왼쪽 여백 추가 */
-		  display: inline-block; /* 인라인 블록 설정 */
-		  width: auto; /* 너비 자동 설정 */
-		  height: 30px; /* input 높이 설정 */
-		  vertical-align: middle; /* 수직 정렬 */
-		  box-sizing: border-box; /* 박스 크기 설정 */
-		}
-		
-		button.btn {
-			width:80px;
-			font-size:18px;
-		}
-		
-		/* 첫 번째 tr의 td와 th에서 상단 테두리 제거 */
-		.bordered tbody tr:first-child th,
-		.bordered tbody tr:first-child td {
-		    border-top: none; /* 상단 테두리 제거 */
-		}
-			
-		.bordered {
-	  		border-left: 1px solid #e8eef3;
-	  		border-right: 1px solid #e8eef3;
-	  	}
-	  	.bordered th,
-	  	.bordered td {
-	    	border-left: 1px solid #e8eef3;
-	    	border-top: 1px solid #e8eef3;
-	    	border-right: 1px solid #e8eef3;
-	    }	
-		
-		/* 첫 번째 td를 수평 및 수직 가운데 정렬 */
-		.bordered tbody tr td.align-center {
-		    text-align: center; /* 수평 가운데 정렬 */
-		    vertical-align: middle;
-		    padding-bottom:8px;
-		}
+	.bordered {
+  		border-left: 1px solid #e8eef3;
+  		border-right: 1px solid #e8eef3;
+  	}
+  	.bordered th,
+  	.bordered td {
+    	border-left: 1px solid #e8eef3;
+    	border-top: 1px solid #e8eef3;
+    	border-right: 1px solid #e8eef3;
+    }	
+	
+	/* 첫 번째 td를 수평 및 수직 가운데 정렬 */
+	.bordered tbody tr td.align-center {
+	    text-align: center; /* 수평 가운데 정렬 */
+	    vertical-align: middle;
+	    padding-bottom:8px;
+	}
 		
 		
 	
@@ -166,6 +171,7 @@
                                     <table id="notice_config" class="table table-hover table-bordered no-wrap" style="width:100%; text-align: center;">
                                         <thead>
                                             <tr>
+                                            	<th scope="col" style="display:none;">noticeNo</th>
                                                 <th scope="col">읽음</th>
                                                 <th scope="col">글번호</th>
                                                 <th scope="col">분류</th>
@@ -177,19 +183,16 @@
                                         <tbody>
                                         	<th:block th:if="${#lists.isEmpty(resultList)}">
                                         		<tr>
-                                        			<td colspan="6">게시글이 존재하지 않습니다.</td>
+                                        			<td colspan="7">게시글이 존재하지 않습니다.</td>
                                         		</tr>
                                         	</th:block>
                                         	<th:block th:if="${!#lists.isEmpty(resultList)}">
                                         		<tr th:each="notice, noticeStat : ${resultList}">
+                                        			<td th:text="${notice.notice_no}" style="display:none;"></td>
                                         			<td th:text="${notice.read_check==1 ? 'V' : ''}"></td>
                                         			<td th:text="${noticeStat.count}"></td>
                                         			<td th:text="${notice.category_name}"></td>
-                                        			<td style="text-align:left !important;">
-                                        				<a th:href="@{/notice/{noticeNo}(noticeNo=${notice.notice_no})}">
-											                <span th:text="${notice.notice_title}"></span>
-											            </a>
-                                        			</td>
+                                        			<td th:text="${notice.notice_title}" style="text-align:left !important;"></td>
                                         			<td th:text="${notice.writer_name}"></td>
                                         			<td th:text="${#temporals.format(notice.reg_time, 'yyyy.MM.dd')}"></td>
                                        			</tr>
@@ -251,6 +254,17 @@
     <!--This page plugins -->
     <script src="/assets/extra-libs/datatables.net/js/jquery.dataTables.min.js"></script>
     <script src="/dist/js/pages/datatable/datatable-basic.init.js"></script>
+	<script>
+	    $('#notice_config').on('click', 'td:nth-child(5)', function () {
+	        // 클릭된 행에서 해당 게시글의 번호를 추출합니다.
+	        var noticeNo = $(this).closest('tr').find('td:nth-child(1)').text(); // 번호가 있는 td를 선택
+	
+	        // 게시글 상세 페이지로 이동합니다.
+	        if (noticeNo) {
+	            window.location.href = '/notice/' + noticeNo;
+	        }
+	    });
+	</script>
 </body>
 
 </html>
