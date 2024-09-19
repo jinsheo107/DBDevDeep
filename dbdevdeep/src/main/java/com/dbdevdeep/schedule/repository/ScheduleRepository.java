@@ -14,4 +14,6 @@ public interface ScheduleRepository extends JpaRepository<Schedule, Long>{
 
 	List<Schedule> findByCalendarTypeAndEmployee_EmpId(int calendarType, String empId);
 
+	Schedule findByScheduleNo(Long schedule_no);
+
 }

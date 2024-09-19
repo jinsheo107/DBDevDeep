@@ -10,6 +10,14 @@
 </head>
 <th:block layout:fragment="content">
 	<style>
+		.required-indicator {
+		    display: inline-block; /* 인라인 블록으로 설정하여 레이블 옆에 표시 */
+		    width: 8px; /* 동그라미 크기 */
+		    height: 8px; /* 동그라미 크기 */
+		    background-color: #FF7373; /* 빨간색 */
+		    border-radius: 50%; /* 동그라미 모양 */
+		    margin-right: 5px; /* 레이블과 간격 */
+		}
 		.form-control{
 			margin-left:0px !important;
 		}
@@ -315,7 +323,7 @@
 	                showCancelButton: true,
 	                confirmButtonColor: '#5f76e8',
 	                cancelButtonColor: '#e8eaec',
-	                confirmButtonText: '확인',
+	                confirmButtonText: '삭제',
 	                cancelButtonText: '취소',
 	                customClass: {
 	                    cancelButton: 'custom-cancel-button'
@@ -560,22 +568,6 @@
 		<div class="modal fade" id="holidayDetailModal" tabindex="-1" role="dialog" aria-labelledby="holidayDetailModalLabel">
 		    <div class="modal-dialog modal-dialog-centered" style="max-width:50%; width: 50%;">
 		        <div class="modal-content" id="holidayDetailContent">
-		            <div class="modal-header modal-colored-header bg-primary" style="display: flex; align-items: center; justify-content: space-between; font-size: 25px;">
-		                <div class="modal-title" id="holidayDetailModalLabel">휴일 정보</div>
-		                <div style="font-size:16px;">등록일 : </div>
-		            </div>
-		            <div class="modal-body" style="padding:0px;">
-		                <!-- 상세정보 내용을 동적으로 채울 부분 -->
-		                <table style="border-bottom:none; border-top:none;" class="table bordered">
-		                    <tbody>
-		                        <!-- 서버에서 가져온 데이터로 채울 부분 -->
-		                    </tbody>
-		                </table>
-		            </div>
-		            <div class="modal-footer" style="margin-top:-15px;">
-		                <button type="button" class="btn btn-primary" id="updateButton">수정</button>
-		                <button type="button" class="btn waves-effect waves-light btn-outline-secondary" data-dismiss="modal">닫기</button>
-		            </div>
 		        </div>
 		    </div>
 		</div>
@@ -585,8 +577,13 @@
 		    <div class="modal-dialog modal-dialog-centered" style="max-width:50%; width: 50%;">
 		        <div class="modal-content">
 		            <div class="modal-header modal-colored-header bg-primary" style="display: flex; align-items: center; justify-content: space-between; font-size: 25px;">
-		                <div class="modal-title" id="holidayCreateModalLabel">휴일 등록</div>
-		                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+		                <div class="modal-title" id="holidayCreateModalLabel">
+		                	<i data-feather="calendar" class="svg-icon mr-2 ml-1"></i>
+		                	휴일 등록
+		                </div>
+		                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+		                	<i data-feather="x" class="svg-icon mr-2 ml-1"></i>
+		                </button>
 		            </div>
 		    			<form id="holidayCreateFrm">
 				            <div class="modal-body" style="padding:0px;">
@@ -596,18 +593,23 @@
 				                        <!-- 날짜 선택 -->
 									            <tr>
 									                <td class="align-center" style="width: 20%;">
+									                	<span class="required-indicator"></span> <!-- 필수 입력 표시 -->
 									                    <label>날짜</label>
 									                </td>
 									                <td style="width: 80%;">
-									                    <div class="form-inline">
-									                        <input type="radio" name="is_period" value="N" id="createDateOption1" checked>
-                                                            <label for="createDateOption1" class="ml-2">하루</label>
-                                                            <input type="date" class="form-control" id="create_single_date" name="start_date" placeholder="날짜" style="margin-left: 15px !important;">
-                                                            <input type="radio" name="is_period" value="Y" id="createDateOption2" class="ml-4">
-                                                            <label for="createDateOption2" class="ml-2">기간</label>
-                                                            <input type="date" class="form-control" id="create_period_start_date" name="start_date" placeholder="시작일" style="margin-left: 15px !important;">
-                                                            <span class="ml-3 mr-2"> ~ </span>
-                                                            <input type="date" class="form-control" id="create_period_end_date" name="end_date" placeholder="종료일" style="margin-left: 10px !important">
+									                    <div class="form-inline d-flex justify-content-between align-items-center">
+									                    	<div style="display:flex;">
+										                        <input type="radio" name="is_period" value="N" id="createDateOption1" checked>
+	                                                            <label for="createDateOption1" class="ml-2">하루</label>
+	                                                            <input type="date" class="form-control" id="create_single_date" name="start_date" placeholder="날짜" style="margin-left: 15px !important;">
+									                    	</div>
+									                    	<div style="display:flex;">
+	                                                            <input type="radio" name="is_period" value="Y" id="createDateOption2" class="ml-4">
+	                                                            <label for="createDateOption2" class="ml-2">기간</label>
+	                                                            <input type="date" class="form-control" id="create_period_start_date" name="start_date" placeholder="시작일" style="margin-left: 15px !important; max-width:170px; width:170px;">
+	                                                            <span class="ml-3 mr-2"> ~ </span>
+	                                                            <input type="date" class="form-control" id="create_period_end_date" name="end_date" placeholder="종료일" style="margin-left: 10px !important; max-width:170px; width:170px;">
+									                    	</div>
 									                    </div>
 									                </td>
 									            </tr>
@@ -615,6 +617,7 @@
 									            <!-- 휴일명 입력 -->
 									            <tr>
 									                <td class="align-center" style="width: 20%;">
+									                	<span class="required-indicator"></span> <!-- 필수 입력 표시 -->
 									                    <label>휴일명</label>
 									                </td>
 									                <td style="width: 80%;">
@@ -653,8 +656,13 @@
 		    <div class="modal-dialog modal-dialog-centered" style="max-width:50%; width: 50%;">
 		        <div class="modal-content">
 		            <div class="modal-header modal-colored-header bg-primary" style="display: flex; align-items: center; justify-content: space-between; font-size: 25px;">
-		                <div class="modal-title" id="holidayEditModalLabel">휴일 수정</div>
-		                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+		                <div class="modal-title" id="holidayEditModalLabel">
+		                	<i data-feather="calendar" class="svg-icon mr-2 ml-1"></i>
+		                	휴일 수정
+		                </div>
+		                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+		                	<i data-feather="x" class="svg-icon mr-2 ml-1"></i>
+		                </button>
 		            </div>
 		    			<form id="holidayEditFrm">
 				            <div class="modal-body" style="padding:0px;">
@@ -664,18 +672,23 @@
 				                        <!-- 날짜 선택 -->
 									            <tr>
 									                <td class="align-center" style="width: 20%;">
+									                	<span class="required-indicator"></span> <!-- 필수 입력 표시 -->
 									                    <label>날짜</label>
 									                </td>
 													<td style="width: 80%;">
-													    <div class="form-inline">
-													        <input type="radio" name="is_period" value="N" id="editDateOption1" checked>
-                                                            <label for="editDateOption1" class="ml-2">하루</label>
-                                                            <input type="date" class="form-control ml-2" id="edit_single_date" name="start_date" placeholder="날짜" style="margin-left: 15px !important;">
-                                                            <input type="radio" name="is_period" value="Y" id="editDateOption2" class="ml-4">
-                                                            <label for="editDateOption2" class="ml-2">기간</label>
-                                                            <input type="date" class="form-control ml-2" id="edit_period_start_date" name="start_date" placeholder="시작일" style="margin-left: 15px !important;">
-                                                            <span class="ml-3 mr-2"> ~ </span> 
-                                                            <input type="date" class="form-control ml-2" id="edit_period_end_date" name="end_date" placeholder="종료일" style="margin-left: 10px !important;">
+													    <div class="form-inline d-flex justify-content-between align-items-center">
+													    	<div style="display:flex;">
+														        <input type="radio" name="is_period" value="N" id="editDateOption1" checked>
+	                                                            <label for="editDateOption1" class="ml-2">하루</label>
+	                                                            <input type="date" class="form-control ml-2" id="edit_single_date" name="start_date" placeholder="날짜" style="margin-left: 15px !important;">
+                                                            </div>
+                                                            <div style="display:flex;">
+	                                                            <input type="radio" name="is_period" value="Y" id="editDateOption2" class="ml-4">
+	                                                            <label for="editDateOption2" class="ml-2">기간</label>
+	                                                            <input type="date" class="form-control ml-2" id="edit_period_start_date" name="start_date" placeholder="시작일" style="margin-left: 15px !important;">
+	                                                            <span class="ml-3 mr-2"> ~ </span> 
+	                                                            <input type="date" class="form-control ml-2" id="edit_period_end_date" name="end_date" placeholder="종료일" style="margin-left: 10px !important;">
+													    	</div>
 													    </div>
 													</td>
 									            </tr>
@@ -683,6 +696,7 @@
 									            <!-- 휴일명 입력 -->
 									            <tr>
 									                <td class="align-center" style="width: 20%;">
+									                	<span class="required-indicator"></span> <!-- 필수 입력 표시 -->
 									                    <label>휴일명</label>
 									                </td>
 									                <td style="width: 80%;">
