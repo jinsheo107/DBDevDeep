@@ -499,6 +499,30 @@ public class ApproveService {
 	        return (int) (daysBetween * 8);
 	    }
 	}
+
+	public List<VacationRequestDto> selectApprovedVacationRequest(String empId) {
+		List<VacationRequest> vacationRequestList = vacationRequestRepository.findByApprove_ApproStatusAndApprove_Employee_EmpId(1,empId);
+		
+		List<VacationRequestDto> vacationRequestDtoList = new ArrayList<VacationRequestDto>();
+		for(VacationRequest vr : vacationRequestList) {
+			VacationRequestDto dto = new VacationRequestDto().toDto(vr);
+			vacationRequestDtoList.add(dto);
+		}
+		
+		return vacationRequestDtoList;
+	}
+
+	public List<VacationRequestDto> selectAllApprovedVacationRequest() {
+		List<VacationRequest> vacationRequestList = vacationRequestRepository.findByApprove_ApproStatus(1);
+		
+		List<VacationRequestDto> vacationRequestDtoList = new ArrayList<VacationRequestDto>();
+		for(VacationRequest vr : vacationRequestList) {
+			VacationRequestDto dto = new VacationRequestDto().toDto(vr);
+			vacationRequestDtoList.add(dto);
+		}
+		
+		return vacationRequestDtoList;
+	}
 	
 	
 }

@@ -43,6 +43,8 @@ dependencies {
 	implementation 'org.mariadb.jdbc:mariadb-java-client'
 	// WebSocket(웹소켓)
 	implementation 'org.springframework.boot:spring-boot-starter-websocket'
+	// Quartz(스케쥴러)
+	implementation 'org.springframework.boot:spring-boot-starter-quartz'
 	
 	// security(시큐리티)
 	implementation 'org.springframework.boot:spring-boot-starter-security'

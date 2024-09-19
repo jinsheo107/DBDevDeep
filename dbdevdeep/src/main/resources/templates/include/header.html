@@ -159,45 +159,7 @@
                 <ul class="list-style-none">
                   <li>
                     <div class="message-center notifications position-relative">
-                      <!-- 공지사항 알림 메세지 -->
-                      <a href="javascript:void(0)"
-                        class="message-item d-flex align-items-center border-bottom px-3 py-2">
-                        <div class="btn btn-danger rounded-circle btn-circle">
-                          <i data-feather="info" class="text-white"></i>
-                        </div>
-                        <div class="w-75 d-inline-block v-middle pl-2">
-                          <h6 class="message-title mb-0 mt-1">[공지]</h6>
-                          <span class="font-12 text-nowrap d-block text-muted text-truncate">'2024년 하반기 교사 워크숍 일정' 공지가
-                            등록되었습니다.</span>
-                          <span class="font-12 text-nowrap d-block text-muted">9:30 AM</span>
-                        </div>
-                      </a>
-                      <!-- 일정 알림 메세지 -->
-                      <a href="javascript:void(0)"
-                        class="message-item d-flex align-items-center border-bottom px-3 py-2">
-                        <span class="btn btn-success text-white rounded-circle btn-circle">
-                          <i data-feather="calendar" class="text-white"></i>
-                        </span>
-                        <div class="w-75 d-inline-block v-middle pl-2">
-                          <h6 class="message-title mb-0 mt-1">[일정]</h6>
-                          <span class="font-12 text-nowrap d-block text-muted text-truncate">'팀 회의' 일정이 10분 후에
-                            시작됩니다.</span>
-                          <span class="font-12 text-nowrap d-block text-muted">9:10 AM</span>
-                        </div>
-                      </a>
-                      <!-- 결재 알림 메세지 -->
-                      <a href="javascript:void(0)"
-                        class="message-item d-flex align-items-center border-bottom px-3 py-2">
-                        <span class="btn btn-info rounded-circle btn-circle">
-                          <i data-feather="clipboard" class="text-white"></i>
-                        </span>
-                        <div class="w-75 d-inline-block v-middle pl-2">
-                          <h6 class="message-title mb-0 mt-1">[결재]</h6>
-                          <span class="font-12 text-nowrap d-block text-muted text-truncate">'2024학년도 학급 운영 계획' 결재 요청이
-                            도착했습니다.</span>
-                          <span class="font-12 text-nowrap d-block text-muted">9:08 AM</span>
-                        </div>
-                      </a>
+                      
                     </div>
                   </li>
                   <li>
@@ -250,5 +212,40 @@
         </div>
       </nav>
     </header>
+    
+    <script>
+	function addScheduleNotification(title, message, time) {
+	    const messageCenter = document.querySelector('.message-center.notifications');
+	
+	    const notificationHTML = `
+	        <a href="javascript:void(0)" class="message-item d-flex align-items-center border-bottom px-3 py-2" onclick="this.remove();">
+	            <span class="btn btn-success text-white rounded-circle btn-circle">
+	                <i data-feather="calendar" class="text-white"></i>
+	            </span>
+	            <div class="w-75 d-inline-block v-middle pl-2">
+	                <h6 class="message-title mb-0 mt-1">[${title}]</h6>
+	                <span class="font-12 text-nowrap d-block text-muted text-truncate">${message}</span>
+	                <span class="font-12 text-nowrap d-block text-muted">${time}</span>
+	            </div>
+	        </a>
+	    `;
+	
+	    messageCenter.insertAdjacentHTML('afterbegin', notificationHTML); // 알림을 가장 위에 추가
+	}
+	
+	function scheduleAlarm(title, message, time) {
+	    fetch(`/schedule/notify?title=${encodeURIComponent(title)}&message=${encodeURIComponent(message)}&time=${encodeURIComponent(time)}`)
+	        .then(response => {
+	            if (response.ok) {
+	                addScheduleNotification(title, message, time);
+	            } else {
+	                console.error("알림 추가에 실패했습니다.");
+	            }
+	        })
+	        .catch(error => {
+	            console.error("오류 발생:", error);
+	        });
+	}
+	</script>
     </th:block>
 </html>
