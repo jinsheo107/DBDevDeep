@@ -46,7 +46,7 @@ div.dataTables_wrapper div.dataTables_paginate ul.pagination {
 					<div class="col-12">
 						<div class="card">
 							<div class="card-body">
-								<h4 class="card-title">주소록</h4>
+								<h4 class="card-title">과목 정보</h4>
 								<div class="student-info">
 									<div class="student-details">
 										<input type="hidden" id="csrf_token" th:value="${_csrf.token}">
@@ -55,7 +55,12 @@ div.dataTables_wrapper div.dataTables_paginate ul.pagination {
 												<p th:text="${subjectDetail.teacher_history.getTYear} + '학년도 ' + ${subjectDetail.subject_semester} + '학기 ' + ${subjectDetail.teacher_history.grade} + '학년 ' +${subjectDetail.teacher_history.getGradeClass} + '반 '"></p>
 												<p th:text="'담당 교사 : '+${subjectDetail.teacher_history.getEmployee().getEmpName()}"></p>
 												<p th:text="'과목명 : '+${subjectDetail.subject_name}"></p>
-			 									<p>"수업 시간 :"</p>
+			 									<p>
+												    수업 시간 :
+												    <span th:each="timetableDetail : ${timetableDetail}" 
+												          th:text="${timetableDetail.day} + '요일 ' + ${timetableDetail.period} + '교시' + (iterStat.hasNext ? ', ' : '')">
+												    </span>
+												</p>
 											</li>
 											<li>
 												<div class="academic-info">
@@ -85,11 +90,11 @@ div.dataTables_wrapper div.dataTables_paginate ul.pagination {
 													</table>
 												</div>
 											</li>
-											<li>
-											</li>
 										</ul>
 									</div>
-									
+									<a th:href="@{/student/subject}">목록으로</a><br>
+									<a>수정</a><br>
+									<a th:onclick="subjectDelete([[${subjectDetail.subject_no}]])">삭제</a>
 								</div>
 							</div>
 						</div>
@@ -110,6 +115,36 @@ div.dataTables_wrapper div.dataTables_paginate ul.pagination {
 		<script
 			src="/assets/extra-libs/datatables.net/js/jquery.dataTables.min.js"></script>
 		<script src="/dist/js/pages/datatable/datatable-basic.init.js"></script>
-		
+		<script>
+			const subjectDelete = function(subjectNo){
+				if(confirm("정말 삭제하시겠습니까?")){
+					const csrfToken = document.getElementById('csrf_token').value;
+					 fetch('/subject/'+subjectNo,{
+						 method : 'delete',
+						 headers : {
+								'X-CSRF-TOKEN':csrfToken}
+					 })
+					 .then(response => response.json())
+					 .then(data => {
+						 if(data.res_code == '200'){
+								Swal.fire({
+									icon :'success',
+									title:'성공',
+									text : data.res_msg ,
+									confirmButtonText:"닫기"
+								}).then((result)=>{
+									location.href="/student/subject";
+								});
+							} else{
+								Swal.fire({
+									icon:'error',
+									title:'실패',
+									text: data.res_msg,
+									confirmButtonText:"닫기"
+						 		});
+							}
+						})
+				}}
+		</script>
 	</body>
 </html>

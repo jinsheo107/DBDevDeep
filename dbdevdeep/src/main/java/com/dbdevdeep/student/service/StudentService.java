@@ -288,4 +288,18 @@ public class StudentService {
 
 	        return resultMap;
 		}
+		
+		// 과목 정보 전부 삭제
+		public int deleteSubject(Long subject_no) {
+			int result = 0;
+			try {
+				subjectRepository.deleteById(subject_no);
+				curriculumRepository.deleteById(subject_no);
+				timeTableRepository.deleteById(subject_no);
+				result = 1;
+			}catch(Exception e) {
+				e.printStackTrace();
+			}
+			return result;
+		}
 }

@@ -121,6 +121,7 @@ public class StudentViewController {
 			SubjectDto dto = studentService.selectSubjectOne(subject_no);
 			List<CurriculumDto> cdto = studentService.selectCurriOne(subject_no);
 			List<TimeTableDto> tdto = studentService.selectTimeTableOne(subject_no);
+			model.addAttribute("timetableDetail",tdto);
 			model.addAttribute("subjectDetail",dto);
 			model.addAttribute("curriDetail",cdto);
 			return "student/subject_detail";
