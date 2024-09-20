@@ -1,10 +1,18 @@
 package com.dbdevdeep.schedule.service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import com.dbdevdeep.employee.domain.Employee;
@@ -15,11 +23,16 @@ import com.dbdevdeep.schedule.domain.ScheduleDto;
 import com.dbdevdeep.schedule.repository.CategoryRepository;
 import com.dbdevdeep.schedule.repository.ScheduleRepository;
 
+@SpringBootApplication
+@EnableScheduling // 스케줄러 활성화
 @Service
 public class ScheduleService {
 	private final ScheduleRepository scheduleRepository;
 	private final EmployeeRepository employeeRepository;
 	private final CategoryRepository categoryRepository;
+	
+	// 알림 데이터를 저장할 리스트
+    private final List<Map<String, Object>> alertDataList = new ArrayList<>();
 	
 	@Autowired
 	public ScheduleService(ScheduleRepository scheduleRepository, EmployeeRepository employeeRepository,
@@ -161,5 +174,54 @@ public class ScheduleService {
 		
 		return result;
 	}
+	
+	// 매 분마다 실행하여 알림 체크
+    @Scheduled(cron = "0 * * * * *") // 매 분의 0초에 실행
+    public void checkForAlerts() {
+        alertDataList.clear(); // 매번 새롭게 데이터를 저장하기 위해 리스트를 비움
+
+        // alertType이 'OFF'가 아닌 스케줄 데이터를 가져옴
+        List<Schedule> schedules = scheduleRepository.findByAlertTypeIsNot("OFF");
+
+        for (Schedule s : schedules) {
+            LocalDate startDate = s.getStartDate();
+            LocalTime startTime = s.getStartTime();
+            LocalDateTime startDateTime = startDate.atTime(startTime);
+            String alertType = s.getAlertType();
+
+            LocalDateTime alertTime = null;
+            String msg = "";
+
+            if ("ON".equals(alertType)) {
+                alertTime = startDateTime;
+                msg = "있습니다.";
+            } else if ("10".equals(alertType)) {
+                alertTime = startDateTime.minusMinutes(10);
+                msg = "10분 후에 시작됩니다.";
+            } else if ("30".equals(alertType)) {
+                alertTime = startDateTime.minusMinutes(30);
+                msg = "30분 후에 시작됩니다.";
+            } else if ("60".equals(alertType)) {
+                alertTime = startDateTime.minusMinutes(60);
+                msg = "60분 후에 시작됩니다.";
+            }
+
+            // 알림 시간이 현재 시간에 도래했는지 확인
+            if (alertTime != null && alertTime.isBefore(LocalDateTime.now()) && alertTime.isAfter(LocalDateTime.now().minusMinutes(1))) {
+                // Map으로 알림 데이터를 생성하여 리스트에 추가
+            	
+                Map<String, Object> alertData = new HashMap<>();
+                alertData.put("title", "일정");
+                alertData.put("message", "\'" + s.getScheduleTitle() + "\' 일정이 " + msg); // 단일 따옴표 이스케이프
+                alertData.put("time", startDateTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")));
+                alertDataList.add(alertData);
+            }
+        }
+    }
+    
+    // 클라이언트 요청 시 알림 데이터를 반환하는 메서드
+    public List<Map<String, Object>> getAlerts() {
+        return new ArrayList<>(alertDataList); // 알림 데이터 반환
+    }
 
 }
