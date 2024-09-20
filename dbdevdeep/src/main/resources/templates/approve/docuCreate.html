@@ -304,7 +304,7 @@
                 
                 
            <div class="container">
-     		   <form id="approCreateFrm">
+     		   <form id="approCreateFrm" method="POST">
      		   <input type="hidden" id="csrf_token" th:value="${_csrf.token}">
 					<br><br>     		   
      			   <h2 class="text-center">보&nbsp;&nbsp;고&nbsp;&nbsp;서</h2>
@@ -341,10 +341,11 @@
 				                    <td><input type="text" id="appro_title" name="appro_title" class="form-control"></td>
 				                    <td>종류</td>
 				                    <td>
-				                    <select id="templateSelect" class="form-control">
+				                    <select id="templateSelect" name="tempNo" class="form-control">
 										    <option value="">종류를 선택해주세요</option>
 										    <option th:each="template : ${tempList}" th:value="${template.temp_no}" th:text="${template.temp_name}"></option>
-									</select></td>
+									</select>
+									</td>
 				                </tr>
 				                <tr>
 				                	<td colspan="4">
@@ -356,6 +357,7 @@
 										                	<div id="editor">
 										                	</div>
 										                </div>
+										                <textarea id="approContent" name="appro_content" style="display:none;"></textarea>
 										            </div>
 										        </div>
 										    </div>
@@ -505,169 +507,172 @@
     
     <!-- tempEdit 내용 불러오기 -->
     <script>
- // 에디터가 초기화되었는지 여부를 저장하는 변수
+    // CKEditor가 초기화되었는지 여부를 저장하는 변수
     let editorInitialized = false;
+    let editorInstance;  // CKEditor 인스턴스를 저장할 변수
 
     document.addEventListener("DOMContentLoaded", function() {
         ClassicEditor
-            .create(document.querySelector('#editor'))
-            .then(editorInstance => {
-                window.editor = editorInstance;
+            .create(document.querySelector('#editor'), {
+                // 테이블 관련 플러그인 추가
+                extraPlugins: ['Table', 'TableToolbar'],
+                
+                // 테이블에 기본 스타일 적용
+                table: {
+                    contentToolbar: ['tableColumn', 'tableRow', 'mergeTableCells'],
+                    tableProperties: {
+                        defaultProperties: {
+                            borderWidth: '1px',
+                            borderColor: '#000',
+                            width: '100%'
+                        }
+                    },
+                    tableCellProperties: {
+                        defaultProperties: {
+                            borderWidth: '1px',
+                            borderColor: '#000',
+                            verticalAlign: 'middle',
+                        }
+                    }
+                }
+            })
+            .then(editor => {
+                editorInstance = editor;  // CKEditor 인스턴스 저장
                 editorInitialized = true;  // CKEditor 초기화 완료 플래그
-                console.log("CKEditor initialized:", window.editor);
+                console.log("CKEditor initialized:", editorInstance);
             })
             .catch(error => {
                 console.error('CKEditor 초기화 중 오류 발생:', error);
             });
     });
 
-    $('#templateSelect').change(function() {
-        var tempNo = $(this).val();
-        console.log("선택된 템플릿 ID:", tempNo);
-
-        if (tempNo) {
-            $.ajax({
-                url: '/getTempContent/' + tempNo,
-                method: 'GET',
-                success: function(data) {
-                    if (data && data.temp_content) {
-                        if (editorInitialized && typeof window.editor.setData === 'function') {
-                            window.editor.setData(data.temp_content); // CKEditor에 데이터 설정
-                        } else {
-                            console.error("CKEditor가 아직 초기화되지 않았습니다.");
-                        }
-                    } else {
-                        console.log("템플릿 내용이 없습니다.");
-                    }
-                },
-                error: function(xhr, status, error) {
-                    console.error('Error fetching template content:', error);
-                }
-            });
-        } else {
-            if (editorInitialized && typeof window.editor.setData === 'function') {
-                window.editor.setData(''); // 에디터 내용을 초기화
-            }
-        }
+    </script>
+    
+    
+    <script>
+    // 임시저장
+    document.getElementById('saveBtn').addEventListener('click', function () {
+        handleSave();  
     });
 
+    // 승인 요청
+    document.getElementById('submitBtn').addEventListener('click', function (event) {
+        event.preventDefault();  // 기본 submit 방지
+        handleSubmit();  // 유효성 검사 및 제출 처리 함수 호출
+    });
 
-	</script>
-	    
-	<!-- 유효성검사 -->
-    <script>
-	    // 임시저장
-    	document.getElementById('saveBtn').addEventListener('click', function () {
-	        handleSave();  
-	    });
-	
-	    // 승인 요청
-	    document.getElementById('submitBtn').addEventListener('click', function (event) {
-	        event.preventDefault(); 
-	        handleSubmit();
-	    });
-    
-    
-	    function handleSave(){
-	    	const form = document.getElementById('approCreateFrm');
-	    	const formData = new FormData(form);
-	    	const csrfToken = document.getElementById("csrf_token").value;
-	    	
-	    	if(form.appro_title.value == ""){
-	    		Swal.fire({
-	    			icon: 'error',
-	    			title: '제목을 입력해주세요',
-	    			confirmButtonText: '닫기'
-	    		});
-	    		return; 
-	    	}
-	    	fetch('/draftApprove',{
-	    		method: 'POST',
-	    		headers:{
-	    			'X-CSRF-TOKEN':csrfToken
-	    		},
-	    		body: formData
-	    	})
-	    	.then(response => response.json())
-	    	.then(data => {
-	    		if(data.res_code == '200'){
-	    			Swal.fire({
-	    				icon: 'success',
-	    				title: '성공',
-	    				text: 'data.res_msg',
-	    				confirmButtonText: "닫기"
-	    			});
-	    		}else{
-	    			Swal.fire({
-	    				icon: 'error',
-	    				title: '실패',
-	    				text: data.res_msg,
-	    				confirmButtonText: "닫기"
-	    			});
-	    		}
-	    	})
-	    	.catch(error => {
-	    		console.error('Error:',error);
-	    	});
-	    	
-	    }
-	    
-	 // 결재 요청 유효성 검사 및 처리 함수
-	    function handleSubmit() {
-	        const form = document.getElementById('approCreateFrm'); 
-	        const formData = new FormData(form); 
-	        const csrfToken = document.getElementById("csrf_token").value; 
+    // 임시 저장 처리 함수
+    function handleSave(){
+        const form = document.getElementById('approCreateFrm');
+        const formData = new FormData(form);
+        const csrfToken = document.getElementById("csrf_token").value;
 
-	        // 유효성 검사
-	        if (form.appro_title.value == "") {
-	            Swal.fire({
-	                icon: 'error',
-	                title: '제목을 입력해주세요',
-	                confirmButtonText: "닫기"
-	            });
-	            return;
-	        } else if (form.approval.value == "") {
-	            Swal.fire({
-	                icon: 'error',
-	                title: '결재자를 선택해주세요',
-	                confirmButtonText: "닫기"
-	            });
-	            form.approval.focus();
-	            return;
-	        }
+        if (form.appro_title.value == ""){
+            Swal.fire({
+                icon: 'error',
+                title: '제목을 입력해주세요',
+                confirmButtonText: '닫기'
+            });
+            return;
+        }
 
-	        fetch('/approUp', {
-	            method: 'POST',
-	            headers: {
-	                'X-CSRF-TOKEN': csrfToken 
-	            },
-	            body: formData
-	        })
-	        .then(response => response.json())
-	        .then(data => {
-	            if (data.res_code == '200') {
-	                Swal.fire({
-	                    icon: 'success',
-	                    title: '성공',
-	                    text: data.res_msg,
-	                    confirmButtonText: "닫기"
-	                }).then(() => {
-	                    location.href = "/";
-	                });
-	            } else {
-	                Swal.fire({
-	                    icon: 'error',
-	                    title: '실패',
-	                    text: data.res_msg,
-	                    confirmButtonText: "닫기"
-	                });
-	            }
-	        })
-	        .catch(error => {
-	            console.error('Error:', error); 
-	        });
-	    }
-	</script>
+        fetch('/draftApprove', {
+            method: 'POST',
+            headers:{
+                'X-CSRF-TOKEN': csrfToken
+            },
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.res_code == '200'){
+                Swal.fire({
+                    icon: 'success',
+                    title: '성공',
+                    text: data.res_msg,
+                    confirmButtonText: "닫기"
+                });
+            } else {
+                Swal.fire({
+                    icon: 'error',
+                    title: '실패',
+                    text: data.res_msg,
+                    confirmButtonText: "닫기"
+                });
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+    }
+
+    // 결재 요청 유효성 검사 및 처리 함수
+    function handleSubmit() {
+        const form = document.getElementById('approCreateFrm'); 
+        const formData = new FormData(form); 
+        const csrfToken = document.getElementById("csrf_token").value;
+		const editorValue = document.getElementById("editor").value;
+		console.log('에디터벨류 : ' + editorValue);
+        // 에디터에서 HTML 데이터를 가져와 textarea에 설정
+        if (editorInitialized && editorInstance) {
+        const editorContent = editorInstance.getData();
+        document.getElementById('approContent').value = editorContent; 
+    }
+
+     // **FormData 수동으로 추가하기**
+        formData.set('appro_content', document.getElementById('approContent').value);
+        
+        // 유효성 검사
+        if (form.appro_title.value == "") {
+            Swal.fire({
+                icon: 'error',
+                title: '제목을 입력해주세요',
+                confirmButtonText: "닫기"
+            });
+            return;
+        } else if (form.approval.value == "") {
+            Swal.fire({
+                icon: 'error',
+                title: '결재자를 선택해주세요',
+                confirmButtonText: "닫기"
+            });
+            form.approval.focus();
+            return;
+        }
+
+        fetch('/docuApproUp', {
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': csrfToken 
+            },
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.res_code == '200') {
+                Swal.fire({
+                    icon: 'success',
+                    title: '성공',
+                    text: data.res_msg,
+                    confirmButtonText: "닫기"
+                }).then(() => {
+                    location.href = "/";
+                });
+            } else {
+                Swal.fire({
+                    icon: 'error',
+                    title: '실패',
+                    text: data.res_msg,
+                    confirmButtonText: "닫기"
+                });
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error); 
+        });
+    }
+</script>
+
 
 </th:block>
 	
