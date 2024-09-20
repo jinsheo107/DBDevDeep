@@ -109,7 +109,7 @@
                     <div class="card-body">
                         <h3 class="card-title">기자재 등록</h3>
                         <hr>
-                        <form id="item_createForm">
+                        <form id="item_createForm" th:action="@{/item}" enctype="multipart/form-data" method = "post">
                             <!-- CSRF 토큰 추가 -->
                             <input type="hidden" id="csrf_token" th:value="${_csrf.token}">
                             <!-- 장소 선택 -->
@@ -209,9 +209,9 @@
 
                             <!-- 이미지 업로드 -->
                             <div class="row mb-3">
-                                <label for="item_image" class="col-sm-2 col-form-label">이미지</label>
+                                <label for="file" class="col-sm-2 col-form-label">이미지</label>
                                 <div class="col-sm-10">
-                                    <input type="file" class="form-control" id="item_image" name="item_image" accept="image/*">
+                                    <input type="file" class="form-control" id="file" name="file" accept="image/*">
                                 </div>
                             </div>
 

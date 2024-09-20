@@ -37,11 +37,11 @@ public class PlaceApiController {
 		Map<String, String> resultMap = new HashMap<String, String>();
 		
 		resultMap.put("res_code", "404");
-		resultMap.put("res_msg", "게시글 삭제중 오류가 발생하였습니다.");
+		resultMap.put("res_msg", "장소 삭제중 오류가 발생하였습니다.");
 		
 		if(placeService.deletePlace(place_no) > 0) {
 			resultMap.put("res_code", "200");
-			resultMap.put("res_msg", "게시글 삭제에 성공했습니다.");
+			resultMap.put("res_msg", "장소 삭제에 성공했습니다.");
 		}
 		return resultMap;
 	}
@@ -54,17 +54,17 @@ public class PlaceApiController {
 		Map<String, String> resultMap = new HashMap<String, String>();
 		
 		resultMap.put("res_code", "404");
-		resultMap.put("res_msg", "게시글 수정중 오류가 발생하였습니다.");
+		resultMap.put("res_msg", "장소 수정중 오류가 발생하였습니다.");
 		
 		 try {
 	            // 장소 정보 수정 처리
 	            if (placeService.updatePlace(dto, file) > 0) {
 	                resultMap.put("res_code", "200");
-	                resultMap.put("res_msg", "게시글이 성공적으로 수정되었습니다.");
+	                resultMap.put("res_msg", "장소가 성공적으로 수정되었습니다.");
 	            }
 	        } catch (Exception e) {
 	            e.printStackTrace();
-	            resultMap.put("res_msg", "서버 오류로 인해 게시글 수정에 실패하였습니다.");
+	            resultMap.put("res_msg", "서버 오류로 인해 장소 수정에 실패하였습니다.");
 	        }
 
 	        return resultMap;
