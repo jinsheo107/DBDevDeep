@@ -23,6 +23,7 @@ public class VacationRequestDto {
 	private int vac_type;
 	private LocalDateTime start_time;
 	private LocalDateTime end_time;
+	private Approve approve;
 	
 	public VacationRequest toEntity(Approve approve) {
 		return VacationRequest.builder()
@@ -43,6 +44,7 @@ public class VacationRequestDto {
 				.vac_type(vacationRequest.getVacType())
 				.start_time(vacationRequest.getStartTime())
 				.end_time(vacationRequest.getEndTime())
+				.approve(vacationRequest.getApprove())
 				.build();
 	}
 }
