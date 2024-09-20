@@ -1,9 +1,12 @@
 package com.dbdevdeep.schedule.domain;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Date;
+import java.time.LocalTime;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
+import com.dbdevdeep.employee.domain.Employee;
+import com.dbdevdeep.employee.repository.EmployeeRepository;
+import com.dbdevdeep.schedule.repository.CategoryRepository;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -24,27 +27,38 @@ public class ScheduleDto {
 	
 	private Long category_no;
 	private String category_color;
+	private String category_name;
 	private String emp_id;
+	private String emp_name;
 	
 	private String schedule_title;
 	private String schedule_content;
-	private LocalDateTime start_time;
-	private LocalDateTime end_time;
+	private LocalDate start_date;
+	private LocalTime start_time;
+	private LocalDate end_date;
+	private LocalTime end_time;
 	private String is_all_day;
 	private String schedule_place;
 	private String repeat_type;
-	private Date repeat_start_date;
-	private Date repeat_end_date;
+	private LocalDate repeat_start_date;
+	private LocalDate repeat_end_date;
 	private LocalDateTime reg_time;
 	private LocalDateTime mod_time;
+	private String alert_type;
 	
-	public Schedule toEntity() {
+	public Schedule toEntity(EmployeeRepository employeeRepository,
+			CategoryRepository categoryRepository) {
+		Employee employee = employeeRepository.findByempId(emp_id);
+		Category category = categoryRepository.findByCategoryNo(category_no);
+		
 		return Schedule.builder()
 				.scheduleNo(schedule_no)
 				.calendarType(calendar_type)
 				.scheduleTitle(schedule_title)
 				.scheduleContent(schedule_content)
-				.startTIme(start_time)
+				.startDate(start_date)
+				.startTime(start_time)
+				.endDate(end_date)
 				.endTime(end_time)
 				.isAllDay(is_all_day)
 				.schedulePlace(schedule_place)
@@ -53,6 +67,9 @@ public class ScheduleDto {
 				.repeatEndDate(repeat_end_date)
 				.regTime(reg_time)
 				.modTime(mod_time)
+				.alertType(alert_type)
+				.employee(employee)
+				.category(category)
 				.build();
 	}
 	
@@ -62,10 +79,12 @@ public class ScheduleDto {
 				.calendar_type(schedule.getCalendarType())
 				.category_no(schedule.getCategory().getCategoryNo())
 				.category_color(schedule.getCategory().getCategoryColor())
-				.emp_id(schedule.getEmployee().getEmpId())
+				.emp_name(schedule.getEmployee().getEmpName())
 				.schedule_title(schedule.getScheduleTitle())
 				.schedule_content(schedule.getScheduleContent())
-				.start_time(schedule.getStartTIme())
+				.start_date(schedule.getStartDate())
+				.start_time(schedule.getStartTime())
+				.end_date(schedule.getEndDate())
 				.end_time(schedule.getEndTime())
 				.is_all_day(schedule.getIsAllDay())
 				.schedule_place(schedule.getSchedulePlace())
@@ -74,6 +93,7 @@ public class ScheduleDto {
 				.repeat_end_date(schedule.getRepeatEndDate())
 				.reg_time(schedule.getRegTime())
 				.mod_time(schedule.getModTime())
+				.alert_type(schedule.getAlertType())
 				.build();
 	}
 }

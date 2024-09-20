@@ -7,11 +7,111 @@
     <link href="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.0/main.min.css" rel="stylesheet">
     <!-- FullCalendar JavaScript -->
     <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.0/main.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
     <!-- Google API Client Library -->
     <script src="https://apis.google.com/js/api.js"></script>
     <!-- Custom CSS -->
     <link href="/dist/css/style.min.css" rel="stylesheet">
     <style>
+    	
+    	/* FullCalendar 일정 이벤트 텍스트 색상을 검정으로 설정 */
+		.fc-event, .fc-event-dot {
+		    color: black !important; /* 텍스트 색상을 검정으로 강제 설정 */
+		    text-decoration: none !important; /* 링크 밑줄 제거 */
+		}
+		
+    	/* 모든 요소에 대해 title 속성 비활성화 */
+		input[title] {
+		  pointer-events: none;
+		}
+		
+    	/* more 버튼 팝업의 최대 가로 길이 설정 및 내용 줄바꿈 */
+		.fc-more-popover {
+		    width: auto; /* 자동 너비 */
+		    white-space: normal; /* 내용이 자동으로 줄바꿈되도록 설정 */
+		    word-wrap: break-word; /* 긴 단어를 줄바꿈 */
+		    overflow-x: auto; /* 가로 스크롤 필요시 스크롤바 표시 */
+		    background-color:white !important;
+		}
+    	.required-indicator {
+		    display: inline-block; /* 인라인 블록으로 설정하여 레이블 옆에 표시 */
+		    width: 8px; /* 동그라미 크기 */
+		    height: 8px; /* 동그라미 크기 */
+		    background-color: #FF7373; /* 빨간색 */
+		    border-radius: 50%; /* 동그라미 모양 */
+		    margin-right: 5px; /* 레이블과 간격 */
+		}
+    	.btn-color{
+    		color: #4F5467 !important;
+    	}
+    	
+    	.btn-color:disabled{
+    		opacity: 100 !important;
+    	}
+    	
+		.bordered {
+		    table-layout: fixed; /* 테이블 레이아웃을 고정으로 설정 */
+		    width: 100%; /* 테이블 너비를 100%로 설정 */
+		}
+		
+		.bordered td {
+		    height: 71px; /* 모든 셀의 높이를 동일하게 설정 */
+		    vertical-align: middle; /* 수직 중앙 정렬 */
+		    overflow: hidden; /* 내용이 넘칠 경우 숨기기 */
+		}
+    
+    	/* 첫 번째 tr의 td와 th에서 상단 테두리 제거 */
+		.bordered tbody tr:first-child th,
+		.bordered tbody tr:first-child td {
+		    border-top: none; /* 상단 테두리 제거 */
+		}
+			
+		.bordered {
+	  		border-left: 1px solid #e8eef3;
+	  		border-right: 1px solid #e8eef3;
+	  	}
+	  	.bordered th,
+	  	.bordered td {
+	    	border-left: 1px solid #e8eef3;
+	    	border-top: 1px solid #e8eef3;
+	    	border-right: 1px solid #e8eef3;
+	    }	
+		
+		/* 첫 번째 td를 수평 및 수직 가운데 정렬 */
+		.bordered tbody tr td.align-center {
+		    text-align: center; /* 수평 가운데 정렬 */
+		    vertical-align: middle;
+		    padding-bottom:8px;
+		}
+    	
+    	.public-btn {
+			width:72px;
+			font-size:16px;
+			height:45px;
+		}
+    	
+    	.fc-timegrid-col-events{
+    		margin:0px !important;
+    	}
+    
+    	.fc-direction-ltr .fc-timegrid-slot-label-frame {
+		    text-align: center;
+		}
+    	
+		.fc .fc-timegrid-axis-frame,
+		.fc .fc-timegrid-axis-cushion {
+		    overflow: hidden !important;
+		    display: flex !important;
+		    align-items: center !important;  /* 수직 가운데 정렬 */
+		    justify-content: center !important;  /* 수평 가운데 정렬 */
+		    height: 100% !important;  /* 전체 높이 사용 */
+		    white-space: nowrap;  /* 줄바꿈 방지 */
+		}
+		
+    	.fc-timegrid-event-harness{
+    		margin:0px !important;
+    	}
+    	
     	.form-control{
 			margin-left:0px !important;
 		}
@@ -22,7 +122,7 @@
 		}
 		
 		.fc-day-today{
-			background-color:transparent !important;
+			background-color:white !important;
 		}
 		  
 		.fc-day-today .fc-daygrid-day-number::after {
@@ -34,7 +134,8 @@
 			width: 23px; /* 원하는 동그라미 크기 */
 			height: 23px; /* 원하는 동그라미 크기 */
 			border-radius: 50%; /* 동그라미 모양 */
-			background-color: #5f76e85d;
+			background-color: #FFFB80;
+			z-index:-999;
 		}
 		/* 종일 일정 높이 설정 */
 		.fc-daygrid-event {
@@ -43,18 +144,21 @@
 		    display:flex;
 		    align-items: center; /* 수직 가운데 정렬 */
 		    justify-content: center; /* 가로 중앙 정렬 (필요 시) */
+		    margin-left:0px !important;
+		    margin-right:0px !important;
 		}
 		
-		.fc-event-title-container{
+		.fc-dayGridMonth-view .fc-event-title-container{
 			height: 20px !important; /* 원하는 높이로 조정 */
 		    line-height: 20px !important; /* 텍스트가 중앙에 오도록 설정 */
 		}
 		
 		/* 시간 일정 높이 설정 */
-		.fc-timegrid-event {
+		.fc-dayGridMonth-view .fc-timegrid-event {
 		    height: 20px !important; /* 원하는 높이로 조정 */
 		    line-height: 20px !important; /* 텍스트가 중앙에 오도록 설정 */
 		}
+				
     	.more-link-content:before {
 			content: "\25BC"; /* 아래쪽 화살표 */
 			margin-right: 5px; /* 아이콘과 숫자 간의 여백 */
@@ -67,6 +171,19 @@
 		.more-link-content{
 		  	color:#212529;
 		 }
+		 
+		.fc-timeGridWeek-view .fc-timegrid-event{
+		    align-items: center !important;  /* 수직 가운데 정렬 */
+			padding:0px !important;
+		}
+		
+		.fc-timeGridDay-view .fc-timegrid-event{
+			padding:1px !important;
+		}
+		
+		.fc-dayGridMonth-view .fc-daygrid-event{
+			padding:1px !important;
+		}
     	
     	.fc-event-title {
 		    font-weight: normal !important; /* 제목 글씨를 일반 두께로 설정 */
@@ -76,15 +193,15 @@
 		    border-width:7px;
 		}
 		
-		.fc-daygrid-event{
-			margin-left:0px !important;
-			margin-right:0px !important;
+		.fc-dayGridMonth-view .fc-daygrid-event{
+			margin-left:1px !important;
+			margin-right:1px !important;
 			margin-bottom:0px !important;
 		}
 		
 		.fc-daygrid-day-bottom{
 			padding-right:5px !important;
-			padding-left:10px !important;
+			padding-left:5px !important;
 		}
     
     	.fc-header-toolbar{
@@ -100,7 +217,7 @@
 		    color: #FF0000 !important; /* 숫자 색상을 빨간색으로 설정 */
 		}
 		
-    	.fc-holiday {
+    	.fc-holiday, .fc-vacation {
 		    cursor: default !important;
 		}
     
@@ -176,23 +293,30 @@
     	}
 		
 		/* 일요일 헤더 및 셀 글씨 색상 */
-		.fc-sunday-header, .fc-sunday {
+		.fc-sunday .fc-daygrid-day-number,
+		.fc-sunday-header .fc-col-header-cell-cushion {
 		    color: #FF0000 !important; /* 일요일 글씨 색상 */
 		}
 		
+		/* 오늘의 날짜 색상 변경 */
+		.fc-day-today .fc-daygrid-day-number {
+		    color: #212529 !important;
+		}
+		
 		/* 토요일 헤더 및 셀 글씨 색상 */
-		.fc-saturday-header, .fc-saturday {
+		.fc-saturday .fc-daygrid-day-number,
+		.fc-saturday-header .fc-col-header-cell-cushion {
 		    color: #0031AE !important; /* 토요일 글씨 색상 */
 		}
 
     	/* 일요일 셀 배경색 */
 		.fc-sunday {
-		    background-color: #FFF8F8 !important; /* 연한 빨간색 배경 */
+		    background-color: #e8eaec5a !important; /* 연한 빨간색 배경 */
 		}
 		
 		/* 토요일 셀 배경색 */
 		.fc-saturday {
-		    background-color: #F4FBFF !important; /* 연한 파란색 배경 */
+		    background-color: #e8eaec5a !important; /* 연한 파란색 배경 */
 		}
 		
 		.fc-scrollgrid-sync-inner {
@@ -218,11 +342,10 @@
 			font-size:18px;
 			margin-bottom:0px !important;
 		}
-		
-	    
+
 	    .btn-group-custom{
-	    	width:225px;
-	    	height:50px;
+	    	width:215px;
+	    	height:46px;
 	    }
 	    
 	    .scrollable-list {
@@ -262,85 +385,361 @@
 <th:block layout:fragment="content">
 <body>
 	<div class="page-wrapper">
-			<div class="container-fluid" style="margin-bottom:-10px;">
-
-                <div class="row">
-				    <div class="col-12">
-				        <div class="card">
-				            <div class="card-body" style="padding:50px 80px">
-				                <!-- "범주관리" 타이틀과 하단 선 -->
-				                <div class="row" style="margin-left:0px !important; margin-right:0px !important; border-bottom: 1px solid gray; padding-bottom: 20px; display:flex; align-items: center;">
-				                    <div class="col d-flex justify-content-start align-items-center" style="padding-left:0px; max-width:140px;">
-				                        <div style="font-size:30px;">일정관리</div>
-				                    </div>
-				                    <!-- 공용/개인 선택 버튼 -->
-						            <div class="btn-group btn-group-custom" role="group" aria-label="범주 유형 선택" style="margin-right: 10px;">
-									    <button type="button" class="btn btn-outline-primary active" id="total-button" onclick="showTotalCategories()">전체</button>
-									    <button type="button" class="btn btn-outline-primary" id="public-button" onclick="showPublicCategories()">공용</button>
-									    <button type="button" class="btn btn-outline-primary" id="private-button" onclick="showPrivateCategories()">개인</button>
-									</div>
-
-				                </div>
-				                
-				                <!-- 좌측 네모난 div와 오른쪽 콘텐츠를 같은 행에 배치 -->
-				                <div class="row mt-4">
-				                    <!-- 좌측 네모난 div -->
-				                    <div class="col" style="max-width: 300px;">
-				                        <div style="border: 1px solid gray; height: calc(100vh - 330px); min-height: 200px; border-radius:10px; position: relative;">
-				                        	<!-- 범주목록 타이틀 -->
-				                            <div style="font-size: 22px; border-bottom: 1px solid gray; text-align: center;
-				                            display: flex; align-items: center; justify-content: center; height: 80px; background-color:#E8EAEC;
-				                            border-top-left-radius: 10px; border-top-right-radius: 10px; color:black;">
-				                                범주목록
-				                            </div>
-				                            
-				                            <!-- 전체 범주 목록 -->
-											<ul id="total-category-list" class="list-group scrollable-list" style="list-style: none; padding: 20px; ">
-											    <li class="list-group-item" style="display:flex; align-items: center;">
-											        <div style="width:20px; height:20px; background-color: #81B3FF; margin-right: 10px;"></div>
-											        <div>공용</div>
-											    </li>
-											    <li class="list-group-item" style="display:flex; align-items: center;">
-											        <div style="width:20px; height:20px; background-color: #E5DCFF; margin-right: 10px;"></div>
-											        <div>개인</div>
-											    </li>
-											</ul>
-				                            
-				                            <!-- 공용 범주 목록 -->
-											<ul id="public-category-list" class="list-group scrollable-list" style="list-style: none; padding: 20px;">
-											    <li th:each="category : ${publicCategoryList}" class="list-group-item"
-											        style="display:flex; align-items: center;">
-											        <div th:style="'width: 20px; height: 20px; background-color: #' + ${category.category_color} + '; margin-right: 10px;'"></div>
-											        <div th:text="${category.category_name}"></div>
-											    </li>
-											</ul>
-											
-											<!-- 개인 범주 목록 -->
-											<ul id="private-category-list" class="list-group scrollable-list" style="list-style: none; padding: 20px; display: none;"> <!-- 처음에는 숨김 -->
-											    <li th:each="category : ${privateCategoryList}" class="list-group-item"
-											        style="display:flex; align-items: center;">
-											        <div th:style="'width: 20px; height: 20px; background-color: #' + ${category.category_color} + '; margin-right: 10px;'"></div>
-											        <div th:text="${category.category_name}"></div>
-											    </li>
-											</ul>
-				                        </div>
-				                    </div>
-				                    <!-- 우측 테이블 컨텐츠 -->
-									<div class="col" style="padding-right: 0;"> <!-- 오른쪽 패딩 조정 -->
-										<div id="calendar"></div>
-									</div>
+		<div class="container-fluid" style="margin-bottom:-10px;">
+			<div class="row">
+			    <div class="col-12">
+			        <div class="card">
+			            <div class="card-body" style="padding:50px 80px">
+			                <!-- "범주관리" 타이틀과 하단 선 -->
+			                <div class="row" style="margin-left:0px !important; margin-right:0px !important; border-bottom: 1px solid gray; padding-bottom: 20px; display:flex; align-items: center;">
+			                    <div class="col d-flex justify-content-start align-items-center" style="padding:0px; max-width:140px; ">
+			                        <div style="font-size:30px;">일정관리</div>
+			                    </div>
+			                    <!-- 공용/개인 선택 버튼 -->
+					            <div class="btn-group btn-group-custom" role="group" aria-label="범주 유형 선택" style="margin-right: 10px;">
+								    <button type="button" class="btn btn-outline-primary active" id="total-button" onclick="showTotalCategories()">전체</button>
+								    <button type="button" class="btn btn-outline-primary" id="public-button" onclick="showPublicCategories()">공용</button>
+								    <button type="button" class="btn btn-outline-primary" id="private-button" onclick="showPrivateCategories()">개인</button>
+								</div>
+								<div class="col d-flex justify-content-end align-items-center" style="padding:0px;">
+									<button type="button" class="btn btn-outline-secondary public-btn" id="register-button"
+									data-toggle="modal" data-target="#scheduleCreateModal">등록</button>
+								</div>
+			                </div>
+			                
+			                <!-- 좌측 네모난 div와 오른쪽 콘텐츠를 같은 행에 배치 -->
+			                <div class="row mt-4" style="margin-left:0px !important; margin-right:0px !important;">
+			                    <!-- 좌측 네모난 div -->
+			                    <div class="col" style="max-width: 300px; padding-left:0px !important;">
+			                        <div style="border: 1px solid gray; height: calc(100vh - 330px); min-height: 200px; border-radius:10px; position: relative;">
+			                        	<!-- 범주목록 타이틀 -->
+			                            <div style="font-size: 22px; border-bottom: 1px solid gray; text-align: center;
+			                            display: flex; align-items: center; justify-content: center; height: 80px; background-color:#E8EAEC;
+			                            border-top-left-radius: 10px; border-top-right-radius: 10px; color:black;">
+			                                범주목록
+			                            </div>
+			                            
+			                            <!-- 전체 범주 목록 -->
+										<ul id="total-category-list" class="list-group scrollable-list" style="list-style: none; padding: 20px; ">
+										    <li class="list-group-item" style="display:flex; align-items: center;">
+										        <div style="width:20px; height:20px; border-radius:5px; background-color: #D7EEFF; margin-right: 10px;"></div>
+										        <div>공용</div>
+										    </li>
+										    <li class="list-group-item" style="display:flex; align-items: center;">
+										        <div style="width:20px; height:20px; border-radius:5px; background-color: #E5DCFF; margin-right: 10px;"></div>
+										        <div>개인</div>
+										    </li>
+										</ul>
+			                            
+			                            <!-- 공용 범주 목록 -->
+										<ul id="public-category-list" class="list-group scrollable-list" style="list-style: none; padding: 20px;">
+										    <li th:each="category : ${publicCategoryList}" class="list-group-item"
+										        style="display:flex; align-items: center;">
+										        <div th:style="'width: 20px; height: 20px; border-radius:5px; background-color: #' + ${category.category_color} + '; margin-right: 10px;'"></div>
+										        <div th:text="${category.category_name}"></div>
+										    </li>
+										</ul>
+										
+										<!-- 개인 범주 목록 -->
+										<ul id="private-category-list" class="list-group scrollable-list" style="list-style: none; padding: 20px; display: none;"> <!-- 처음에는 숨김 -->
+										    <li th:each="category : ${privateCategoryList}" class="list-group-item"
+										        style="display:flex; align-items: center;">
+										        <div th:style="'width: 20px; height: 20px; border-radius:5px; background-color: #' + ${category.category_color} + '; margin-right: 10px;'"></div>
+										        <div th:text="${category.category_name}"></div>
+										    </li>
+										</ul>
+			                        </div>
+			                    </div>
+			                    <!-- 우측 테이블 컨텐츠 -->
+								<div class="col" style="padding-right: 0;"> <!-- 오른쪽 패딩 조정 -->
+									<div id="calendar"></div>
+								</div>
 				            </div>
+				        	<!-- 등록 모달 HTML -->
+							<div class="modal fade" id="scheduleCreateModal" tabindex="-1" role="dialog" aria-labelledby="scheduleCreateModalLabel">
+							    <div class="modal-dialog modal-dialog-centered custom-modal-size" style="max-width:54%; width: 54%; height:72%;">
+							        <div class="modal-content" style="height:72%;">
+							            <div class="modal-header modal-colored-header bg-primary" style="display: flex; align-items: center; justify-content: space-between; font-size: 25px;">
+							                <div class="modal-title" id="scheduleCreateModalLabel">
+							                	<i data-feather="calendar" class="svg-icon mr-2 ml-1"></i>
+							                	일정 등록
+							                </div>
+							                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+							                	<i data-feather="x" class="svg-icon mr-2 ml-1"></i>
+							                </button>
+							            </div>
+							    			<form id="scheduleCreateFrm">
+									            <div class="modal-body" style="padding:0px;">
+									    			<input type="hidden" id="csrf_token" th:value="${_csrf.token}">
+									                <table style="border-bottom:none; border-top:none;" class="table bordered">
+									                    <tbody id="scheduleCreateContent">
+									                        <!-- 날짜 선택 -->
+												            <tr>
+												                <td class="align-center" style="width: 20%;">
+												                	<span class="required-indicator"></span> <!-- 필수 입력 표시 -->
+												                    <label>기간</label>
+												                </td>
+												                <td style="width: 80%;">
+												                    <div class="form-inline">
+												                    	<input type="date" class="form-control" id="create_start_date" name="start_date" placeholder="시작일" style="max-width:170px; width:170px;">
+			                                                            <input type="time" class="form-control" id="create_start_time" name="start_time" placeholder="시작시간" style="margin-left:5px !important; max-width:150px; width:150px;">
+			                                                            <span class="ml-3 mr-3"> ~ </span>
+			                                                            <input type="date" class="form-control" id="create_end_date" name="end_date" placeholder="종료일" style="max-width:170px; width:170px;">
+			                                                            <input type="time" class="form-control" id="create_end_time" name="end_time" placeholder="종료시간" style="margin-left:5px !important; max-width:150px; width:150px;">
+												                    	<div class="custom-control custom-checkbox ml-4">
+													                    	<input type="checkbox" class="custom-control-input" id="create_is_all_day" name="is_all_day">
+	                                        								<label class="custom-control-label" for="create_is_all_day">종일</label>
+	                                        							</div>
+												                    </div>
+												                </td>
+												            </tr>
+												
+								                            <!-- 제목 입력 -->
+								                            <tr>
+								                                <td class="align-center" style="width: 20%;">
+								                                	<span class="required-indicator"></span> <!-- 필수 입력 표시 -->
+								                                    <label>제목</label>
+								                                </td>
+								                                <td style="width: 80%;">
+								                                    <div class="form-inline d-flex justify-content-between align-items-center">
+								                                        <!-- Flexbox 설정 -->
+								                                        <div>
+								                                            <select class="form-control mr-sm-2" id="create_calendar_type" name="calendar_type" onchange="updateCategoryOptions('create')">
+								                                                <option value="0" selected>공용</option>
+								                                                <option value="1">개인</option>
+								                                            </select>
+								                                            <select class="form-control mr-sm-2" id="create_category_no" name="category_no"></select>
+								                                        </div>
+								                                        <input type="text" class="form-control" name="schedule_title" id="create_schedule_title" placeholder="제목을 입력해주세요." style="width:75%;">
+								                                    </div>
+								                                </td>
+								                            </tr>
+								
+								                            <!-- 장소 -->
+								                            <tr>
+								                                <td class="align-center" style="width: 20%;">
+								                                    <label>장소</label>
+								                                </td>
+								                                <td style="width: 80%;">
+								                                    <input type="text" class="form-control" name="schedule_place" id="create_schedule_place" placeholder="장소를 입력해주세요.">
+								                                </td>
+								                            </tr>
+								
+								                            <!-- 내용 -->
+								                            <tr>
+								                                <td class="align-center" style="width: 20%;">
+								                                    <label>내용</label>
+								                                </td>
+								                                <td style="width: 80%;">
+								                                    <textarea class="form-control" rows="3" name="schedule_content" id="create_schedule_content" placeholder="내용을 입력해주세요."></textarea>
+								                                </td>
+								                            </tr>
+								
+								                            <!-- 반복 -->
+								                            <tr>
+								                                <td class="align-center" style="width: 20%;">
+								                                    <label>반복</label>
+								                                </td>
+								                                <td style="width: 80%;">
+								                                    <div class="form-inline d-flex justify-content-between align-items-center">
+								                                        <!-- 버튼 그룹 -->
+															 			<div class="btn-group" role="group" aria-label="Repeat options" id="create_repeat_type">
+															                <button type="button" class="btn btn-outline-light btn-color active" onclick="setRepeatOption('create', this, 'NONE')" data-repeat-type="NONE">사용안함</button>
+								                                            <button type="button" class="btn btn-outline-light btn-color" onclick="setRepeatOption('create', this, 'DAILY')" data-repeat-type="DAILY">매일</button>
+								                                            <button type="button" class="btn btn-outline-light btn-color" onclick="setRepeatOption('create', this, 'WEEKLY')" data-repeat-type="WEEKLY">매주</button>
+								                                            <button type="button" class="btn btn-outline-light btn-color" onclick="setRepeatOption('create', this, 'MONTHLY')" data-repeat-type="MONTHLY">매월</button>
+								                                            <button type="button" class="btn btn-outline-light btn-color" onclick="setRepeatOption('create', this, 'YEARLY')" data-repeat-type="YEARLY">매년</button>
+															            </div>
+								                                        <!-- 날짜 선택 필드 -->
+								                                        <div>
+								                                            <input type="date" class="form-control" id="create_repeat_start_date" name="repeat_start_date" placeholder="반복 시작일" style="max-width:170px; width:170px;" disabled>
+								                                            <span class="ml-3 mr-3"> ~ </span>
+								                                            <input type="date" class="form-control" id="create_repeat_end_date" name="repeat_end_date" placeholder="반복 종료일" style="max-width:170px; width:170px;" disabled>
+								                                        </div>
+								                                    </div>
+								                                </td>
+								                            </tr>
+								
+								                            <!-- 알림 -->
+								                            <tr>
+								                                <td class="align-center" style="width: 20%;">
+								                                    <label>알림</label>
+								                                </td>
+								                                <td style="width: 80%;">
+								                                    <!-- 버튼 그룹 -->
+								                                    <div class="btn-group" role="group" aria-label="Alert options" id="create_alert_type">
+								                                        <button type="button" class="btn btn-outline-light btn-color active" onclick="setActiveButton('create', this, 'OFF')" data-alert-type="OFF">사용안함</button>
+								                                        <button type="button" class="btn btn-outline-light btn-color" onclick="setActiveButton('create', this, 'ON')" data-alert-type="ON">정시</button>
+								                                        <button type="button" class="btn btn-outline-light btn-color" onclick="setActiveButton('create', this, '10')" data-alert-type="10">10분 전</button>
+								                                        <button type="button" class="btn btn-outline-light btn-color" onclick="setActiveButton('create', this, '30')" data-alert-type="30">30분 전</button>
+								                                        <button type="button" class="btn btn-outline-light btn-color" onclick="setActiveButton('create', this, '60')" data-alert-type="60">1시간 전</button>
+								                                    </div>
+								                                </td>
+								                            </tr>
+								                        </tbody>
+								                    </table>
+								                </div>
+								                <div class="modal-footer" style="margin-top:-16px;">
+								                    <button type="button" class="btn waves-effect waves-light btn-outline-secondary public-btn" data-dismiss="modal">취소</button>
+								                    <button type="submit" class="btn waves-effect waves-light btn-primary public-btn">등록</button>
+								                </div>
+							        	</form>
+							        </div>
+							    </div>
+							</div>
+							
+							<!-- 상세정보 모달 HTML -->
+							<div class="modal fade" id="scheduleDetailModal" tabindex="-1" role="dialog" aria-labelledby="scheduleDetailModalLabel">
+							    <div class="modal-dialog modal-dialog-centered custom-modal-size" style="max-width:54%; width: 54%; height:72%;">
+							        <div class="modal-content" style="height:72%;" id="scheduleDetailContent">
+							            <input type="hidden" id="csrf_token" th:value="${_csrf.token}">
+									</div>
+							    </div>
+							</div>
+							
+							<!-- 수정 모달 HTML -->
+							<div class="modal fade" id="scheduleEditModal" tabindex="-1" role="dialog" aria-labelledby="scheduleEditModalLabel">
+							    <div class="modal-dialog modal-dialog-centered custom-modal-size" style="max-width:54%; width: 54%; height:72%;">
+							        <div class="modal-content" style="height:72%;">
+							            <div class="modal-header modal-colored-header bg-primary" style="display: flex; align-items: center; justify-content: space-between; font-size: 25px;">
+							                <div class="modal-title" id="scheduleEditModalLabel">
+							                    <i data-feather="calendar" class="svg-icon mr-2 ml-1"></i>
+							                    일정 수정
+							                </div>
+							                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+							                    <i data-feather="x" class="svg-icon mr-2 ml-1"></i>
+							                </button>
+							            </div>
+							            <form id="scheduleEditFrm">
+							                <div class="modal-body" style="padding:0px;">
+							                    <input type="hidden" id="csrf_token" th:value="${_csrf.token}">
+								                <table style="border-bottom:none; border-top:none;" class="table bordered">
+								                    <tbody id="scheduleCreateContent">
+								                        <!-- 날짜 선택 -->
+											            <tr>
+											                <td class="align-center" style="width: 20%;">
+											                	<span class="required-indicator"></span> <!-- 필수 입력 표시 -->
+											                    <label>기간</label>
+											                </td>
+											                <td style="width: 80%;">
+											                    <div class="form-inline">
+											                    	<input type="date" class="form-control" id="edit_start_date" name="start_date" placeholder="시작일" style="max-width:170px; width:170px;">
+		                                                            <input type="time" class="form-control" id="edit_start_time" name="start_time" placeholder="시작시간" style="margin-left:5px !important; max-width:150px; width:150px;">
+		                                                            <span class="ml-3 mr-3"> ~ </span>
+		                                                            <input type="date" class="form-control" id="edit_end_date" name="end_date" placeholder="종료일" style="max-width:170px; width:170px;">
+		                                                            <input type="time" class="form-control" id="edit_end_time" name="end_time" placeholder="종료시간" style="margin-left:5px !important; max-width:150px; width:150px;">
+											                    	<div class="custom-control custom-checkbox ml-4">
+												                    	<input type="checkbox" class="custom-control-input" id="edit_is_all_day" name="is_all_day">
+                                        								<label class="custom-control-label" for="edit_is_all_day">종일</label>
+                                        							</div>
+											                    </div>
+											                </td>
+											            </tr>
+											
+							                            <!-- 제목 입력 -->
+							                            <tr>
+							                      			<td class="align-center" style="width: 20%;">
+							                                	<span class="required-indicator"></span> <!-- 필수 입력 표시 -->
+							                                    <label>제목</label>
+							                                </td>
+							                                <td style="width: 80%;">
+							                                    <div class="form-inline d-flex justify-content-between align-items-center">
+														            <!-- Flexbox 설정 -->
+							                                        <div>
+							                                            <select class="form-control mr-sm-2" id="edit_calendar_type" name="calendar_type" onchange="updateCategoryOptions('edit')">
+							                                                <option value="0">공용</option>
+							                                                <option value="1">개인</option>
+							                                            </select>
+							                                            <select class="form-control mr-sm-2" id="edit_category_no" name="category_no"></select>
+							                                        </div>
+							                                        <input type="text" class="form-control" name="schedule_title" id="edit_schedule_title" placeholder="제목을 입력해주세요." style="width:75%;">
+							                                    </div>
+							                                </td>
+							                            </tr>
+							
+							                            <!-- 장소 -->
+							                            <tr>
+							                                <td class="align-center" style="width: 20%;">
+							                                    <label>장소</label>
+							                                </td>
+							                                <td style="width: 80%;">
+							                                    <input type="text" class="form-control" name="schedule_place" id="edit_schedule_place" placeholder="장소를 입력해주세요.">
+							                                </td>
+							                            </tr>
+							
+							                            <!-- 내용 -->
+							                            <tr>
+							                                <td class="align-center" style="width: 20%;">
+							                                    <label>내용</label>
+							                                </td>
+							                                <td style="width: 80%;">
+							                                    <textarea class="form-control" rows="3" name="schedule_content" id="edit_schedule_content" placeholder="내용을 입력해주세요."></textarea>
+							                                </td>
+							                            </tr>
+							
+														<!-- 반복 -->
+							                            <tr>
+							                                <td class="align-center" style="width: 20%;">
+							                                    <label>반복</label>
+							                                </td>
+							                                <td style="width: 80%;">
+							                                    <div class="form-inline d-flex justify-content-between align-items-center">
+							                                        <!-- 버튼 그룹 -->
+							                                        <div class="btn-group" role="group" aria-label="Repeat options" id="edit_repeat_type">
+								                                        <button type="button" class="btn btn-outline-light btn-color active" onclick="setRepeatOption('edit', this, 'NONE')" data-repeat-type="NONE">사용안함</button>
+														                <button type="button" class="btn btn-outline-light btn-color" onclick="setRepeatOption('edit', this, 'DAILY')" data-repeat-type="DAILY">매일</button>
+														                <button type="button" class="btn btn-outline-light btn-color" onclick="setRepeatOption('edit', this, 'WEEKLY')" data-repeat-type="WEEKLY">매주</button>
+														                <button type="button" class="btn btn-outline-light btn-color" onclick="setRepeatOption('edit', this, 'MONTHLY')" data-repeat-type="MONTHLY">매월</button>
+														                <button type="button" class="btn btn-outline-light btn-color" onclick="setRepeatOption('edit', this, 'YEARLY')" data-repeat-type="YEARLY">매년</button>
+							                                        </div>
+							                                        <!-- 날짜 선택 필드 -->
+							                                        <div>
+							                                            <input type="date" class="form-control" id="edit_repeat_start_date" name="repeat_start_date" placeholder="반복 시작일" style="max-width:170px; width:170px;" disabled>
+							                                            <span class="ml-3 mr-3"> ~ </span>
+							                                            <input type="date" class="form-control" id="edit_repeat_end_date" name="repeat_end_date" placeholder="반복 종료일" style="max-width:170px; width:170px;" disabled>
+							                                        </div>
+							                                    </div>
+							                                </td>
+							                            </tr>
+							
+							                            <!-- 알림 -->
+							                            <tr>
+							                                <td class="align-center" style="width: 20%;">
+							                                    <label>알림</label>
+							                                </td>
+							                                <td style="width: 80%;">
+							                                    <!-- 버튼 그룹 -->
+							                                    <div class="btn-group" role="group" aria-label="Alert options" id="edit_alert_type">
+							                                        <button type="button" class="btn btn-outline-light btn-color active" onclick="setActiveButton('edit', this, 'OFF')" data-alert-type="OFF">사용안함</button>
+														            <button type="button" class="btn btn-outline-light btn-color" onclick="setActiveButton('edit', this, 'ON')" data-alert-type="ON">정시</button>
+														            <button type="button" class="btn btn-outline-light btn-color" onclick="setActiveButton('edit', this, '10')" data-alert-type="10">10분 전</button>
+														            <button type="button" class="btn btn-outline-light btn-color" onclick="setActiveButton('edit', this, '30')" data-alert-type="30">30분 전</button>
+														            <button type="button" class="btn btn-outline-light btn-color" onclick="setActiveButton('edit', this, '60')" data-alert-type="60">1시간 전</button>
+							                                    </div>
+							                                </td>
+							                            </tr>
+							                        </tbody>
+							                    </table>
+							                </div>
+							                <div class="modal-footer" style="margin-top:-16px;">
+							                    <button type="button" class="btn waves-effect waves-light btn-outline-secondary public-btn" data-dismiss="modal">취소</button>
+							                    <button type="button" class="btn waves-effect waves-light btn-primary public-btn" id="editSubmitButton">등록</button>
+							                </div>
+							            </form>
+							        </div>
+							    </div>
+							</div>
+							
 				        </div>
 				    </div>
 				</div>
-            </div>
+			</div>
         </div>
-    </div>
+	</div>
 	<script src="/assets/libs/jquery/dist/jquery.min.js"></script>
     <!-- Bootstrap tether Core JavaScript -->
     <script src="/assets/libs/popper.js/dist/umd/popper.min.js"></script>
     <script src="/assets/libs/bootstrap/dist/js/bootstrap.min.js"></script>
-    <!-- apps -->
     <!-- apps -->
     <script src="/dist/js/app-style-switcher.js"></script>
     <script src="/dist/js/feather.min.js"></script>
@@ -351,93 +750,556 @@
     <script src="/dist/js/sidebarmenu.js"></script>
     <!--Custom JavaScript -->
     <script src="/dist/js/custom.min.js"></script>
+<script>
+	//공통 함수: 카테고리 옵션 업데이트
+	function updateCategoryOptions(modalPrefix) {
+	    var calendarType = document.getElementById(`${modalPrefix}_calendar_type`).value;
+	    var categorySelect = document.getElementById(`${modalPrefix}_category_no`);
+	
+	    // 기존 옵션 제거
+	    categorySelect.innerHTML = "";
+	
+	    var options = [];
+	    // '공용' 선택 시
+	    if (calendarType === "0") {
+	        options = [
+	            { value: "7", text: "학사" },
+	            { value: "8", text: "행사" },
+	            { value: "9", text: "회의" },
+	            { value: "10", text: "연수" },
+	            { value: "11", text: "중요" }
+	        ];
+	    } 
+	    // '개인' 선택 시
+	    else if (calendarType === "1") {
+	        options = [
+	            { value: "1", text: "업무" },
+	            { value: "2", text: "수업" },
+	            { value: "4", text: "상담" },
+	            { value: "5", text: "개인" },
+	            { value: "6", text: "중요" }
+	        ];
+	    }
+	
+	    // 옵션 추가
+	    options.forEach(function(option) {
+	        var opt = document.createElement('option');
+	        opt.value = option.value;
+	        opt.text = option.text;
+	        categorySelect.appendChild(opt);
+	    });
+	}
+	
+	// '등록' 모달의 카테고리 옵션 변경 이벤트 리스너
+	document.getElementById('create_calendar_type').addEventListener('change', function () {
+	    updateCategoryOptions('create');
+	});
+
+	// '수정' 모달의 카테고리 옵션 변경 이벤트 리스너
+	document.getElementById('edit_calendar_type').addEventListener('change', function () {
+	    updateCategoryOptions('edit');
+	});
+	
+	// 페이지 로드 시 기본 옵션 설정
+	document.addEventListener("DOMContentLoaded", function() {
+	    updateCategoryOptions('create');
+	    updateCategoryOptions('edit');
+	});
+
+
+	// 공통 함수: 날짜 유효성 검사
+	function setupDateValidation(modalPrefix) {
+	    document.getElementById(`${modalPrefix}_start_date`).addEventListener('change', function() {
+	        const startDate = new Date(this.value);
+	        const endDateInput = document.getElementById(`${modalPrefix}_end_date`);
+	        const endDate = new Date(endDateInput.value);
+
+	        if (endDate < startDate) {
+	            endDateInput.value = this.value;  // 시작일이 변경되면 종료일도 최소 시작일로 설정
+	        }
+	        endDateInput.setAttribute('min', this.value);  // 종료일은 시작일 이후여야 함
+	    });
+
+	    document.getElementById(`${modalPrefix}_end_date`).addEventListener('change', function() {
+	        const endDate = new Date(this.value);
+	        const startDateInput = document.getElementById(`${modalPrefix}_start_date`);
+	        const startDate = new Date(startDateInput.value);
+
+	        if (startDate > endDate) {
+	            startDateInput.value = this.value;  // 종료일이 변경되면 시작일도 최대 종료일로 설정
+	        }
+	        startDateInput.setAttribute('max', this.value);  // 시작일은 종료일 이전이어야 함
+	    });
+	}
+
+	// 공통 함수: 시간 유효성 검사
+	function setupTimeValidation(modalPrefix) {
+	    document.getElementById(`${modalPrefix}_start_time`).addEventListener('change', function() {
+	        const startTime = this.value;
+	        const endTimeInput = document.getElementById(`${modalPrefix}_end_time`);
+
+	        if (endTimeInput.value && endTimeInput.value <= startTime) {
+	            endTimeInput.value = startTime;  // 시작 시간이 변경되면 종료 시간도 최소 시작 시간으로 설정
+	        }
+	        endTimeInput.setAttribute('min', startTime);  // 종료 시간은 시작 시간 이후여야 함
+	    });
+
+	    document.getElementById(`${modalPrefix}_end_time`).addEventListener('change', function() {
+	        const endTime = this.value;
+	        const startTimeInput = document.getElementById(`${modalPrefix}_start_time`);
+
+	        if (startTimeInput.value && startTimeInput.value >= endTime) {
+	            startTimeInput.value = endTime;  // 종료 시간이 변경되면 시작 시간도 최대 종료 시간으로 설정
+	        }
+	        startTimeInput.setAttribute('max', endTime);  // 시작 시간은 종료 시간 이전이어야 함
+	    });
+	}
+
+	// 각 모달에 대해 유효성 검사 설정 호출
+	setupDateValidation('create');
+	setupDateValidation('edit');
+	setupTimeValidation('create');
+	setupTimeValidation('edit');
+
+	// 공통 함수: "종일" 옵션 선택 시 시간 필드 비활성화
+	function setupAllDayToggle(modalPrefix) {
+	    document.getElementById(`${modalPrefix}_is_all_day`).addEventListener('change', function () {
+	        const startTimeInput = document.getElementById(`${modalPrefix}_start_time`);
+	        const endTimeInput = document.getElementById(`${modalPrefix}_end_time`);
+
+	        if (this.checked) {
+	            startTimeInput.disabled = true;
+	            endTimeInput.disabled = true;
+	            startTimeInput.value = '';  // 시간 필드 값 초기화
+	            endTimeInput.value = '';    // 시간 필드 값 초기화
+	        } else {
+	            startTimeInput.disabled = false;
+	            endTimeInput.disabled = false;
+	        }
+	    });
+	}
+
+	// 각 모달에 대해 "종일" 옵션 설정 호출
+	setupAllDayToggle('create');
+	setupAllDayToggle('edit');
+
+	// 공통 함수: 유효성 검사
+	function validateForm(modalPrefix) {
+	    const isAllDayChecked = $(`#${modalPrefix}_is_all_day`).is(':checked');
+	    const startDateInput = $(`#${modalPrefix}_start_date`);
+	    const endDateInput = $(`#${modalPrefix}_end_date`);
+	    const startTimeInput = $(`#${modalPrefix}_start_time`);
+	    const endTimeInput = $(`#${modalPrefix}_end_time`);
+	    const titleInput = $(`#${modalPrefix}_schedule_title`);
+
+	    let vali_check = true;
+	    let vali_text = "";
+
+	    if (isAllDayChecked) {
+	        // 종일 체크된 경우, 시작일과 종료일만 유효성 검사
+	        if (!startDateInput.val() && !endDateInput.val()) {
+	            vali_text = "시작일과 종료일을 모두 입력해주세요.";
+	            startDateInput.focus();
+	            vali_check = false;
+	        } else if (!startDateInput.val()) {
+	            vali_text = "시작일을 입력해주세요.";
+	            startDateInput.focus();
+	            vali_check = false;
+	        } else if (!endDateInput.val()) {
+	            vali_text = "종료일을 입력해주세요.";
+	            endDateInput.focus();
+	            vali_check = false;
+	        } else if (!titleInput.val()) {
+	            vali_text = "제목을 입력해주세요.";
+	            titleInput.focus();
+	            vali_check = false;
+	        }
+	    } else {
+	        // 종일 체크되지 않은 경우, 모든 필드 유효성 검사
+	        if (!startDateInput.val() && !endDateInput.val()) {
+	            vali_text = "시작일과 종료일을 모두 입력해주세요.";
+	            startDateInput.focus();
+	            vali_check = false;
+	        } else if (!startDateInput.val()){
+	            vali_text = "시작일을 입력해주세요.";
+	            startDateInput.focus();
+	            vali_check = false;
+	        } else if (!endDateInput.val()){
+	            vali_text = "종료일을 입력해주세요.";
+	            endDateInput.focus();
+	            vali_check = false;
+	        } else if (!startTimeInput.val() && !endTimeInput.val()) {
+	            vali_text = "시작 시간과 종료 시간을 모두 입력해주세요.";
+	            startTimeInput.focus();
+	            vali_check = false;
+	        } else if (!startTimeInput.val()){
+	            vali_text = "시작 시간을 입력해주세요.";
+	            startTimeInput.focus();
+	            vali_check = false;
+	        } else if (!endTimeInput.val()){
+	            vali_text = "종료 시간을 입력해주세요.";
+	            endTimeInput.focus();
+	            vali_check = false;
+	        } else if (!titleInput.val()) {
+	            vali_text = "제목을 입력해주세요.";
+	            titleInput.focus();
+	            vali_check = false;
+	        }
+	    }
+
+	    if (!vali_check) {
+	        Swal.fire({
+	            icon: 'warning',
+	            title: '경고',
+	            text: vali_text,
+	            confirmButtonText: '확인',
+	            customClass: {
+	                confirmButton: 'swal-custom-button'
+	            }
+	        });
+	    }
+
+	    return vali_check;
+	}
+
+	// 공통 함수: 모달 초기화
+	function resetModal(modalId) {
+	    const modal = $(`#${modalId}`);
+
+	    // 입력 필드와 텍스트 영역 초기화
+	    modal.find('input[type="text"], input[type="number"], input[type="date"], input[type="time"], textarea').val('');
+	    modal.find('input[type="checkbox"]').prop('checked', false); // 모든 체크박스 초기화 (종일 체크박스 포함)
+
+	    // "종일" 일정 관련 설정
+	    const allDayCheckbox = document.getElementById(`${modalId}_is_all_day`);
+	    if (allDayCheckbox) {
+	        allDayCheckbox.checked = false; // 종일 체크박스 초기화
+	    }
+
+	    // 반복 버튼 초기화
+	    const repeatTypeGroup = document.getElementById(`${modalId}_repeat_type`);
+	    if (repeatTypeGroup) {
+	        const repeatButtons = repeatTypeGroup.querySelectorAll('.btn');
+	        repeatButtons.forEach(btn => btn.classList.remove('active')); // 모든 반복 버튼의 'active' 클래스 제거
+	        repeatButtons[0].classList.add('active'); // 첫 번째 반복 버튼 활성화
+	    }
+
+	    // 알림 버튼 초기화
+	    const alertTypeGroup = document.getElementById(`${modalId}_alert_type`);
+	    if (alertTypeGroup) {
+	        const alertButtons = alertTypeGroup.querySelectorAll('.btn');
+	        alertButtons.forEach(btn => btn.classList.remove('active')); // 모든 알림 버튼의 'active' 클래스 제거
+	        alertButtons[0].classList.add('active'); // 첫 번째 알림 버튼 활성화
+	    }
+
+	    // 반복 일정 및 알림 관련 필드 초기화
+	    const repeatStartDate = document.getElementById(`${modalId}_repeat_start_date`);
+	    const repeatEndDate = document.getElementById(`${modalId}_repeat_end_date`);
+	    if (repeatStartDate && repeatEndDate) {
+	        repeatStartDate.value = '';
+	        repeatEndDate.value = '';
+	        repeatStartDate.disabled = true; // 반복 시작일 비활성화
+	        repeatEndDate.disabled = true;   // 반복 종료일 비활성화
+	    }
+
+	    // 시간 및 날짜 입력 필드 초기화
+	    const timeInputs = ['start_time', 'end_time', 'start_date', 'end_date'];
+	    timeInputs.forEach(id => {
+	        const element = document.getElementById(`${modalId}_${id}`);
+	        if (element) {
+	            element.value = '';
+	            element.removeAttribute('min');
+	            element.removeAttribute('max');
+	        }
+	    });
+
+	    // 시간 필드 활성화
+	    const startTimeInput = document.getElementById(`${modalId}_start_time`);
+	    const endTimeInput = document.getElementById(`${modalId}_end_time`);
+	    if (startTimeInput && endTimeInput) {
+	        startTimeInput.disabled = false;
+	        endTimeInput.disabled = false;
+	    }
+
+	    // 선택 박스 초기화
+	    const categorySelect = document.getElementById(`${modalId}_category_no`);
+	    const calendarTypeSelect = document.getElementById(`${modalId}_calendar_type`);
+	    if (categorySelect) categorySelect.selectedIndex = 0;
+	    if (calendarTypeSelect) calendarTypeSelect.selectedIndex = 0;
+	}
+
+	// 등록 모달 초기화
+	$('#scheduleCreateModal').on('hidden.bs.modal', function() {
+	    resetModal('create');
+	});
+
+	// 수정 모달 초기화
+	$('#scheduleEditModal').on('hidden.bs.modal', function() {
+		calendar.refetchEvents(); // 캘린더의 이벤트를 다시 로드
+	    resetModal('edit');
+	});
+
+	// 모달 닫기 버튼과 취소 버튼에 초기화 함수 연결
+	$('.close[data-dismiss="modal"], .public-btn[data-dismiss="modal"]').on('click', function () {
+	    const modalId = $(this).closest('.modal').attr('id');
+	    if (modalId === 'scheduleCreateModal') {
+	        resetModal('create'); // 등록 모달 초기화
+	    } else if (modalId === 'scheduleEditModal') {
+	        resetModal('edit'); // 수정 모달 초기화
+	    }
+	});
+
+
+
+	// 제목과 장소 입력 필드의 글자 수 제한
+	function limitInputLength(modalPrefix, inputElementId, maxLength) {
+	    const inputElement = document.querySelector(`#${modalPrefix}_${inputElementId}`);
+	    if (inputElement) {
+	        inputElement.addEventListener('input', function () {
+	            if (this.value.length > maxLength) {
+	                this.value = this.value.slice(0, maxLength);
+	            }
+	        });
+	    }
+	}
+
+	// 제목과 장소 입력 필드에 이벤트 리스너 추가 (등록 모달)
+	limitInputLength('create', 'schedule_title', 30);
+	limitInputLength('create', 'schedule_place', 30);
+
+	// 제목과 장소 입력 필드에 이벤트 리스너 추가 (수정 모달)
+	limitInputLength('edit', 'schedule_title', 30);
+	limitInputLength('edit', 'schedule_place', 30);
+
+	// 반복 옵션 선택 시 처리
+	window.setRepeatOption = function (modalPrefix, button, type) {
+	    const repeatButtons = document.querySelectorAll(`#${modalPrefix}_repeat_type .btn`);
+	    repeatButtons.forEach(btn => btn.classList.remove('active'));
+	    button.classList.add('active');
+	
+	    const repeatStartDateInput = document.getElementById(`${modalPrefix}_repeat_start_date`);
+	    const repeatEndDateInput = document.getElementById(`${modalPrefix}_repeat_end_date`);
+	
+	    if (type === 'NONE') {
+	        repeatStartDateInput.setAttribute('disabled', 'true');
+	        repeatEndDateInput.setAttribute('disabled', 'true');
+	        repeatStartDateInput.value = '';
+	        repeatEndDateInput.value = '';
+	    } else {
+	        repeatStartDateInput.removeAttribute('disabled');
+	        repeatEndDateInput.removeAttribute('disabled');
+	    }
+	};
+
+	// 알림 옵션 선택 시 처리
+	window.setActiveButton = function (modalPrefix, button, type) {
+	    const buttons = document.querySelectorAll(`#${modalPrefix}_alert_type .btn`);
+	    buttons.forEach(btn => btn.classList.remove('active'));
+	    button.classList.add('active');
+	};
+
+    $(document).ready(function () {
+        // 공통 변수 선언
+        const startDateInput = $('#create_start_date');
+        const endDateInput = $('#create_end_date');
+        const startTimeInput = $('#create_start_time');
+        const endTimeInput = $('#create_end_time');
+        const titleInput = $('#create_schedule_title');
+        const csrfToken = $('#csrf_token').val();
+        const isAllDayInput = $('#create_is_all_day');  // 종일 체크박스
+
+        // 등록 모달 폼 제출 이벤트
+        $('#scheduleCreateFrm').on('submit', function (e) {
+            e.preventDefault();
+
+            const isValid = validateForm('create');  
+
+            if (!isValid) return;  
+
+            const payload = new FormData(this);
+            
+            // 반복 및 알림 유형 가져오기
+            const repeatTypeButton = document.querySelector('#create_repeat_type .btn.active');
+            const alertTypeButton = document.querySelector('#create_alert_type .btn.active');
+
+            const repeatType = repeatTypeButton ? repeatTypeButton.getAttribute('data-repeat-type') : 'NONE';
+            const alertType = alertTypeButton ? alertTypeButton.getAttribute('data-alert-type') : 'OFF';
+            
+            payload.set('repeat_type', repeatType);  
+            payload.set('alert_type', alertType);    
+            
+            console.log(repeatType);
+
+            // 시간 값을 HH:mm:ss 형식으로 변환
+            function formatTimeToHHmmss(time) {
+                if (time && time.includes(':')) {
+                    return time + ':00';  
+                }
+                return time;  
+            }
+
+            const formattedStartTime = isAllDayInput.is(':checked') ? '00:00:00' : formatTimeToHHmmss(startTimeInput.val());
+            const formattedEndTime = isAllDayInput.is(':checked') ? '23:59:00' : formatTimeToHHmmss(endTimeInput.val());
+
+            payload.set('start_time', formattedStartTime);
+            payload.set('end_time', formattedEndTime);
+            payload.set('is_all_day', isAllDayInput.is(':checked') ? 'Y' : 'N');
+
+            // UTC로 변환하여 서버에 전송
+            payload.set('start_date', convertToUTCDate(payload.get('start_date')));
+            payload.set('end_date', convertToUTCDate(payload.get('end_date')));
+
+            fetch('/schedule', {
+                method: 'POST',
+                body: JSON.stringify(Object.fromEntries(payload)),
+                headers: {
+                    'X-CSRF-TOKEN': csrfToken,
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => handleResponse(data, "등록"))
+            .catch(error => console.error('등록 오류:', error));
+        });
+    });
     
-    <script>
-	 	// 전역 변수로 현재 범주 유형 설정
-		let currentCategoryType = 0; // 기본값: 전체 (0)
-		
-		// 로컬 스토리지에서 범주 유형을 로드
-		const savedCategoryType = localStorage.getItem('currentCategoryType');
-		if (savedCategoryType) {
-		    currentCategoryType = parseInt(savedCategoryType, 10); // 저장된 값을 불러와 현재 범주 유형으로 설정
-		}
-		
-		// 전체 범주 목록 표시 함수
-		window.showTotalCategories = function () {
-		    // 전체 범주를 보이게 하고, 공용과 개인 범주는 숨김
-		    document.getElementById('total-category-list').style.display = 'block';
-		    document.getElementById('public-category-list').style.display = 'none';
-		    document.getElementById('private-category-list').style.display = 'none';
-	
-		    // 버튼 상태 업데이트
-		    document.getElementById('total-button').classList.add('active');
-		    document.getElementById('public-button').classList.remove('active');
-		    document.getElementById('private-button').classList.remove('active');
-		    
-		 	// 현재 범주 유형 설정: 전체
-		    currentCategoryType = 0;
-		    
-		    // 로컬 스토리지에 저장
-		    localStorage.setItem('currentCategoryType', currentCategoryType);
-		};
-		
-		// 공용 범주 목록 표시 함수
-		window.showPublicCategories = function () {
-		    // 공용 범주를 보이게 하고, 전체와 개인 범주는 숨김
-		    document.getElementById('total-category-list').style.display = 'none';
-		    document.getElementById('public-category-list').style.display = 'block';
-		    document.getElementById('private-category-list').style.display = 'none';
-	
-		    // 버튼 상태 업데이트
-		    document.getElementById('total-button').classList.remove('active');
-		    document.getElementById('public-button').classList.add('active');
-		    document.getElementById('private-button').classList.remove('active');
-		    
-		 	// 현재 범주 유형 설정: 공용
-		    currentCategoryType = 1;
-		    
-		    // 로컬 스토리지에 저장
-		    localStorage.setItem('currentCategoryType', currentCategoryType);
-		};
-	
-		// 개인 범주 목록 표시 함수
-		window.showPrivateCategories = function () {
-		    // 개인 범주를 보이게 하고, 전체와 공용 범주는 숨김
-		    document.getElementById('total-category-list').style.display = 'none';
-		    document.getElementById('public-category-list').style.display = 'none';
-		    document.getElementById('private-category-list').style.display = 'block';
-	
-		    // 버튼 상태 업데이트
-		    document.getElementById('total-button').classList.remove('active');
-		    document.getElementById('public-button').classList.remove('active');
-		    document.getElementById('private-button').classList.add('active');
-		    
-		 	// 현재 범주 유형 설정: 개인
-		    currentCategoryType = 2;
-		    
-		 	// 로컬 스토리지에 저장
-		    localStorage.setItem('currentCategoryType', currentCategoryType);
-		};
-		
-		$(document).ready(function () {
-			// 초기화: 로컬 스토리지에 저장된 값에 따라 범주 목록을 보여줌
-			if(currentCategoryType === 0){
-				showTotalCategories();
-			} else if (currentCategoryType === 1) {
-		        showPrivateCategories(); // 개인 범주 보여줌
-		    } else {
-		        showPublicCategories(); // 공용 범주 보여줌
-		    }
-		});
-    </script>
+	// 날짜를 UTC 형식으로 변환하는 함수
+    function convertToUTCDate(dateString) {
+        const date = new Date(dateString + 'T00:00:00'); 
+        return new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate())).toISOString().split('T')[0];
+    }
+    
+    // 공통 함수: API 응답 처리
+    function handleResponse(data, action) {
+        if (data.res_code === '200') {
+            Swal.fire({
+                icon: 'success',
+                title: '성공',
+                text: data.res_msg,
+                confirmButtonText: '확인',
+                customClass: {
+                    confirmButton: 'swal-custom-button'
+                }
+            }).then(() => {
+                location.href = "/schedule";
+            });
+        } else {
+            Swal.fire({
+                icon: 'error',
+                title: '실패',
+                text: data.res_msg,
+                confirmButtonText: '확인',
+                customClass: {
+                    confirmButton: 'swal-custom-button'
+                }
+            });
+        }
+    }
+</script>
+
     
 <script>
+	// 전역 변수로 현재 범주 유형 설정
+	let currentCategoryType = 0; // 기본값: 전체 (0)
+	
+	// 새로고침 시 항상 "전체"로 설정되도록 수정
+	localStorage.setItem('currentCategoryType', currentCategoryType); // 초기화 시 "전체" 설정으로 저장
+	
+	// 범주 목록 및 캘린더 데이터 로드 함수
+	function updateCategoryAndCalendar() {
+	    if (currentCategoryType === 0) {
+	        showTotalCategories(); // 전체 범주와 일정 데이터 로드
+	    } else if (currentCategoryType === 1) {
+	        showPublicCategories(); // 공용 범주와 일정 데이터 로드
+	    } else {
+	        showPrivateCategories(); // 개인 범주와 일정 데이터 로드
+	    }
+	}
+	
+	// 전체 범주 목록 표시 함수
+	window.showTotalCategories = function () {
+	    // 전체 범주를 보이게 하고, 공용과 개인 범주는 숨김
+	    document.getElementById('total-category-list').style.display = 'block';
+	    document.getElementById('public-category-list').style.display = 'none';
+	    document.getElementById('private-category-list').style.display = 'none';
+	
+	    // 버튼 상태 업데이트
+	    document.getElementById('total-button').classList.add('active');
+	    document.getElementById('public-button').classList.remove('active');
+	    document.getElementById('private-button').classList.remove('active');
+	
+	    // 현재 범주 유형 설정: 전체
+	    currentCategoryType = 0;
+	
+	    // 로컬 스토리지에 저장
+	    localStorage.setItem('currentCategoryType', currentCategoryType);
+	
+	    // 전체 일정 데이터 로드
+	    loadCalendarData('/getTotalScheduleData');
+	};
+	
+	// 공용 범주 목록 표시 함수
+	window.showPublicCategories = function () {
+	    // 공용 범주를 보이게 하고, 전체와 개인 범주는 숨김
+	    document.getElementById('total-category-list').style.display = 'none';
+	    document.getElementById('public-category-list').style.display = 'block';
+	    document.getElementById('private-category-list').style.display = 'none';
+	
+	    // 버튼 상태 업데이트
+	    document.getElementById('total-button').classList.remove('active');
+	    document.getElementById('public-button').classList.add('active');
+	    document.getElementById('private-button').classList.remove('active');
+	
+	    // 현재 범주 유형 설정: 공용
+	    currentCategoryType = 1;
+	
+	    // 로컬 스토리지에 저장
+	    localStorage.setItem('currentCategoryType', currentCategoryType);
+	
+	    // 공용 일정 데이터 로드
+	    loadCalendarData('/getPublicScheduleData');
+	};
+	
+	// 개인 범주 목록 표시 함수
+	window.showPrivateCategories = function () {
+	    // 개인 범주를 보이게 하고, 전체와 공용 범주는 숨김
+	    document.getElementById('total-category-list').style.display = 'none';
+	    document.getElementById('public-category-list').style.display = 'none';
+	    document.getElementById('private-category-list').style.display = 'block';
+	
+	    // 버튼 상태 업데이트
+	    document.getElementById('total-button').classList.remove('active');
+	    document.getElementById('public-button').classList.remove('active');
+	    document.getElementById('private-button').classList.add('active');
+	
+	    // 현재 범주 유형 설정: 개인
+	    currentCategoryType = 2;
+	
+	    // 로컬 스토리지에 저장
+	    localStorage.setItem('currentCategoryType', currentCategoryType);
+	
+	    // 개인 일정 데이터 로드
+	    loadCalendarData('/getPrivateScheduleData');
+	};
+	
+	$(document).ready(function () {
+	    // 페이지 로드 시 항상 "전체" 버튼 클릭 상태로 초기화
+	    currentCategoryType = 0;
+	    updateCategoryAndCalendar(); // 전체 범주와 일정 데이터 로드
+	});
+</script>
+
+<script>
+	let currentEventData = null;
+
     // FullCalendar 초기화 함수
-    function initFullCalendar() {
+    function initFullCalendar(eventsData) {
         var calendarEl = document.getElementById('calendar');
         var calendar = new FullCalendar.Calendar(calendarEl, {
             initialView: 'dayGridMonth',
             locale: 'ko',
+            timeZone: 'local', // 타임존을 'local'로 설정
             headerToolbar: {
                 left: 'prev,next today',
                 center: 'title',
@@ -454,6 +1316,40 @@
             titleFormat: function (date) { // 커스텀 titleFormat 설정
                 return date.date.year + '년 ' + (date.date.month + 1) + '월';
             },
+            eventOrder: function (a, b) {
+                const aIsHoliday = a.classNames && a.classNames.includes('fc-holiday');
+                const bIsHoliday = b.classNames && b.classNames.includes('fc-holiday');
+
+                const aIsAllDay = a.allDay;
+                const bIsAllDay = b.allDay;
+
+                // 공휴일 일정 우선
+                if (aIsHoliday && !bIsHoliday) {
+                    return -1; // a가 먼저 오도록 설정
+                } else if (!aIsHoliday && bIsHoliday) {
+                    return 1; // b가 먼저 오도록 설정
+                }
+
+                // 그 다음 all-day 일정 우선
+                if (aIsAllDay && !bIsAllDay) {
+                    return -1; // a가 먼저 오도록 설정
+                } else if (!aIsAllDay && bIsAllDay) {
+                    return 1; // b가 먼저 오도록 설정
+                }
+                
+                // 시작 시간 비교 (이른 시간이 먼저)
+                const aStartTime = a.start instanceof Date ? a.start : new Date(a.start);
+                const bStartTime = b.start instanceof Date ? b.start : new Date(b.start);
+
+                if (aStartTime < bStartTime) {
+                    return -1; // a가 먼저 오도록 설정
+                } else if (aStartTime > bStartTime) {
+                    return 1; // b가 먼저 오도록 설정
+                }
+
+                // 그 외에는 순서 변경 없음
+                return 0;
+            },
             dayCellDidMount: function (arg) { // 날짜 셀이 렌더링된 후 호출
                 const today = new Date(); // 오늘 날짜
                 if (
@@ -464,73 +1360,233 @@
                     // 오늘 날짜 셀에 클래스를 추가
                     arg.el.classList.add('fc-day-today');
                 }
-            },
-            events: function(fetchInfo, successCallback, failureCallback) { // 이벤트 로드 함수
-                fetch('/getHolidayData') // 서버에서 공휴일 데이터 로드
-                    .then(response => response.json())
-                    .then(data => {
-                        const holidayEvents = data.flatMap(holiday => {
-                            // 기본 이벤트 객체
-                            let event = {
-                                title: holiday.holiday_name,
-                                start: holiday.start_date,
-                                end: holiday.is_period === 'Y' ? holiday.end_date : holiday.start_date,
-                                classNames: ['fc-holiday'],
-                                allDay: holiday.is_period === 'N' ? true : false,
-                                backgroundColor: '#FFF8F8',
-                                textColor: '#FF0000',
-                                editable: false // 휴일 이벤트는 드래그 불가하도록 설정
-                            };
 
-                            // 반복 타입이 YEARLY라면 매년 반복 이벤트 생성
-                            if (holiday.repeat_type === 'YEARLY') {
-                                return createYearlyEvents(holiday);
-                            } else {
-                                return [event]; // 반복이 없을 경우 기본 이벤트만 반환
+                // + 버튼 추가
+                var addButton = document.createElement('div');
+                addButton.className = 'add-event-btn';
+                addButton.textContent = '+';
+                addButton.style.position = 'absolute';
+                addButton.style.top = '3px'; // 왼쪽 위 위치
+                addButton.style.left = '3px'; // 왼쪽 위 위치
+                addButton.style.cursor = 'pointer';
+                addButton.style.paddingLeft = '7px';
+                addButton.style.paddingRight = '7px';
+                addButton.style.backgroundColor = '#fff';
+                addButton.style.border = '1px solid gray';
+                addButton.style.borderRadius = '4px';
+                addButton.style.display = 'none'; // 기본은 숨김
+                addButton.style.zIndex = '998';
+                addButton.style.visibility = 'visible'; // 기본적으로 visible로 설정
+
+                // 버튼 클릭 시 등록 모달 열기 및 날짜 설정
+                addButton.addEventListener('click', function (event) {
+                    event.stopPropagation(); // 이벤트 버블링 방지
+
+                    // 클릭한 날짜를 가져옴
+                    const clickedDate = arg.date;
+                    const year = clickedDate.getFullYear();
+                    const month = (clickedDate.getMonth() + 1).toString().padStart(2, '0');
+                    const day = clickedDate.getDate().toString().padStart(2, '0');
+
+                    // 모달 내의 날짜 input 값 설정
+                    document.getElementById('create_start_date').value = `${year}-${month}-${day}`;
+                    document.getElementById('create_end_date').value = `${year}-${month}-${day}`;
+
+                    // 종일 체크박스를 체크된 상태로 설정
+                    const allDayCheckbox = document.getElementById('create_is_all_day');
+                    allDayCheckbox.checked = true;
+
+                    // 시간 필드 비활성화
+                    const startTimeInput = document.getElementById('create_start_time');
+                    const endTimeInput = document.getElementById('create_end_time');
+                    startTimeInput.disabled = true;
+                    endTimeInput.disabled = true;
+
+                    // 모달 열기
+                    $('#scheduleCreateModal').modal('show');
+                });
+
+                // 날짜 셀에 마우스가 올려질 때 버튼 보이기
+                arg.el.addEventListener('mouseenter', function () {
+                    addButton.style.display = 'block';
+                });
+
+                // 날짜 셀에서 마우스가 벗어날 때 버튼 숨기기
+                arg.el.addEventListener('mouseleave', function () {
+                    addButton.style.display = 'none';
+                });
+
+                // 날짜 셀에 버튼 추가
+                arg.el.style.position = 'relative'; // 부모 위치 상대 설정
+                arg.el.appendChild(addButton);
+            },
+            eventClick: function (info) {
+
+                // 일정 클릭 시 상세정보 모달 표시
+                const scheduleNo = info.event.id; // 이벤트 ID 가져오기
+                
+                // 공휴일 이벤트인지 확인
+                if (info.event.classNames.includes('fc-holiday')) {
+                    // 공휴일 이벤트라면 클릭을 막음
+                    return;
+                }
+                
+                // 휴가 이벤트인지 확인
+                if (info.event.classNames.includes('fc-vacation')) {
+                    // 휴가 이벤트라면 클릭을 막음
+                    return;
+                }
+
+                // 서버로 요청 보내기
+                fetch(`/schedule/${scheduleNo}`,{
+	                method: 'GET',
+	                headers: {
+	                    'Accept': 'application/json',
+	                    'Content-Type': 'application/json'
+	                }
+                })
+                .then(response => response.json())
+                .then(data => {
+                	currentEventData = data; // 데이터 저장
+                	
+                    // 클릭한 이벤트의 시작 날짜를 currentDate로 사용
+                    const currentDate = info.event.start.toISOString().split('T')[0]; // YYYY-MM-DD 형식
+
+                    // 모달에 데이터 표시
+                    updateDetailModal(data, currentDate); // currentDate를 추가로 전달
+                    
+                    // 모달 표시
+                    $('#scheduleDetailModal').modal('show');
+
+                })
+                .catch(error => {
+                    console.error('Error fetching schedule details:', error);
+                    Swal.fire({
+                        icon: 'error',
+                        title: '오류',
+                        text: '일정 정보를 불러오는 중 문제가 발생했습니다.',
+                        confirmButtonText: '확인',
+                    });
+                });
+            },
+            events: eventsData.map(event => {
+                // UTC에서 Local 시간으로 변환
+                const utcStartDate = new Date(event.start);
+                event.start = new Date(utcStartDate.getTime() + utcStartDate.getTimezoneOffset() * 60000); // 오프셋을 더함
+
+                if (event.end) {
+                    const utcEndDate = new Date(event.end);
+                    event.end = new Date(utcEndDate.getTime() + utcEndDate.getTimezoneOffset() * 60000); // 오프셋을 더함
+
+                    // 날짜와 시간을 비교하기 위한 값 추출
+                    const startDate = event.start.toISOString().split('T')[0]; // 'YYYY-MM-DD'
+                    const endDate = event.end.toISOString().split('T')[0]; // 'YYYY-MM-DD'
+                    const startTime = event.start.getHours(); // 시작 시간
+                    const endTime = event.end.getHours(); // 종료 시간
+
+					if(event.allDay === true && endDate !== startDate){
+						event.end.setDate(event.end.getDate() + 1);
+					}
+                }
+
+                return event;
+            }),
+            editable: true, // 전체적으로 일정 수정 가능
+            eventDrop: function(event, delta, revertFunc) {
+                // 일정 클릭 시 상세정보 모달 표시
+                const scheduleNo = event.event.id; // 이벤트 ID 가져오기
+
+                // 수정된 시작일과 종료일
+                const newStart = event.event.start; // 수정된 시작일
+                const newEnd = event.event.end; // 수정된 종료일
+
+                if (!newStart || !newEnd) {
+                    console.error('새로운 시작일 또는 종료일이 정의되지 않음.');
+                    revertFunc(); // 수정이 실패하면 원래 위치로 되돌리기
+                    return;
+                }
+
+                // 서버로 요청 보내기
+                fetch(`/schedule/${scheduleNo}`, {
+                    method: 'GET',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    currentEventData = data; // 데이터 저장
+                    
+                    const isAllDay = currentEventData.is_all_day === 'Y';
+                    
+                 	// 종일 일정일 경우 종료일을 하루 줄여야 함
+                    if (newStart.getDate() !== newEnd.getDate()) {
+                        newStart.setDate(newStart.getDate() + 1);
+                    }
+
+                    // PUT 요청
+                    return fetch(`/schedule/${scheduleNo}`, {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json',
+                            'X-CSRF-TOKEN': $('#csrf_token').val()
+                        },
+                        body: JSON.stringify({
+                            schedule_no: scheduleNo,
+                            calendar_type: currentEventData.calendar_type,
+                            category_no: currentEventData.category_no,
+                            schedule_title: currentEventData.schedule_title,
+                            schedule_content: currentEventData.schedule_content,
+                            schedule_place: currentEventData.schedule_place,
+                            start_date: newStart.toISOString(),
+                            end_date: newEnd.toISOString(),
+                            start_time: currentEventData.start_time,
+                            end_time: currentEventData.end_time,
+                            is_all_day: currentEventData.is_all_day,
+                            repeat_type: currentEventData.repeat_type,
+                            repeat_start_date: currentEventData.repeat_start_date,
+                            repeat_end_date: currentEventData.repeat_end_date,
+                            alert_type: currentEventData.alert_type
+                        })
+                    });
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.res_code === '200') {
+                        Swal.fire({
+                            icon: 'success',
+                            title: '성공',
+                            text: data.res_msg,
+                            confirmButtonText: '확인',
+                            customClass: {
+                                confirmButton: 'swal-custom-button'
                             }
                         });
-                        
-                     	// 일정 데이터 로드
-                        fetch('/getTotalScheduleData')
-                            .then(response => response.json())
-                            .then(scheduleData => {
-                            	const scheduleEvents = scheduleData.map(schedule => {
-                            	    // 시작일과 종료일을 비교하여 날짜 차이 계산
-                            	    const startDate = new Date(schedule.start_time);
-                            	    const endDate = new Date(schedule.end_time);
-
-                            	 	// is_all_day가 'Y'이거나 날짜 차이가 1일 이상인 경우 allDay를 true로 설정
-                            	    const isAllDayEvent = schedule.is_all_day === 'Y' || 
-                            	        (endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24) >= 1;
-
-                            	    return {
-                            	        title: schedule.schedule_title,
-                            	        start: schedule.start_time, // 시작 시간
-                            	        end: schedule.end_time, // 종료 시간
-                            	        allDay: isAllDayEvent, // 날짜 차이에 따라 종일 일정 여부 결정
-                            	        backgroundColor: `#${schedule.category_color}`, // 배경색 설정
-                            	        textColor: 'black',
-                            	        editable: true, // 드래그 가능
-                            	        classNames: ['fc-schedule'] // 일정 클래스 추가
-                            	    };
-                            	});
-
-                                // 두 이벤트 데이터를 합쳐서 FullCalendar에 전달
-                                successCallback([...holidayEvents, ...scheduleEvents]);
-                                addHolidayClassToDateNumbers(); // 공휴일 날짜 셀에 클래스 추가
-                            })
-                            .catch(error => failureCallback(error.message));
-                    })
-                    .catch(error => failureCallback(error.message));
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: '실패',
+                            text: data.res_msg,
+                            confirmButtonText: '확인',
+                            customClass: {
+                                confirmButton: 'swal-custom-button'
+                            }
+                        });
+                    }
+            	})
+                .catch(error => console.error('수정 오류:', error));
             },
-            editable: true, // 전체적으로 일정 수정 가능
             eventStartEditable: true, // 드래그로 시작 시간 변경 가능
             eventDurationEditable: true, // 드래그로 일정 길이 변경 가능
-            eventAllow: function(dropInfo, draggedEvent) {
+            forceEventDuration: true, // 이벤트의 기간을 강제로 적용
+            eventAllow: function (dropInfo, draggedEvent) {	
                 // 휴일 이벤트는 드래그할 수 없도록 설정
-                if (draggedEvent.classNames.includes('fc-holiday')) {
+                if (draggedEvent.classNames.includes('fc-holiday') || draggedEvent.extendedProps.category_no == 3) {
                     return false; // 드래그 불가
-                }
+                } 
+
                 return true; // 다른 일정은 드래그 가능
             },
             droppable: true,
@@ -538,7 +1594,38 @@
             height: 'calc(100vh - 330px)',  // 높이를 자동으로 조정
             dayMaxEvents: true,  // 각 셀의 최대 이벤트 수를 제한
             dayMaxEventRows: 2,  // 각 셀의 최대 이벤트 행 수 설정
-            moreLinkContent: function(args) { // "more" 링크의 내용 커스터마이징
+            moreLinkClick: function (info) {
+                // MutationObserver를 사용하여 팝업이 생성될 때까지 기다린 후 스타일 적용
+                const observer = new MutationObserver(function (mutations) {
+                    mutations.forEach(function (mutation) {
+                        if (mutation.addedNodes.length) {
+                            const popover = document.querySelector('.fc-more-popover');
+                            if (popover) {
+                                const calendarCells = document.querySelectorAll('.fc-daygrid-day');
+                                if (calendarCells.length > 0) {
+                                    const cellWidth = calendarCells[0].getBoundingClientRect().width; // 첫 번째 셀의 너비 계산
+                                    popover.style.maxWidth = (cellWidth * 2) + 'px'; // 팝업의 최대 너비를 셀 두 개 너비로 설정
+                                    popover.style.zIndex = '999'; // z-index 설정
+                                }
+
+                                // + 버튼 숨기기
+                                document.querySelectorAll('.add-event-btn').forEach(button => {
+                                    button.style.visibility = 'hidden';
+                                });
+
+                                // 스타일 적용 후 Observer 중지
+                                observer.disconnect();
+                            }
+                        }
+                    });
+                });
+
+                // 팝업을 감시하기 위해 body에 Observer 추가
+                observer.observe(document.body, { childList: true, subtree: true });
+
+                return 'popover'; // 기본 팝업 모드를 유지
+            },
+            moreLinkContent: function (args) { // "more" 링크의 내용 커스터마이징
                 // 더보기 링크를 감싸는 span 생성
                 let moreLinkSpan = document.createElement('span');
                 moreLinkSpan.className = 'more-link-content';
@@ -546,30 +1633,657 @@
 
                 return { domNodes: [moreLinkSpan] };
             },
-            dayHeaderClassNames: function(arg) { // 헤더 부분의 특정 요일에 클래스를 추가
+            dayHeaderClassNames: function (arg) { // 헤더 부분의 특정 요일에 클래스를 추가
                 if (arg.date.getDay() === 0) {
                     return ['fc-sunday-header'];
                 } else if (arg.date.getDay() === 6) {
                     return ['fc-saturday-header'];
                 }
             },
-            dayCellClassNames: function(arg) { // 특정 요일에 클래스를 추가
+            dayCellClassNames: function (arg) { // 특정 요일에 클래스를 추가
                 if (arg.date.getDay() === 0) {
                     return ['fc-sunday'];
                 } else if (arg.date.getDay() === 6) {
                     return ['fc-saturday'];
                 }
             },
-            dayCellContent: function(e) { // 날짜 셀의 숫자만 표시되도록 설정
+            dayCellContent: function (e) { // 날짜 셀의 숫자만 표시되도록 설정
                 e.dayNumberText = e.date.getDate(); // '1일' 대신 '1'만 표시
             },
-            eventDidMount: function() { // 이벤트가 마운트될 때
+            eventDidMount: function () { // 이벤트가 마운트될 때
                 addHolidayClassToDateNumbers(); // 각 이벤트 렌더링 후 호출하여 날짜 셀에 클래스 추가
             }
         });
 
         calendar.render(); // 캘린더 렌더링
+        
+        // more 팝업이 닫힐 때 + 버튼 다시 보이기
+        document.addEventListener('click', function (event) {
+            if (!event.target.closest('.fc-more-popover')) {
+                document.querySelectorAll('.add-event-btn').forEach(button => {
+                    button.style.visibility = 'visible'; // more 팝업이 닫히면 + 버튼 다시 보이기
+                });
+            }
+        });
+
+        // more 팝업의 X 버튼 클릭 시 + 버튼 다시 보이기
+        document.addEventListener('click', function (event) {
+            if (event.target.closest('.fc-more-popover .fc-popover-close')) {
+                document.querySelectorAll('.add-event-btn').forEach(button => {
+                    button.style.visibility = 'visible'; // X 버튼 클릭 시 + 버튼 다시 보이기
+                });
+            }
+        });
     }
+    
+    let scheduleNo;
+    
+ 	// 상세정보 모달 업데이트 함수
+    function updateDetailModal(data, currentDate) {
+    	// 기간 포맷팅
+        const formattedPeriod = formatPeriod(data.start_date, data.start_time, data.end_date, data.end_time, data.repeat_type, currentDate, data.is_all_day);
+    	
+    	scheduleNo = data.schedule_no;
+        
+     	// 등록일 포맷팅 (T로 자르고 앞부분만 사용)
+        const formattedModTime = data.mod_time ? data.mod_time.split('T')[0].replace(/-/g, '.') : '';
+        const calendarType = data.calendar_type == 0 ? '공용' : '개인';
+
+        const scheduleDetailContent = document.getElementById('scheduleDetailContent');
+        scheduleDetailContent.innerHTML = `
+        	<div class="modal-header modal-colored-header bg-primary" style="display: flex; align-items: center; justify-content: space-between; font-size: 25px;">
+	            <div class="modal-title" id="holidayDetailModalLabel">
+	            	<i data-feather="calendar" class="svg-icon mr-2 ml-1"></i>
+	            	일정 정보
+	           	</div>
+	            <div style="font-size:16px; display:flex;">
+	            	<div style="margin-right:20px;">등록자 : ${data.emp_name}</div>
+		            <div>등록일 : ${formattedModTime}</div>
+	            </div>
+        	</div>
+        	<div class="modal-body" style="padding:0px;">
+	            <table style="border-bottom:none; border-top:none;" class="table bordered">
+	                <tbody>
+			            <tr>
+				            <td class="align-center" style="width: 20%;">
+				            	<label>기간</label>
+				            </td>
+				            <td style="width: 80%;">${formattedPeriod}</td>
+				        </tr>
+			
+			            <tr>
+			                <td class="align-center" style="width: 20%;">
+			                    <label>제목</label>
+			                </td>
+			                <td style="width: 80%;">
+			                    <div class="form-inline d-flex">
+				                    <!-- 공용/개인 텍스트 -->
+				                    <div class="px-3" style="background-color: #E8EAEC; padding: 5px 10px; border-radius: 5px; color:#4F5467;">
+				                        ${calendarType}
+				                    </div>
+				
+				                    <!-- 범주 색상 및 이름 -->
+				                    <div class="d-flex align-items-center px-2" style="margin-left:5px;">
+				                    	[
+				                        <div style="width: 15px; height: 15px; background-color: #${data.category_color}; border-radius: 50%; margin-right: 5px; margin-left:5px;"></div>
+				                        <span>${data.category_name} ]</span>
+				                    </div>
+				
+				                    <!-- 제목 텍스트 -->
+				                    <span style="margin-left: 5px;">${data.schedule_title}</span>
+			                    </div>
+			                </td>
+			            </tr>
+			
+			            <!-- 장소 -->
+			            <tr>
+			                <td class="align-center" style="width: 20%;">
+			                    <label>장소</label>
+			                </td>
+			                <td style="width: 80%;">
+			                	<input type="text" class="form-control" name="schedule_place" id="schedule_place" value="${data.schedule_place}" readonly style="color:#7C8798;">
+			                </td>
+			            </tr>
+			
+			            <!-- 내용 -->
+			            <tr>
+			                <td class="align-center" style="width: 20%;">
+			                    <label>내용</label>
+			                </td>
+			                <td style="width: 80%;">
+			                	<textarea class="form-control" rows="3" name="schedule_content" id="schedule_content" readonly style="color:#7C8798;">${data.schedule_content}</textarea>
+			                </td>
+			            </tr>
+			
+			            <!-- 반복 -->
+			            <tr>
+			                <td class="align-center" style="width: 20%;">
+			                    <label>반복</label>
+			                </td>
+			                <td style="width: 80%;">
+				                <div class="form-inline d-flex justify-content-between align-items-center">
+				                    <!-- 버튼 그룹 -->
+				                    <div class="btn-group" role="group" aria-label="Repeat options" id="repeat_type">
+				                        <button type="button" class="btn btn-outline-light btn-color ${data.repeat_type === 'NONE' ? 'active' : ''}" disabled>사용안함</button>
+				                        <button type="button" class="btn btn-outline-light btn-color ${data.repeat_type === 'DAILY' ? 'active' : ''}" disabled>매일</button>
+				                        <button type="button" class="btn btn-outline-light btn-color ${data.repeat_type === 'WEEKLY' ? 'active' : ''}" disabled>매주</button>
+				                        <button type="button" class="btn btn-outline-light btn-color ${data.repeat_type === 'MONTHLY' ? 'active' : ''}" disabled>매월</button>
+				                        <button type="button" class="btn btn-outline-light btn-color ${data.repeat_type === 'YEARLY' ? 'active' : ''}" disabled>매년</button>
+				                    </div>
+				                    
+				                    <!-- 날짜 선택 필드: repeat_type이 'NONE'일 때만 표시 -->
+				                    ${data.repeat_type !== 'NONE' ? `
+				                    <div>
+				                        <input type="date" class="form-control" id="repeat_start_date" name="repeat_start_date" value="${data.repeat_start_date ? data.repeat_start_date.split('T')[0] : ''}" style="max-width:170px; width:170px;" disabled>
+				                        <span class="ml-3 mr-3"> ~ </span>
+				                        <input type="date" class="form-control" id="repeat_end_date" name="repeat_end_date" value="${data.repeat_end_date ? data.repeat_end_date.split('T')[0] : ''}" style="max-width:170px; width:170px;" disabled>
+				                    </div>` : ''}
+				                </div>
+				            </td>
+			            </tr>
+			
+			            <!-- 알림 -->
+			            <tr>
+			                <td class="align-center" style="width: 20%;">
+			                    <label>알림</label>
+			                </td>
+			                <td style="width: 80%;">
+			                    <!-- 버튼 그룹 -->
+			                    <div class="btn-group" role="group" aria-label="Alert options" id="alert_type" style="color:black;">
+				                    <button type="button" class="btn btn-outline-light btn-color ${data.alert_type === 'OFF' ? 'active' : ''}" disabled>사용안함</button>
+				                    <button type="button" class="btn btn-outline-light btn-color ${data.alert_type === 'ON' ? 'active' : ''}" disabled>정시</button>
+				                    <button type="button" class="btn btn-outline-light btn-color ${data.alert_type === '10' ? 'active' : ''}" disabled>10분 전</button>
+				                    <button type="button" class="btn btn-outline-light btn-color ${data.alert_type === '30' ? 'active' : ''}" disabled>30분 전</button>
+				                    <button type="button" class="btn btn-outline-light btn-color ${data.alert_type === '60' ? 'active' : ''}" disabled>1시간 전</button>
+			                	</div>
+			                </td>
+			            </tr>
+		            </tbody>
+                </table>
+            </div>
+            <div class="modal-footer" style="margin-top:-15px;">
+	            <button type="button" class="btn btn-primary public-btn" id="editButton">수정</button>
+	            <button type="button" class="btn btn-light public-btn" id="deleteButton">삭제</button>
+	            <button type="button" class="btn btn-outline-secondary public-btn" data-dismiss="modal">닫기</button>
+            </div>
+        `;
+        
+        // Feather Icons 초기화
+	    if (typeof feather !== 'undefined') {
+	        feather.replace();  // Feather Icons가 로드된 경우에만 초기화
+	    }
+        
+        const activeButtons = scheduleDetailContent.querySelectorAll('.btn.active');
+        activeButtons.forEach(button => {
+            button.style.backgroundColor = '#e8eaec'; // 원하는 배경색
+            button.style.borderColor = '#e8eaec'; // 테두리 색
+        });
+        
+     	// 수정 버튼 클릭 이벤트 추가
+        const editButton = scheduleDetailContent.querySelector('#editButton');
+        editButton.addEventListener('click', function () {
+            // 날짜 형식을 YYYY-MM-DD로 변환 (T로 자르고 앞부분만 사용)
+		    const formattedStartDate = data.start_date ? data.start_date.split('T')[0] : ''; // addOneDay 함수 호출
+		    const formattedEndDate = data.end_date ? data.end_date.split('T')[0] : ''; 
+
+            document.getElementById('edit_start_date').value = formattedStartDate;
+            document.getElementById('edit_start_time').value = data.start_time;
+            document.getElementById('edit_end_date').value = formattedEndDate;
+            document.getElementById('edit_end_time').value = data.end_time;
+            document.getElementById('edit_schedule_title').value = data.schedule_title;
+            document.getElementById('edit_schedule_place').value = data.schedule_place;
+            document.getElementById('edit_schedule_content').value = data.schedule_content;
+            document.getElementById('edit_calendar_type').value = data.calendar_type;
+            
+            // 종일 옵션 설정
+            const isAllDayCheckbox = document.getElementById('edit_is_all_day');
+            isAllDayCheckbox.checked = data.is_all_day === 'Y'; // 'Y'일 경우 체크, 아니면 체크 해제
+            
+            // 시간 필드 가져오기
+            const startTimeField = document.getElementById('edit_start_time');
+            const endTimeField = document.getElementById('edit_end_time');
+
+            // 종일 일정인 경우 시간 필드 비활성화 및 값 초기화
+            function toggleTimeFields() {
+                if (isAllDayCheckbox.checked) {
+                    startTimeField.disabled = true;
+                    endTimeField.disabled = true;
+                    startTimeField.value = ''; // 시작 시간 초기화
+                    endTimeField.value = ''; // 종료 시간 초기화
+                } else {
+                    startTimeField.disabled = false;
+                    endTimeField.disabled = false;
+                    startTimeField.value = data.start_time; // 원래 값으로 복구
+                    endTimeField.value = data.end_time; // 원래 값으로 복구
+                }
+            }
+
+            // 처음 열릴 때 시간 필드 설정
+            toggleTimeFields();
+
+            // 종일 체크박스 변경 시 시간 필드 활성화/비활성화
+            isAllDayCheckbox.addEventListener('change', toggleTimeFields);
+            
+            // 카테고리 설정
+            const categorySelect = document.getElementById('edit_category_no');
+            updateCategoryOptions('edit');  // 'edit' 접두사 추가
+            categorySelect.value = data.category_no;
+
+            // 반복 설정
+            setRepeatOption('edit', document.querySelector(`#edit_repeat_type .btn[onclick*="${data.repeat_type}"]`), data.repeat_type);
+            document.getElementById('edit_repeat_start_date').value = data.repeat_start_date ? data.repeat_start_date.split('T')[0] : '';
+            document.getElementById('edit_repeat_end_date').value = data.repeat_end_date ? data.repeat_end_date.split('T')[0] : '';
+
+            // 알림 설정
+            setActiveButton('edit', document.querySelector(`#edit_alert_type .btn[onclick*="${data.alert_type}"]`), data.alert_type);
+            
+            // 상세 정보 모달 닫기
+            $('#scheduleDetailModal').modal('hide');
+
+            // 수정 모달 열기
+            $('#scheduleEditModal').modal('show');
+        });
+
+        
+     	// 수정 모달의 "저장" 버튼 클릭 이벤트
+        document.getElementById('editSubmitButton').addEventListener('click', function () {
+        	
+        	 // 이전 이벤트 리스너 제거 (중복 등록 방지)
+            document.getElementById('editSubmitButton').removeEventListener('click', arguments.callee);
+
+            // 유효성 검사
+            const isValid = validateForm('edit');  
+            if (!isValid) return;  
+
+            const form = document.getElementById('scheduleEditFrm');
+            const formData = new FormData(form);
+
+            // 시작 날짜와 종료 날짜 가져오기
+            let startDate = new Date(formData.get('start_date'));
+            let endDate = new Date(formData.get('end_date'));
+
+            // 종일 일정인지 확인
+            const isAllDayChecked = document.getElementById('edit_is_all_day').checked;
+
+            // 시간 설정
+            let startTime = isAllDayChecked ? '00:00:00' : formData.get('start_time');
+            let endTime = isAllDayChecked ? '23:59:59' : formData.get('end_time');
+
+            // 날짜와 시간을 UTC로 변환하여 설정
+            const formattedStartDate = convertToUTCDateTime(startDate.toISOString().split('T')[0], startTime);
+            const formattedEndDate = convertToUTCDateTime(endDate.toISOString().split('T')[0], endTime);
+
+            formData.set('start_date', formattedStartDate);
+            formData.set('end_date', formattedEndDate);
+            formData.set('start_time', startTime);
+            formData.set('end_time', endTime);
+            formData.set('is_all_day', isAllDayChecked ? 'Y' : 'N');
+
+            // 수정할 일정의 ID 설정
+            formData.set('schedule_no', scheduleNo);
+
+            // 반복 및 알림 유형 가져오기
+            const repeatTypeButton = document.querySelector('#edit_repeat_type .btn.active');
+            const alertTypeButton = document.querySelector('#edit_alert_type .btn.active');
+
+            const repeatType = repeatTypeButton ? repeatTypeButton.getAttribute('data-repeat-type') : 'NONE';
+            const alertType = alertTypeButton ? alertTypeButton.getAttribute('data-alert-type') : 'OFF';
+
+            formData.set('repeat_type', repeatType);  
+            formData.set('alert_type', alertType);   
+
+            // FormData를 JSON 객체로 변환
+            const payload = Object.fromEntries(formData.entries());
+
+            // 서버로 PUT 요청 보내기
+            fetch(`/schedule/${data.schedule_no}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': $('#csrf_token').val() // CSRF 토큰 추가
+                },
+                body: JSON.stringify(payload)
+            })
+            .then(response => response.json())
+            .then(data => handleResponse(data, "수정"))
+            .catch(error => console.error('수정 오류:', error));
+        });
+
+
+        // 날짜를 UTC 형식으로 변환하는 함수 (시간 포함)
+        function convertToUTCDateTime(dateString, timeString) {
+            const date = new Date(`${dateString}T${timeString}`);
+            return new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate(), date.getHours(), date.getMinutes(), date.getSeconds())).toISOString();
+        }
+
+        // 시간이 입력되지 않은 경우 기본값으로 설정
+        function formatTimeToHHmmss(time) {
+            if (!time || time.trim() === "") {
+                return '00:00:00';  // 기본값 설정
+            }
+            if (time.includes(':')) {
+                const parts = time.split(':');
+                if (parts.length === 2) {
+                    return time + ':00';  // 'HH:mm' 형식을 'HH:mm:ss'로 변환
+                }
+            }
+            return time;  // 이미 올바른 형식이거나 빈 값인 경우 그대로 반환
+        }
+
+        
+        // 삭제 버튼 클릭 이벤트 추가
+        const deleteButton = scheduleDetailContent.querySelector('#deleteButton');
+        const csrfToken = $('#csrf_token').val();
+        
+        deleteButton.addEventListener('click', function () {
+            // 삭제 확인 다이얼로그
+            Swal.fire({
+                title: '삭제 확인',
+                text: '해당 일정을 삭제하시겠습니까?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: '삭제',
+                cancelButtonText: '취소',
+                customClass: {
+                    confirmButton: 'swal-custom-button'
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // 서버에 DELETE 요청 보내기
+                    fetch(`/schedule/${data.schedule_no}`, {
+                        method: 'DELETE',
+                        headers: {
+                            'X-CSRF-TOKEN': csrfToken,
+                            'Accept': 'application/json',
+                            'Content-Type': 'application/json'
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(responseData => {
+                        // 공통 응답 처리 함수 사용
+                        handleResponse(responseData, '삭제');
+                    })
+                    .catch(error => {
+                        Swal.fire({
+                            icon: 'error',
+                            title: '삭제 실패',
+                            text: '일정 삭제 중 문제가 발생했습니다.',
+                            confirmButtonText: '확인',
+                        });
+                        console.error('Error deleting schedule:', error);
+                    });
+                }
+            });
+        });
+        
+        
+    }
+    
+ 	// 날짜와 시간을 "YYYY.MM.DD HH:MM ~ YYYY.MM.DD HH:MM" 형식으로 변환하는 함수
+	function formatPeriod(startDate, startTime, endDate, endTime, repeatType, currentDate, isAllDay) {
+	    // ISO 형식에서 날짜 부분만 잘라내고 반복 설정에 따라 계산
+	    const startDatePart = calculateNextRepeatDate(startDate.split('T')[0], repeatType, currentDate, startDate);  // 반복 유형에 따른 시작일 계산
+	    const endDatePart = calculateNextRepeatDate(endDate.split('T')[0], repeatType, currentDate, endDate);  // 반복 유형에 따른 종료일 계산
+	
+	    // 종일 일정인 경우 날짜만 반환
+	    if (isAllDay === 'Y') {
+	        if (startDatePart === endDatePart) {  // 시작일과 종료일이 같다면
+	            return `${formatDate(startDatePart)} 종일`;
+	        } else {  // 시작일과 종료일이 다르다면
+	            return `${formatDate(startDatePart)} ~ ${formatDate(endDatePart)} 종일`;
+	        }
+	    }
+	
+	    // 시간 형식 변환
+	    const startTimePart = formatTime(startTime);  // '15:00'
+	    const endTimePart = formatTime(endTime);  // '16:00'
+	    
+	    // 각각의 날짜와 시간을 합쳐서 출력 형식 생성
+	    return `${formatDate(startDatePart)} ${startTimePart} ~ ${formatDate(endDatePart)} ${endTimePart}`;
+	}
+
+    // 반복 설정이 있을 경우 특정 인스턴스에 따라 다음 반복 날짜 계산 함수
+    function calculateNextRepeatDate(dateString, repeatType, currentDate, originalDateString) {
+        const date = new Date(dateString);
+        const baseDate = new Date(currentDate);  // 현재 인스턴스를 기준으로 계산
+        const originalDate = new Date(originalDateString);  // 반복 설정의 시작 날짜
+	
+     	// 첫 일정은 원래 날짜에 하루를 더한 값을 반환
+        if (baseDate.toDateString() === originalDate.toDateString()) {
+            return originalDateString.split('T')[0]; 
+        }
+
+        // 반복 유형에 따라 날짜를 계산
+        switch (repeatType) {
+            case 'DAILY':
+                // 매일 반복: 하루 추가
+                date.setDate(originalDate.getDate() + Math.floor((baseDate - originalDate) / (1000 * 60 * 60 * 24)));
+                break;
+            case 'WEEKLY':
+                // 매주 반복: 7일 추가
+                const weeksDifference = Math.floor((baseDate - originalDate) / (1000 * 60 * 60 * 24 * 7));
+                date.setDate(originalDate.getDate() + (weeksDifference) * 7);
+                break;
+            case 'MONTHLY':
+                // 매월 반복: 원래 날짜에 따라 계산
+                const monthIncrement = Math.floor((baseDate - originalDate) / (1000 * 60 * 60 * 24 * 30));
+                date.setMonth(originalDate.getMonth() + monthIncrement);
+                date.setDate(originalDate.getDate());  // 원래의 날짜를 유지
+                break;
+            case 'YEARLY':
+                // 매년 반복: 원래 날짜에 따라 계산
+                date.setFullYear(originalDate.getFullYear() + Math.floor((baseDate - originalDate) / (1000 * 60 * 60 * 24 * 365)) + 1);
+                date.setDate(originalDate.getDate());
+                break;
+            default:
+                return originalDateString; // 반복 설정이 없을 경우 원래 날짜 반환
+        }
+
+        return date.toISOString().split('T')[0];  // 'YYYY-MM-DD' 형식으로 반환
+    }
+    
+ 	// 날짜에 하루를 더하는 함수 (UTC 기준 사용)
+    function addOneDay(dateString) {
+        const date = new Date(dateString + 'T00:00:00Z'); // 시간을 명시적으로 00:00:00으로 설정, UTC 시간 사용
+        date.setUTCDate(date.getUTCDate() + 1);  // 날짜에 1일 추가 (UTC 기준)
+        return date.toISOString().split('T')[0];  // 'YYYY-MM-DD' 형식으로 반환
+    }
+ 	
+    // 시간에서 초를 제거하고 "HH:MM" 형식으로 변환하는 함수
+    function formatTime(timeString) {
+        return timeString.split(':').slice(0, 2).join(':');  // '11:00:00' -> '11:00'
+    }
+
+    // 날짜를 "YYYY.MM.DD" 형식으로 변환하는 함수
+    function formatDate(dateString) {
+        const [year, month, day] = dateString.split('-');
+        return `${year}.${month}.${day}`;
+    }
+
+    // 일정 데이터 로드 및 FullCalendar 업데이트 함수
+    function loadCalendarData(scheduleApiUrl) {
+        // 공휴일 데이터는 항상 동일하게 로드
+        fetch('/getHolidayData') // 공휴일 데이터 로드
+            .then(response => response.json())
+            .then(holidayData => {
+                const holidayEvents = holidayData.flatMap(holiday => {
+                    // 기본 이벤트 객체
+                    let event = {
+                        title: holiday.holiday_name,
+                        start: holiday.start_date,
+                        end: holiday.is_period === 'Y' ? new Date(new Date(holiday.end_date).setDate(new Date(holiday.end_date).getDate())).toISOString().split('T')[0] : holiday.start_date, // 종료일을 다음 날로 설정
+                        classNames: ['fc-holiday'],
+                        allDay: true,
+                        backgroundColor: '#FFF8F8',
+                        textColor: '#FF0000',
+                        editable: false // 휴일 이벤트는 드래그 불가하도록 설정
+                    };
+
+                    // 반복 타입이 YEARLY라면 매년 반복 이벤트 생성
+                    if (holiday.repeat_type === 'YEARLY') {
+                        return createYearlyEvents(holiday);
+                    } else {
+                        return [event]; // 반복이 없을 경우 기본 이벤트만 반환
+                    }
+                });
+
+                // 일정 데이터 로드 (동적으로 변경됨)
+                fetch(scheduleApiUrl)
+                    .then(response => response.json())
+                    .then(scheduleData => {
+                        const scheduleEvents = scheduleData.flatMap(schedule => {
+                            // 반복 타입에 따른 이벤트 생성
+                            switch (schedule.repeat_type) {
+                                case 'DAILY':
+                                    return createRepeatedEvents(schedule, 'DAILY', scheduleApiUrl);
+                                case 'WEEKLY':
+                                    return createRepeatedEvents(schedule, 'WEEKLY', scheduleApiUrl);
+                                case 'MONTHLY':
+                                    return createRepeatedEvents(schedule, 'MONTHLY', scheduleApiUrl);
+                                case 'YEARLY':
+                                    return createRepeatedEvents(schedule, 'YEARLY', scheduleApiUrl);
+                                default:
+                                	// 기본 이벤트 생성 시 DATE와 TIME을 합쳐 UTC로 변환
+                                    const startDateString = `${schedule.start_date}T${schedule.start_time}`;
+                                    const endDateString = `${schedule.end_date}T${schedule.end_time}`;
+
+                                	// 유효한 날짜인지 확인
+                                	const startDate = new Date(startDateString);
+                                	const endDate = new Date(endDateString);
+
+                                	// 잘못된 날짜 처리
+                                	if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
+                                	    console.error('유효하지 않은 날짜 형식:', startDateString, endDateString);
+                                	    return []; // 유효하지 않은 경우 빈 배열 반환
+                                	}
+
+                                	// UTC로 변환
+                                    const utcStartDate = new Date(Date.UTC(startDate.getFullYear(), startDate.getMonth(), startDate.getDate(), startDate.getHours(), startDate.getMinutes()));
+                                    const utcEndDate = new Date(Date.UTC(endDate.getFullYear(), endDate.getMonth(), endDate.getDate(), endDate.getHours(), endDate.getMinutes()));
+
+
+                                	// allDay 이벤트 결정
+                                	const isAllDayEvent = schedule.is_all_day === 'Y' || (startDate.toDateString() !== endDate.toDateString());
+
+                                    // backgroundColor 설정
+                                    let backgroundColor;
+                                    if (scheduleApiUrl === '/getTotalScheduleData') { // 전체 버튼
+                                        backgroundColor = schedule.calendar_type === 0 ? '#D7EEFF' : '#E5DCFF';
+                                    } else { // 공용, 개인 버튼
+                                        backgroundColor = `#${schedule.category_color}`;
+                                    }
+
+                                    return [{
+                                    	id: schedule.schedule_no,
+                                        title: schedule.schedule_title,
+                                        start: utcStartDate.toISOString(),
+                                        end: utcEndDate.toISOString(),
+                                        allDay: isAllDayEvent, // 날짜 차이에 따라 종일 일정 여부 결정
+                                        backgroundColor: backgroundColor, // 배경색 설정
+                                        textColor: 'black',
+                                        editable: schedule.category_no !== 3, // 드래그 가능
+                                        classNames: [schedule.category_no === 3 ? 'fc-vacation' : 'fc-schedule'], // category_no에 따라 클래스 추가
+                                        extendedProps: {
+                                            category_no: schedule.category_no // category_no를 extendedProps에 추가
+                                        }
+                                    }];
+                            }
+                        });
+
+                        // 두 이벤트 데이터를 합쳐서 FullCalendar에 전달
+                        initFullCalendar([...holidayEvents, ...scheduleEvents]);
+                        addHolidayClassToDateNumbers(); // 공휴일 날짜 셀에 클래스 추가
+                    })
+                    .catch(error => console.error('Error loading schedule data:', error));
+            })
+            .catch(error => console.error('Error loading holiday data:', error));
+    }
+
+ 	// 반복 이벤트 생성 함수
+    function createRepeatedEvents(schedule, repeatType, scheduleApiUrl) {
+        const events = [];
+
+        // 시작, 종료, 반복 시작, 반복 종료 날짜 설정
+        const startDateString = `${schedule.start_date}T${schedule.start_time}`; // 'YYYY-MM-DDTHH:mm'
+        const endDateString = `${schedule.end_date}T${schedule.end_time}`; // 'YYYY-MM-DDTHH:mm'
+        const repeatStartDateString = `${schedule.repeat_start_date}T${schedule.start_time}`;
+        const repeatEndDateString = `${schedule.repeat_end_date}T${schedule.end_time}`;
+
+        // 유효한 날짜인지 확인
+        const startDate = new Date(startDateString);
+        const endDate = new Date(endDateString);
+        const repeatStartDate = new Date(repeatStartDateString);
+        const repeatEndDate = new Date(repeatEndDateString);
+
+        // 잘못된 날짜 처리
+        if (isNaN(startDate.getTime()) || isNaN(endDate.getTime()) || isNaN(repeatStartDate.getTime()) || isNaN(repeatEndDate.getTime())) {
+            console.error('유효하지 않은 날짜 형식:', startDateString, endDateString, repeatStartDateString, repeatEndDateString);
+            return []; // 유효하지 않은 경우 빈 배열 반환
+        }
+
+        // allDay 이벤트 결정
+        const isAllDayEvent = schedule.is_all_day === 'Y' || (startDate.toDateString() !== endDate.toDateString());
+
+        // backgroundColor 설정
+        let backgroundColor;
+        if (scheduleApiUrl === '/getTotalScheduleData') { // 전체 버튼
+            backgroundColor = schedule.calendar_type === 0 ? '#D7EEFF' : '#E5DCFF';
+        } else { // 공용, 개인 버튼
+            backgroundColor = `#${schedule.category_color}`;
+        }
+
+        // 반복 이벤트 생성
+        let currentStartDate = new Date(repeatStartDate);
+        let currentEndDate = new Date(currentStartDate.getTime() + (endDate - startDate)); // 동일한 간격 유지
+
+        // 반복 이벤트 생성 루프
+        while (currentStartDate <= repeatEndDate) {
+            // 각 이벤트 생성
+            let eventStart = new Date(currentStartDate);
+            let eventEnd = new Date(currentEndDate);
+
+            // 이벤트의 시간대를 UTC로 변환하여 처리
+            eventStart = new Date(Date.UTC(eventStart.getFullYear(), eventStart.getMonth(), eventStart.getDate(), eventStart.getHours(), eventStart.getMinutes()));
+            eventEnd = new Date(Date.UTC(eventEnd.getFullYear(), eventEnd.getMonth(), eventEnd.getDate(), eventEnd.getHours(), eventEnd.getMinutes()));
+
+            events.push({
+                id: schedule.schedule_no,
+                title: schedule.schedule_title,
+                start: eventStart.toISOString(),
+                end: eventEnd.toISOString(),
+                allDay: isAllDayEvent,
+                classNames: ['fc-schedule'],
+                backgroundColor: backgroundColor,
+                textColor: 'black',
+                editable: true
+            });
+
+            // 반복 유형에 따라 다음 반복 날짜 계산
+            switch (repeatType) {
+                case 'DAILY':
+                    currentStartDate.setDate(currentStartDate.getDate() + 1); // 하루 증가
+                    currentEndDate.setDate(currentEndDate.getDate() + 1);
+                    break;
+                case 'WEEKLY':
+                    currentStartDate.setDate(currentStartDate.getDate() + 7); // 1주일 증가
+                    currentEndDate.setDate(currentEndDate.getDate() + 7);
+                    break;
+                case 'MONTHLY':
+                    currentStartDate.setMonth(currentStartDate.getMonth() + 1); // 1달 증가
+                    currentEndDate.setMonth(currentEndDate.getMonth() + 1);
+                    break;
+                case 'YEARLY':
+                    currentStartDate.setFullYear(currentStartDate.getFullYear() + 1); // 1년 증가
+                    currentEndDate.setFullYear(currentEndDate.getFullYear() + 1);
+                    break;
+            }
+        }
+
+        return events;
+    }
+
+
 
     // 매년 반복 이벤트 생성 함수
     function createYearlyEvents(holiday) {
@@ -587,20 +2301,20 @@
 
             events.push({
                 title: holiday.holiday_name, // 공휴일 이름
-                start: startDate.toISOString().split('T')[0], // ISO 포맷으로 변환
-                end: endDate.toISOString().split('T')[0],
+                start: startDate,
+                end: endDate,
                 classNames: ['fc-holiday'], // 공휴일 클래스 추가
                 allDay: holiday.is_period === 'N' ? true : false,
-				backgroundColor: '#FFF8F8',
-				textColor: '#FF0000',
-				editable: false // 휴일 이벤트는 드래그 불가하도록 설정
+                backgroundColor: '#FFF8F8',
+                textColor: '#FF0000',
+                editable: false // 휴일 이벤트는 드래그 불가하도록 설정
             });
         }
 
         return events;
     }
 
- 	// 공휴일 날짜 셀의 숫자에 클래스를 추가하는 함수
+    // 공휴일 날짜 셀의 숫자에 클래스를 추가하는 함수
     function addHolidayClassToDateNumbers() {
         const holidayEvents = document.querySelectorAll('.fc-h-event.fc-holiday'); // 공휴일 이벤트만 선택
         holidayEvents.forEach(eventEl => {
@@ -614,11 +2328,12 @@
         });
     }
 
-    document.addEventListener('DOMContentLoaded', function() {
-        initFullCalendar();
+    document.addEventListener('DOMContentLoaded', function () {
+        updateCategoryAndCalendar(); // 초기 로드 시 전체 일정 데이터 로드 및 범주 목록 설정
         window.dispatchEvent(new Event('resize')); // 캘린더 초기화 후 리사이즈 이벤트 강제 발생
     });
 </script>
+
 </th:block>
 </body>
 </html>
