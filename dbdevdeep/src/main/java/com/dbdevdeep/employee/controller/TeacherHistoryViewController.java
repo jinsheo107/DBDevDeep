@@ -31,7 +31,7 @@ public class TeacherHistoryViewController {
 		this.employeeService = employeeService;
 	}
 	
-	@GetMapping("/class-year")
+	@GetMapping("/grade-class/list")
 	public String GroupByYearList(Model model, GradeClassGroup group) {
 		List<GradeClassGroup> resultList = teacherHistoryService.GroupByYearList();
 		
@@ -40,7 +40,7 @@ public class TeacherHistoryViewController {
 		return "employee/class_by_year";
 	}
 	
-	@GetMapping("/class-year/{t_year}")
+	@GetMapping("/grade-class/{t_year}")
 	public String selectClassByYearList(@PathVariable("t_year") String t_year, Model model) {
 		List<TeacherHistoryDto> resultList = teacherHistoryService.selectClassByYearList(t_year);
 		List<EmployeeDto> empList = employeeService.selectEmployeeByNotTeacher(t_year);

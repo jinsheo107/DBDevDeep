@@ -2,6 +2,7 @@
 package com.dbdevdeep.notice.domain;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import com.dbdevdeep.employee.domain.Employee;
 
@@ -12,6 +13,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
@@ -64,4 +66,17 @@ public class Notice {
 	
 	@Column(name="is_att")
 	private int isAtt;
+
+	// 공지사항 읽음확인
+	@OneToMany(mappedBy = "notice")
+	private List<NoticeReadCheck> noticeReadCheck;
+	
+	// 공지사항 첨부파일
+	@OneToMany(mappedBy = "notice")
+	private List<NoticeAttachment> noticeAttachment;
+	
+	// 공지사항 댓글
+	@OneToMany(mappedBy = "notice")
+	private List<NoticeComment> noticeComment;
+	
 }
