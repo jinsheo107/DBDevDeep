@@ -1,7 +1,9 @@
 package com.dbdevdeep.schedule.domain;
 
+import java.sql.Time;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Date;
+import java.time.LocalTime;
 
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -44,11 +46,17 @@ public class Schedule {
     @Column(name = "schedule_content")
     private String scheduleContent;
     
+    @Column(name = "start_date")
+    private LocalDate startDate;
+    
     @Column(name = "start_time")
-    private LocalDateTime startTIme;
+    private LocalTime startTime;
+    
+    @Column(name = "end_date")
+    private LocalDate endDate;
     
     @Column(name = "end_time")
-    private LocalDateTime endTime;
+    private LocalTime endTime;
     
     @Column(name = "is_all_day")
     private String isAllDay;
@@ -60,10 +68,10 @@ public class Schedule {
     private String repeatType;
     
     @Column(name = "repeat_start_date")
-    private Date repeatStartDate;
+    private LocalDate repeatStartDate;
     
     @Column(name = "repeat_end_date")
-    private Date repeatEndDate;
+    private LocalDate repeatEndDate;
     
     @Column(name = "reg_time")
     @CreationTimestamp
@@ -72,6 +80,9 @@ public class Schedule {
     @Column(name = "mod_time")
     @UpdateTimestamp
     private LocalDateTime modTime;
+    
+    @Column(name = "alert_type")
+    private String alertType;
     
     @ManyToOne
     @JoinColumn(name = "emp_id")

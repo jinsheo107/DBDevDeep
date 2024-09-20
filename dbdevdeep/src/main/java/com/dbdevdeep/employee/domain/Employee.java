@@ -6,9 +6,7 @@ import java.util.List;
 import com.dbdevdeep.approve.domain.ApproDraft;
 import com.dbdevdeep.approve.domain.Approve;
 import com.dbdevdeep.approve.domain.ApproveLine;
-import com.dbdevdeep.approve.domain.LineDraft;
 import com.dbdevdeep.approve.domain.Reference;
-import com.dbdevdeep.approve.domain.ReferenceDraft;
 import com.dbdevdeep.attendance.domain.Attendance;
 import com.dbdevdeep.chat.domain.ChatMemberInfo;
 import com.dbdevdeep.chat.domain.ChatMemberStatusHistory;
@@ -130,13 +128,7 @@ public class Employee {
     @OneToMany(mappedBy = "employee")
     private List<ApproDraft> approveDrafts;
 
-    @OneToMany(mappedBy = "employee")
-    private List<ReferenceDraft> referenceDrafts;
-
-    @OneToMany(mappedBy = "employee")
-    private List<LineDraft> lineDrafts;
-    
-	// 근태관리 관련
+    // 근태관리 관련
 	@OneToMany(mappedBy = "employee")
 	private List<Attendance> attendances;
 	
