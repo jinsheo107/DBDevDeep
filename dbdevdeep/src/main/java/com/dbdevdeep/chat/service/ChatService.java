@@ -37,7 +37,7 @@ public class ChatService {
             String roomPic = chatMapper.otherMemberPic(params);
 
             if (roomPic != null) {
-                // new_pic_name값이 있을 경우 room_pic에 설정
+                // roomPic값이 있을 경우 room_pic에 설정
                 chatRoom.setRoom_pic(roomPic);
             } else {
                 // null일 경우 학교 로고로 room_pic 설정
