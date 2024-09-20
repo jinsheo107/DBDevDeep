@@ -37,9 +37,11 @@ public class NoticeReadCheckDto {
 	private String read_id;
 	private LocalDateTime read_time;
 	
-	public NoticeReadCheck toEntity() {
+	public NoticeReadCheck toEntity(Employee e, Notice n) {
 		return NoticeReadCheck.builder()
 				.checkNo(check_no)
+				.notice(n)
+				.employee(e)
 				.readTime(read_time)
 				.build();
 	}
@@ -47,6 +49,8 @@ public class NoticeReadCheckDto {
 	public NoticeReadCheckDto toDto(NoticeReadCheck nrc) {
 		return NoticeReadCheckDto.builder()
 				.check_no(nrc.getCheckNo())
+				.notice_no(nrc.getNotice().getNoticeNo())
+				.read_id(nrc.getEmployee().getEmpId())
 				.read_time(nrc.getReadTime())
 				.build();
 	}

@@ -87,7 +87,7 @@ public class TeacherHistoryApiController {
 	}
 	
 	@ResponseBody
-	@PostMapping("/class-year/{t_year}")
+	@PostMapping("/grade-class/{t_year}")
 	public Map<String, String> addTeacher(TeacherHistoryDto dto) {
 		Map<String, String> resultMap = new HashMap<String, String>();
 
@@ -104,7 +104,7 @@ public class TeacherHistoryApiController {
 	}
 	
 	@ResponseBody
-	@PutMapping("/class-year/{t_year}")
+	@PutMapping("/grade-class/{t_year}")
 	public Map<String, String> editTeacher(@RequestBody GradeClassRequest gcr, @PathVariable("t_year") String t_year) {
 		
 		Map<String, String> resultMap = new HashMap<String, String>();
@@ -130,9 +130,7 @@ public class TeacherHistoryApiController {
 				
 				for(int i = 0; i < gradeArray.length; i++) {
 					int count = teacherHistoryService.tYearGradeCount(gcr.getT_year(), i + 1);
-					
-					System.out.println(real + ", " + total);
-					
+										
 					if(count < gradeArray[i]) {
 						for(int j = 0; j < gradeArray[i] - count; j++) {
 							if(teacherHistoryService.saveTeacherHistory(i + 1, count + j + 1, gcr.getT_year()) > 0) {
