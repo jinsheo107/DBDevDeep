@@ -9,17 +9,19 @@
  ****************************************/
 $('#notice_config').DataTable({
 	// 화면 크기에 따라 컬럼 width 자동 조절
-	"responsive": true,
-	// 컬럼 width 비율 조절
-	"columnDefs": [
-		{ "width": "5%", "targets": 0 },
-		{ "width": "5%", "targets": 1 },
-		{ "width": "10%", "targets": 2 },
-		{ "width": "60%", "targets": 3 },
-		{ "width": "10%", "targets": 4 },
-		{ "width": "10%", "targets": 5 }
-	],
-	"order": [[1, "desc"]],
+	 "responsive": true,
+	 // 컬럼 width 비율 조절
+	 "columnDefs": [
+        { "width": "0%", "targets": 0 },
+        { "width": "5%", "targets": 1 },
+        { "width": "5%", "targets": 2 },
+        { "width": "10%", "targets": 3 },
+        { "width": "60%", "targets": 4 },
+        { "width": "10%", "targets": 5 },
+        { "width": "10%", "targets": 6 }
+    ],
+	"order": [[2, "desc"]], 
+
 	// 정보 표시 해제
 	info: false,
 	// DataTables의 DOM 구조를 재정의
@@ -86,10 +88,10 @@ $('#notice_config').DataTable({
 		var searchInput = $('<input type="text" class="form-control" placeholder="검색어를 입력해주세요" style="height: 46px; padding: 8px 12px; width: 300px; box-sizing: border-box;">');
 		var searchButton = $('<button class="btn btn-primary ml-2" style="height:46px;">검색</button>');
 
-		searchButton.on('click', function() {
-			var searchTerm = searchInput.val();  // 검색어 가져오기
-			$('#holiday_config').DataTable().search(searchTerm).draw();  // 검색어로 필터링
-		});
+			searchButton.on('click', function () {
+				var searchTerm = searchInput.val();  // 검색어 가져오기
+				$('#notice_config').DataTable().search(searchTerm).draw();  // 검색어로 필터링
+			});
 
 		searchBoxContainer.append(searchInput).append(searchButton);
 
