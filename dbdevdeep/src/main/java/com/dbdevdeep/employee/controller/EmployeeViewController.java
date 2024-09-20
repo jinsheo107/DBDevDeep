@@ -1,5 +1,6 @@
  package com.dbdevdeep.employee.controller;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -169,7 +170,8 @@ public class EmployeeViewController {
 		
 		AuditLogDto logDto = employeeService.selectAuditLogDto(audit_no);
 		
-		model.addAttribute("logDto", logDto);
+		model.addAttribute("oriData", logDto.getOri_data());
+		model.addAttribute("newData", logDto.getNew_data());
 		
 		return "employee/log-employee-detail";
 	}

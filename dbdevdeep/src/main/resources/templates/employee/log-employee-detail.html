@@ -82,8 +82,8 @@ input:read-only {
 				<div class="card">
 					<div class="card-body" style="padding: 50px 80px;">
 						<div class="row" style="margin-left: 0px !important; margin-right: 0px !important; margin-bottom: 20px;">
-							<div class="col d-flex justify-content-start align-items-center" style="padding-left: 0px; max-width: 240px;">
-								<div style="font-size: 30px;">직원 상세 정보</div>
+							<div class="col d-flex justify-content-start align-items-center" style="padding-left: 0px; max-width: 300px;">
+								<div style="font-size: 30px;">직원 정보 변경 기록</div>
 							</div>
 							<div class="col d-flex justify-content-end">
 								<button type="button" class="btn waves-effect waves-light btn-outline-secondary" style="margin: 4px;" onclick="location.href='/log/employee';">목록</button>
@@ -94,7 +94,10 @@ input:read-only {
 							<div class="tab-pane show active" id="employee_info">
 								<div class="form-body">
 									<div class="row">
-										<input th:value="${logDto.ori_data}">
+										<ul>
+									        <!-- JSON 데이터를 반복하여 출력 -->
+									        <li th:each="item : ${oriData}" th:text="${#strings.setSplit(item, ',')[0]}"></li>
+									    </ul>
 									</div>
 								</div>
 							</div>

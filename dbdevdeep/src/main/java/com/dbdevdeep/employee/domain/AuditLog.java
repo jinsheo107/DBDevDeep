@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 
 import org.hibernate.annotations.CreationTimestamp;
 
+import groovy.transform.ToString;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -24,6 +25,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor(access=AccessLevel.PROTECTED)
 @Getter
 @Builder
+@ToString
 public class AuditLog {
 
 	@Id
