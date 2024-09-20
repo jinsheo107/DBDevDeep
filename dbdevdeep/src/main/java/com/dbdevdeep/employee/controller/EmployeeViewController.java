@@ -1,6 +1,5 @@
  package com.dbdevdeep.employee.controller;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -22,6 +21,8 @@ import com.dbdevdeep.employee.domain.TeacherHistoryDto;
 import com.dbdevdeep.employee.domain.TransferDto;
 import com.dbdevdeep.employee.service.EmployeeService;
 import com.dbdevdeep.employee.service.TeacherHistoryService;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.RequiredArgsConstructor;
 
@@ -31,6 +32,7 @@ public class EmployeeViewController {
 	
 	private final EmployeeService employeeService;
 	private final TeacherHistoryService teacherHistoryService;
+	private final ObjectMapper objectMapper;
 
 	@GetMapping("/login")
 	public String loginPage() {
@@ -170,8 +172,16 @@ public class EmployeeViewController {
 		
 		AuditLogDto logDto = employeeService.selectAuditLogDto(audit_no);
 		
-		model.addAttribute("oriData", logDto.getOri_data());
-		model.addAttribute("newData", logDto.getNew_data());
+        try {
+			EmployeeDto oriData = objectMapper.readValue(logDto.getOri_data(), EmployeeDto.class);
+			EmployeeDto newData = objectMapper.readValue(logDto.getOri_data(), EmployeeDto.class);
+			
+			model.addAttribute("oriData", oriData);
+			model.addAttribute("newData", newData);
+			
+		} catch (JsonProcessingException e) {
+			e.printStackTrace();
+		}
 		
 		return "employee/log-employee-detail";
 	}

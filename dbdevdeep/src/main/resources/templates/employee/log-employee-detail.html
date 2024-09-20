@@ -96,7 +96,7 @@ input:read-only {
 									<div class="row">
 										<ul>
 									        <!-- JSON 데이터를 반복하여 출력 -->
-									        <li th:each="item : ${oriData}" th:text="${#strings.setSplit(item, ',')[0]}"></li>
+									        <li th:text="${oriData.emp_id}"></li>
 									    </ul>
 									</div>
 								</div>
