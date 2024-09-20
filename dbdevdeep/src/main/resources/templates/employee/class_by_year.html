@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{include/employee_layout}">
+<th:block layout:fragment="content">
+	<style>
+		div.dataTables_wrapper div.dataTables_paginate ul.pagination {
+			margin: 2px 0;
+			white-space: nowrap;
+			justify-content: center;
+		}
+	</style>
+	<div class="page-wrapper">
+		<div class="container-fluid">
+			<div class="row">
+				<div class="col-12">
+					<div class="card">
+						<div class="card-body">
+							<h3 class="card-title">학년도별 반 배정</h3>
+							<hr>
+							<div class="row mb-2">
+								<div class="col-6 d-flex justify-content-start">
+									<button type="button" class="btn waves-effect waves-light btn-primary m-1">btn1</button>
+									<button type="button" class="btn waves-effect waves-light btn-light m-1">btn2</button>
+								</div>
+								<div class="col-6 d-flex justify-content-end">
+									<button type="button" class="btn waves-effect waves-light btn-primary m-1" data-toggle="modal" data-target="#class_create_modal">반 생성</button>
+
+								</div>
+							</div>
+							<div class="table-responsive">
+								<table id="class_by_year" class="table table-hover table-bordered no-wrap" style="width: 100%">
+									<thead>
+										<tr>
+											<th scope="col">번호</th>
+											<th scope="col">학년도</th>
+											<th scope="col">배정여부</th>
+											<th scope="col">이동</th>
+										</tr>
+									</thead>
+									<tbody>
+										<th:block th:if="${#lists.isEmpty(resultList)}">
+											<tr>
+												<td colspan="7">반 배정 목록이 없습니다.</td>
+											</tr>
+										</th:block>
+										<th:block th:if="${!#lists.isEmpty(resultList)}">
+												<tr th:each="history, historyStat : ${resultList}" >
+												        <td scope="row" th:text="${historyStat.count}"></td>
+												        <td th:text="${history.t_year + ' 학년도'}"></td>
+												        <td th:text="${history.total - history.is_assign == 0 ? '배정완료' : '미배정(' + (history.total - history.is_assign) + ')'}"></td>
+												        <td><a th:href="@{/grade-class/{t_year}(t_year=${history.t_year})}">이동하기</a></td>
+											    </tr>
+										</th:block>
+									</tbody>
+								</table>
+
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<!-- 반 생성 모달창 -->
+			<div id="class_create_modal" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+				<div class="modal-dialog">
+					<div class="modal-content">
+						<div class="modal-header modal-colored-header bg-info">
+							<h4 class="modal-title" id="info-header-modalLabel">반 생성</h4>
+							<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+						</div>
+						<div class="modal-body">
+							<div class="text-center">생성하실 반 개수를 선택해주세요</div>
+							<hr>
+							<form class="pl-3 pr-3" id="gradeForm">
+								<input type="hidden" id="csrf_token" th:value="${_csrf.token}">
+								<div class="form-group">
+									<label for="t_year">학년도 <span style="color: red;">*</span></label> 
+									<select id="t_year" name="t_year" class="form-control">
+									
+								  </select>
+								</div>
+								<div id="gradeDiv">
+								
+								</div>
+								<div class="col-12 d-flex justify-content-end">
+									<button type="button" class="btn waves-effect waves-light btn-light m-1" data-dismiss="modal" aria-hidden="true">취소</button>
+									<button type="button" class="btn waves-effect waves-light btn-primary m-1" id="createClass">반 생성</button>
+								</div>
+							</form>
+							
+
+						</div>
+					</div>
+					<!-- /.modal-content -->
+				</div>
+				<!-- /.modal-dialog -->
+			</div>
+			<!-- /.modal -->
+		</div>
+		<footer class="footer text-center text-muted">
+			All Rights Reserved by Adminmart. Designed and Developed by <a href="https://wrappixel.com">WrapPixel</a>.
+		</footer>
+	</div>
+	<script>
+        // 현재 년도를 기준으로 100년 전부터 10년 후까지의 년도 선택
+        const startYear = new Date().getFullYear() - 100;
+        const endYear = new Date().getFullYear();
+        const selectElement = document.getElementById('t_year');
+
+        for (let year = endYear; year >= startYear; year--) {
+            const option = document.createElement('option');
+            option.value = year;
+            option.textContent = year;
+            selectElement.appendChild(option);
+        };
+ 
+
+        // 각 학년에 대한 입력 필드를 동적으로 생성합니다.
+        for (let i = 1; i <= 6; i++) {
+            const div = document.createElement('div');
+            div.className = 'form-group';
+
+            const label = document.createElement('label');
+            label.setAttribute('for', `grade_${i}`);
+            label.textContent = `${i}학년`;
+            
+            const span = document.createElement('span');
+            span.textContent = ` *`;
+            span.style.color = 'red';
+            
+            label.appendChild(span);
+
+            const input = document.createElement('input');
+            input.className = 'form-control';
+            input.type = 'number'; // 숫자만 입력받을 수 있도록 설정
+            input.id = `grade_${i}`;
+            input.name = `grade_${i}`;
+            input.setAttribute('min', '0'); // 0 이상의 숫자만 입력 가능
+            input.setAttribute('max', '9'); // 최대 10까지
+            
+            input.addEventListener('input', function() {
+                const value = this.value;
+                if (value > 9) {
+                    this.value = value.slice(0, 1);
+                } else if(value < 0){
+                	this.value = value.slice(0, 0);
+                }
+            });
+
+            div.appendChild(label);
+            div.appendChild(input);
+            document.getElementById("gradeDiv").appendChild(div);
+        }
+        
+        document.getElementById('createClass').addEventListener('click', () => {
+        	const form = document.getElementById('gradeForm');
+            const csrfToken = document.getElementById("csrf_token").value;
+            const payload = new FormData(form);
+            
+            const obj = {};
+            payload.forEach((value, key) => {
+            	obj[key] = value;
+            });
+            const jsonData = JSON.stringify(obj);
+            
+            fetch('/grade-class', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': csrfToken
+                },
+                body: JSON.stringify(obj)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.res_code === "200") {
+                    Swal.fire({
+                        icon: 'success',
+                        title: '성공',
+                        text: data.res_msg,
+                        confirmButtonText: "닫기"
+                    });
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: '실패',
+                        text: data.res_msg,
+                        confirmButtonText: "닫기"
+                    });
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        });
+        
+        
+        
+    </script>
+    
+    <script>
+	    function redirectToUrl(t_year) {
+	    	var url = '/grade-class/' + t_year;
+            window.location.href = url;
+	    }
+	</script>
+	</body>
+</html>

@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<style>
+</style>
+<th:block th:fragment="scheduleNavLayout">
+	 <aside class="left-sidebar" data-sidebarbg="skin6">
+      <!-- Sidebar scroll-->
+      <div class="scroll-sidebar" data-sidebarbg="skin6">
+        <!-- Sidebar navigation-->
+	
+        <nav class="sidebar-nav">
+          <ul id="sidebarnav">
+
+            <li class="sidebar-item"> <a class="sidebar-link" th:href="@{/schedule}"
+                aria-expanded="false"><span class="hide-menu">일정관리</span></a>
+            </li>
+
+			<li class="sidebar-item"> <a class="sidebar-link" th:href="@{/category}"
+                aria-expanded="false"><span class="hide-menu">범주관리</span></a>
+            </li>
+
+			<li class="sidebar-item"> <a class="sidebar-link" th:href="@{/holiday}"
+                aria-expanded="false"><span class="hide-menu">휴일관리</span></a>
+            </li>
+            
+          </ul>
+        </nav>
+      </div>
+    </aside>
+</th:block>
+</html>

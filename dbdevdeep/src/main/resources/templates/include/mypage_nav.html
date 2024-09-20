@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<th:block th:fragment="mypageNavLayout">
+	<aside class="left-sidebar" data-sidebarbg="skin6">
+		<!-- Sidebar scroll-->
+		<div class="scroll-sidebar" data-sidebarbg="skin6">
+			<!-- Sidebar navigation-->
+
+			<nav class="sidebar-nav">
+				<ul id="sidebarnav">
+				
+					<!-- 직원 Nav -->
+					<li class="sidebar-item">
+						<a class="sidebar-link has-arrow active" href="javascript:void(0)" aria-expanded="false"> 
+							<span class="hide-menu">내 정보</span>
+						</a>
+						<ul aria-expanded="false" class="collapse  first-level base-level-line">
+							<li class="sidebar-item">
+								<a th:href="@{/mypage}" class="sidebar-link">
+									<span class="hide-menu"> 내 정보 </span>
+								</a>
+							</li>
+							<li class="sidebar-item">
+								<a th:href="@{/mypage/edit}" class="sidebar-link">
+									<span class="hide-menu"> 내 정보 수정 </span>
+								</a>
+							</li>
+							<li class="sidebar-item">
+								<a th:href="@{/mypage/pw}" class="sidebar-link">
+									<span class="hide-menu"> 비밀번호 수정 </span>
+								</a>
+							</li>
+						</ul>
+					</li>
+	
+					<!-- 학생 Nav -->
+					<li class="sidebar-item">
+						<a class="sidebar-link has-arrow" href="javascript:void(0)" aria-expanded="false">
+							<span class="hide-menu">내 서명</span>
+						</a>
+						<ul aria-expanded="false" class="collapse  first-level base-level-line">
+							<li class="sidebar-item">
+								<a th:href="@{/mypage/sign}" class="sidebar-link">
+									<span class="hide-menu"> 내 서명 </span>
+								</a>
+							</li>
+						</ul>
+					</li>
+					
+					<!-- 반 nav -->
+					<li class="sidebar-item">
+						<a class="sidebar-link has-arrow" href="javascript:void(0)" aria-expanded="false">
+							<span class="hide-menu">내 알람</span>
+						</a>
+						<ul aria-expanded="false" class="collapse  first-level base-level-line">
+							<li class="sidebar-item">
+								<a th:href="@{/grade-class}" class="sidebar-link">
+									<span class="hide-menu"> 알람 </span>
+								</a>
+							</li>
+						</ul>
+					</li>
+
+				</ul>
+			</nav>
+			
+				
+		</div>
+	</aside>
+</th:block>
+</html>

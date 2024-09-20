@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<th:block th:fragment="chatNavLayout">
+	<style>
+		/* 화면 크기에 따라 사이드바의 너비 고정 */
+        @media (max-width: 1200px) {
+            .sidebar_container {
+                overflow-x: hidden; /* 가로 스크롤을 숨기기 */
+            }
+        }
+        /* 사이드바 컨테이너 스타일링 */
+        .sidebar_container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px; /* sidebar_div 사이의 간격 */
+            padding: 20px; /* sidebar_container와 사이드바의 간격 */
+            height: calc(100vh - 100px); /* 컨테이너의 높이를 뷰포트의 높이에서 패딩을 뺀 값으로 설정 */
+            max-width: 300px; /* 사이드바의 최대 너비 설정 */
+        }
+
+        /* 사이드바 내 div 스타일링 */
+        .sidebar_div {
+            border: 3px solid rgb(219, 219, 219); /* 테두리 색상 및 두께 */
+            width: 100%; /* 너비를 컨테이너에 맞추기 */
+            height: calc((100% - 20px) / 2); /* 높이를 컨테이너의 반절로 설정 (간격을 고려) */
+            border-radius: 10px;
+        }
+
+        /* 프로필 섹션 스타일링 */
+        .profile_section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding : 20px; /* 패딩 추가 */
+        }
+
+        /* 프로필 이미지 스타일링 */
+        .profile_image {
+            width: 120px; /* 프로필 이미지의 너비 */
+            height: 120px; /* 프로필 이미지의 높이 */
+            border-radius: 50%; /* 원형으로 만들기 */
+            overflow: hidden; /* 원형 테두리 안에서 이미지가 잘리도록 설정 */
+            margin: 20px; /* 이미지 간격 */
+        }
+
+        .profile_image img {
+            width: 100%; /* 이미지의 너비를 컨테이너에 맞추기 */
+            height: 100%; /* 이미지의 높이를 컨테이너에 맞추기 */
+            object-fit: cover; /* 이미지 비율 유지하며 자르기 */
+         }
+
+         /* 이름 스타일링 */
+         .profile_name div {
+            margin: 5px; /* 기본 여백 제거 */
+            font-size: 18px; /* 이름의 글자 크기 */
+            font-weight:bolder; /* 이름을 굵게 표시 */
+            color: black;
+         }
+
+         .point_label {
+            font-weight: bolder; /* 라벨을 굵게 표시 */
+            color: black;
+         }
+
+         /* 상태메세지 div 스타일링 */
+		.profile_status {
+			display: flex;
+		    flex-direction: column; /* test와 버튼을 위아래로 배치 */
+		    align-items: center;    /* 중앙 정렬 */
+		    width: 100%;            /* 부모 요소의 너비에 맞춤 */
+		    gap: 10px;     
+		}
+
+		.sidebar_btn {
+			font-size: 16px; 		/* 버튼 글자 크기 */
+			width: 100%;            /* 버튼을 부모 요소 너비에 맞춤 */
+		    background-color: #0031AE; /* 버튼 배경색 (원하는 색으로 변경 가능) */
+		    color: white;           /* 버튼 텍스트 색상 */
+		    padding: 10px;          /* 버튼 안쪽 여백 */
+		    border: none;           /* 버튼 테두리 제거 */
+		    border-radius: 5px;     /* 버튼 모서리를 둥글게 */
+		    cursor: pointer;        /* 커서가 손가락 모양으로 변하도록 설정 */
+		}
+
+        .status_btn:hover{
+            background-color: #00278a; /* 버튼 색상 */
+            color: white;
+        }
+
+		
+		/* 대화상대 목록 섹션 스타일링 */
+		.emplist_section{
+			display: flex;
+		    flex-direction: column;
+		    align-items: flex-start; /* 수평으로 왼쪽 정렬 */
+		    justify-content: flex-start; /* 수직으로 위쪽 정렬 */
+		}
+		#sidejstree.jstree {
+		    margin: 0;  /* 요소의 바깥 여백 제거 */
+		    padding: 0; /* 요소의 안쪽 여백 제거 */
+		}
+		
+		#jstree_demo_div {
+			max-height: 300px; /* 원하는 최대 높이를 설정 */
+		    width: 100%; /* 너비를 부모 요소에 맞추기 */
+		}
+		
+
+		/* 버튼 숨김 상태 */
+		.hidden {
+		    display: none;
+		}
+
+
+        </style>
+        <!-- 내 프로필 변경 모달창 시작 -->
+        <div class="modal fade" id="edit_status_modal" tabindex="-1" role="dialog"
+	        aria-labelledby="mySmallModalLabel" aria-hidden="true">
+	        <div class="modal-dialog modal-sm">
+	            <div class="modal-content">
+	                <div class="modal-header">
+	                    <h4 class="modal-title" id="mySmallModalLabel">프로필 변경</h4>
+	                    <button type="button" class="close" data-dismiss="modal"
+	                        aria-hidden="true">×</button>
+	                </div>
+	                <div class="modal-body">
+	                    <div class="sidebar_div profile_section">
+	                        <div class="profile_image">
+	                            <img th:src="@{'/UploadImg/employee/' + ${loginEmp.new_pic_name}}" alt="Profile Picture">
+	                        </div>
+	                        <!-- 이름 -->
+	                        <div class="profile_name">
+	                            <div><span class="text-dark" th:text="${loginEmp.emp_name}"></span></div>
+	                        </div>
+	                        <!-- 상태메세지 -->
+	                        <div class="profile_status">
+	                        	<form id="editStatusForm">
+		                        	<textarea th:text="${loginEmp.chat_status_msg}" 
+		                        	rows="3" cols="22" style="resize: none;" id="chat_status_msg" name="chat_status_msg"></textarea>
+		                            <!-- CSRF정보를 담은 히든 인풋 -->
+									<input type="hidden" id="csrf_token" th:value="${_csrf.token}">
+		                            <input type="hidden" th:value="${loginEmp.emp_id}" id="emp_id" name="emp_id">
+		                            <button type="submit" class="sidebar_btn">변경하기</button>
+	                        	</form>
+	                        </div>
+                        </div>
+	                </div>
+	            </div><!-- /.modal-content -->
+	        </div><!-- /.modal-dialog -->
+	    </div><!-- /.modal -->
+	    <!-- 내 프로필 변경 모달창 끝 -->
+	    <!-- 상대방 프로필 모달창 시작 -->
+        <div class="modal fade" id="profile_modal" tabindex="-1" role="dialog"
+	        aria-labelledby="mySmallModalLabel" aria-hidden="true">
+	        <div class="modal-dialog modal-sm">
+	            <div class="modal-content">
+	                <div class="modal-header">
+	                    <h4 class="modal-title" id="mySmallModalLabel">프로필 보기</h4>
+	                    <button type="button" class="close" data-dismiss="modal"
+	                        aria-hidden="true">×</button>
+	                </div>
+	                <div class="modal-body">
+	                    <div class="sidebar_div profile_section">
+	                        <div class="profile_image">
+	                        	<!-- 사진 -->
+	                            <img src="" id="profile_pic_modal" alt="Profile Picture">
+	                        </div>
+	                        <!-- 이름 -->
+	                        <div class="profile_name">
+	                            <div><span class="text-dark" id="profile_name_modal"></span></div>
+	                        </div>
+	                        <!-- 상태메세지 -->
+	                        <div class="profile_status">
+	                        	<form id="profileChatForm">
+	                        		<div class="text-center m-2"><span class="text-dark" id="profile_status_modal"></span></div>
+		                            <!-- CSRF정보를 담은 히든 인풋 -->
+									<input type="hidden" id="csrf_token" th:value="${_csrf.token}">
+		                            <input type="hidden" id="emp_id_modal">
+		                            <button type="submit" class="sidebar_btn">채팅하기</button>
+	                        	</form>
+	                        </div>
+                        </div>
+	                </div>
+	            </div><!-- /.modal-content -->
+	        </div><!-- /.modal-dialog -->
+	    </div><!-- /.modal -->
+	    <!-- 상대방 프로필 모달창 끝 -->
+	    <!-- 사이드바 시작 -->
+        <aside class="left-sidebar" data-sidebarbg="skin6">
+            <!-- Sidebar scroll-->
+            <div class="" data-sidebarbg="skin6">
+                <!-- Sidebar navigation-->
+                <div class="sidebar_container">
+                    <div class="sidebar_div profile_section">
+                        <div class="profile_image">
+                            <img th:src="@{'/UploadImg/employee/' + ${loginEmp.new_pic_name}}" alt="Profile Picture">
+                        </div>
+                        <!-- 이름 -->
+                        <div class="profile_name">
+                            <div><span class="text-dark" th:text="${loginEmp.emp_name}"></span></div>
+                        </div>
+                        <!-- 상태메세지 -->
+                        <div class="profile_status">
+                            <div class="text-center"><span class="text-dark" th:text="${loginEmp.chat_status_msg}" id="statusMsg"></span></div>
+                        	<input type="hidden" id="login_dept_code" th:value="${loginEmp.dept_code}">
+                        	<button type="button" class="sidebar_btn" data-toggle="modal" 
+                        	data-target="#edit_status_modal">메세지 변경</button>
+                        </div>
+					</div>
+                    <div class="sidebar_div emplist_section">
+	                    <form class="p-2">
+	                        <input class="form-control" type="text" placeholder="Search Contact">
+	                    </form>
+                        <div class="point_label px-2">대화상대 목록</div>
+                        <div id="jstree_demo_div" class="scroll-sidebar">
+                        	<ul id="sidejstree"></ul>
+                        </div>
+                        <div class="profile_status"style="padding : 20px;">
+                        	<button class="sidebar_btn" id="toggle_checkbox">대화상대 선택</button>
+                        	<button class="sidebar_btn hidden" id="start_chat">채팅하기</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+        <!-- 사이드바 끝 -->
+    <!-- 대화상대 목록 jstree 출력, 대화상대 선택 버튼 클릭 이벤트 -->
+    <script>
+        $(document).ready(function() {
+    		const myDept = $('#login_dept_code').val();
+    		
+            fetch('/api/emp-tree')
+                .then(response => response.json())
+                .then(data => {
+                	// 받아온 데이터로 트리구조 만들기
+                    const D1Data = D1(data.employees, data.teacherHistory);
+                    const D2Data = D2(data.employees, data.teacherHistory);
+                    const D3Data = D3(data.employees);
+                    const D3J4Data = D3J4(data.employees);
+                    const D4Data = D4(data.employees, data.teacherHistory);
+                    const D4J4Data = D4J4(data.employees, data.teacherHistory)
+                    
+                    $('#sidejstree').jstree({
+                    	'core': {
+		        					'data': Object.keys(D1Data).length !== 0 
+		        						? D1Data : Object.keys(D2Data).length !== 0
+		        								 ? D2Data : Object.keys(D3Data).length !== 0 
+		        										? [...D3Data, ...D4Data] : Object.keys(D3Data).length !== 0
+		        												? [...D3J4Data, ...D4Data] : Object.keys(D4Data).length !== 0
+		        														? [...D3Data, ...D4J4Data] : Object.keys(D3Data).length !== 0 && Object.keys(D4Data).length !== 0
+		        																? [...D3J4Data, ...D4J4Data] : [],
+									"themes" : {
+							            "responsive": false
+							        }	
+		        				},
+		        		
+		        				"types" : {
+		        			        "default" : {
+		        			            "icon" : "fas fa-user" // 아이콘 변경
+		        			        }
+		        			    },
+		        			    "plugins": ["types"]
+		        			 	    
+                    });
+                    
+                 	// 트리 로드 완료 후 이벤트 리스너 등록
+                    $('#sidejstree').on('loaded.jstree', function() {
+                        registerTreeClickListener(); // 트리가 로드된 후 클릭 이벤트 리스너 등록
+                    });
+                    
+                 	 
+                });
+            
+            function getTeacherHistory(empId, teacherHistory) {
+                const history = teacherHistory.find(t => t.teach_emp_id === empId);
+                return history ? { grade: history.grade, grade_class: history.grade_class } : { grade: null, grade_class: null };
+            }
+            
+            
+            // 교장
+            function D1(items, historys) {
+            	return items
+            		.filter(item => item.dept_code == 'D1')
+            		.map(item => {
+            			return {
+            				"id": item.emp_id,
+            				"text": item.dept_name + " " + item.emp_name,
+            				"state" : { "opened" : true },
+            				"children" : D2(items, historys)
+            			};
+            		});
+            }
+            
+            // 교감
+            function D2(items, historys) {
+            	return items
+            		.filter(item => item.dept_code == 'D2')
+            		.map(item => {
+            			return {
+            				"id": item.emp_id,
+            				"text": item.dept_name + " " + item.emp_name,
+            				"state" : { "opened" : true },
+            				"children" : [...D3(items), ...D4(items, historys)]
+            				
+            			}
+            		})
+            }
+            
+            // 행정부장
+            function D3(items) {
+            	return items
+            		.filter(item => item.dept_code == 'D3' && item.job_code == 'J3')
+            		.map(item => {
+            			return {
+            				"id": item.emp_id,
+            				"text": item.dept_name + "장 " + item.emp_name,
+            				"state" : { "opened" : myDept == item.dept_code },
+            				"children" : D3J4(items)
+            			}
+            		})
+            }
+            
+            // 행정직원
+            function D3J4(items) {
+            	return items
+            		.filter(item => item.dept_code == 'D3' && item.job_code == 'J4')
+            		.map(item => {
+            			return {
+            				"id": item.emp_id,
+            				"text": item.emp_name,
+            				"state" : { "opened" : false }
+            			}
+            		})
+            		.sort((a, b) => {
+            			return a.text.localeCompare(b.text); // 이름 순으로 정렬
+            		});
+            }
+            
+            // 교무부장
+            function D4(items, historys) {
+            	return items
+            		.filter(item => item.dept_code == 'D4' && item.job_code == 'J3')
+            		.map(item => {
+            			const history = getTeacherHistory(item.emp_id, historys);
+            			return {
+            				"id": item.emp_id,
+            				"text": item.dept_name + "장 " + item.emp_name,
+            				"state" : { "opened" : myDept == item.dept_code },
+            				"children" : D4J4(items, historys)
+            			}
+            		})
+            }
+            
+            // 교무직원
+            function D4J4(items, historys) {
+            	return items
+            		.filter(item => item.dept_code == 'D4' && item.job_code == 'J4')
+            		.map(item => {
+            			return {
+            				"id": item.emp_id,
+            				"text": item.emp_name,
+            				"state" : { "opened" : false }
+            			}
+            		})
+            		.sort((a, b) => {
+                        const matchA = a.text.match(/\((\d+)-(\d+)\)/);
+                        const matchB = b.text.match(/\((\d+)-(\d+)\)/);
+
+                        const gradeA = matchA ? parseInt(matchA[1], 10) : null;
+                        const gradeB = matchB ? parseInt(matchB[1], 10) : null;
+                        const classA = matchA ? parseInt(matchA[2], 10) : null;
+                        const classB = matchB ? parseInt(matchB[2], 10) : null;
+
+                        if (gradeA !== null && gradeB !== null) {
+                            if (gradeA === gradeB) {
+                                return (classA !== null ? classA : 0) - (classB !== null ? classB : 0); // 학년이 같은 경우 반 순으로 정렬
+                            } else {
+                                return gradeA - gradeB; // 학년이 다른 경우 학년 순으로 정렬
+                            }
+                        } else if (gradeA !== null) {
+                            return -1; // 두 값 중 하나가 null인 경우 학년이 있는 값 순으로 정렬
+                        } else if (gradeB !== null) {
+                            return 1; // 두 값 중 하나가 null인 경우 학년이 있는 값 순으로 정렬
+                        } else {
+                            return a.text.localeCompare(b.text); // 두 값이 null이면 이름 순으로 정렬
+                        }
+                    });
+            	}
+            
+            let enableJsTreeClick = true; // jstree 클릭 이벤트 활성화 플래그
+            
+         	// 버튼 클릭 시 체크박스 플러그인 활성화
+            $('#toggle_checkbox').click(function() {
+            	// jstree 클릭 이벤트 활성화
+            	enableJsTreeClick = true;
+            	
+        	    // '대화상대 선택' 버튼 숨기고 '채팅하기' 버튼 보이기
+            	const toggleButton = document.getElementById('toggle_checkbox');
+        	    const chatButton = document.getElementById('start_chat');
+        	    toggleButton.classList.add('hidden');  // 대화상대 선택 버튼 숨김
+        	    chatButton.classList.remove('hidden');  // 채팅하기 버튼 보이기
+        		
+        	    // jstree 재생성
+                // 기존 트리 파괴 후 새로 생성 (데이터 유지)
+                $('#sidejstree').jstree("destroy").empty(); // 기존 트리 파괴
+                
+                fetch('/api/emp-tree')
+                .then(response => response.json())
+                .then(data => {
+                	// 받아온 데이터로 트리구조 만들기
+                    const D1Data = D1(data.employees, data.teacherHistory);
+                    const D2Data = D2(data.employees, data.teacherHistory);
+                    const D3Data = D3(data.employees);
+                    const D3J4Data = D3J4(data.employees);
+                    const D4Data = D4(data.employees, data.teacherHistory);
+                    const D4J4Data = D4J4(data.employees, data.teacherHistory)
+                    
+                    $('#sidejstree').jstree({
+                    	'core': {
+		        					'data': Object.keys(D1Data).length !== 0 
+		        						? D1Data : Object.keys(D2Data).length !== 0
+		        								 ? D2Data : Object.keys(D3Data).length !== 0 
+		        										? [...D3Data, ...D4Data] : Object.keys(D3Data).length !== 0
+		        												? [...D3J4Data, ...D4Data] : Object.keys(D4Data).length !== 0
+		        														? [...D3Data, ...D4J4Data] : Object.keys(D3Data).length !== 0 && Object.keys(D4Data).length !== 0
+		        																? [...D3J4Data, ...D4J4Data] : [],
+									"themes" : {
+							            "responsive": false
+							        }	
+		        				},
+		        		
+		        				"types" : {
+		        			        "default" : {
+		        			        	'icon' : false // 아이콘 비활성화
+		        			        }
+		        			    },
+		        			    
+		        			    "plugins": ["types","checkbox"],
+		        			    
+		        			    "checkbox": {
+		        		            'three_state': false,    // 부모-자식 체크 독립
+		        		            'cascade': 'none'        // 기본적으로 상호 작용하지 않음
+		                            
+		        			    }  
+                    });
+		         	
+                    
+                    let nodeClickCounts = {}; // 노드 클릭 횟수를 저장할 객체
+                    
+                    $('#sidejstree').on('click', function(e) {
+                    	// 클릭 이벤트 비활성화 시 종료
+                    	if (!enableJsTreeClick) {
+                            return; 
+                        }
+                    	
+                        const tree = $.jstree.reference('#sidejstree');  // jstree 인스턴스 가져오기
+
+                     	// 체크박스 클릭 여부 확인
+                        if ($(e.target).hasClass('jstree-checkbox')) {
+                            const nodeId = $(e.target).closest('li').attr('id'); // 클릭한 노드의 ID 가져오기
+                            const node = tree.get_node(nodeId);  // 클릭한 노드 객체 가져오기
+                            
+
+                            // 클릭 횟수를 추적하여 홀수/짝수를 구분
+                            if (!nodeClickCounts[nodeId]) {
+                                nodeClickCounts[nodeId] = 0;
+                            }
+                            nodeClickCounts[nodeId]++; // 클릭 횟수 증가
+
+                            if (nodeClickCounts[nodeId] % 2 === 1) {
+                                // 홀수 번째 클릭 - 자식 노드 포함 체크
+                                tree.check_node(node);  // 부모 노드 체크
+                                tree.check_node(node.children_d);  // 자식 노드도 모두 체크
+                            } else {
+                                // 짝수 번째 클릭 - 자식 노드 포함 해제
+                                tree.uncheck_node(node);  // 부모 노드 해제
+                                tree.uncheck_node(node.children_d);  // 자식 노드도 모두 해제
+                            }
+                        }
+                        // 노드 텍스트(anchor) 클릭 여부 확인
+                        else if ($(e.target).hasClass('jstree-anchor')) {
+                            const nodeId = $(e.target).closest('li').attr('id'); // 클릭한 노드의 ID 가져오기
+                            const node = tree.get_node(nodeId);  // 클릭한 노드 객체 가져오기
+
+                            // 클릭 횟수를 추적하여 홀수/짝수를 구분
+                            if (!nodeClickCounts[nodeId]) {
+                                nodeClickCounts[nodeId] = 0;
+                            }
+                            nodeClickCounts[nodeId]++; // 클릭 횟수 증가
+
+                            if (nodeClickCounts[nodeId] % 2 === 1) {
+                                // 홀수 번째 클릭 - 노드만 체크
+                                tree.check_node(node);
+                            } else {
+                                // 짝수 번째 클릭 - 노드만 해제
+                                tree.uncheck_node(node);
+                            }
+                        }
+                    });
+                    
+  
+                });
+ 
+            });
+         	
+         	
+         	// 버튼 클릭 시 체크박스 플러그인 비활성화
+         	document.getElementById('start_chat').addEventListener('click', function() {
+         		enableJsTreeClick = false; // jstree 클릭 이벤트 비활성화
+         		
+			    // '채팅하기' 버튼 숨기고 '대화상대 선택' 버튼 보이기
+			    const toggleButton = document.getElementById('toggle_checkbox');
+			    const chatButton = document.getElementById('start_chat');
+		
+			    chatButton.classList.add('hidden');  // 채팅하기 버튼 숨김
+			    toggleButton.classList.remove('hidden');  // 대화상대 선택 버튼 보이기
+			    
+			 	// 채팅방 생성하기
+			    // 체크된 노드값 받아오기
+			    const checkedNodes = $('#sidejstree').jstree("get_checked");
+			    
+            	if(checkedNodes.length > 1){
+            		// 단체 채팅방 생성
+			        // createGroupChat(checkedNodes); 단체 채팅방 함수 호출
+            	} else if(checkedNodes.length === 1){
+            		// 일대일 채팅방 생성
+            		createPrivateChat(checkedNodes[0]);
+            	}
+            
+		    
+			 	// jstree 재생성
+	            // 기존 트리 파괴 후 새로 생성 (데이터 유지)
+	            $('#sidejstree').jstree("destroy").empty(); // 기존 트리 파괴
+	            
+	            fetch('/api/emp-tree')
+	            .then(response => response.json())
+	            .then(data => {
+	            	// 받아온 데이터로 트리구조 만들기
+	                const D1Data = D1(data.employees, data.teacherHistory);
+	                const D2Data = D2(data.employees, data.teacherHistory);
+	                const D3Data = D3(data.employees);
+	                const D3J4Data = D3J4(data.employees);
+	                const D4Data = D4(data.employees, data.teacherHistory);
+	                const D4J4Data = D4J4(data.employees, data.teacherHistory)
+	                
+	                $('#sidejstree').jstree({
+	                	'core': {
+		        					'data': Object.keys(D1Data).length !== 0 
+		        						? D1Data : Object.keys(D2Data).length !== 0
+		        								 ? D2Data : Object.keys(D3Data).length !== 0 
+		        										? [...D3Data, ...D4Data] : Object.keys(D3Data).length !== 0
+		        												? [...D3J4Data, ...D4Data] : Object.keys(D4Data).length !== 0
+		        														? [...D3Data, ...D4J4Data] : Object.keys(D3Data).length !== 0 && Object.keys(D4Data).length !== 0
+		        																? [...D3J4Data, ...D4J4Data] : [],
+									"themes" : {
+							            "responsive": false
+							        }	
+		        				},
+		        		
+		        				"types" : {
+		        			        "default" : {
+		        			            "icon" : "fas fa-user" // 아이콘 변경
+		        			        }
+		        			    },
+		        			    "plugins": ["types"]	    
+	                });
+	                
+	             	// 트리 로드 완료 후 이벤트 리스너 등록
+	                $('#sidejstree').on('loaded.jstree', function() {
+	                    registerTreeClickListener(); // 트리가 로드된 후 클릭 이벤트 리스너 등록
+	                });
+	             	
+	            });
+	            
+	            
+         	}); 
+		    
+
+        });
+
+	</script>
+	<!-- 채팅방 생성하기? -->
+	<script>
+		// 일대일 채팅방을 생성하는 함수
+		function createPrivateChat(selectedUserId) {
+		    // 일대일 채팅방 생성 요청
+		    fetch('/chatroom/create', {
+		        method: 'POST',
+		        headers: {
+		            'Content-Type': 'application/json'
+		        },
+		        body: JSON.stringify({
+		            userId: selectedUserId // 선택된 사용자 ID
+		        })
+		    })
+		    .then(response => response.json())
+		    .then(data => {
+		        if (data.success) {
+		            openChatRoom(data.chatRoomId); // 채팅방으로 이동
+		        } else {
+		            Swal.fire({
+		                icon: 'error',
+		                title: '실패',
+		                text: '채팅방 생성에 실패했습니다.'
+		            });
+		        }
+		    })
+		    .catch(error => {
+		        console.error("채팅방 생성 중 오류 발생:", error);
+		    });
+		}
+
+	</script>
+	<!-- 대화상대 프로필 출력 -->
+	<script>
+		// 트리 노드 클릭 이벤트 리스너 함수
+		function registerTreeClickListener() {
+		    $('#sidejstree').on("select_node.jstree", function (e, data) {
+		        // 클릭된 노드의 아이디값
+		        const empId = data.node.id;
+		        
+		        if (empId) {
+		            fetch(`/profile/${empId}`, {
+		                method: 'GET',
+		                headers: {
+		                    'Accept': 'application/json'  // 서버에 JSON 형식으로 응답을 요청
+		                }
+		            })
+		            .then(response => response.json())
+		            .then(data => {
+		                if (data != null) {
+		                    // 성공 시 모달창에 회원정보 넣기
+		                    document.getElementById('profile_pic_modal').src = `/UploadImg/employee/${data.new_pic_name}`; 
+		                    document.getElementById('profile_name_modal').innerText = data.emp_name;
+		                    document.getElementById('profile_status_modal').innerText = data.chat_status_msg;
+		                    document.getElementById('emp_id_modal').value = data.emp_id;
+		                    // 모달 열기
+		                    $('#profile_modal').modal('show');
+		                } else {
+		                    // 실패 시
+		                    Swal.fire({
+		                        icon: 'error',
+		                        title: '실패',
+		                        text: '처리 중 문제가 발생하였습니다.'
+		                    });
+		                }
+		            });
+		        }
+		    });
+		}
+    
+	</script>
+	<!-- 프로필 채팅방 생성 (일대일) -->
+	<script>
+	</script>
+	<!-- 내 상태 메세지 수정 -->
+	<script>
+	// 상태메세지 수정하기
+	const form = document.getElementById("editStatusForm");
+		form.addEventListener('submit',(e)=>{
+  	 		e.preventDefault();
+  	 		
+			const empId = document.getElementById('emp_id').value;
+			const csrfToken = document.getElementById("csrf_token").value;
+			
+			const payload = new FormData(form);
+			let obj = {};
+  			payload.forEach(function(value,key){
+  				obj[key]=value;
+  			})
+			const jsonData = JSON.stringify(obj);
+  			
+  			fetch('status/${empId}',{
+  				method:'POST',
+  				headers:{
+  					"Content-Type": "application/json;charset=utf-8",
+  					"Accept": "application/json",
+  					"X-CSRF-TOKEN": csrfToken
+  				},
+  				body: jsonData
+  				})
+  				.then(response=>response.json())
+  				.then(data=>{
+  					if(data.res_code == '200'){
+  						Swal.fire({
+  							icon :'success',
+  							title:'성공',
+  							text : data.res_msg
+  						}).then((result)=>{
+  							// 상태 메시지 갱신	
+  							document.getElementById('statusMsg').innerText = document.getElementById('chat_status_msg').value;
+  							// 모달 닫기
+  							$('#edit_status_modal').modal('hide');
+  							
+  						});
+  					} else{
+  						Swal.fire({
+  							icon:'error',
+  							title:'실패',
+  							text: data.res_msg
+  						});
+  					}
+  				})
+  			});
+  				
+	</script>
+
+</th:block>
+</html>

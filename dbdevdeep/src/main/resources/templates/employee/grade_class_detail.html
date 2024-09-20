@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{include/employee_layout}">
+<th:block layout:fragment="content">
+	<style>
+		div.dataTables_wrapper div.dataTables_paginate ul.pagination {
+			margin: 2px 0; white-space: nowrap; justify-content: center;
+		}
+		
+		td span {
+			display: block; width: 100%; height: 56px; box-sizing: border-box; cursor: pointer; text-align: center; line-height: 56px;
+		}
+		
+	</style>
+	<div class="page-wrapper">
+		<div class="container-fluid">
+			<div class="row">
+				<div class="col-12">
+					<div class="card">
+						<div class="card-body">
+							<h3 class="card-title" th:text="${resultList[0].t_year + ' 년도'}"></h3>
+							<hr>
+							<div class="row mb-2">
+								<div class="col-6 d-flex justify-content-start">
+									<button type="button" class="btn waves-effect waves-light btn-outline-secondary" style="margin: 4px;" onclick="location.href='/grade-class';">목록</button>
+								</div>
+								<div class="col-6 d-flex justify-content-end">
+									<button type="button" class="btn waves-effect waves-light btn-primary m-1" data-toggle="modal" data-target="#class_edit_modal">반 수정</button>
+
+								</div>
+							</div>
+							<div class="table-responsive">
+								<table id="class_by_year" class="table table-bordered no-wrap" style="width: 100%">
+									<thead>
+										<th:block th:if="${#lists.isEmpty(resultList)}">
+											<tr>
+												<th>반 배정 목록이 없습니다.</th>
+											</tr>
+										</th:block>
+										<th:block th:if="${!#lists.isEmpty(resultList)}">
+											<tr>
+												<th scope="col" style="width: 10%;">학년\반</th>
+												<th scope="col" th:each="i : ${#numbers.sequence(1, maxClass)}" th:text="${i} + ' 반'"></th>
+											</tr>
+										</th:block>
+									</thead>
+									<tbody>
+										<tr th:each="grade : ${#numbers.sequence(1, 6)}">
+											<td th:text="${grade} + ' 학년'" class="gradeTextCenter"></td>
+											<td th:each="i : ${#numbers.sequence(1, maxClass)}" style="padding: 0px;">
+												<span th:if="${gradeToClassMap[grade + ''] != null and #lists.size(gradeToClassMap[grade + '']) >= i and gradeToClassMap[grade + ''][i-1].teach_emp_name != 'null'}" 
+													th:text="${gradeToClassMap[grade + ''][i-1].teach_emp_name}" 
+													th:data-grade="${grade}" th:data-class="${i}" 
+													th:data-empname="${gradeToClassMap[grade + ''][i-1].teach_emp_name}" 
+													th:data-empid="${gradeToClassMap[grade + ''][i-1].teach_emp_id}" 
+													th:data-teacherno="${gradeToClassMap[grade + ''][i-1].teacher_no}" 
+													th:data-tyear="${gradeToClassMap[grade + ''][i-1].t_year}" 
+													class="teacher-span" 
+													data-toggle="modal" 
+													data-target="#editClass"> </span> 
+												<span th:if="${gradeToClassMap[grade + ''] != null and #lists.size(gradeToClassMap[grade + '']) >= i and gradeToClassMap[grade + ''][i-1].teach_emp_name == 'null'}" 
+													th:text="미배정" 
+													th:data-grade="${grade}" 
+													th:data-class="${i}"
+													th:data-teacherno="${gradeToClassMap[grade + ''][i-1].teacher_no}" 
+													th:data-tyear="${gradeToClassMap[grade + ''][i-1].t_year}" 
+													data-toggle="modal" 
+													data-target="#addClass" 
+													class="add-span"> </span> 
+												<span th:if="${gradeToClassMap[grade + ''] == null or #lists.size(gradeToClassMap[grade + '']) < i}" style="cursor: default;"> </span>
+											</td>
+										</tr>
+									</tbody>
+								</table>
+
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div id="addClass" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+				<div class="modal-dialog">
+					<div class="modal-content">
+						<div class="modal-header modal-colored-header bg-info">
+							<h4 class="modal-title" id="info-header-modalLabel">직원 반 배정</h4>
+							<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+						</div>
+
+						<div class="modal-body">
+							<input type="hidden" id="csrf_token" th:value="${_csrf.token}">
+							<form class="pl-3 pr-3" id="addClassFrm">
+								<input type="hidden" name="teacher_no" id="add_teacher_no">
+
+								<div class="form-group">
+									<select class="form-control" name="teach_emp_id">
+										<option value="0">직원을 선택하세요</option>
+										<th:block th:each="emp : ${empList}">
+											<option th:text="${emp.emp_name}" th:value="${emp.emp_id}"></option>
+										</th:block>
+									</select>
+								</div>
+
+								<div class="form-group">
+									<label for="password">학년</label> <input class="form-control" type="text" name="grade" id="add_grade" readonly>
+								</div>
+
+								<div class="form-group">
+									<label for="password">반</label> <input class="form-control" type="text" name="grade_class" id="add_grade_class" readonly>
+								</div>
+
+								<div class="form-group">
+									<label for="password">학년도</label> <input class="form-control" type="text" name="t_year" readonly id="add_t_year">
+								</div>
+
+								<div class="form-group text-center">
+									<button class="btn btn-primary" type="submit" id="addTeacherBtn">직원 등록</button>
+								</div>
+
+							</form>
+
+						</div>
+					</div>
+					<!-- /.modal-content -->
+				</div>
+				<!-- /.modal-dialog -->
+			</div>
+			<!-- /.modal -->
+
+			<div id="editClass" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+				<div class="modal-dialog">
+					<div class="modal-content">
+						<div class="modal-header modal-colored-header bg-info">
+							<h4 class="modal-title" id="info-header-modalLabel">직원 반 수정</h4>
+							<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+						</div>
+						<div class="modal-body">
+							<form class="pl-3 pr-3" id="editClassFrm">
+								<div class="form-group">
+									<input class="form-control" type="text" name="teacher_no" id="edit_teacher_no">
+								</div>
+
+								<div class="form-group">
+									<label for="emailaddress">직원명</label>
+									<!-- <input class="form-control" type="text" name="emp_id" id="edit_emp_name"> -->
+									<select class="form-control" name="teach_emp_id">
+										<option id="selectTeacher"></option>
+										<th:block th:each="emp : ${empList}">
+											<option th:text="${emp.emp_name}" th:value="${emp.emp_id}"></option>
+										</th:block>
+									</select>
+								</div>
+
+								<div class="form-group">
+									<label for="password">학년</label> <input class="form-control" type="text" name="grade" id="edit_grade" readonly>
+								</div>
+
+								<div class="form-group">
+									<label for="password">반</label> <input class="form-control" type="text" name="grade_class" id="edit_grade_class" readonly>
+								</div>
+
+								<div class="form-group">
+									<label for="password">학년도</label> <input class="form-control" type="text" name="t_year" readonly id="edit_t_year">
+								</div>
+								<br>
+								<div class="form-group text-center">
+									<button class="btn btn-primary" type="submit">직원 수정</button>
+								</div>
+
+							</form>
+
+						</div>
+					</div>
+					<!-- /.modal-content -->
+				</div>
+				<!-- /.modal-dialog -->
+			</div>
+			<!-- /.modal -->
+
+			<!-- 반 수정 모달 -->
+			<div id="class_edit_modal" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+				<div class="modal-dialog">
+					<div class="modal-content">
+						<div class="modal-header modal-colored-header bg-info">
+							<h4 class="modal-title" id="info-header-modalLabel">반 생성</h4>
+							<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+						</div>
+						<div class="modal-body">
+							<div class="text-center">재생성하실 반 개수를 선택해주세요</div>
+							<hr>
+							<form class="pl-3 pr-3" id="editClassForm">
+								<input type="hidden" id="csrf_token" th:value="${_csrf.token}">
+								<div class="form-group">
+									<label for="t_year">학년도 <span style="color: red;">*</span></label> <select id="t_year" name="t_year" class="form-control">
+										<option th:text="${resultList[0].t_year + ' 년도'}" th:value="${resultList[0].t_year}"></option>
+									</select>
+								</div>
+								<div id="gradeDiv">
+									<label for="grade_1">1학년 <span style="color: red;">*</span></label> <input type="number" class="form-control" name="grade_1" id="grade_1" min="0" max="9" th:value="${GCR.grade_1}"> <label for="grade_2">2학년 <span style="color: red;">*</span></label> <input type="number" class="form-control" name="grade_2" id="grade_2" min="0" max="9" th:value="${GCR.grade_2}"> <label for="grade_3">3학년 <span style="color: red;">*</span></label> <input type="number" class="form-control" name="grade_3" id="grade_3" min="0" max="9" th:value="${GCR.grade_3}"> <label for="grade_4">4학년 <span style="color: red;">*</span></label> <input type="number" class="form-control" name="grade_4" id="grade_4" min="0" max="9" th:value="${GCR.grade_4}"> <label for="grade_5">5학년 <span style="color: red;">*</span></label> <input type="number" class="form-control" name="grade_5" id="grade_5" min="0" max="9" th:value="${GCR.grade_5}"> <label for="grade_6">6학년 <span
+										style="color: red;"
+									>*</span></label> <input type="number" class="form-control" name="grade_6" id="grade_6" min="0" max="9" th:value="${GCR.grade_6}">
+								</div>
+								<br>
+								<div class="d-flex justify-content-end">
+									<button type="button" class="btn waves-effect waves-light btn-light m-1" data-dismiss="modal" aria-hidden="true">취소</button>
+									<button type="submit" class="btn waves-effect waves-light btn-primary m-1" id="editClass">반 수정</button>
+								</div>
+							</form>
+
+
+						</div>
+					</div>
+					<!-- /.modal-content -->
+				</div>
+				<!-- /.modal-dialog -->
+			</div>
+
+			<script>
+				$('.teacher-span').on('click', function() {
+			        var grade = $(this).data('grade');
+			        var classNumber = $(this).data('class');
+			        var empName = $(this).data('empname');
+			        var empId = $(this).data('empid');
+			        var teacher_no = $(this).data('teacherno')
+			        var year = $(this).data('tyear');
+				
+			        $('#edit_t_year').val(year);
+			        $('#edit_grade').val(grade);
+			        $('#edit_grade_class').val(classNumber);
+			        $('#selectTeacher').text(empName);
+			        $('#selectTeacher').val(empId);
+			        $('#edit_teacher_no').val(teacher_no);
+			    });
+				
+				$('.add-span').on('click', function() {
+			        var grade = $(this).data('grade');
+			        var classNumber = $(this).data('class');
+			        var teacher_no = $(this).data('teacherno')
+			        var year = $(this).data('tyear');
+				
+			        $('#add_t_year').val(year);
+			        $('#add_grade').val(grade);
+			        $('#add_grade_class').val(classNumber);
+			        $('#add_teacher_no').val(teacher_no);
+			    });
+				
+				const addForm = document.getElementById('addClassFrm')
+				addForm.addEventListener('submit', (e) => {
+					e.preventDefault();
+					if(addForm.teach_emp_id.value == 0) {
+						addForm.teach_emp_id.focus();
+						Swal.fire({
+							icon : 'info',
+							title : '직원을 선택하세요'
+						});
+					} else {
+						const payload = new FormData(addForm);
+						const csrfToken = document.getElementById("csrf_token").value;
+						fetch('/grade-class/' + addForm.t_year.value, {
+							method:'POST',
+							headers : {
+								'X-CSRF-TOKEN': csrfToken
+							},
+							body:payload
+						})
+						.then(response => response.json())
+						.then(data=>{
+							if(data.res_code == '200'){
+								Swal.fire({
+									icon :'success',
+									title:'성공',
+									text : data.res_msg,
+									confirmButtonText:"닫기"
+								}).then((result)=>{
+									location.href="/grade-class/" + addForm.t_year.value;
+								});
+							} else{
+								Swal.fire({
+									icon:'error',
+									title:'실패',
+									text: data.res_msg,
+									confirmButtonText:"닫기"
+								});
+							}
+						});
+					}
+				});
+				
+				const editForm = document.getElementById('editClassFrm');
+				
+				editForm.addEventListener('submit', (e) => {
+					e.preventDefault();
+					if(editForm.teach_emp_id.value == 0) {
+						editForm.teach_emp_id.focus();
+						Swal.fire({
+							icon : 'info',
+							title : '직원을 선택하세요'
+						});
+					} else {
+						const payload = new FormData(editForm);
+						const csrfToken = document.getElementById("csrf_token").value;
+						fetch('/grade-class/' + editForm.t_year.value, {
+							method:'POST',
+							headers : {
+								'X-CSRF-TOKEN': csrfToken
+							},
+							body:payload
+						})
+						.then(response => response.json())
+						.then(data=>{
+							if(data.res_code == '200'){
+								Swal.fire({
+									icon :'success',
+									title:'성공',
+									text : data.res_msg,
+									confirmButtonText:"닫기"
+								}).then((result)=>{
+									location.href="/grade-class/" + editForm.t_year.value;
+								});
+							} else{
+								Swal.fire({
+									icon:'error',
+									title:'실패',
+									text: data.res_msg,
+									confirmButtonText:"닫기"
+								});
+							}
+						});
+					}
+				});
+				
+				const editClassForm = document.getElementById('editClassForm');
+				editClassForm.addEventListener('submit', (e) => {
+					e.preventDefault();
+					
+					const payload = new FormData(editClassForm);
+					const csrfToken = document.getElementById('csrf_token').value;
+					
+					const obj = {};
+          payload.forEach((value, key) => {
+          	obj[key] = value;
+          });
+          const jsonData = JSON.stringify(obj);
+
+					fetch('/grade-class/' + obj.t_year, {
+						method: 'PUT',
+						headers: {
+							'Accept': 'application/json',
+							'Content-Type': 'application/json',
+							'X-CSRF-TOKEN': csrfToken
+						},
+						body: jsonData
+					})
+					.then(response => response.json())
+					.then(data => {
+						console.log(data);
+						if(data.res_code == '200'){
+								Swal.fire({
+									icon :'success',
+									title:'성공',
+									text : data.res_msg,
+									confirmButtonText:"닫기"
+								}).then((result)=>{
+									location.href="/grade-class/" + editClassForm.t_year.value;
+								});
+							} else {
+								Swal.fire({
+									icon:'error',
+									title:'실패',
+									text: data.res_msg,
+									confirmButtonText:"닫기"
+								});
+							}
+					}).catch(error => {
+				        console.error('Error:', error);
+				    });
+				});
+				
+			</script>
+		</div>
+		<footer class="footer text-center text-muted">
+			All Rights Reserved by Adminmart. Designed and Developed by <a href="https://wrappixel.com">WrapPixel</a>.
+		</footer>
+	</div>
+
+	</body>
+</html>

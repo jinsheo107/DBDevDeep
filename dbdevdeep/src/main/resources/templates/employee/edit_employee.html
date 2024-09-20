@@ -1,0 +1,839 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+     xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+     layout:decorate="~{include/employee_layout}">
+<th:block layout:fragment="content">
+<style>
+.addPic {
+	background-color: gainsboro;
+	width: 100%;
+	aspect-ratio: 1 / 1;
+	border-radius: 50%;
+	border: none;
+	font-size: 25px;
+}
+
+.addPic, .littleButton {
+	transition: background-color 0.3s ease;
+}
+
+.addPic:hover, .littleButton:hover {
+	background-color: rgb(189, 189, 189);
+	cursor: pointer;
+}
+
+.littleButton {
+	background-color: gainsboro;
+	width: 35px;
+	height: 35px;
+	border-radius: 50%;
+	border: none;
+	font-size: 15px;
+	text-align: center;
+	position: relative;
+	bottom: 35px;
+	left: 85px;
+}
+
+.preview-container {
+	border-radius: 50%;
+	overflow: hidden;
+	width: 100%;
+	aspect-ratio: 1 / 1;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	border: 2px solid lightgray;
+}
+
+#imagePreview {
+	width: 100%;
+	aspect-ratio: 1 / 1;
+	object-fit: cover;
+}
+
+.hidden {
+	display: none;
+}
+
+.centered-container {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+</style>
+		<!-- ============================================================== -->
+		<!-- End Left Sidebar - style you can find in sidebar.scss  -->
+		<!-- ============================================================== -->
+		<!-- ============================================================== -->
+		<!-- Page wrapper  -->
+		<!-- ============================================================== -->
+		<div class="page-wrapper">
+			<!-- ============================================================== -->
+			<!-- Container fluid  -->
+			<!-- ============================================================== -->
+			<div class="container-fluid">
+				<!-- ============================================================== -->
+				<!-- Start Page Content -->
+				<!-- ============================================================== -->
+				<div class="col-sm-12 col-md-12">
+					<div class="card">
+						<div class="card-body">
+							<h4 class="card-title">직원 정보 수정</h4>
+							<hr>
+							<form id="employeeAddFrm">
+								<input type="hidden" id="csrf_token" th:value="${_csrf.token}">
+								<input type="hidden" name="admin_id" th:value="${#authentication.principal.dto.emp_id}">
+								<div class="form-body">
+									<div class="row">
+										<div class="col-md-1 "></div>
+
+
+										<!-- 사진등록 -->
+										<div class="col-md-1 ">
+											<div class="form-group" style="margin-top: 20px;">
+												<label>사진 <span style="color: red;">*</span></label>
+												<div class="row">
+													<div class="preview-container" id="preview-container">
+														<img id="imagePreview" th:src="@{'/UploadImg/employee/' + ${empDto.new_pic_name}}" width="150px" style="border-radius: 50%; object-fit: cover; aspect-ratio: 1 / 1">
+													</div>
+													<input type="button" class="addPic littleButton" id="addPic" value="+">
+												</div>
+											</div>
+										</div>
+
+										<div class="col-md-9 m-auto">
+											<div class="form-group">
+												<label for="gov_id">직원번호</label>
+												<div class="row">
+													<div class="col-md-8">
+														<input type="text" class="form-control" id="emp_id" name="emp_id" th:value="${empDto.emp_id}" readonly>
+													</div>
+												</div>
+											</div>
+										
+											<div class="form-group">
+												<label for="gov_id">교육청관리번호</label>
+												<div class="row">
+													<div class="col-md-8">
+														<input type="text" class="form-control" id="gov_id" name="gov_id" th:value="${empDto.gov_id}" readonly placeholder="00000000000" maxlength="11">
+													</div>
+												</div>
+											</div>
+
+											<div class="form-group">
+												<label for="gov_id">이름</label>
+												<div class="row">
+													<div class="col-md-8">
+														<input type="text" class="form-control" id="emp_name" name="emp_name" th:value="${empDto.emp_name}" readonly placeholder="홍길동">
+													</div>
+												</div>
+											</div>
+											<div class="form-group">
+												<label for="gov_id">부서 <span style="color: red;">*</span></label>
+												<div class="row">
+													<div class="col-md-8">
+														<input type="hidden" id="dept_code" th:value="${empDto.dept_code}">
+														<select class="form-control" id="department" name="dept_code"  style="background-image: none;">
+															<option value="0">부서를 선택하세요.</option>
+															<option value="D4">행정부</option>
+															<option value="D3">교무부</option>
+															<option value="D2">교감</option>
+															<option value="D1">교장</option>
+														</select>
+														<div id="department_feedback" class="mt-2"></div>
+													</div>
+												</div>
+											</div>
+											<div class="form-group">
+												<label for="gov_id">직급 <span style="color: red;">*</span></label>
+												<div class="row">
+													<div class="col-md-8">
+														<input type="hidden" id="job_code" th:value="${empDto.job_code}">
+														<select class="form-control" id="job" name="job_code" th:value="${empDto.job_code}" style="background-image: none;">
+															<option value="0">직급을 선택하세요.</option>
+															<option value="J4">직원</option>
+															<option value="J3">부장</option>
+															<option value="J2">교감</option>
+															<option value="J1">교장</option>
+														</select>
+														<div id="job_feedback" class="mt-2"></div>
+													</div>
+												</div>
+											</div>
+											<div class="form-group">
+												<label for="gov_id">주민등록번호</label>
+												<div class="row">
+													<div class="col-md-4">
+														<input type="text" class="form-control" id="firstempRrn" th:value="${#strings.substring(empDto.emp_rrn, 0, 6)}" readonly placeholder="000101" maxlength="6">
+													</div>
+													<div class="col-md-4">
+														<input type="text" class="form-control" id="secondempRrn" th:value="${#strings.substring(empDto.emp_rrn, 7, 8) + '******'}" readonly placeholder="4111111" maxlength="7">
+														<input type="hidden" class="form-control" id="secondempRrn" th:value="${#strings.substring(empDto.emp_rrn, 7, 14)}" readonly placeholder="4111111" maxlength="7">
+													</div>
+													<input type="hidden" id="emp_rrn" name="emp_rrn" th:value="${empDto.emp_rrn}">
+													<div id="emp_rrn_feedback" class="mt-2 col-md-8"></div>
+												</div>
+											</div>
+											<div class="form-group">
+												<label for="gov_id">우편번호 <span style="color: red;">*</span></label>
+												<div class="row">
+													<div class="col-md-8">
+														<input type="text" name="emp_post_code" class="form-control" id="sample6_postcode" th:value="${empDto.emp_post_code}" placeholder="우편번호" onclick="sample6_execDaumPostcode()" readonly><br> 
+														<input type="text" name="emp_addr" class="form-control" id="sample6_address" th:value="${empDto.emp_addr}" placeholder="주소" readonly><br> 
+														<input type="text" name="emp_detail_addr" class="form-control" id="sample6_detailAddress" th:value="${empDto.emp_detail_addr}" placeholder="상세주소"> 
+														<input type="text" id="sample6_extraAddress" placeholder="참고항목" hidden="hidden">
+														<div id="emp_post_code_feedback" class="mt-2"></div>
+													</div>
+													<div class="col-md-1">
+														<input type="button" id="postBtn" onclick="sample6_execDaumPostcode()" value="우편번호 찾기" class="btn waves-effect waves-light btn-primary">
+													</div>
+												</div>
+											</div>
+											<div class="form-group">
+												<label for="gov_id">전화번호 <span style="color: red;">*</span></label>
+												<div class="row">
+													<div class="col-md-2">
+														<input type="text" class="form-control" id="firstPhone" placeholder="010" th:value="${#strings.setSplit(empDto.emp_phone, '-')[0]}" maxlength="3">
+													</div>
+													<div class="col-md-3">
+														<input type="text" class="form-control" id="secondPhone" placeholder="1111" th:value="${#strings.setSplit(empDto.emp_phone, '-')[1]}" maxlength="4">
+													</div>
+													<div class="col-md-3">
+														<input type="text" class="form-control" id="thirdPhone" placeholder="2222" th:value="${#strings.setSplit(empDto.emp_phone, '-')[2]}" maxlength="4">
+													</div>
+													<div id="emp_phone_feedback" class="mt-2 col-md-8"></div>
+													<input type="hidden" id="empPhone" name="emp_phone" th:value="${empDto.emp_phone}">
+
+												</div>
+											</div>
+											<div class="form-group">
+												<label for="gov_id">내선전화번호 <span style="color: red;">*</span></label>
+												<div class="row">
+													<div class="col-md-8">
+														<input type="text" class="form-control" id="emp_internal_phone" th:value="${empDto.emp_internal_phone}" name="emp_internal_phone" placeholder="0000" maxlength="4">
+														<div id="emp_internal_phone_feedback" class="mt-2"></div>
+													</div>
+												</div>
+											</div>
+											<div class="form-group">
+												<div class="row">
+													<div class="col-md-8"></div>
+													<div class="col-md-2">
+														<br> 
+														<input type="button" onclick="cancelBtn();" class="btn waves-effect waves-light btn-light" value="취소">
+														<input type="submit" class="btn waves-effect waves-light btn-primary" value="수정"> 
+													</div>
+												</div>
+											</div>
+											<input type="file" class="custom-file-input" id="inputGroupFile04" name="file">
+										</div>
+									</div>
+								</div>
+							</form>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<footer class="footer text-center text-muted">
+			All Rights Reserved by Adminmart. Designed and Developed by <a href="https://wrappixel.com">WrapPixel</a>.
+		</footer>
+	<script src="/assets/libs/jquery/dist/jquery.min.js"></script>
+	<!-- Bootstrap tether Core JavaScript -->
+	<script src="/assets/libs/popper.js/dist/umd/popper.min.js"></script>
+	<script src="/assets/libs/bootstrap/dist/js/bootstrap.min.js"></script>
+	<!-- apps -->
+	<!-- apps -->
+	<script src="/dist/js/app-style-switcher.js"></script>
+	<script src="/dist/js/feather.min.js"></script>
+	<!-- slimscrollbar scrollbar JavaScript -->
+	<script src="/assets/libs/perfect-scrollbar/dist/perfect-scrollbar.jquery.min.js"></script>
+	<script src="/assets/extra-libs/sparkline/sparkline.js"></script>
+	<!--Wave Effects -->
+	<!-- themejs -->
+	<!--Menu sidebar -->
+	<script src="/dist/js/sidebarmenu.js"></script>
+	<!--Custom JavaScript -->
+	<script src="/dist/js/custom.min.js"></script>
+	
+	<script>
+		$(document).ready(function() {
+		    const dept_code = $("#dept_code").val();
+		    const job_code = $("#job_code").val();
+		    
+		    if (dept_code) {
+		        $('#department').val(dept_code);
+		    }
+		    if (job_code) {
+		        $('#job').val(job_code);
+		    }
+		});
+
+	</script>
+
+	<!-- 입력여부 -->
+	<script>	
+		const form = document.getElementById('employeeAddFrm');
+		
+		form.addEventListener('submit', (e) => {
+			e.preventDefault();
+			
+			let vali_check = false;
+			let vali_text = '';
+			
+			if(form.dept_code.value == "0") {
+				form.dept_code.focus();
+			} else if(form.job_code.value == "0") {
+				form.job_code.focus();
+			} else if(form.emp_rrn.value == "") {
+				document.getElementById("firstempRrn").focus();
+			} else if(form.emp_post_code.value == "") {
+				form.emp_post_code.focus();
+			} else if(form.emp_detail_addr.value == "") {
+				form.emp_detail_addr.focus();
+			} else if(form.emp_phone.value == "" || !/^01[0-9]-\d{3,4}-\d{4}$/.test(form.emp_phone.value)) {
+				document.getElementById("firstPhone").focus();
+			} else if(form.emp_internal_phone.value == "") {
+				form.emp_internal_phone.focus();
+			} else {
+					const payload = new FormData(form);
+					const csrfToken = document.getElementById("csrf_token").value;
+					fetch('/employee/edit',{
+						method:'POST',
+						headers : {
+							'X-CSRF-TOKEN': csrfToken
+						},
+						body:payload
+					})
+					.then(response => response.json())
+					.then(data=>{
+						if(data.res_code == '200'){
+							Swal.fire({
+								icon :'success',
+								title:'성공',
+								text : data.res_msg,
+								confirmButtonText:"닫기"
+							}).then(() => {
+								window.location.reload()
+							})
+						} else{
+							Swal.fire({
+								icon:'error',
+								title:'실패',
+								text: data.res_msg,
+								confirmButtonText:"닫기"
+							});
+						}
+					});
+			}
+		})
+	</script>
+
+	<!-- 정규식 -->
+	<script>
+		const govIdInput = document.getElementById('gov_id');
+		
+		const govCheckButton = document.getElementById('gov_check_button');
+		
+		govIdInput.addEventListener('input', function() {
+			govIdInput.value = govIdInput.value.replace(/[^0-9]/g, '');
+		});
+	
+		/* 교육청관리번호 정규식 검사 */
+		const govIdValid = govIdInput.addEventListener('keyup', function() {
+	    const govId = govIdInput.value;
+	    const feedbackElement = document.getElementById('gov_id_feedback');
+	    const isValid = /^[0-9]{11}$/.test(govId);
+
+	    if (isValid) {
+        feedbackElement.textContent = '중복확인을 진행해주세요.';
+        feedbackElement.style.color = 'red';
+        govIdInput.classList.add('is-invalid');
+        govIdInput.classList.remove('is-valid');
+        govCheckButton.disabled = false;
+        document.getElementById('gov_check_button').focus();
+	    } else {
+        feedbackElement.textContent = '숫자 11자리를 입력해주세요.';
+        feedbackElement.style.color = 'red';
+        govIdInput.classList.add('is-invalid');
+        govIdInput.classList.remove('is-valid');
+        govCheckButton.disabled = true;
+	    }
+		});
+				/* 직원명 */
+		const empNameInput = document.getElementById('emp_name');
+		
+		empNameInput.addEventListener('input', function() {
+			empNameInput.value = empNameInput.value.replace(/[^ㄱ-힣]/g, '');
+		});
+		
+		const empNameValid = empNameInput.addEventListener('keyup', function(event) {
+			let valiCount = 0;
+			const empName = empNameInput.value;
+			const empNamefeedback = document.getElementById('emp_name_feedback');
+			const isValid = /^[가-힣]{1,6}$/.test(empName);
+	
+		    if (isValid) {
+		    	empNamefeedback.textContent = '';
+		    	empNamefeedback.style.color = 'green';
+		        empNameInput.classList.add('is-valid');
+		        empNameInput.classList.remove('is-invalid');
+	        
+	        valiCount = 1;
+	        
+	        if(event.key == 'Enter') {
+	        	document.getElementById('department').focus();
+	        }
+	        
+		    } else {
+		    	empNamefeedback.textContent = '한글 1 ~ 6자리를 입력해주세요.';
+		    	empNamefeedback.style.color = 'red';
+	        empNameInput.classList.add('is-invalid');
+	        empNameInput.classList.remove('is-valid');
+	        
+	        valiCount = 0;
+		    }
+		    
+		    return valiCount;
+		});
+		
+
+		const departmentInput = document.getElementById('department');
+		
+		departmentInput.addEventListener('change', function() {
+			const department = departmentInput.value;
+			const feedbackElement = document.getElementById('department_feedback');
+			
+			if (department != 0) {
+				feedbackElement.textContent = '';
+				feedbackElement.style.color = 'green';
+				departmentInput.classList.add('is-valid');
+				departmentInput.classList.remove('is-invalid');
+			} else {
+				feedbackElement.textContent = '부서를 선택하세요';
+				feedbackElement.style.color = 'red';
+				departmentInput.classList.add('is-invalid');
+				departmentInput.classList.remove('is-valid');
+			}
+			
+			if(department == 'D1') {
+				jobInput.value = 'J1';
+				job_feedback.textContent = '';
+				job_feedback.style.color = 'green';
+				jobInput.classList.add('is-valid');
+				jobInput.classList.remove('is-invalid');
+				jobInput.innerHTML = '<option value="J1">교장</option>';
+			} else if(department == 'D2') {
+				jobInput.value = 'J2';
+				job_feedback.textContent = '';
+				job_feedback.style.color = 'green';
+				jobInput.classList.add('is-valid');
+				jobInput.classList.remove('is-invalid');
+				jobInput.innerHTML = '<option value="J2">교감</option>';
+			} else if(department == 'D3' || department == 'D4'){
+				jobInput.innerHTML = '<option value="0">직급을 선택하세요.</option>';
+				jobInput.innerHTML += '<option value="J4">직원</option>';
+				jobInput.innerHTML += '<option value="J3">부장</option>';
+				
+				job_feedback.textContent = '부서를 선택하세요';
+				job_feedback.style.color = 'red';
+				jobInput.classList.add('is-invalid');
+				jobInput.classList.remove('is-valid');
+			} else {
+				jobInput.innerHTML = '<option value="0">직급을 선택하세요.</option>';
+				jobInput.innerHTML += '<option value="J4">직원</option>';
+				jobInput.innerHTML += '<option value="J3">부장</option>';
+				jobInput.innerHTML += '<option value="J2">교감</option>'
+				jobInput.innerHTML += '<option value="J1">교장</option>'
+			}
+		});
+		
+		const  jobInput = document.getElementById('job');
+		
+		jobInput.addEventListener('change', function() {
+			const job = jobInput.value;
+			const feedbackElement = document.getElementById('job_feedback');
+			
+			if (job != 0) {
+				job_feedback.textContent = '';
+				job_feedback.style.color = 'green';
+				jobInput.classList.add('is-valid');
+				jobInput.classList.remove('is-invalid');
+			} else {
+				job_feedback.textContent = '부서를 선택하세요';
+				job_feedback.style.color = 'red';
+				jobInput.classList.add('is-invalid');
+				jobInput.classList.remove('is-valid');
+			}
+		});
+		
+		/* 주민등록번호 정규식 */
+		document.getElementById('firstempRrn').addEventListener('input', validateResidentNumber);
+	    document.getElementById('secondempRrn').addEventListener('input', validateResidentNumber);
+		    
+	    document.getElementById('firstempRrn').addEventListener('input', function() {
+	    	document.getElementById('firstempRrn').value = document.getElementById('firstempRrn').value.replace(/[^0-9]/g, '');
+		});
+	    document.getElementById('secondempRrn').addEventListener('input', function() {
+	    	document.getElementById('secondempRrn').value = document.getElementById('secondempRrn').value.replace(/[^0-9]/g, '');
+		});
+	
+	    function validateResidentNumber() {
+	       const firstempRrn = document.getElementById('firstempRrn');
+	       const secondempRrn = document.getElementById('secondempRrn');
+	       const empRrnFeedback = document.getElementById('emp_rrn_feedback');
+	       const empRrn = `${firstempRrn.value}${secondempRrn.value}`;
+	       
+	       const isValidFirst = /^[0-9]{2}(0[1-9]|1[0-2])(0[1-9]|[1-2][0-9]|3[0-1])$/;
+	       const isValidSecond = /^[1-4][0-9]{6}$/;
+	
+	       // 주민등록번호 형식 확인
+	       if (isValidFirst.test(firstempRrn.value)) {
+	    	   firstempRrn.classList.remove('is-invalid');
+	    	   firstempRrn.classList.add('is-valid');
+	           empRrnFeedback.textContent = '';
+	           secondempRrn.focus();
+	       } else {
+	    	   empRrnFeedback.textContent = '주민번호 앞 6자리를 입력해주세요';
+	           empRrnFeedback.style.color = 'red';
+	           firstempRrn.classList.remove('is-valid');
+	           firstempRrn.classList.add('is-invalid');
+	           document.getElementById('emp_rrn').value = '';
+	       }
+	       
+	       if(isValidSecond.test(secondempRrn.value)) {
+	         secondempRrn.classList.remove('is-invalid');
+	         secondempRrn.classList.add('is-valid');
+	         empRrnFeedback.textContent = '';
+	       }  else {
+	    	   empRrnFeedback.textContent = '올바른 주민등록번호 형식이 아닙니다.';
+	           empRrnFeedback.style.color = 'red';
+	           secondempRrn.classList.remove('is-valid');
+	           secondempRrn.classList.add('is-invalid');
+	           document.getElementById('emp_rrn').value = '';
+	       }
+				
+	       if (isValidFirst.test(firstempRrn.value) && isValidSecond.test(secondempRrn.value)) {
+	       	document.getElementById('emp_rrn').value = `${firstempRrn.value}-${secondempRrn.value}`;
+	       	document.getElementById('emp_pw').value = empRrn;
+	       	empRrnFeedback.textContent = '';
+	       	document.getElementById('postBtn').focus();
+	       } else {
+	           empRrnFeedback.textContent = '올바른 주민등록번호 형식이 아닙니다.';
+	           empRrnFeedback.style.color = 'red';
+	           /* firstempRrn.classList.remove('is-valid');
+	           firstempRrn.classList.add('is-invalid'); */
+	           document.getElementById('emp_rrn').value = '';
+	           document.getElementById('emp_pw').value = empRrn;
+	       }
+	    }
+    
+    /* 전화번호 */
+    const firstPhone = document.getElementById('firstPhone');
+    const secondPhone = document.getElementById('secondPhone');
+    const thirdPhone = document.getElementById('thirdPhone');
+    const empPhone = document.getElementById('empPhone');
+    
+    const onlyNumber = function(event) {
+        let value = event.target.value;
+        value = value.replace(/[^0-9]/g, '');
+        event.target.value = value;
+        updateEmpPhone();
+    };
+    
+    firstPhone.addEventListener('input', onlyNumber);
+    secondPhone.addEventListener('input', onlyNumber);
+    thirdPhone.addEventListener('input', onlyNumber);
+    
+    const updateEmpPhone = () => {
+        const firstValue = firstPhone.value.trim();
+        const secondValue = secondPhone.value.trim();
+        const thirdValue = thirdPhone.value.trim();
+        
+        empPhone.value = `${firstValue}-${secondValue}-${thirdValue}`;
+    };
+    /* 전화번호 첫번째 칸 입력 */
+    firstPhone.addEventListener('keyup', (event) => {
+    	const trimmedValue = firstPhone.value.trim();
+      const isValid = /^01[0-9]$/.test(trimmedValue);
+    	
+    	if(isValid) {
+    		firstPhone.classList.remove('is-invalid');
+    		firstPhone.classList.add('is-valid');
+    		document.getElementById('emp_phone_feedback').textContent = '';
+    		secondPhone.focus();
+    	} else {
+    		firstPhone.classList.remove('is-valid');
+    		firstPhone.classList.add('is-invalid');
+    		document.getElementById('emp_phone_feedback').textContent = '휴대전화 앞 3자리를 입력하세요';
+    		document.getElementById('emp_phone_feedback').style.color = 'red';
+    	}
+    	
+    	if(event.key == 'Enter') {
+    		secondPhone.focus();
+    	}
+    	
+    	updateEmpPhone();
+    });
+    /* 전화번호 중간 입력 */
+    secondPhone.addEventListener('keyup', (event) => {
+    	
+    	if(secondPhone.value.length == 4) {
+    		secondPhone.classList.remove('is-invalid');
+    		secondPhone.classList.add('is-valid');
+    		document.getElementById('emp_phone_feedback').textContent = '';
+    		thirdPhone.focus();
+    	} else {
+    		secondPhone.classList.remove('is-valid');
+    		secondPhone.classList.add('is-invalid');
+    		document.getElementById('emp_phone_feedback').textContent = '휴대전화 중간 3 ~ 4자리를 입력하세요';
+    		document.getElementById('emp_phone_feedback').style.color = 'red';
+    	}
+    	
+    	if(event.key == 'Enter') {
+    		if(secondPhone.value.length == 3) {
+    		secondPhone.classList.remove('is-invalid');
+    		secondPhone.classList.add('is-valid');
+    		document.getElementById('emp_phone_feedback').textContent = '';    			
+    		}
+    		thirdPhone.focus();
+    	}
+    	
+    	updateEmpPhone();
+    });
+    
+    /* 세번째 전화번호 입력 */
+    thirdPhone.addEventListener('keyup', (event) => {
+    	if(thirdPhone.value.length == 4) {
+    		thirdPhone.classList.remove('is-invalid');
+    		thirdPhone.classList.add('is-valid');
+    		document.getElementById('emp_phone_feedback').textContent = '';
+    		document.getElementById('emp_internal_phone').focus();
+    	} else {
+    		thirdPhone.classList.remove('is-valid');
+    		thirdPhone.classList.add('is-invalid');
+    		document.getElementById('emp_phone_feedback').textContent = '휴대전화 끝 4자리를 입력하세요';
+    		document.getElementById('emp_phone_feedback').style.color = 'red';
+    	}
+    	
+    	if(event.key == 'Enter') {
+    		document.getElementById('emp_internal_phone').focus();
+    	}
+    	
+    	updateEmpPhone();
+    });
+    
+    
+    const internalPhone = document.getElementById("emp_internal_phone");
+    
+    internalPhone.addEventListener('input', onlyNumber);
+    
+    internalPhone.addEventListener('keyup', () => {
+    	const internalVali = /^\d{4}$/.test(internalPhone.value);
+    	
+    	if(internalVali) {
+    		internalPhone.classList.remove('is-invalid');
+    		internalPhone.classList.add('is-valid');
+    		document.getElementById('emp_internal_phone_feedback').textContent = '';
+    		document.getElementById('trans_school_id').focus();
+    	} else {
+    		internalPhone.classList.remove('is-valid');
+    		internalPhone.classList.add('is-invalid');
+    		document.getElementById('emp_internal_phone_feedback').textContent = '내선전화번호 4자리를 입력하세요';
+    		document.getElementById('emp_internal_phone_feedback').style.color = 'red';
+    	}
+    });
+	</script>
+
+	<!-- 교육청관리번호 중복 확인 -->
+	<script>
+	
+		const dupGov = function() {
+			valiCount = 0;
+			
+			let govId = document.getElementById('gov_id').value;
+			const govFeedback = document.getElementById('gov_id_feedback');
+			
+			const csrfToken = document.getElementById("csrf_token").value;
+						
+			if(govId.length == 11 && !isNaN(govId)) {
+				
+				fetch('/govid',{
+					method:'POST',
+					headers : {
+						"Content-Type": "application/json;charset=utf-8",
+						"Accept": "application/json",
+						'X-CSRF-TOKEN': csrfToken
+					},
+					body:govId
+				})
+				.then(response => response.json())
+				.then(data => {
+					if(data.res_code == "200") {
+						govFeedback.textContent = '중복확인이 완료되었습니다.';
+						govFeedback.style.color = 'green';
+				    govIdInput.classList.add('is-valid');
+			      govIdInput.classList.remove('is-invalid');
+			      document.getElementById('emp_name').focus();
+						
+			      valiCount = 1;
+			      
+						Swal.fire({
+							icon :'success',
+							title:'성공',
+							text : data.res_msg,
+							confirmButtonText:"닫기"
+						})
+					} else {
+						document.getElementById('gov_id').focus();
+						
+						valiCount = 0;
+						
+						Swal.fire({
+							icon:'error',
+							title:'실패',
+							text: data.res_msg,
+							confirmButtonText:"닫기"
+						});
+					}
+				})
+			}
+		}
+	</script>
+
+	<!-- 사진 등록 -->
+	<script>
+    const fileInput = document.getElementById('inputGroupFile04');
+    const imagePreview = document.getElementById('imagePreview');
+    const addPicButton = document.getElementById('addPic');
+    const previewContainer = document.getElementById('preview-container');
+
+    addPicButton.addEventListener('click', () => {
+        fileInput.click();
+    });
+
+    fileInput.addEventListener('change', (event) => {
+        const file = event.target.files[0];
+
+        if (file) {
+            const validExtensions = ['jpg', 'jpeg', 'png'];
+            const fileExtension = file.name.split('.').pop().toLowerCase();
+
+            if (validExtensions.includes(fileExtension)) {
+                const reader = new FileReader();
+
+                reader.onload = (e) => {
+                    imagePreview.src = e.target.result;
+                    addPicButton.classList.remove('addPic');
+                    addPicButton.classList.add('littleButton');
+                    previewContainer.classList.remove('hidden');
+                };
+
+                reader.readAsDataURL(file);
+            } else {
+                Swal.fire({
+                	icon:'error',
+									title:'실패',
+									text: '이미지 파일만 선택할 수 있습니다.',
+									confirmButtonText:"닫기"
+                });
+                fileInput.value = ''; 
+                imagePreview.src = '';
+                addPicButton.classList.add('addPic');
+                addPicButton.classList.remove('littleButton');
+                previewContainer.classList.add('hidden');
+            }
+        } else {
+            imagePreview.src = '';
+            addPicButton.classList.add('addPic');
+            addPicButton.classList.remove('littleButton');
+            previewContainer.classList.add('hidden');
+        }
+    });
+</script>
+
+
+	<!-- Daum 주소 Api -->
+	<script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+	<script>
+    function sample6_execDaumPostcode() {
+      new daum.Postcode({
+        oncomplete: function (data) {
+          var addr = '';
+          var extraAddr = '';
+
+          if (data.userSelectedType === 'R') {
+            addr = data.roadAddress;
+          } else {
+            addr = data.jibunAddress;
+          }
+
+          if (data.userSelectedType === 'R') {
+            if (data.bname !== '' && /[동|로|가]$/g.test(data.bname)) {
+              extraAddr += data.bname;
+            }
+            if (data.buildingName !== '' && data.apartment === 'Y') {
+              extraAddr += (extraAddr !== '' ? ', ' + data.buildingName : data.buildingName);
+            }
+            if (extraAddr !== '') {
+              extraAddr = ' (' + extraAddr + ')';
+            }
+            document.getElementById("sample6_extraAddress").value = extraAddr;
+
+          } else {
+            document.getElementById("sample6_extraAddress").value = '';
+          }
+
+          document.getElementById('sample6_postcode').value = data.zonecode;
+          document.getElementById("sample6_address").value = addr;
+          document.getElementById("sample6_detailAddress").focus();
+          
+          const postCode = document.getElementById('sample6_postcode');
+          const addrCode = document.getElementById("sample6_address");
+          const detailAddr = document.getElementById("sample6_detailAddress");
+          
+          if(postCode.value != '') {
+        	  postCode.classList.remove('is-invalid');
+        	  postCode.classList.add('is-valid');
+        	  addrCode.classList.remove('is-invalid');
+        	  addrCode.classList.add('is-valid');
+	        } else {
+	        	postCode.classList.remove('is-valid');
+	        	postCode.classList.add('is-invalid');
+	        	addrCode.classList.remove('is-valid');
+	        	addrCode.classList.add('is-invalid');
+	        	emp_post_code_feedback.textContent = '우편번호를 선택하세요';
+	        	emp_post_code_feedback.style.color = 'red';
+	        }
+          
+          detailAddr.addEventListener('keyup', (event) => {
+        	  
+        	  if(detailAddr.value.length > 0) {
+        		  detailAddr.classList.remove('is-invalid');
+        		  detailAddr.classList.add('is-valid');
+           		emp_post_code_feedback.textContent = '';
+           		if(event.key == 'Enter') {
+           			document.getElementById('firstPhone').focus();
+           		}
+        	  } else {
+        		  detailAddr.classList.remove('is-valid');
+        		  detailAddr.classList.add('is-invalid');
+  	        	emp_post_code_feedback.textContent = '상세주소를 입력하세요';
+	        	emp_post_code_feedback.style.color = 'red';
+        	  }
+          })
+          
+        }
+      }).open();
+    }
+  </script>
+  
+  <script>
+  	const cancelBtn = () => {
+  		window.history.back();
+  	}
+  </script>
+
+</body>
+</html>

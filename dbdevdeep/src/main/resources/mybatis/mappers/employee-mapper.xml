@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC
+"-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dbdevdeep.employee.mybatis.mapper.EmployeeVoMapper">
+	<update id="updateLoginYn" parameterType="com.dbdevdeep.employee.vo.EmployeeVo">
+		UPDATE `employee`
+		SET login_yn = #{login_yn}
+		<where>
+			emp_id = #{emp_id}
+		</where>
+	</update>
+	
+	<select id="selectEmployeeByNotTeacher" parameterType="string" resultType="com.dbdevdeep.employee.vo.EmployeeVo">
+	    SELECT e.*
+	    FROM `employee` e 
+	    LEFT JOIN teacher_history t ON e.emp_id = t.emp_id AND t.t_year = #{t_year}
+	    WHERE e.dept_code = 'D4' AND t.emp_id IS NULL;
+	</select>
+	
+	<update id="employeeEntStatusTransfer" parameterType="com.dbdevdeep.employee.vo.EmployeeVo">
+	    UPDATE `employee`
+	    SET ent_status = #{ent_status}
+	    <where>
+	    	emp_id = #{emp_id}
+	    </where>
+	</update>
+	
+	<update id="updateEntStatus" parameterType="com.dbdevdeep.employee.vo.EmployeeVo">
+		UPDATE `employee`
+		SET ent_status = #{ent_status}
+		<where>
+			emp_id = #{emp_id}
+		</where>
+	</update>
+</mapper>
