@@ -612,8 +612,6 @@
         const formData = new FormData(form); 
         const csrfToken = document.getElementById("csrf_token").value;
 		const editorValue = document.getElementById("editor").value;
-		console.log('에디터벨류 : ' + editorValue);
-        // 에디터에서 HTML 데이터를 가져와 textarea에 설정
         if (editorInitialized && editorInstance) {
         const editorContent = editorInstance.getData();
         document.getElementById('approContent').value = editorContent; 
