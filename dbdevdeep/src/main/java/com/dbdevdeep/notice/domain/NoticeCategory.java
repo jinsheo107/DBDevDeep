@@ -1,10 +1,13 @@
 package com.dbdevdeep.notice.domain;
 
+import java.util.List;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -30,4 +33,7 @@ public class NoticeCategory {
 	@Column(name="category_name")
 	private String categoryName;
 	
+	// 공지사항
+	@OneToMany(mappedBy = "noticeCategory")
+	private List<Notice> notice;
 }

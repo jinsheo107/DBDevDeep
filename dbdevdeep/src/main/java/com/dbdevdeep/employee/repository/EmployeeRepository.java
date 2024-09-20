@@ -7,7 +7,6 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import com.dbdevdeep.attendance.domain.Attendance;
 import com.dbdevdeep.employee.domain.Employee;
 
 public interface EmployeeRepository extends JpaRepository<Employee, String>{

@@ -1,7 +1,6 @@
 package com.dbdevdeep.notice.domain;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 import com.dbdevdeep.employee.domain.Employee;
@@ -22,7 +21,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name="employee")
+@Table(name="notice_comment")
 @NoArgsConstructor(access=AccessLevel.PROTECTED)
 @AllArgsConstructor(access=AccessLevel.PROTECTED)
 @Getter
@@ -42,11 +41,12 @@ public class NoticeComment {
 	private Employee employee;
 	
 	@ManyToOne
-	@JoinColumn(name="parent_cmt_id")
+	@JoinColumn(name="parent_cmt_no", nullable=true)
 	private NoticeComment parentComment;
-
+	
+	// 대댓글 관련
     @OneToMany(mappedBy = "parentComment")
-    private List<NoticeComment> childComments = new ArrayList<>();
+    private List<NoticeComment> childComments;
 	
     @Column(name="cmt_content")
     private String cmtContent;
@@ -56,6 +56,9 @@ public class NoticeComment {
 	
 	@Column(name="mod_time")
 	private LocalDateTime modTime;
+	
+	@Column(name="is_delete")
+	private int isDelete;
 	
 	
 }

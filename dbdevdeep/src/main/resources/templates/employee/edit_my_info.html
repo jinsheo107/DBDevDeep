@@ -399,7 +399,7 @@
 			
 			const csrfToken = document.getElementById("csrf_token").value;
 			
-			fetch('/edit-myinfo', {
+			fetch('/mypage/edit', {
 				method:'POST',
 				headers: {
 					'X-CSRF-TOKEN': csrfToken
@@ -416,7 +416,7 @@
 						confirmButtonText: "닫기"
 					})
 					.then((result) => {
-						location.href="/editmypage";
+						location.href="/mypage/edit";
 					})
 				} else {
 					Swal.fire({

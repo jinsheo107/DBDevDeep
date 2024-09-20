@@ -340,29 +340,28 @@
 				                    <td>종류</td>
 				                    <td colspan="3">
 				                    <div style="display: flex; gap: 15px; justify-content: space-evenly; align-items: center;">
-				                        <div><label><input type="radio" name="vac_type" value="0" onclick="toggleHalfDay(false)"> 연차</label></div>
-				                        <div><label><input type="radio" name="vac_type" value="8" onclick="toggleHalfDay(true)"> 반차</label></div>
-				                        <div><label><input type="radio" name="vac_type" value="1" onclick="toggleHalfDay(false)"> 공가</label></div>
-				                        <div><label><input type="radio" name="vac_type" value="2" onclick="toggleHalfDay(false)"> 병가</label></div>
-				                        <div><label><input type="radio" name="vac_type" value="3" onclick="toggleHalfDay(false)"> 조퇴</label></div>
-				                        <div><label><input type="radio" name="vac_type" value="4" onclick="toggleHalfDay(false)"> 경조사</label></div>
-				                        <div><label><input type="radio" name="vac_type" value="5" onclick="toggleHalfDay(false)"> 출산휴가</label></div>
+				                        <div><label><input type="radio" name="vac_type" value="0"> 연차</label></div>
+				                        
+				                        <div><label><input type="radio" name="vac_type" value="6"> 오전반차</label></div>
+				                		<div><label><input type="radio" name="vac_type" value="7"> 오후반차</label></div>
+				                        
+				                        <div><label><input type="radio" name="vac_type" value="1"> 공가</label></div>
+				                        <div><label><input type="radio" name="vac_type" value="2"> 병가</label></div>
+				                        <div><label><input type="radio" name="vac_type" value="3"> 조퇴</label></div>
+				                        <div><label><input type="radio" name="vac_type" value="4"> 경조사</label></div>
+				                        <div><label><input type="radio" name="vac_type" value="5"> 출산휴가</label></div>
 				                        </div>
 				                    </td>
 				                </tr>
 				                <tr>
-				                	<td>반차</td>
-				                	<td>
+				                	<td>일정</td>
+				                	<td colspan="3">
 				                	<div style="display: flex; gap: 15px; justify-content: space-evenly; align-items: center;">
-				                	<div><label><input type="radio" name="vac_type" value="6" id="half_one" disabled>오전</label></div>
-				                	<div><label><input type="radio" name="vac_type" value="7" id="half_two" disabled>오후</label></div>
+				                	<div><input type="date" id="start_date" class="form-control" name="start_date"></div>
+				                	<div><span>~</span></div>
+				                	<div><input type="date" id="end_date" class="form-control" name="end_date"></div>
 				                	</div>
 				                	</td>
-				                	<td>일정</td>
-				                	<td>
-								        <input type="date" id="start_date" class="form-control" name="start_date">
-								        <input type="date" id="end_date" class="form-control" name="end_date">
-								    </td>
 				                </tr>
 				                <tr>
 				                <td>신청사유</td>
@@ -500,12 +499,6 @@
 	<script src="dist/js/custom.min.js"></script>
 	
 	 <script>
-	<!-- 반차 선택시 오전/오후 선택기능 활성화 -->
-    function toggleHalfDay(enable) {
-        document.getElementById("half_one").disabled = !enable;
-        document.getElementById("half_two").disabled = !enable;
-    }
-
     
 	 // 로컬 시간대로 현재 날짜와 시간을 포맷팅하는 함수
 	    function formatDateToLocal(date) {

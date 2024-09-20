@@ -1,13 +1,11 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org"
-     xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-     layout:decorate="~{include/employee_layout}">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{include/employee_layout}">
 <th:block layout:fragment="content">
-<style>
+	<style>
 .addPic {
 	background-color: gainsboro;
 	width: 100%;
-	aspect-ratio: 1 / 1;
+	aspect-ratio: 1/1;
 	border-radius: 50%;
 	border: none;
 	font-size: 25px;
@@ -39,7 +37,7 @@
 	border-radius: 50%;
 	overflow: hidden;
 	width: 100%;
-	aspect-ratio: 1 / 1;
+	aspect-ratio: 1/1;
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -48,7 +46,7 @@
 
 #imagePreview {
 	width: 100%;
-	aspect-ratio: 1 / 1;
+	aspect-ratio: 1/1;
 	object-fit: cover;
 }
 
@@ -62,252 +60,203 @@
 	align-items: center;
 }
 </style>
-		<!-- ============================================================== -->
-		<!-- End Left Sidebar - style you can find in sidebar.scss  -->
-		<!-- ============================================================== -->
-		<!-- ============================================================== -->
-		<!-- Page wrapper  -->
-		<!-- ============================================================== -->
-		<div class="page-wrapper">
-			<!-- ============================================================== -->
-			<!-- Container fluid  -->
-			<!-- ============================================================== -->
-			<div class="container-fluid">
-				<!-- ============================================================== -->
-				<!-- Start Page Content -->
-				<!-- ============================================================== -->
-				<div class="col-sm-12 col-md-12">
-					<div class="card">
-						<div class="card-body">
-							<h4 class="card-title">직원 계정 등록</h4>
-							<hr>
-							<form id="employeeAddFrm">
-								<input type="hidden" id="csrf_token" th:value="${_csrf.token}">
-								<div class="form-body">
-									<div class="row">
-										<div class="col-md-1 "></div>
+	<div class="page-wrapper">
+		<div class="container-fluid">
+			<div class="col-sm-12 col-md-12">
+				<div class="card">
+					<div class="card-body">
+						<h4 class="card-title">직원 계정 등록</h4>
+						<hr>
+						<form id="employeeAddFrm">
+							<input type="hidden" id="csrf_token" th:value="${_csrf.token}">
+							<div class="form-body">
+								<div class="row">
+									<div class="col-md-1 "></div>
 
 
-										<!-- 사진등록 -->
-										<div class="col-md-1 ">
-											<div class="form-group" style="margin-top: 20px;">
-												<label>사진 <span style="color: red;">*</span></label>
-												<div class="row">
-													<div class="preview-container hidden" id="preview-container">
-														<img id="imagePreview" src="">
-													</div>
-													<input type="button" class="addPic" id="addPic" value="+">
+									<!-- 사진등록 -->
+									<div class="col-md-1 ">
+										<div class="form-group" style="margin-top: 20px;">
+											<label>사진 <span style="color: red;">*</span></label>
+											<div class="row">
+												<div class="preview-container hidden" id="preview-container">
+													<img id="imagePreview" src="">
 												</div>
+												<input type="button" class="addPic" id="addPic" value="+">
 											</div>
-										</div>
-
-										<div class="col-md-9 m-auto">
-											<div class="form-group">
-												<label for="gov_id">교육청관리번호 <span style="color: red;">*</span></label>
-												<div class="row">
-													<div class="col-md-8">
-														<input type="text" class="form-control" id="gov_id" name="gov_id" placeholder="00000000000" maxlength="11">
-														<div id="gov_id_feedback" class="mt-2"></div>
-													</div>
-													<div class="col-md-1">
-														<input type="button" id="gov_check_button" class="btn waves-effect waves-light btn-primary" disabled value="중복확인" onclick="dupGov();">
-													</div>
-												</div>
-											</div>
-
-											<div class="form-group">
-												<label for="gov_id">이름 <span style="color: red;">*</span></label>
-												<div class="row">
-													<div class="col-md-8">
-														<input type="text" class="form-control" id="emp_name" name="emp_name" placeholder="홍길동">
-														<div id="emp_name_feedback" class="mt-2"></div>
-													</div>
-												</div>
-											</div>
-											<div class="form-group">
-												<label for="gov_id">부서 <span style="color: red;">*</span></label>
-												<div class="row">
-													<div class="col-md-8">
-														<select class="form-control" id="department" name="dept_code" style="background-image: none;">
-															<option value="0">부서를 선택하세요.</option>
-															<option value="D4">행정부</option>
-															<option value="D3">교무부</option>
-															<option value="D2">교감</option>
-															<option value="D1">교장</option>
-														</select>
-														<div id="department_feedback" class="mt-2"></div>
-													</div>
-												</div>
-											</div>
-											<div class="form-group">
-												<label for="gov_id">직급 <span style="color: red;">*</span></label>
-												<div class="row">
-													<div class="col-md-8">
-														<select class="form-control" id="job" name="job_code" style="background-image: none;">
-															<option value="0">직급을 선택하세요.</option>
-															<option value="J4">직원</option>
-															<option value="J3">부장</option>
-															<option value="J2">교감</option>
-															<option value="J1">교장</option>
-														</select>
-														<div id="job_feedback" class="mt-2"></div>
-													</div>
-												</div>
-											</div>
-											<div class="form-group">
-												<label for="gov_id">주민등록번호 <span style="color: red;">*</span></label>
-												<div class="row">
-													<div class="col-md-4">
-														<input type="text" class="form-control" id="firstempRrn" placeholder="000101" maxlength="6">
-
-													</div>
-													<div class="col-md-4">
-														<input type="text" class="form-control" id="secondempRrn" placeholder="4111111" maxlength="7">
-													</div>
-													<input type="text" id="emp_rrn" name="emp_rrn" hidden="hidden">
-													<div id="emp_rrn_feedback" class="mt-2 col-md-8"></div>
-												</div>
-											</div>
-											<div class="form-group">
-												<label for="gov_id">우편번호 <span style="color: red;">*</span></label>
-												<div class="row">
-													<div class="col-md-8">
-														<input type="text" name="emp_post_code" class="form-control" id="sample6_postcode" placeholder="우편번호" onclick="sample6_execDaumPostcode()" readonly><br> 
-														<input type="text" name="emp_addr" class="form-control" id="sample6_address" placeholder="주소" readonly><br> 
-														<input type="text" name="emp_detail_addr" class="form-control" id="sample6_detailAddress" placeholder="상세주소"> 
-														<input type="text" id="sample6_extraAddress" placeholder="참고항목" hidden="hidden">
-														<div id="emp_post_code_feedback" class="mt-2"></div>
-													</div>
-													<div class="col-md-1">
-														<input type="button" id="postBtn" onclick="sample6_execDaumPostcode()" value="우편번호 찾기" class="btn waves-effect waves-light btn-primary">
-													</div>
-												</div>
-											</div>
-											<div class="form-group">
-												<label for="gov_id">전화번호 <span style="color: red;">*</span></label>
-												<div class="row">
-													<div class="col-md-2">
-														<input type="text" class="form-control" id="firstPhone" placeholder="010" maxlength="3">
-													</div>
-													<div class="col-md-3">
-														<input type="text" class="form-control" id="secondPhone" placeholder="1111" maxlength="4">
-													</div>
-													<div class="col-md-3">
-														<input type="text" class="form-control" id="thirdPhone" placeholder="2222" maxlength="4">
-													</div>
-													<div id="emp_phone_feedback" class="mt-2 col-md-8"></div>
-													<input type="text" id="empPhone" name="emp_phone" hidden="hidden">
-
-												</div>
-											</div>
-											<div class="form-group">
-												<label for="gov_id">내선전화번호 <span style="color: red;">*</span></label>
-												<div class="row">
-													<div class="col-md-8">
-														<input type="text" class="form-control" id="emp_internal_phone" name="emp_internal_phone" placeholder="0000" maxlength="4">
-														<div id="emp_internal_phone_feedback" class="mt-2"></div>
-													</div>
-												</div>
-											</div>
-											<div class="form-group">
-												<label for="gov_id">비밀번호 <span style="color: red;">*</span></label>
-												<div class="row">
-													<div class="col-md-8">
-														<input type="text" class="form-control" id="emp_pw" name="emp_pw" placeholder="주민등록번호를 입력하세요" readonly>
-														<div id="emp_pw_feedback" class="mt-2"></div>
-													</div>
-												</div>
-											</div>
-											<div class="form-group">
-												<label for="gov_id">이전학교번호</label>
-												<div class="row">
-													<div class="col-md-8">
-														<input type="text" class="form-control " id="trans_school_id" placeholder="00000000" maxlength="8">
-														<div id="trans_school_id_feedback" class="mt-2"></div>
-													</div>
-												</div>
-											</div>
-											<div class="form-group">
-												<label for="gov_id">입사일 <span style="color: red;">*</span></label>
-												<div class="row">
-													<div class="col-md-8">
-														<input type="date" class="form-control " id="hire_date" name="hire_date">
-														<div id="trans_school_id_feedback" class="mt-2"></div>
-													</div>
-												</div>
-											</div>
-											<div class="form-group">
-												<div class="row">
-													<div class="col-md-8"></div>
-													<div class="col-md-2">
-														<br> 
-														<input type="submit" class="btn waves-effect waves-light btn-primary" value="등록"> 
-														<input type="button" onclick="cancelBtn();" class="btn waves-effect waves-light btn-light" value="취소">
-													</div>
-												</div>
-											</div>
-											<input type="file" class="custom-file-input" id="inputGroupFile04" name="file">
 										</div>
 									</div>
+
+									<div class="col-md-9 m-auto">
+										<div class="form-group">
+											<label for="gov_id">교육청관리번호 <span style="color: red;">*</span></label>
+											<div class="row">
+												<div class="col-md-8">
+													<input type="text" class="form-control" id="gov_id" name="gov_id" placeholder="00000000000" maxlength="11">
+													<div id="gov_id_feedback" class="mt-2"></div>
+												</div>
+												<div class="col-md-1">
+													<input type="button" id="gov_check_button" class="btn waves-effect waves-light btn-primary" disabled value="중복확인" onclick="dupGov();">
+												</div>
+											</div>
+										</div>
+
+										<div class="form-group">
+											<label for="gov_id">이름 <span style="color: red;">*</span></label>
+											<div class="row">
+												<div class="col-md-8">
+													<input type="text" class="form-control" id="emp_name" name="emp_name" placeholder="홍길동">
+													<div id="emp_name_feedback" class="mt-2"></div>
+												</div>
+											</div>
+										</div>
+										<div class="form-group">
+											<label for="gov_id">부서 <span style="color: red;">*</span></label>
+											<div class="row">
+												<div class="col-md-8">
+													<select class="form-control" id="department" name="dept_code" style="background-image: none;">
+														<option value="0">부서를 선택하세요.</option>
+														<option value="D4">행정부</option>
+														<option value="D3">교무부</option>
+														<option value="D2">교감</option>
+														<option value="D1">교장</option>
+													</select>
+													<div id="department_feedback" class="mt-2"></div>
+												</div>
+											</div>
+										</div>
+										<div class="form-group">
+											<label for="gov_id">직급 <span style="color: red;">*</span></label>
+											<div class="row">
+												<div class="col-md-8">
+													<select class="form-control" id="job" name="job_code" style="background-image: none;">
+														<option value="0">직급을 선택하세요.</option>
+														<option value="J4">직원</option>
+														<option value="J3">부장</option>
+														<option value="J2">교감</option>
+														<option value="J1">교장</option>
+													</select>
+													<div id="job_feedback" class="mt-2"></div>
+												</div>
+											</div>
+										</div>
+										<div class="form-group">
+											<label for="gov_id">주민등록번호 <span style="color: red;">*</span></label>
+											<div class="row">
+												<div class="col-md-4">
+													<input type="text" class="form-control" id="firstempRrn" placeholder="000101" maxlength="6">
+
+												</div>
+												<div class="col-md-4">
+													<input type="text" class="form-control" id="secondempRrn" placeholder="4111111" maxlength="7">
+												</div>
+												<input type="text" id="emp_rrn" name="emp_rrn" hidden="hidden">
+												<div id="emp_rrn_feedback" class="mt-2 col-md-8"></div>
+											</div>
+										</div>
+										<div class="form-group">
+											<label for="gov_id">우편번호 <span style="color: red;">*</span></label>
+											<div class="row">
+												<div class="col-md-8">
+													<input type="text" name="emp_post_code" class="form-control" id="sample6_postcode" placeholder="우편번호" onclick="sample6_execDaumPostcode()" readonly><br> <input type="text" name="emp_addr" class="form-control" id="sample6_address" placeholder="주소" readonly><br> <input type="text" name="emp_detail_addr" class="form-control" id="sample6_detailAddress" placeholder="상세주소"> <input type="text" id="sample6_extraAddress" placeholder="참고항목" hidden="hidden">
+													<div id="emp_post_code_feedback" class="mt-2"></div>
+												</div>
+												<div class="col-md-1">
+													<input type="button" id="postBtn" onclick="sample6_execDaumPostcode()" value="우편번호 찾기" class="btn waves-effect waves-light btn-primary">
+												</div>
+											</div>
+										</div>
+										<div class="form-group">
+											<label for="gov_id">전화번호 <span style="color: red;">*</span></label>
+											<div class="row">
+												<div class="col-md-2">
+													<input type="text" class="form-control" id="firstPhone" placeholder="010" maxlength="3">
+												</div>
+												<div class="col-md-3">
+													<input type="text" class="form-control" id="secondPhone" placeholder="1111" maxlength="4">
+												</div>
+												<div class="col-md-3">
+													<input type="text" class="form-control" id="thirdPhone" placeholder="2222" maxlength="4">
+												</div>
+												<div id="emp_phone_feedback" class="mt-2 col-md-8"></div>
+												<input type="text" id="empPhone" name="emp_phone" hidden="hidden">
+
+											</div>
+										</div>
+										<div class="form-group">
+											<label for="gov_id">내선전화번호 <span style="color: red;">*</span></label>
+											<div class="row">
+												<div class="col-md-8">
+													<input type="text" class="form-control" id="emp_internal_phone" name="emp_internal_phone" placeholder="0000" maxlength="4">
+													<div id="emp_internal_phone_feedback" class="mt-2"></div>
+												</div>
+											</div>
+										</div>
+										<div class="form-group">
+											<label for="gov_id">비밀번호 <span style="color: red;">*</span></label>
+											<div class="row">
+												<div class="col-md-8">
+													<input type="text" class="form-control" id="emp_pw" name="emp_pw" placeholder="주민등록번호를 입력하세요" readonly>
+													<div id="emp_pw_feedback" class="mt-2"></div>
+												</div>
+											</div>
+										</div>
+										<div class="form-group">
+											<label for="gov_id">이전학교번호</label>
+											<div class="row">
+												<div class="col-md-8">
+													<input type="text" class="form-control " id="trans_school_id" name="trans_school_id" placeholder="00000000" maxlength="7">
+													<div id="trans_school_id_feedback" class="mt-2"></div>
+												</div>
+											</div>
+										</div>
+										<div class="form-group">
+											<label for="gov_id">입사일 <span style="color: red;">*</span></label>
+											<div class="row">
+												<div class="col-md-8">
+													<input type="date" class="form-control " id="hire_date" name="hire_date">
+													<div id="hire_date_feedback" class="mt-2"></div>
+												</div>
+											</div>
+										</div>
+										<div class="form-group">
+											<div class="row">
+												<div class="col-md-8"></div>
+												<div class="col-md-2">
+													<br> <input type="submit" class="btn waves-effect waves-light btn-primary" value="등록"> <input type="button" onclick="cancelBtn();" class="btn waves-effect waves-light btn-light" value="취소">
+												</div>
+											</div>
+										</div>
+										<input type="file" class="custom-file-input" id="inputGroupFile04" name="file">
+									</div>
 								</div>
-							</form>
-						</div>
+							</div>
+						</form>
 					</div>
 				</div>
 			</div>
-			<!-- ============================================================== -->
-			<!-- End PAge Content -->
-			<!-- ============================================================== -->
-			<!-- ============================================================== -->
-			<!-- Right sidebar -->
-			<!-- ============================================================== -->
-			<!-- .right-sidebar -->
-			<!-- ============================================================== -->
-			<!-- End Right sidebar -->
-			<!-- ============================================================== -->
 		</div>
 		<!-- ============================================================== -->
-		<!-- End Container fluid  -->
+		<!-- End PAge Content -->
 		<!-- ============================================================== -->
 		<!-- ============================================================== -->
-		<!-- footer -->
+		<!-- Right sidebar -->
 		<!-- ============================================================== -->
-		<footer class="footer text-center text-muted">
-			All Rights Reserved by Adminmart. Designed and Developed by <a href="https://wrappixel.com">WrapPixel</a>.
-		</footer>
+		<!-- .right-sidebar -->
 		<!-- ============================================================== -->
-		<!-- End footer -->
+		<!-- End Right sidebar -->
 		<!-- ============================================================== -->
 	</div>
 	<!-- ============================================================== -->
-	<!-- End Page wrapper  -->
+	<!-- End Container fluid  -->
 	<!-- ============================================================== -->
-	</div>
 	<!-- ============================================================== -->
-	<!-- End Wrapper -->
+	<!-- footer -->
 	<!-- ============================================================== -->
-	<!-- End Wrapper -->
-	<!-- ============================================================== -->
-	<!-- All Jquery -->
-	<!-- ============================================================== -->
-	<script src="assets/libs/jquery/dist/jquery.min.js"></script>
-	<!-- Bootstrap tether Core JavaScript -->
-	<script src="assets/libs/popper.js/dist/umd/popper.min.js"></script>
-	<script src="assets/libs/bootstrap/dist/js/bootstrap.min.js"></script>
-	<!-- apps -->
-	<!-- apps -->
-	<script src="dist/js/app-style-switcher.js"></script>
-	<script src="dist/js/feather.min.js"></script>
-	<!-- slimscrollbar scrollbar JavaScript -->
-	<script src="assets/libs/perfect-scrollbar/dist/perfect-scrollbar.jquery.min.js"></script>
-	<script src="assets/extra-libs/sparkline/sparkline.js"></script>
-	<!--Wave Effects -->
-	<!-- themejs -->
-	<!--Menu sidebar -->
-	<script src="dist/js/sidebarmenu.js"></script>
-	<!--Custom JavaScript -->
-	<script src="dist/js/custom.min.js"></script>
-
+	<footer class="footer text-center text-muted">
+		All Rights Reserved by Adminmart. Designed and Developed by <a href="https://wrappixel.com">WrapPixel</a>.
+	</footer>
+	
 	<!-- 입력여부 -->
 	<script>
 		let valiCount = 0;
@@ -344,7 +293,7 @@
 			} else {
 					const payload = new FormData(form);
 					const csrfToken = document.getElementById("csrf_token").value;
-					fetch('/signup',{
+					fetch('/employee/add',{
 						method:'POST',
 						headers : {
 							'X-CSRF-TOKEN': csrfToken
@@ -359,7 +308,9 @@
 								title:'성공',
 								text : data.res_msg,
 								confirmButtonText:"닫기"
-							});
+							}).then(() => {
+								location.href="/employee/add";
+							})
 						} else{
 							Swal.fire({
 								icon:'error',
@@ -701,7 +652,7 @@
     
     transInput.addEventListener('input', onlyNumber);
     transInput.addEventListener('keyup', () => {
-    	if(transInput.value.length == 8 || transInput.value.length == 0) {
+    	if(transInput.value.length == 7 || transInput.value.length == 0) {
     		document.getElementById('trans_school_id_feedback').textContent = '';
     		transInput.classList.add('is-valid');
     		transInput.classList.remove('is-invalid');
@@ -785,7 +736,7 @@
         const file = event.target.files[0];
 
         if (file) {
-            const validExtensions = ['jpg', 'jpeg', 'png'];
+            const validExtensions = ['jpg', 'jpeg', 'png', 'jfif'];
             const fileExtension = file.name.split('.').pop().toLowerCase();
 
             if (validExtensions.includes(fileExtension)) {
@@ -896,12 +847,12 @@
       }).open();
     }
   </script>
-  
-  <script>
+
+	<script>
   	const cancelBtn = () => {
   		window.history.back();
   	}
   </script>
 
-</body>
+	</body>
 </html>

@@ -303,7 +303,7 @@
 						'Accept': 'application/json',
 			      		'Content-Type': 'application/json',
 						'X-CSRF-TOKEN': csrfToken
-					},
+					}
 				})
 				.then(response => response.json())
 				.then(data=>{
@@ -388,7 +388,7 @@
 			    modTimeFormat = modTimeFormat.replaceAll(/[-]/g, '.');
 		    }
 		    
-		    // Populate the table with the extracted data
+		    
 		    document.getElementById('signTitle').innerText = signTitle;
 		    document.getElementById('signType').innerText = signType;
 		    document.getElementById('regTime').innerText = regTimeFormat;
@@ -397,7 +397,7 @@
 		    
 		    document.getElementById('edit_sign_no').value = signNo;
 		    
-		    // Optionally, you can also handle the show/hide logic for other elements
+		    
 		    var addSignElement = document.getElementById('addSign');
 		    var signInfoElement = document.getElementById('sign_info');
 		    var editSignElement = document.getElementById('editSign');
@@ -522,7 +522,7 @@
     						confirmButtonText:"닫기"
     					})
     					.then(() => {
-    						location.href="/mysign";
+    						location.href="/mypage/sign";
     					});
     				} else {
     					Swal.fire({
@@ -595,7 +595,7 @@
 							confirmButtonText:"닫기"
 						})
 						.then(() => {
-							location.href="/mysign";
+							location.href="/mypage/sign";
 						});
 					} else {
 						Swal.fire({
@@ -631,7 +631,7 @@
 			      cancelButtonText: '취소',
 			}).then((result) => {
 			      if (result.isConfirmed) {
-			    	  fetch('/mysign/' + signNo, {
+			    	  fetch('/mypage/sign/' + signNo, {
 			    		  method: 'DELETE',
 			    		  headers: {
 			    			  'X-CSRF-TOKEN': csrfToken
@@ -646,7 +646,7 @@
 				    			  text: data.res_msg
 				    		  })
 				    		  .then(() => {
-				    			  location.href="/mysign";
+				    			  location.href="/mypage/sign";
 				    		  })
 			    		  } else {
 			    			  Swal.fire({
