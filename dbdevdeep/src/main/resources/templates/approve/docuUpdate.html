@@ -539,7 +539,10 @@
             .then(editor => {
                 editorInstance = editor;  // CKEditor 인스턴스 저장
                 editorInitialized = true;  // CKEditor 초기화 완료 플래그
-                console.log("CKEditor initialized:", editorInstance);
+                const approContent = /*[[${aDto.appro_content}]]*/ '';  // Thymeleaf를 사용하여 서버에서 전달된 데이터 주입
+                if (approContent) {
+                    editor.setData(approContent);  // 에디터에 HTML 데이터를 설정
+                }
             })
             .catch(error => {
                 console.error('CKEditor 초기화 중 오류 발생:', error);
