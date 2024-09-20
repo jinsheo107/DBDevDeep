@@ -124,7 +124,17 @@ div.dataTables_wrapper div.dataTables_paginate ul.pagination {
 	white-space: nowrap;
 	justify-content: center;
 }
-
+/* a 태그 속성 제거 */
+a {
+	text-decoration: none; /* 밑줄 제거 */
+	color: inherit; /* 기본 색상 제거, 부모 요소의 색상 사용 */
+	cursor: pointer; /* 커서 스타일 변경 */
+}
+/* a 태그 호버 시 스타일 */
+a:hover {
+	text-decoration: none; /* 호버 시 밑줄 추가 */
+	color: inherit; /* 호버 시 색상 변경 */
+}
 </style>
 <body>
 		<!-- ============================================================== -->
@@ -144,40 +154,41 @@ div.dataTables_wrapper div.dataTables_paginate ul.pagination {
 						<div class="card">
 							<div class="card-body" style="padding: 50px 80px">
 								<div class="row" style="margin-left: 0px !important; margin-right: 0px !important;">
-									<div class="col d-flex justify-content-start align-items-center" style="padding-left: 0px; max-width: 140px;">
-										<div style="font-size: 30px;">장소관리</div>
+									<div class="col d-flex justify-content-start align-items-center" style="padding-left: 0px;">
+										<div style="font-size: 30px;">기자재관리</div>
 									</div>
 									<div class="col d-flex justify-content-end" sec:authorize="hasAnyAuthority('D3')">
-										<button type="button" onclick="location.href='/place/create'"
-										class="btn waves-effect waves-light btn-primary m-1" style="width:80px; height:50px;" >등록</button>
+										<button type="button" onclick="location.href='/item/create'" class="btn waves-effect waves-light btn-primary m-1" style="width:80px; height:50px;" >등록</button>
 									</div>
 								</div>
 							<div class="table-responsive mt-2">
-								<table id="place_list" class="table table-hover table-bordered no-wrap" style="width: 100%; text-align: center;">
+								<table id="item_list" class="table table-hover table-bordered no-wrap" style="width: 100%; text-align: center;">
 									<thead>
 										<tr>
-											<th scope="col">장소번호</th>
 											<th scope="col">장소명</th>
+											<th scope="col">기자재명</th>
 											<th scope="col">위치</th>
-											<th scope="col">사용 가능 시간</th>
 											<th scope="col">사용 가능 여부</th>
-											<th scope="col">사용 불가 일</th>
+											<th scope="col">총 갯수</th>
+											<th scope="col">사용 가능 갯수</th>
+											<th scope="col">사용 불가능 갯수</th>
 										</tr>
 									</thead>
 									<tbody>
 										<th:block th:if="${#lists.isEmpty(resultList)}">
 											<tr>
-												<td colspan="6">해당하는 글이 없습니다.</td>
+												<td colspan="7">해당하는 글이 없습니다.</td>
 											</tr>
 										</th:block>
 										<th:block th:if="${!#lists.isEmpty(resultList)}">
-											<tr th:each="place, placeStat : ${resultList}">
-												<td th:text="${place.place_no}"></td>
-												<td th:text="${place.place_name}"></td>
-												<td th:text="${place.place_location}"></td>
-												<td th:text="${place.formattedTimeRange}"></td>
-												<td th:text="${place.place_status == 'Y' ? '사용가능' : '사용 불가능'}"></td>
-												<td th:text="${place.unuseable_start_date != null ? place.unuseable_start_date : ''} + ' - ' + ${place.unuseable_end_date != null ? place.unuseable_end_date : ''}"></td>
+											<tr th:each="item : ${resultList}" th:data-item-no="${item.item_no}">
+												<td th:text="${item.place_name}"></td>
+												<td th:text ="${item.item_name}"></td>
+												<td th:text="${item.place_location}"></td>
+												<td th:text="${item.item_status == 'Y' ? '사용가능' : '사용불가능'}"></td>
+												<td th:text="${item.item_quantity}"></td>
+												<td th:text="${item.item_quantity - item.unuseable_quantity}"></td>
+												<td th:text="${item.unuseable_quantity}"></td>
 											</tr>
 										</th:block>
 									</tbody>
@@ -238,15 +249,16 @@ div.dataTables_wrapper div.dataTables_paginate ul.pagination {
 		<script src="assets/extra-libs/datatables.net/js/jquery.dataTables.min.js"></script>
 		<script src="dist/js/pages/datatable/datatable-basic.init.js"></script>
 		<script>
-			$('#place_list').on('click', 'td', function(){
-				let placeNo = $(this).closest('tr').find('td:nth-child(1)').text();
-				
-				if(placeNo){
-					window.location.href = '/place/' + placeNo;
-				}
-			});
+		$('#item_list').on('click', 'tr', function(){
+	        // 첫 번째 열에서 item_no 값을 추출
+	        let itemNo = $(this).data('item-no');
+	        
+	        if (itemNo) {
+	            window.location.href = '/item/' + itemNo;
+	        } else {
+	            alert('아이템 번호를 찾을 수 없습니다.');
+	        }
+	    });
 		</script>
-	
-	
 	</body>
 </html>
