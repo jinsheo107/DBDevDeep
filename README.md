@@ -136,32 +136,3 @@ Spring Framework를 활용하여 다양한 사용자 환경에서 업무 효율�
 
 # DB 구성
 ![4  ERD_1팀](https://github.com/user-attachments/assets/e63e4942-e435-48dd-809f-95a5f6cb59af)
-
-
-# 지원
-물망초등학교 그룹웨어 프로젝트에서 오류를 발견하실 경우 아래 메일로 연락주시면 감사하겠습니다.
-
-<a href="mailto:hello91390@gmail.com">
-    <img src="https://img.shields.io/badge/Gmail-D14836?style=for-the-badge&logo=gmail&logoColor=white"></a>
-<span> ☎ 공지사항, 채팅</span>
-<br>
-<a href="mailto:dosjin01@gmail.com">
-    <img src="https://img.shields.io/badge/Gmail-D14836?style=for-the-badge&logo=gmail&logoColor=white"></a>
-<span> ☎ 학생관리, 인사관리(학생)</span>
-<br>
-<a href="mailto:pbkan4@gmail.com">
-    <img src="https://img.shields.io/badge/Gmail-D14836?style=for-the-badge&logo=gmail&logoColor=white"></a>
-<span> ☎ 전자결재, 근태관리</span>
-<br>
-<a href="mailto:somp8320@gmail.com">
-    <img src="https://img.shields.io/badge/Gmail-D14836?style=for-the-badge&logo=gmail&logoColor=white"></a>
-<span> ☎ 일정관리, 문서관리, 메인페이지</span>
-<br>
-<a href="mailto:yimx2j@gmail.com">
-    <img src="https://img.shields.io/badge/Gmail-D14836?style=for-the-badge&logo=gmail&logoColor=white"></a>
-<span> ☎ 장소관리, 기자재관리</span>
-<br>
-<a href="mailto:jinsheo107@gmail.com">
-    <img src="https://img.shields.io/badge/Gmail-D14836?style=for-the-badge&logo=gmail&logoColor=white"></a>
-<span> ☎ 로그인, 주소록, 인사관리, 내 정보, 알림</span>
-<br>
